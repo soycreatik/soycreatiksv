@@ -358,7 +358,22 @@
            ADAPTACIÓN RESPONSIVA (CELULARES)
            ========================================= */
         @media (max-width: 900px) {
+            /* Desactivar efectos pesados en celular */
+            body::before { display: none !important; }
+            .smoke-overlay { display: none !important; }
             .cursor-glow { display: none !important; }
+
+            /* Suavizar animaciones de texto (sin blur) para 0 lag en móvil */
+            .title-group { filter: none !important; transition: opacity 1s ease, transform 1s ease !important; }
+            .title-group.active { filter: none !important; }
+            .world-text { filter: none !important; transition: opacity 1s ease, transform 1s ease !important; }
+            .world-text.active { filter: none !important; }
+            
+            /* Optimizar sombras pesadas */
+            .glow-background { backdrop-filter: blur(4px) !important; }
+            .dashboard-container { backdrop-filter: blur(6px) !important; -webkit-backdrop-filter: blur(6px) !important; }
+
+            /* Ajustes visuales */
             .side-text-left { display: none !important; }
             .side-text-right { display: none !important; } 
             .bottom-slogan { display: block !important; position: relative !important; width: 100% !important; text-align: center !important; margin-top: 30px !important; font-size: 0.85rem !important; color: rgba(255, 255, 255, 0.6) !important; letter-spacing: 1px; text-transform: uppercase; }
@@ -393,7 +408,6 @@
             .menu-overlay-title h1 { font-size: 2.2rem; }
             .menu-overlay-title h2 { font-size: 1.5rem; }
 
-            /* --- FIX PAQUETES OVERFLOW MOBILE --- */
             .sticker-center-text { width: 90vw !important; padding: 0 !important; }
             .sticker-line1 { flex-direction: column !important; gap: 5px !important; }
             .sticker-logo-img { height: auto !important; width: 90% !important; max-width: 250px !important; }
@@ -669,9 +683,7 @@
             }
         });
 
-        // ==========================================
-        // LÓGICA DEL NUEVO CARRUSEL AUTOMÁTICO
-        // ==========================================
+        // LÓGICA DEL CARRUSEL AUTOMÁTICO
         const viewer = document.getElementById('main-viewer');
         const thumbBoxes = document.querySelectorAll('#thumbnail-grid .icon-box');
         const dashImages = [
@@ -684,7 +696,6 @@
         function autoShowImage() {
             if (!viewer || thumbBoxes.length === 0) return;
             
-            // Efecto de desvanecimiento ultra-optimizado usando GPU
             viewer.style.opacity = 0; 
             
             setTimeout(() => {
@@ -693,7 +704,6 @@
                 viewer.style.objectPosition = (newSrc.includes('img2') || newSrc.includes('img7')) ? 'center top' : 'center center';
                 viewer.style.opacity = 1;
                 
-                // Efecto visual: iluminar la miniatura que está activa
                 thumbBoxes.forEach((box, i) => {
                     if (i === dashIdx) {
                         box.style.borderColor = '#a855f7';
@@ -726,10 +736,13 @@
         }
         animateGlow();
 
+        // LOADER DINÁMICO (5 seg en Móvil, 2.5 en PC)
         function triggerIntro() {
             loader.classList.remove('hidden'); introText.classList.remove('animate-letters');
             void introText.offsetWidth; introText.classList.add('animate-letters');
-            setTimeout(() => loader.classList.add('hidden'), 2500);
+            
+            const loadTime = window.innerWidth <= 900 ? 5000 : 2500;
+            setTimeout(() => loader.classList.add('hidden'), loadTime);
         }
 
         function initDynamicBox() {
@@ -787,10 +800,9 @@
             triggerIntro(); 
             initDynamicBox(); 
             
-            // Iniciar la galería automática al cargar la página
             if (viewer) {
                 autoShowImage();
-                setInterval(autoShowImage, 3500); // Cambia la foto cada 3.5 segundos
+                setInterval(autoShowImage, 3500); 
             }
         });
     </script>
