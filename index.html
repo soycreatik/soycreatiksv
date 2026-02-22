@@ -56,9 +56,9 @@
         .bg-slide {
             position: absolute; top: 0; left: -10%; width: 120%; height: 100%;
             background-size: cover; background-position: center;
-            opacity: 0; filter: blur(4px) brightness(0.4); /* Blur reducido para evitar tirones */
+            opacity: 0; filter: blur(4px) brightness(0.4); 
             animation: slideAnimation 16s infinite linear; 
-            will-change: transform, opacity; /* Aceleración GPU */
+            will-change: transform, opacity; 
             backface-visibility: hidden;
         }
         .smoke-overlay {
@@ -172,29 +172,43 @@
 
         .bottom-slogan { display: none; }
 
-        /* --- MARQUEE INFINITO (ACELERADO POR HARDWARE) --- */
+        /* --- MARQUEE INFINITO (OPTIMIZADO PARA 0 LAG) --- */
         .marquee-wrapper {
             width: 100%; overflow: hidden; background: rgba(0, 0, 0, 0.15); padding: 30px 0; position: relative; z-index: 3;
             border-top: 1px solid rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-            will-change: opacity; transition: opacity 0.8s ease; display: flex; flex-wrap: nowrap;
+            will-change: opacity; transition: opacity 0.5s ease; display: flex; flex-wrap: nowrap;
+            pointer-events: none; /* Evita que el celular calcule si tocas la línea */
+            transform: translateZ(0); /* Aísla el elemento en su propia capa gráfica */
         }
+        .marquee-content { 
+            display: flex; flex-shrink: 0; width: max-content; align-items: center; 
+            animation: marqueeFlow 25s linear infinite; 
+            will-change: transform; 
+            backface-visibility: hidden; /* Corta el lag del texto en movimiento */
+        }
+        .marquee-img { height: 32px; width: auto; margin: 0 60px; display: block; opacity: 0.9; flex-shrink: 0; max-width: none; }
+        
         .overlay-marquee {
             width: 100%; overflow: hidden; padding: 50px 0; position: relative; z-index: 5;
             background: rgba(0, 0, 0, 0.2); border-top: 1px solid rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-            display: flex; flex-wrap: nowrap;
+            display: flex; flex-wrap: nowrap; pointer-events: none; transform: translateZ(0);
         }
-        .marquee-content { display: flex; flex-shrink: 0; width: max-content; align-items: center; animation: marqueeFlow 25s linear infinite; will-change: transform; }
-        .marquee-img { height: 32px; width: auto; margin: 0 60px; display: block; opacity: 0.9; flex-shrink: 0; max-width: none; }
+
         @keyframes marqueeFlow { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
-        /* --- DASHBOARD --- */
+        /* --- DASHBOARD (OPTIMIZADO EL BLUR) --- */
         .dashboard-container {
             display: grid; grid-template-columns: 1.2fr 1fr 1.2fr; gap: 30px; width: 90%; max-width: 1200px; margin: 60px auto 100px auto; padding: 50px;
-            background: rgba(30, 10, 50, 0.2); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 40px; backdrop-filter: blur(20px);
+            background: rgba(30, 10, 50, 0.2); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 40px; 
+            backdrop-filter: blur(12px); /* Blur optimizado */
+            -webkit-backdrop-filter: blur(12px); /* Soporte vital para iPhones */
             box-shadow: 0 30px 60px rgba(0,0,0,0.6); transform: translate3d(0, 100px, 0); opacity: 0; 
-            transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 1s ease; z-index: 3; position: relative; will-change: transform, opacity;
+            transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 1s ease; z-index: 3; position: relative; 
+            will-change: transform, opacity;
+            backface-visibility: hidden; /* Evita colapso del scroll */
         }
         .dashboard-container.visible { transform: translate3d(0, 0, 0); opacity: 1; }
+        
         .dash-left h2 { font-size: 3rem; line-height: 0.9; margin-bottom: 20px; font-weight: 800; letter-spacing: -1px;}
         .glass-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; overflow: hidden; width: 100%; box-sizing: border-box; }
         .viewer-box { width: 100%; height: 250px; border-radius: 15px; background: rgba(255,255,255,0.05); display: flex; justify-content: center; align-items: center; position: relative; overflow: hidden; }
@@ -673,18 +687,24 @@
             });
         }
 
-        // OPTIMIZACIÓN DE SCROLL: Uso de RequestAnimationFrame
+        // OPTIMIZACIÓN DE SCROLL: Uso de RequestAnimationFrame con Redondeo anti-lag
         let isScrolling = false;
         window.addEventListener('scroll', () => {
             if(isMenuOpen || isPaquetesOpen) return;
             if (!isScrolling) {
                 window.requestAnimationFrame(() => {
                     const scrollVal = window.scrollY;
-                    const fadeFactor = Math.max(0, 1 - scrollVal / 300);
+                    const fadeFactor = Math.max(0, 1 - scrollVal / 300).toFixed(2);
+                    
                     bgPresentation.style.opacity = fadeFactor;
                     mainHeader.style.opacity = fadeFactor;
                     marquee.style.opacity = fadeFactor;
-                    if (scrollVal > 100) panel.classList.add('visible'); else panel.classList.remove('visible');
+                    
+                    if (scrollVal > 100) {
+                        panel.classList.add('visible'); 
+                    } else {
+                        panel.classList.remove('visible');
+                    }
                     isScrolling = false;
                 });
                 isScrolling = true;
