@@ -687,6 +687,18 @@
 
         function autoShowImage() {
             if (!viewer || thumbBoxes.length === 0) return;
+            
+            // --- NUEVO: Si es celular, detenemos la animación y dejamos las fotos fijas ---
+            if (window.innerWidth <= 900) {
+                thumbBoxes.forEach(box => {
+                    box.style.borderColor = 'rgba(255,255,255,0.08)';
+                    box.style.background = 'rgba(255,255,255,0.04)';
+                    box.style.transform = 'scale(1) translate3d(0,0,0)';
+                });
+                return; // Cortamos la ejecución aquí para evitar lag en móvil
+            }
+
+            // --- Lógica original para PC ---
             viewer.style.opacity = 0; 
             setTimeout(() => {
                 const newSrc = dashImages[dashIdx];
@@ -770,7 +782,7 @@
             });
         }
 
-        // OPTIMIZACIÓN DE SCROLL: 0 LAG
+        // OPTIMIZACIÓN DE SCROLL: 0 LAG Y AJUSTE PARA MÓVIL
         let isScrolling = false;
         window.addEventListener('scroll', () => {
             if(isMenuOpen || isPaquetesOpen) return;
@@ -781,12 +793,16 @@
                     
                     bgPresentation.style.opacity = fadeFactor;
                     mainHeader.style.opacity = fadeFactor;
-                    marquee.style.opacity = fadeFactor;
                     
+                    // --- NUEVO: Control condicional del Marquee y Panel según el dispositivo ---
                     if (window.innerWidth > 900) {
+                        marquee.style.opacity = fadeFactor;
                         if (scrollVal > 100) panel.classList.add('visible'); 
                         else panel.classList.remove('visible');
+                    } else {
+                        marquee.style.opacity = 1; // Fija 100% en móvil
                     }
+                    
                     isScrolling = false;
                 });
                 isScrolling = true;
