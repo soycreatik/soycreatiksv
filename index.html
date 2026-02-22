@@ -345,12 +345,7 @@
            ========================================= */
         #contact-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background-color: #020617; 
-            background-image: 
-                radial-gradient(circle at 50% -20%, rgba(14, 165, 233, 0.25) 0%, transparent 60%),
-                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), 
-                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-            background-size: 100% 100%, 40px 40px, 40px 40px;
+            background-color: transparent; /* Ahora transparente para que se vea el fondo rotativo */
             z-index: 99000; 
             display: flex; flex-direction: column; align-items: center;
             overflow-y: auto; overflow-x: hidden;
@@ -365,6 +360,42 @@
             transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1);
             filter: blur(0px);
         }
+
+        /* FONDO ROTATIVO DESENFOCADO PARA CONTACTO (0 Lag, Solo CSS) */
+        .contact-bg-layer {
+            position: fixed; top: -5%; left: -5%; width: 110vw; height: 110vh;
+            background-size: cover; background-position: center;
+            opacity: 0; filter: blur(8px) brightness(0.6);
+            animation: contactSlideAnim 40s infinite linear;
+            will-change: opacity, transform;
+            z-index: 0; pointer-events: none;
+        }
+        .contact-backdrop {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: rgba(2, 6, 23, 0.85); /* Tono azul oscuro semi-transparente */
+            background-image: 
+                radial-gradient(circle at 50% -20%, rgba(14, 165, 233, 0.35) 0%, transparent 60%),
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), 
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
+            z-index: 1; pointer-events: none;
+        }
+
+        @keyframes contactSlideAnim {
+            0% { opacity: 0; transform: scale(1); }
+            5% { opacity: 0.5; } /* Fade in completo a los 2s */
+            12.5% { opacity: 0.5; } /* Se mantiene hasta los 5s */
+            17.5% { opacity: 0; transform: scale(1.05); } /* Fade out a los 7s */
+            100% { opacity: 0; }
+        }
+        .cbg-1 { background-image: url('FOTOS HORIZONTALES/img1H.jpg'); animation-delay: 0s; }
+        .cbg-2 { background-image: url('FOTOS HORIZONTALES/img2H.jpg'); animation-delay: 5s; }
+        .cbg-3 { background-image: url('FOTOS HORIZONTALES/img3H.jpg'); animation-delay: 10s; }
+        .cbg-4 { background-image: url('FOTOS HORIZONTALES/img4H.jpg'); animation-delay: 15s; }
+        .cbg-5 { background-image: url('FOTOS HORIZONTALES/img5H.jpg'); animation-delay: 20s; }
+        .cbg-6 { background-image: url('FOTOS HORIZONTALES/img6H.jpg'); animation-delay: 25s; }
+        .cbg-7 { background-image: url('FOTOS HORIZONTALES/img7H.jpg'); animation-delay: 30s; }
+        .cbg-8 { background-image: url('FOTOS HORIZONTALES/img8H.jpg'); animation-delay: 35s; }
         
         .contact-close-btn {
             position: absolute; top: 30px; right: 5vw;
@@ -451,7 +482,7 @@
 
         /* FOTOS FLOTANTES EN EL OVERLAY 3D */
         .contact-float-item {
-            position: absolute; z-index: 1; pointer-events: none;
+            position: absolute; z-index: 2; pointer-events: none;
             will-change: transform; opacity: 0; transition: opacity 1s ease 0.5s;
         }
         #contact-overlay.active .contact-float-item { opacity: 0.7; }
@@ -555,7 +586,8 @@
             /* Remove heavy animation filters for mobile and hide floating items */
             #contact-overlay { filter: none !important; transition: opacity 0.5s ease, transform 0.5s ease, visibility 0.5s; }
             #contact-overlay.active { filter: none !important; }
-            .contact-float-item { display: none !important; } /* Eliminamos lag de fotos flotantes en cel */
+            .contact-float-item { display: none !important; }
+            .contact-bg-layer { filter: brightness(0.3) !important; } /* Menos lag en fondo celular */
         }
     </style>
 </head>
@@ -670,12 +702,22 @@
     </div>
 
     <div id="contact-overlay">
+        <div class="contact-bg-layer cbg-1"></div>
+        <div class="contact-bg-layer cbg-2"></div>
+        <div class="contact-bg-layer cbg-3"></div>
+        <div class="contact-bg-layer cbg-4"></div>
+        <div class="contact-bg-layer cbg-5"></div>
+        <div class="contact-bg-layer cbg-6"></div>
+        <div class="contact-bg-layer cbg-7"></div>
+        <div class="contact-bg-layer cbg-8"></div>
+        <div class="contact-backdrop"></div>
+
         <button class="contact-close-btn" id="close-contact-btn">✖ Cerrar</button>
         
-        <img src="img1.jpg" class="contact-float-item f-img1" alt="Float">
-        <img src="FOTOS HORIZONTALES/img2H.jpg" class="contact-float-item f-img2" alt="Float">
+        <img src="img10.jpg" class="contact-float-item f-img1" alt="Float">
+        <img src="img5.jpg" class="contact-float-item f-img2" alt="Float">
         <img src="STICKER/sticker1.png" class="contact-float-item f-stk1" alt="Sticker">
-        <img src="Copia de creatik letter.png" class="contact-float-item f-stk2" alt="Sticker">
+        <img src="STICKER/sticker3.png" class="contact-float-item f-stk2" alt="Sticker">
 
         <div class="contact-content-wrapper">
             <div class="contact-pill-container">
@@ -768,6 +810,12 @@
     </div>
 
     <script>
+        // Log de protección
+        console.log("%c==========================================", "color: #0ea5e9; font-weight: bold; font-size: 14px;");
+        console.log("%cCREADO POR ROGER MÉNDEZ", "color: #0ea5e9; font-weight: bold; font-size: 16px;");
+        console.log("%cTodos los derechos reservados. Uso no autorizado prohibido.", "color: white; font-size: 12px;");
+        console.log("%c==========================================", "color: #0ea5e9; font-weight: bold; font-size: 14px;");
+
         const loader = document.getElementById('intro-loader');
         const introText = document.getElementById('intro-text');
         const glow = document.querySelector('.cursor-glow');
