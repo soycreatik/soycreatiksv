@@ -200,27 +200,41 @@
         .dashboard-container {
             display: grid; grid-template-columns: 1.2fr 1fr 1.2fr; gap: 30px; width: 90%; max-width: 1200px; margin: 60px auto 100px auto; padding: 50px;
             background: rgba(30, 10, 50, 0.2); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 40px; 
-            backdrop-filter: blur(12px); /* Blur optimizado */
-            -webkit-backdrop-filter: blur(12px); /* Soporte vital para iPhones */
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px); 
             box-shadow: 0 30px 60px rgba(0,0,0,0.6); transform: translate3d(0, 100px, 0); opacity: 0; 
             transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 1s ease; z-index: 3; position: relative; 
             will-change: transform, opacity;
-            backface-visibility: hidden; /* Evita colapso del scroll */
+            backface-visibility: hidden; 
         }
         .dashboard-container.visible { transform: translate3d(0, 0, 0); opacity: 1; }
         
         .dash-left h2 { font-size: 3rem; line-height: 0.9; margin-bottom: 20px; font-weight: 800; letter-spacing: -1px;}
         .glass-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; overflow: hidden; width: 100%; box-sizing: border-box; }
         .viewer-box { width: 100%; height: 250px; border-radius: 15px; background: rgba(255,255,255,0.05); display: flex; justify-content: center; align-items: center; position: relative; overflow: hidden; }
-        #main-viewer { width: 100%; height: 100%; object-fit: cover; border-radius: 15px; opacity: 0; transition: opacity 0.4s ease, transform 0.4s ease; object-position: center top; }
+        
+        /* Visor optimizado para animación suave */
+        #main-viewer { 
+            width: 100%; height: 100%; object-fit: cover; border-radius: 15px; 
+            opacity: 0; transition: opacity 0.4s ease-in-out; 
+            object-position: center top; will-change: opacity; transform: translateZ(0); 
+        }
+        
         .idea-container { text-align: center; margin-bottom: 20px; }
         .idea-box { background: linear-gradient(90deg, #a855f7, #6b21a8); color: white; font-size: 0.8rem; font-weight: bold; padding: 5px 15px; border-radius: 5px; display: inline-block; margin-bottom: 5px; }
         .nosotros-text { font-size: 3rem; font-weight: 900; color: #ffffff; margin: 0; line-height: 0.9; }
         .creamos-text { font-size: 3rem; font-weight: 900; color: #ffffff; margin: 0; line-height: 0.9; background: linear-gradient(to bottom, #ffffff 50%, #e0e0e0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .icon-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
-        .icon-box { aspect-ratio: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 15px; display: flex; justify-content: center; align-items: center; overflow: hidden; transition: 0.3s; cursor: pointer; }
+        
+        /* Miniaturas optimizadas */
+        .icon-box { 
+            aspect-ratio: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); 
+            border-radius: 15px; display: flex; justify-content: center; align-items: center; overflow: hidden; 
+            transition: all 0.4s ease-in-out; will-change: transform, border-color, background-color; 
+            backface-visibility: hidden;
+        }
         .icon-box img { width: 100%; height: 100%; object-fit: cover; }
-        .icon-box:hover { background: rgba(168, 85, 247, 0.25); transform: scale(1.05) translate3d(0,0,0); border-color: #a855f7; }
+        
         .service-item { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); padding: 14px 20px; border-radius: 50px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; cursor: pointer; font-size: 0.8rem; font-weight: 700; text-decoration: none; color: #ffffff; width: 100%; box-sizing: border-box; }
         .service-item:hover { transform: translate3d(10px, 0, 0); background: rgba(255,255,255,0.06); }
         .dot-icon { width: 32px; height: 32px; border-radius: 50%; background: #a855f7; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 15px #a855f7; flex-shrink: 0; }
@@ -378,7 +392,14 @@
 
             .menu-overlay-title h1 { font-size: 2.2rem; }
             .menu-overlay-title h2 { font-size: 1.5rem; }
-            .sticker-line2 { font-size: 4rem !important; }
+
+            /* --- FIX PAQUETES OVERFLOW MOBILE --- */
+            .sticker-center-text { width: 90vw !important; padding: 0 !important; }
+            .sticker-line1 { flex-direction: column !important; gap: 5px !important; }
+            .sticker-logo-img { height: auto !important; width: 90% !important; max-width: 250px !important; }
+            .sticker-line1 span { font-size: 1rem !important; margin-top: 5px !important; }
+            .sticker-line2 { font-size: clamp(3rem, 15vw, 4rem) !important; margin-top: 0 !important; }
+
             .testimonials-section { padding: 80px 0 !important; }
             .testi-card { width: 90% !important; max-width: 320px !important; margin: 0 auto 20px auto !important; }
             .plans-container { padding: 20px 5vw !important; gap: 15px !important; justify-content: flex-start !important; overflow-x: auto !important; scroll-snap-type: x mandatory; width: 100vw !important; }
@@ -531,7 +552,28 @@
 
     <div class="dashboard-container" id="scroll-panel">
         <div class="dash-left"><h2>Nuestros<br>Trabajos<span style="color: #a855f7;">.</span></h2><div class="glass-box"><div class="viewer-box"><img id="main-viewer" src="" alt=""></div></div></div>
-        <div class="dash-center"><div class="glass-box"><div class="idea-container"><div class="idea-box">¿TIENES UNA IDEA?</div><h2 class="nosotros-text">NOSOTROS</h2><div class="nosotros-text" style="font-size: 1rem; background: #a855f7; display: inline-block; padding: 2px 8px; border-radius: 4px; margin: 5px 0;">LA</div><h2 class="creamos-text">CREAMOS</h2><p style="font-size: 0.7rem; color: white; opacity: 0.7; margin-top: 5px;">(PREGUNTA POR FECHAS DISPONIBLES)</p></div><div class="icon-grid" id="thumbnail-grid"><div class="icon-box" onmouseenter="showImage('img1.jpg')"><img loading="lazy" decoding="async" src="img1.jpg"></div><div class="icon-box" onmouseenter="showImage('img2_2.jpg')"><img loading="lazy" decoding="async" src="img2_2.jpg"></div><div class="icon-box" onmouseenter="showImage('img3.jpg')"><img loading="lazy" decoding="async" src="img3.jpg"></div><div class="icon-box" onmouseenter="showImage('img4.jpg')"><img loading="lazy" decoding="async" src="img4.jpg"></div><div class="icon-box" onmouseenter="showImage('img5.jpg')"><img loading="lazy" decoding="async" src="img5.jpg"></div><div class="icon-box" onmouseenter="showImage('img6.jpg')"><img loading="lazy" decoding="async" src="img6.jpg"></div><div class="icon-box" onmouseenter="showImage('img7_7.jpg')"><img loading="lazy" decoding="async" src="img7_7.jpg"></div><div class="icon-box" onmouseenter="showImage('img8.jpg')"><img loading="lazy" decoding="async" src="img8.jpg"></div><div class="icon-box" onmouseenter="showImage('img9.jpg')"><img loading="lazy" decoding="async" src="img9.jpg"></div></div></div></div>
+        <div class="dash-center">
+            <div class="glass-box">
+                <div class="idea-container">
+                    <div class="idea-box">¿TIENES UNA IDEA?</div>
+                    <h2 class="nosotros-text">NOSOTROS</h2>
+                    <div class="nosotros-text" style="font-size: 1rem; background: #a855f7; display: inline-block; padding: 2px 8px; border-radius: 4px; margin: 5px 0;">LA</div>
+                    <h2 class="creamos-text">CREAMOS</h2>
+                    <p style="font-size: 0.7rem; color: white; opacity: 0.7; margin-top: 5px;">(PREGUNTA POR FECHAS DISPONIBLES)</p>
+                </div>
+                <div class="icon-grid" id="thumbnail-grid">
+                    <div class="icon-box"><img loading="lazy" decoding="async" src="img1.jpg"></div>
+                    <div class="icon-box"><img loading="lazy" decoding="async" src="img2_2.jpg"></div>
+                    <div class="icon-box"><img loading="lazy" decoding="async" src="img3.jpg"></div>
+                    <div class="icon-box"><img loading="lazy" decoding="async" src="img4.jpg"></div>
+                    <div class="icon-box"><img loading="lazy" decoding="async" src="img5.jpg"></div>
+                    <div class="icon-box"><img loading="lazy" decoding="async" src="img6.jpg"></div>
+                    <div class="icon-box"><img loading="lazy" decoding="async" src="img7_7.jpg"></div>
+                    <div class="icon-box"><img loading="lazy" decoding="async" src="img8.jpg"></div>
+                    <div class="icon-box"><img loading="lazy" decoding="async" src="img9.jpg"></div>
+                </div>
+            </div>
+        </div>
         <div class="dash-right"><a href="https://www.facebook.com/profile.php?id=61587372815271" target="_blank" class="service-item"><span>FACEBOOK</span><div class="dot-icon" style="background: #1877f2;"><img loading="lazy" src="communication.png" alt="Facebook"></div></a><a href="https://www.instagram.com/soycreatik" target="_blank" class="service-item"><span>INSTAGRAM</span><div class="dot-icon" style="background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);"><img loading="lazy" src="instagram (1).png" alt="Instagram"></div></a><a href="https://www.tiktok.com/@soy.creatik?is_from_webapp=1&sender_device=pc" target="_blank" class="service-item"><span>TIKTOK</span><div class="dot-icon" style="background: #000000;"><img loading="lazy" src="tik-tok.png" alt="TikTok"></div></a></div>
     </div>
 
@@ -627,15 +669,45 @@
             }
         });
 
+        // ==========================================
+        // LÓGICA DEL NUEVO CARRUSEL AUTOMÁTICO
+        // ==========================================
         const viewer = document.getElementById('main-viewer');
-        function showImage(newSrc) {
-            if (viewer.src.includes(newSrc) && viewer.style.opacity !== '0') return;
-            viewer.style.opacity = 0.2; 
+        const thumbBoxes = document.querySelectorAll('#thumbnail-grid .icon-box');
+        const dashImages = [
+            'img1.jpg', 'img2_2.jpg', 'img3.jpg', 
+            'img4.jpg', 'img5.jpg', 'img6.jpg', 
+            'img7_7.jpg', 'img8.jpg', 'img9.jpg'
+        ];
+        let dashIdx = 0;
+
+        function autoShowImage() {
+            if (!viewer || thumbBoxes.length === 0) return;
+            
+            // Efecto de desvanecimiento ultra-optimizado usando GPU
+            viewer.style.opacity = 0; 
+            
             setTimeout(() => {
+                const newSrc = dashImages[dashIdx];
                 viewer.src = newSrc;
-                viewer.style.objectPosition = (newSrc.includes('img2.jpg') || newSrc.includes('img7.jpg')) ? 'center top' : 'center center';
+                viewer.style.objectPosition = (newSrc.includes('img2') || newSrc.includes('img7')) ? 'center top' : 'center center';
                 viewer.style.opacity = 1;
-            }, 100);
+                
+                // Efecto visual: iluminar la miniatura que está activa
+                thumbBoxes.forEach((box, i) => {
+                    if (i === dashIdx) {
+                        box.style.borderColor = '#a855f7';
+                        box.style.background = 'rgba(168, 85, 247, 0.25)';
+                        box.style.transform = 'scale(1.05) translate3d(0,0,0)';
+                    } else {
+                        box.style.borderColor = 'rgba(255,255,255,0.08)';
+                        box.style.background = 'rgba(255,255,255,0.04)';
+                        box.style.transform = 'scale(1) translate3d(0,0,0)';
+                    }
+                });
+
+                dashIdx = (dashIdx + 1) % dashImages.length;
+            }, 300); 
         }
 
         // OPTIMIZACIÓN DEL CURSOR: Aceleración por hardware real.
@@ -711,7 +783,16 @@
             }
         }, { passive: true });
 
-        window.addEventListener('load', () => { triggerIntro(); initDynamicBox(); });
+        window.addEventListener('load', () => { 
+            triggerIntro(); 
+            initDynamicBox(); 
+            
+            // Iniciar la galería automática al cargar la página
+            if (viewer) {
+                autoShowImage();
+                setInterval(autoShowImage, 3500); // Cambia la foto cada 3.5 segundos
+            }
+        });
     </script>
 </body>
 </html>
