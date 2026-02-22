@@ -47,11 +47,11 @@
             min-height: 200vh; -webkit-font-smoothing: antialiased;
         }
 
-        /* --- CAPA DE FONDOS DINÁMICOS (SIN LAG) --- */
+        /* --- CAPA DE FONDOS DINÁMICOS --- */
         #bg-presentation {
             position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
             z-index: 0; pointer-events: none; overflow: hidden;
-            transition: opacity 0.8s ease; will-change: opacity;
+            will-change: opacity; /* Optimización 1000%: quitamos transition:opacity que peleaba con el JS */
         }
         .bg-slide {
             position: absolute; top: 0; left: -10%; width: 120%; height: 100%;
@@ -81,7 +81,7 @@
             opacity: 0.5; mix-blend-mode: overlay; pointer-events: none; z-index: 2;
         }
         
-        /* --- CURSOR GLOW (OPTIMIZADO) --- */
+        /* --- CURSOR GLOW --- */
         .cursor-glow {
             position: fixed; width: 500px; height: 500px;
             background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 60%);
@@ -93,7 +93,8 @@
         header { 
             position: fixed; top: 0; width: 100%; z-index: 10000; 
             display: flex; justify-content: space-between; align-items: center; 
-            padding: 20px 3vw; box-sizing: border-box; will-change: opacity; transition: opacity 0.3s ease;
+            padding: 20px 3vw; box-sizing: border-box; will-change: opacity; 
+            /* Sin transition de opacity para no pelear con el scroll JS */
         }
         .logo-img { height: 45px; width: auto; cursor: pointer; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), height 0.3s ease; margin-left: -10px; }
         .logo-img:hover { transform: scale(1.1) translate3d(0,0,0); filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.6)); }
@@ -102,7 +103,6 @@
         header.paquetes-mode .logo-img:hover { transform: scale(1.1) rotate(-5deg) translate3d(0,0,0); }
 
         .nav-center, .nav-right { transition: opacity 0.3s ease, visibility 0.3s ease; opacity: 1; visibility: visible; }
-        
         header.paquetes-mode .nav-center, header.paquetes-mode .nav-right a { opacity: 0; visibility: hidden; pointer-events: none; }
         header.menu-mode .nav-right { opacity: 0; visibility: hidden; pointer-events: none; }
 
@@ -147,10 +147,10 @@
 
         .text-box-container {
             position: relative; height: 110px; margin-bottom: 40px; display: flex; justify-content: center; align-items: center; z-index: 10; cursor: pointer;
-            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s ease, box-shadow 0.2s ease;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s ease;
             border-radius: 12px; width: 200px; will-change: width, transform;
         }
-        .text-box-container:hover { transform: scale(1.05) translate3d(0,0,0); box-shadow: 0 0 35px 15px rgba(168, 85, 247, 0.4); }
+        .text-box-container:hover { transform: scale(1.05) translate3d(0,0,0); }
         .glow-background {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 15, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; backdrop-filter: blur(12px); z-index: -1;
@@ -172,19 +172,16 @@
 
         .bottom-slogan { display: none; }
 
-        /* --- MARQUEE INFINITO (OPTIMIZADO PARA 0 LAG) --- */
+        /* --- MARQUEE INFINITO (0 LAG) --- */
         .marquee-wrapper {
             width: 100%; overflow: hidden; background: rgba(0, 0, 0, 0.15); padding: 30px 0; position: relative; z-index: 3;
             border-top: 1px solid rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-            will-change: opacity; transition: opacity 0.5s ease; display: flex; flex-wrap: nowrap;
-            pointer-events: none; /* Evita que el celular calcule si tocas la línea */
-            transform: translateZ(0); /* Aísla el elemento en su propia capa gráfica */
+            will-change: opacity; display: flex; flex-wrap: nowrap; pointer-events: none; transform: translateZ(0);
         }
         .marquee-content { 
             display: flex; flex-shrink: 0; width: max-content; align-items: center; 
             animation: marqueeFlow 25s linear infinite; 
-            will-change: transform; 
-            backface-visibility: hidden; /* Corta el lag del texto en movimiento */
+            will-change: transform; backface-visibility: hidden; 
         }
         .marquee-img { height: 32px; width: auto; margin: 0 60px; display: block; opacity: 0.9; flex-shrink: 0; max-width: none; }
         
@@ -193,19 +190,16 @@
             background: rgba(0, 0, 0, 0.2); border-top: 1px solid rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.03);
             display: flex; flex-wrap: nowrap; pointer-events: none; transform: translateZ(0);
         }
-
         @keyframes marqueeFlow { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
-        /* --- DASHBOARD (OPTIMIZADO EL BLUR) --- */
+        /* --- DASHBOARD --- */
         .dashboard-container {
             display: grid; grid-template-columns: 1.2fr 1fr 1.2fr; gap: 30px; width: 90%; max-width: 1200px; margin: 60px auto 100px auto; padding: 50px;
             background: rgba(30, 10, 50, 0.2); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 40px; 
-            backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px); 
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
             box-shadow: 0 30px 60px rgba(0,0,0,0.6); transform: translate3d(0, 100px, 0); opacity: 0; 
             transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 1s ease; z-index: 3; position: relative; 
-            will-change: transform, opacity;
-            backface-visibility: hidden; 
+            will-change: transform, opacity; backface-visibility: hidden; 
         }
         .dashboard-container.visible { transform: translate3d(0, 0, 0); opacity: 1; }
         
@@ -213,7 +207,6 @@
         .glass-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; overflow: hidden; width: 100%; box-sizing: border-box; }
         .viewer-box { width: 100%; height: 250px; border-radius: 15px; background: rgba(255,255,255,0.05); display: flex; justify-content: center; align-items: center; position: relative; overflow: hidden; }
         
-        /* Visor optimizado para animación suave */
         #main-viewer { 
             width: 100%; height: 100%; object-fit: cover; border-radius: 15px; 
             opacity: 0; transition: opacity 0.4s ease-in-out; 
@@ -226,7 +219,6 @@
         .creamos-text { font-size: 3rem; font-weight: 900; color: #ffffff; margin: 0; line-height: 0.9; background: linear-gradient(to bottom, #ffffff 50%, #e0e0e0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .icon-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
         
-        /* Miniaturas optimizadas */
         .icon-box { 
             aspect-ratio: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); 
             border-radius: 15px; display: flex; justify-content: center; align-items: center; overflow: hidden; 
@@ -241,22 +233,27 @@
         .dot-icon img { width: 60%; height: 60%; object-fit: contain; }
 
         /* =========================================
-           FULL-SCREEN OVERLAY MENU
+           OVERLAYS (MENU & PAQUETES)
            ========================================= */
-        #full-menu-overlay {
+        #full-menu-overlay, #paquetes-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: radial-gradient(circle at 50% 80%, #0a0f24 0%, #030409 60%);
             z-index: 9000; opacity: 0; visibility: hidden;
             transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
             display: flex; flex-direction: column; align-items: center; 
-            overflow-y: auto; overflow-x: hidden;
+            overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth;
+        }
+        #paquetes-overlay {
+            background-color: #050505; 
+            background-image: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+            background-size: 50px 50px;
         }
         #full-menu-overlay::before {
             content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
             background-size: 40px 40px; pointer-events: none; z-index: 0;
         }
-        #full-menu-overlay.active { opacity: 1; visibility: visible; }
+        #full-menu-overlay.active, #paquetes-overlay.active { opacity: 1; visibility: visible; }
 
         .menu-overlay-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 900px; padding-top: 120px; padding-bottom: 100px; text-align: center; }
         .menu-pill-container { border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(5px); margin-bottom: 25px; position: relative; display: flex; justify-content: center; align-items: center; height: 30px; overflow: hidden; animation: dynamicPillWidth 10s infinite cubic-bezier(0.8, 0, 0.1, 1); transform: translate3d(0, 20px, 0); opacity: 0; transition: all 0.5s ease 0.1s; will-change: width; }
@@ -304,15 +301,6 @@
         .bottom-glow-arc { position: fixed; bottom: -400px; left: 50%; transform: translateX(-50%); width: 150vw; height: 500px; border-radius: 50%; background: radial-gradient(ellipse at top, rgba(249, 115, 22, 0.4) 0%, transparent 60%); box-shadow: 0 -20px 100px rgba(249, 115, 22, 0.3); z-index: 1; pointer-events: none; }
         .slider-deco { position: absolute; bottom: -30px; width: 300px; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); }
 
-        /* =========================================
-           OVERLAY DE PAQUETES
-           ========================================= */
-        #paquetes-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #050505; 
-            background-image: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
-            background-size: 50px 50px; overflow-y: auto; overflow-x: hidden; z-index: 9000; opacity: 0; visibility: hidden; transition: opacity 0.5s ease, visibility 0.5s; scroll-behavior: smooth;
-        }
-        #paquetes-overlay.active { opacity: 1; visibility: visible; }
         .sticker-wall-section { position: relative; min-height: 100vh; width: 100%; display: flex; justify-content: center; align-items: center; overflow: hidden; }
         .sticker-center-text { text-align: center; z-index: 50; pointer-events: none; transform: translate3d(0, 30px, 0); opacity: 0; transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s; position: relative; }
         #paquetes-overlay.active .sticker-center-text { transform: translate3d(0, 0, 0); opacity: 1; }
@@ -321,7 +309,6 @@
         .sticker-line1 span { font-family: 'Inter', sans-serif; font-size: 1.2rem; color: #ffffff; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; opacity: 0.6; margin-top: 15px; }
         .sticker-line2 { font-family: 'Pacifico', cursive; font-size: 6rem; color: #db2777; margin: -15px 0 0 0; text-shadow: 0 10px 30px rgba(219, 39, 119, 0.3); transform: rotate(-3deg); }
 
-        /* --- SECCIÓN 2: TESTIMONIOS --- */
         .testimonials-section { position: relative; background: #0a0a0a; padding: 150px 0; color: #fff; text-align: center; z-index: 10; }
         .torn-paper-top, .torn-paper-bottom { position: absolute; left: 0; width: 100%; height: 60px; background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 1200 120" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M0 0 L1200 0 L1200 40 L1150 60 L1100 45 L1050 70 L1000 50 L950 80 L900 60 L850 90 L800 70 L750 100 L700 80 L650 110 L600 90 L550 115 L500 95 L450 110 L400 85 L350 100 L300 75 L250 90 L200 65 L150 80 L100 55 L50 70 L0 40 Z" fill="%23050505"/%3E%3C/svg%3E'); background-size: cover; z-index: 20; }
         .torn-paper-top { top: -30px; }
@@ -333,7 +320,6 @@
         .user-avatar { width: 60px; height: 60px; border-radius: 50%; border: 2px solid #ffd700; }
         .stars { color: #ffd700; }
 
-        /* --- SECCIÓN 3: PRECIOS --- */
         .pricing-section { position: relative; padding: 40px 1vw 120px 1vw; min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow: hidden; }
         .pricing-header { text-align: center; margin-bottom: 50px; position: relative; z-index: 5; }
         .pricing-header h2 { font-family: 'Pacifico', cursive; color: #db2777; font-size: 4rem; margin: 0; text-transform: uppercase; }
@@ -355,25 +341,39 @@
         .btn-plan:hover { background: #fff; color: #000; }
 
         /* =========================================
-           ADAPTACIÓN RESPONSIVA (CELULARES)
+           ADAPTACIÓN RESPONSIVA (MODO RENDIMIENTO EXTREMO)
            ========================================= */
         @media (max-width: 900px) {
-            /* Desactivar efectos pesados en celular */
+            /* 1. APAGAR EFECTOS PESADOS (ELIMINA EL LAG AL 100%) */
             body::before { display: none !important; }
             .smoke-overlay { display: none !important; }
             .cursor-glow { display: none !important; }
-
-            /* Suavizar animaciones de texto (sin blur) para 0 lag en móvil */
-            .title-group { filter: none !important; transition: opacity 1s ease, transform 1s ease !important; }
-            .title-group.active { filter: none !important; }
-            .world-text { filter: none !important; transition: opacity 1s ease, transform 1s ease !important; }
-            .world-text.active { filter: none !important; }
             
-            /* Optimizar sombras pesadas */
-            .glow-background { backdrop-filter: blur(4px) !important; }
-            .dashboard-container { backdrop-filter: blur(6px) !important; -webkit-backdrop-filter: blur(6px) !important; }
+            /* Quitamos el blur de las animaciones del fondo */
+            .bg-slide { filter: brightness(0.3) !important; } 
 
-            /* Ajustes visuales */
+            /* 2. REEMPLAZAR CRISTAL (BLUR) POR COLORES SÓLIDOS Y SOMBRAS LIGERAS */
+            .glow-background, .dashboard-container, .phone-center, .menu-pill-container, .testi-card, .plan-card { 
+                backdrop-filter: none !important; 
+                -webkit-backdrop-filter: none !important; 
+            }
+            .glow-background { background: rgba(20, 10, 30, 0.9) !important; }
+            
+            .dashboard-container { 
+                background: rgba(20, 5, 35, 0.98) !important; /* Fondo elegante sin lag */
+                box-shadow: 0 5px 15px rgba(0,0,0,0.5) !important; /* Sombra ligera */
+                transform: translate3d(0,0,0) !important; /* Desactiva la subida al scrollear en móvil */
+                opacity: 1 !important;
+            }
+
+            /* Suavizar animaciones de texto (sin blur ni re-cálculos de tamaño) */
+            .title-group { filter: none !important; transition: opacity 0.8s ease, transform 0.8s ease !important; }
+            .title-group.active { filter: none !important; }
+            .world-text { filter: none !important; transition: opacity 0.8s ease, transform 0.8s ease !important; }
+            .world-text.active { filter: none !important; }
+            .text-box-container { width: 100% !important; max-width: 260px !important; transition: transform 0.2s ease !important; }
+
+            /* Ajustes visuales de maquetación */
             .side-text-left { display: none !important; }
             .side-text-right { display: none !important; } 
             .bottom-slogan { display: block !important; position: relative !important; width: 100% !important; text-align: center !important; margin-top: 30px !important; font-size: 0.85rem !important; color: rgba(255, 255, 255, 0.6) !important; letter-spacing: 1px; text-transform: uppercase; }
@@ -389,7 +389,7 @@
             .title-group h2 { font-size: 1.4rem !important; }
             .dynamic-title-container { height: 95px !important; margin-bottom: 5px !important; } 
             .world-text { font-size: clamp(2.5rem, 12vw, 4rem) !important; }
-            .text-box-container { height: 75px !important; margin-bottom: 30px !important; max-width: 90vw !important; }
+            .text-box-container { height: 75px !important; margin-bottom: 30px !important; }
             .btn-demo-glow { margin-top: 10px !important; }
             .dashboard-container { grid-template-columns: 1fr; padding: 30px 15px !important; margin: 20px auto 50px auto !important; max-width: 450px; }
             .dash-left { display: none !important; } 
@@ -415,9 +415,9 @@
             .sticker-line2 { font-size: clamp(3rem, 15vw, 4rem) !important; margin-top: 0 !important; }
 
             .testimonials-section { padding: 80px 0 !important; }
-            .testi-card { width: 90% !important; max-width: 320px !important; margin: 0 auto 20px auto !important; }
+            .testi-card { width: 90% !important; max-width: 320px !important; margin: 0 auto 20px auto !important; background: rgba(20, 20, 25, 0.98) !important; }
             .plans-container { padding: 20px 5vw !important; gap: 15px !important; justify-content: flex-start !important; overflow-x: auto !important; scroll-snap-type: x mandatory; width: 100vw !important; }
-            .plan-card { width: 85vw !important; max-width: 320px !important; flex: 0 0 auto !important; scroll-snap-align: center; transform: scale(1) translate3d(0,0,0) !important; }
+            .plan-card { width: 85vw !important; max-width: 320px !important; flex: 0 0 auto !important; scroll-snap-align: center; transform: scale(1) translate3d(0,0,0) !important; background: rgba(15, 15, 20, 0.98) !important; }
         }
     </style>
 </head>
@@ -462,27 +462,19 @@
             <p class="menu-desc">En Creatik, capturamos la esencia de cada momento porque sabemos que tu realidad es lo más importante. No solo entregamos una imagen, entregamos un recuerdo con alma.</p>
             <div class="menu-interactive-area">
                 <div class="float-tag ft-smm">
-                    <div class="f-icon">
-                        <svg viewBox="0 0 24 24"><path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></svg>
-                    </div>
+                    <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></svg></div>
                     <span>Fotografía</span>
                 </div>
                 <div class="float-tag ft-sms">
-                    <div class="f-icon">
-                        <svg viewBox="0 0 24 24"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V4h-4z"/></svg>
-                    </div>
+                    <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V4h-4z"/></svg></div>
                     <span>Video</span>
                 </div>
                 <div class="float-tag ft-user">
-                    <div class="f-icon">
-                        <svg viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.97 4.43c-.16.09-.33.14-.5.14s-.34-.05-.5-.14l-7.97-4.43c-.32-.17-.53-.5-.53-.88V7.5c0-.38.21-.71.53-.88l7.97-4.43c.16-.09.33-.14.5-.14s.34.05.5.14l7.97 4.43c.32.17.53.5.53.88v9zM12 4.15L6.04 7.5 12 10.85l5.96-3.35L12 4.15z"/></svg>
-                    </div>
+                    <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.97 4.43c-.16.09-.33.14-.5.14s-.34-.05-.5-.14l-7.97-4.43c-.32-.17-.53-.5-.53-.88V7.5c0-.38.21-.71.53-.88l7.97-4.43c.16-.09.33-.14.5-.14s.34.05.5.14l7.97 4.43c.32.17.53.5.53.88v9zM12 4.15L6.04 7.5 12 10.85l5.96-3.35L12 4.15z"/></svg></div>
                     <span>Diseño Gráfico</span>
                 </div>
                 <div class="float-tag ft-txt">
-                    <div class="f-icon">
-                        <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                    </div>
+                    <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
                     <span>Pasión</span>
                 </div>
                 
@@ -695,9 +687,7 @@
 
         function autoShowImage() {
             if (!viewer || thumbBoxes.length === 0) return;
-            
             viewer.style.opacity = 0; 
-            
             setTimeout(() => {
                 const newSrc = dashImages[dashIdx];
                 viewer.src = newSrc;
@@ -715,12 +705,11 @@
                         box.style.transform = 'scale(1) translate3d(0,0,0)';
                     }
                 });
-
                 dashIdx = (dashIdx + 1) % dashImages.length;
             }, 300); 
         }
 
-        // OPTIMIZACIÓN DEL CURSOR: Aceleración por hardware real.
+        // OPTIMIZACIÓN 1000% DEL CURSOR: Apagado automático en celulares
         let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
         let ballX = window.innerWidth / 2, ballY = window.innerHeight / 2;
         
@@ -729,14 +718,17 @@
         }, { passive: true });
         
         function animateGlow() {
-            ballX += (mouseX - ballX) * 0.1;
-            ballY += (mouseY - ballY) * 0.1;
-            glow.style.transform = `translate3d(${ballX}px, ${ballY}px, 0) translate3d(-50%, -50%, 0)`;
+            // Solo calcula si es pantalla grande, ahorrando batería al celular
+            if (window.innerWidth > 900) {
+                ballX += (mouseX - ballX) * 0.1;
+                ballY += (mouseY - ballY) * 0.1;
+                glow.style.transform = `translate3d(${ballX}px, ${ballY}px, 0) translate3d(-50%, -50%, 0)`;
+            }
             requestAnimationFrame(animateGlow);
         }
         animateGlow();
 
-        // LOADER DINÁMICO (5 seg en Móvil, 2.5 en PC)
+        // LOADER DINÁMICO (5 seg en Móvil para pre-cargar fotos, 2.5 en PC)
         function triggerIntro() {
             loader.classList.remove('hidden'); introText.classList.remove('animate-letters');
             void introText.offsetWidth; introText.classList.add('animate-letters');
@@ -752,12 +744,18 @@
             const titleHagamos = document.getElementById('title-hagamos');
             if (!box || words.length === 0) return;
             let currentIndex = 0;
+            
             function updateText() {
                 words[currentIndex].classList.remove('active');
                 currentIndex = (currentIndex + 1) % words.length;
                 const nextWord = words[currentIndex];
                 nextWord.classList.add('active');
-                box.style.width = `${nextWord.scrollWidth + (window.innerWidth < 900 ? 60 : 80)}px`;
+                
+                // Optimización: No cambiar el ancho en móviles para evitar tirones (Reflow)
+                if(window.innerWidth > 900) {
+                    box.style.width = `${nextWord.scrollWidth + 80}px`;
+                }
+
                 if (nextWord.textContent.trim().toLowerCase() === 'inolvidable') {
                     titleHistoria.classList.remove('active'); titleHagamos.classList.add('active');
                 } else {
@@ -767,12 +765,14 @@
             document.fonts.ready.then(() => {
                 words[0].classList.add('active');
                 titleHistoria.classList.add('active'); 
-                box.style.width = `${words[0].scrollWidth + (window.innerWidth < 900 ? 60 : 80)}px`;
+                if(window.innerWidth > 900) {
+                    box.style.width = `${words[0].scrollWidth + 80}px`;
+                }
                 setInterval(updateText, 3000);
             });
         }
 
-        // OPTIMIZACIÓN DE SCROLL: Uso de RequestAnimationFrame con Redondeo anti-lag
+        // OPTIMIZACIÓN DE SCROLL: 0 LAG
         let isScrolling = false;
         window.addEventListener('scroll', () => {
             if(isMenuOpen || isPaquetesOpen) return;
@@ -785,10 +785,10 @@
                     mainHeader.style.opacity = fadeFactor;
                     marquee.style.opacity = fadeFactor;
                     
-                    if (scrollVal > 100) {
-                        panel.classList.add('visible'); 
-                    } else {
-                        panel.classList.remove('visible');
+                    // Solo activar la subida visual en PC
+                    if (window.innerWidth > 900) {
+                        if (scrollVal > 100) panel.classList.add('visible'); 
+                        else panel.classList.remove('visible');
                     }
                     isScrolling = false;
                 });
