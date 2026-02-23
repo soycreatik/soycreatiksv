@@ -12,11 +12,31 @@
     <style>
         /* --- RESET Y ACELERACIÓN POR HARDWARE --- */
         *, *::before, *::after { box-sizing: border-box; }
-        html, body {
+        
+        /* --- PROTECCIÓN ANTICOPIA --- */
+        body {
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10 and IE 11 */
+            user-select: none; /* Standard syntax */
             margin: 0; padding: 0;
             max-width: 100vw; 
             overflow-x: hidden !important; 
             position: relative;
+            scroll-behavior: smooth;
+            background-color: #020005; 
+            background-image: radial-gradient(circle at 50% 110%, rgba(107, 33, 168, 0.5) 0%, rgba(30, 10, 50, 0.6) 50%, #020005 90%);
+            background-attachment: fixed; color: #ffffff; font-family: 'Inter', sans-serif;
+            min-height: 200vh; -webkit-font-smoothing: antialiased;
+        }
+
+        /* Bloquear el arrastre de todas las imágenes */
+        img {
+            -webkit-user-drag: none;
+        }
+
+        /* --- CLASE PARA DETENER ANIMACIONES (AHORRO DE RECURSOS) --- */
+        .paused-animation, .paused-animation * {
+            animation-play-state: paused !important;
         }
 
         /* --- INTRO LOADER --- */
@@ -38,14 +58,6 @@
         .intro-logo .k { animation-delay: 0.9s; }
         @keyframes letterEntry { to { opacity: 1; transform: translate3d(0, 0, 0); } }
         #intro-loader.hidden { opacity: 0; visibility: hidden; }
-
-        /* --- ESTILOS GENERALES --- */
-        body {
-            background-color: #020005; 
-            background-image: radial-gradient(circle at 50% 110%, rgba(107, 33, 168, 0.5) 0%, rgba(30, 10, 50, 0.6) 50%, #020005 90%);
-            background-attachment: fixed; color: #ffffff; font-family: 'Inter', sans-serif;
-            min-height: 200vh; -webkit-font-smoothing: antialiased;
-        }
 
         /* --- CAPA DE FONDOS DINÁMICOS --- */
         #bg-presentation {
@@ -105,15 +117,21 @@
         header.paquetes-mode .nav-center, header.paquetes-mode .nav-right a { opacity: 0; visibility: hidden; pointer-events: none; }
         header.menu-mode .nav-right { opacity: 0; visibility: hidden; pointer-events: none; }
 
-        .nav-center { position: absolute; left: 50%; transform: translateX(-50%); }
-        .menu-btn {
+        .nav-center { 
+            position: absolute; left: 50%; transform: translateX(-50%); 
+            display: flex; gap: 15px; align-items: center;
+        }
+        .menu-btn, .academy-btn {
             background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 8px 20px; border-radius: 20px; display: flex; align-items: center; gap: 8px;
-            font-size: 0.9rem; cursor: pointer; color: white; backdrop-filter: blur(10px); transition: 0.3s;
+            font-size: 0.85rem; font-weight: 600; cursor: pointer; color: white; 
+            backdrop-filter: blur(10px); transition: 0.3s;
         }
+        .academy-btn { border-color: rgba(168, 85, 247, 0.3); color: #d8b4fe; }
         .menu-btn .dot { width: 6px; height: 6px; background-color: #f97316; border-radius: 50%; box-shadow: 0 0 8px #f97316; transition: background-color 0.3s, box-shadow 0.3s; }
         .menu-btn.active-btn .dot { background-color: #ef4444; box-shadow: 0 0 8px #ef4444; }
-        .menu-btn:hover { background-color: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.3); }
+        
+        .menu-btn:hover, .academy-btn:hover { background-color: rgba(255, 255, 255, 0.15); border-color: #a855f7; }
 
         .nav-right { display: flex; align-items: center; gap: 20px; }
         .nav-right a { color: white; text-decoration: none; font-size: 0.9rem; opacity: 0.7; transition: 0.3s; }
@@ -175,7 +193,7 @@
         .marquee-wrapper {
             width: 100%; overflow: hidden; background: rgba(0, 0, 0, 0.15); padding: 30px 0; position: relative; z-index: 3;
             border-top: 1px solid rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-            will-change: opacity; display: flex; flex-wrap: nowrap; pointer-events: none; transform: translateZ(0);
+            display: flex; flex-wrap: nowrap; pointer-events: none; transform: translateZ(0);
         }
         .marquee-content { 
             display: flex; flex-shrink: 0; width: max-content; align-items: center; 
@@ -190,6 +208,52 @@
             display: flex; flex-wrap: nowrap; pointer-events: none; transform: translateZ(0);
         }
         @keyframes marqueeFlow { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
+
+        /* --- CREATIK ACADEMY (CUADRADO DINÁMICO) --- */
+        .academy-section {
+            width: 90%; max-width: 1200px; margin: 80px auto;
+            display: flex; align-items: center; justify-content: space-between; gap: 50px;
+            background: rgba(20, 10, 35, 0.4); border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 30px; padding: 50px; position: relative; z-index: 5;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        }
+        .academy-content { flex: 1.2; }
+        .academy-badge {
+            display: inline-block; background: rgba(168, 85, 247, 0.15); border: 1px solid #a855f7;
+            color: #d8b4fe; font-size: 0.75rem; font-weight: 800; padding: 6px 15px;
+            border-radius: 50px; margin-bottom: 20px; letter-spacing: 1px;
+        }
+        .academy-content h2 {
+            font-size: 3rem; font-weight: 900; line-height: 1; margin: 0 0 20px 0; color: #ffffff;
+            letter-spacing: -1px;
+        }
+        .academy-content h2 span { color: #a855f7; font-family: 'Pacifico', cursive; font-weight: 300; font-size: 3.5rem; }
+        .academy-content p {
+            font-size: 0.95rem; color: rgba(255, 255, 255, 0.7); line-height: 1.7;
+        }
+        
+        /* Cuadrado de fotos Academy */
+        .academy-square-slideshow {
+            flex: 0.8;
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 1; /* Esto lo hace perfectamente cuadrado */
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 15px 40px rgba(168, 85, 247, 0.25);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .academy-square-slideshow img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            will-change: opacity, transform;
+        }
+        .academy-square-slideshow:hover img {
+            transform: scale(1.05);
+        }
 
         /* --- DASHBOARD --- */
         .dashboard-container {
@@ -319,13 +383,24 @@
         .user-avatar { width: 60px; height: 60px; border-radius: 50%; border: 2px solid #ffd700; }
         .stars { color: #ffd700; }
 
-        /* --- PRECIOS (FIX OVERFLOW APLICADO) --- */
+        /* --- PRECIOS (AJUSTADO PARA PC EN UNA LÍNEA) --- */
         .pricing-section { position: relative; padding: 40px 1vw 150px 1vw; min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow: visible; }
         .pricing-header { text-align: center; margin-bottom: 50px; position: relative; z-index: 5; }
         .pricing-header h2 { font-family: 'Pacifico', cursive; color: #db2777; font-size: 4rem; margin: 0; text-transform: uppercase; }
         .pricing-header p { font-size: 1.5rem; font-weight: 700; margin-top: -10px; text-transform: uppercase; letter-spacing: 3px; }
-        .plans-container { display: flex; justify-content: center; align-items: stretch; gap: 1.2vw; width: 100%; max-width: 1700px; position: relative; z-index: 5; flex-wrap: nowrap; padding: 40px 15px; -webkit-overflow-scrolling: touch; }
-        .plan-card { background: rgba(15, 15, 20, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 25px 12px; flex: 1; min-width: 0; text-align: center; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.4s, border-color 0.4s, box-shadow 0.4s; position: relative; backdrop-filter: blur(10px); display: flex; flex-direction: column; justify-content: space-between; z-index: 1; }
+        
+        .plans-container { 
+            display: flex; justify-content: center; align-items: stretch; gap: 1vw; 
+            width: 100%; max-width: 1700px; position: relative; z-index: 5; 
+            flex-wrap: nowrap; /* EVITA QUE SE ROMPAN EN DOS LÍNEAS EN PC */
+            padding: 40px 15px; 
+        }
+        .plan-card { 
+            background: rgba(15, 15, 20, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; 
+            padding: 25px 12px; flex: 1 1 0; min-width: 0; text-align: center; /* ESTO HACE QUE SE ACOPLEN UNIFORMES */
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.4s, border-color 0.4s, box-shadow 0.4s; 
+            position: relative; backdrop-filter: blur(10px); display: flex; flex-direction: column; justify-content: space-between; z-index: 1; 
+        }
         .plan-card:hover { transform: scale(1.12) translate3d(0, -10px, 0); background: rgba(25, 25, 30, 1); border-color: rgba(219, 39, 119, 0.8); z-index: 50; box-shadow: 0 25px 60px rgba(0,0,0,0.9), 0 0 20px rgba(219, 39, 119, 0.3); }
         .plan-card.popular { border: 2px solid #ffd700; box-shadow: 0 0 40px rgba(255, 215, 0, 0.15); z-index: 10; }
         .popular-sticker { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #ffd700; color: #000; font-weight: 900; font-size: 0.6rem; padding: 4px 10px; border-radius: 5px; text-transform: uppercase; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4); white-space: nowrap; }
@@ -345,11 +420,10 @@
            ========================================= */
         #contact-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background-color: transparent; /* Ahora transparente para que se vea el fondo rotativo */
+            background-color: transparent; 
             z-index: 99000; 
             display: flex; flex-direction: column; align-items: center;
             overflow-y: auto; overflow-x: hidden;
-            
             opacity: 0; visibility: hidden;
             transform: perspective(1000px) rotateX(15deg) translateY(80px) scale(0.95);
             filter: blur(15px);
@@ -361,7 +435,7 @@
             filter: blur(0px);
         }
 
-        /* FONDO ROTATIVO DESENFOCADO PARA CONTACTO (0 Lag, Solo CSS) */
+        /* FONDO ROTATIVO DESENFOCADO */
         .contact-bg-layer {
             position: fixed; top: -5%; left: -5%; width: 110vw; height: 110vh;
             background-size: cover; background-position: center;
@@ -372,7 +446,7 @@
         }
         .contact-backdrop {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background-color: rgba(2, 6, 23, 0.85); /* Tono azul oscuro semi-transparente */
+            background-color: rgba(2, 6, 23, 0.85);
             background-image: 
                 radial-gradient(circle at 50% -20%, rgba(14, 165, 233, 0.35) 0%, transparent 60%),
                 linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), 
@@ -383,9 +457,9 @@
 
         @keyframes contactSlideAnim {
             0% { opacity: 0; transform: scale(1); }
-            5% { opacity: 0.5; } /* Fade in completo a los 2s */
-            12.5% { opacity: 0.5; } /* Se mantiene hasta los 5s */
-            17.5% { opacity: 0; transform: scale(1.05); } /* Fade out a los 7s */
+            5% { opacity: 0.5; }
+            12.5% { opacity: 0.5; }
+            17.5% { opacity: 0; transform: scale(1.05); }
             100% { opacity: 0; }
         }
         .cbg-1 { background-image: url('FOTOS HORIZONTALES/img1H.jpg'); animation-delay: 0s; }
@@ -406,7 +480,6 @@
         }
         .contact-close-btn:hover { background: rgba(255,255,255,0.1); border-color: #0ea5e9; color: #0ea5e9; }
 
-        /* NUEVA PASTILLA ANIMADA PARA CONTACTO */
         .contact-pill-container { 
             border: 1px solid rgba(14, 165, 233, 0.4); border-radius: 50px; 
             background: rgba(14, 165, 233, 0.1); box-shadow: 0 0 20px rgba(14, 165, 233, 0.2);
@@ -497,49 +570,41 @@
         @keyframes cFloat3 { 0%, 100% { transform: translateY(0) rotate(20deg); } 50% { transform: translateY(-15px) rotate(25deg); } }
         @keyframes cFloat4 { 0%, 100% { transform: translateY(0) rotate(-15deg); } 50% { transform: translateY(15px) rotate(-20deg); } }
 
-
         /* =========================================
-           ADAPTACIÓN RESPONSIVA (MODO RENDIMIENTO EXTREMO)
+           ADAPTACIÓN RESPONSIVA CELULARES
            ========================================= */
         @media (max-width: 900px) {
-            /* 1. APAGAR EFECTOS PESADOS (ELIMINA EL LAG AL 100%) */
             body::before { display: none !important; }
             .smoke-overlay { display: none !important; }
             .cursor-glow { display: none !important; }
-            
-            /* Quitamos el blur de las animaciones del fondo */
             .bg-slide { filter: brightness(0.3) !important; } 
 
-            /* 2. REEMPLAZAR CRISTAL (BLUR) POR COLORES SÓLIDOS Y SOMBRAS LIGERAS */
             .glow-background, .dashboard-container, .phone-center, .menu-pill-container, .testi-card, .plan-card { 
-                backdrop-filter: none !important; 
-                -webkit-backdrop-filter: none !important; 
+                backdrop-filter: none !important; -webkit-backdrop-filter: none !important; 
             }
             .glow-background { background: rgba(20, 10, 30, 0.9) !important; }
             
             .dashboard-container { 
                 background: rgba(20, 5, 35, 0.98) !important;
                 box-shadow: 0 5px 15px rgba(0,0,0,0.5) !important;
-                transform: translate3d(0,0,0) !important;
-                opacity: 1 !important;
+                transform: translate3d(0,0,0) !important; opacity: 1 !important;
             }
 
-            .title-group { filter: none !important; transition: opacity 0.8s ease, transform 0.8s ease !important; }
-            .title-group.active { filter: none !important; }
-            .world-text { filter: none !important; transition: opacity 0.8s ease, transform 0.8s ease !important; }
-            .world-text.active { filter: none !important; }
+            .title-group, .world-text { filter: none !important; transition: opacity 0.8s ease, transform 0.8s ease !important; }
+            .title-group.active, .world-text.active { filter: none !important; }
             .text-box-container { width: 100% !important; max-width: 260px !important; transition: transform 0.2s ease !important; }
 
-            .side-text-left { display: none !important; }
-            .side-text-right { display: none !important; } 
+            .side-text-left, .side-text-right { display: none !important; } 
             .bottom-slogan { display: block !important; position: relative !important; width: 100% !important; text-align: center !important; margin-top: 30px !important; font-size: 0.85rem !important; color: rgba(255, 255, 255, 0.6) !important; letter-spacing: 1px; text-transform: uppercase; }
+            
             header { padding: 15px 5vw; display: flex; justify-content: space-between; position: relative; width: 100%; }
-            .nav-center { position: static; transform: none; margin: 0 10px; }
+            .nav-center { position: relative; left: 0; transform: none; flex: 1; justify-content: center; margin: 0 10px; }
             .logo-img { height: 35px; margin-left: 0; }
             header.paquetes-mode .logo-img { height: 50px; }
             .nav-right a { display: none !important; } 
             .btn-demo-outline { padding: 6px 12px; font-size: 0.8rem; }
-            .menu-btn { padding: 6px 12px; font-size: 0.8rem; }
+            .menu-btn, .academy-btn { padding: 6px 12px; font-size: 0.75rem; }
+            
             .hero-section { flex-direction: column; justify-content: flex-start; text-align: center; padding: 150px 5vw 30px 5vw !important; min-height: auto !important; gap: 0 !important; }
             .title-group h1 { font-size: clamp(3rem, 15vw, 4.5rem) !important; line-height: 1; } 
             .title-group h2 { font-size: 1.4rem !important; }
@@ -547,6 +612,15 @@
             .world-text { font-size: clamp(2.5rem, 12vw, 4rem) !important; }
             .text-box-container { height: 75px !important; margin-bottom: 30px !important; }
             .btn-demo-glow { margin-top: 10px !important; }
+            
+            .academy-section { 
+                flex-direction: column; padding: 40px 20px !important; margin: 40px auto !important; width: 92%; text-align: center; 
+            }
+            .academy-content { flex: none; max-width: 100%; order: 2; }
+            .academy-square-slideshow { flex: none; width: 100%; max-width: 250px; order: 1; margin-bottom: 20px; }
+            .academy-content h2 { font-size: 2.5rem; }
+            .academy-content h2 span { font-size: 2.8rem; }
+
             .dashboard-container { grid-template-columns: 1fr; padding: 30px 15px !important; margin: 20px auto 50px auto !important; max-width: 450px; }
             .dash-left { display: none !important; } 
             .glass-box { padding: 20px !important; }
@@ -563,7 +637,6 @@
 
             .menu-overlay-title h1 { font-size: 2.2rem; }
             .menu-overlay-title h2 { font-size: 1.5rem; }
-
             .sticker-center-text { width: 90vw !important; padding: 0 !important; }
             .sticker-line1 { flex-direction: column !important; gap: 5px !important; }
             .sticker-logo-img { height: auto !important; width: 90% !important; max-width: 250px !important; }
@@ -572,10 +645,18 @@
 
             .testimonials-section { padding: 80px 0 !important; }
             .testi-card { width: 90% !important; max-width: 320px !important; margin: 0 auto 20px auto !important; background: rgba(20, 20, 25, 0.98) !important; }
-            .plans-container { padding: 20px 5vw !important; gap: 15px !important; justify-content: flex-start !important; overflow-x: auto !important; scroll-snap-type: x mandatory; width: 100vw !important; }
-            .plan-card { width: 85vw !important; max-width: 320px !important; flex: 0 0 auto !important; scroll-snap-align: center; transform: scale(1) translate3d(0,0,0) !important; background: rgba(15, 15, 20, 0.98) !important; }
+            
+            /* Corrección de Paquetes Celular (Lista Vertical) */
+            .plans-container { 
+                flex-direction: column !important; padding: 20px 5vw !important; gap: 30px !important; 
+                align-items: center !important; overflow: visible !important; width: 100% !important; 
+            }
+            .plan-card { 
+                width: 100% !important; max-width: 350px !important; flex: none !important; 
+                transform: scale(1) translate3d(0,0,0) !important; background: rgba(15, 15, 20, 0.98) !important; 
+                margin: 0 auto !important;
+            }
 
-            /* Contact Overlay Mobile tweaks */
             .contact-close-btn { top: 15px; right: 15px; padding: 8px 15px; font-size: 0.75rem; }
             .contact-content-wrapper { padding-top: 80px; }
             .contact-desc { font-size: 0.85rem; margin-bottom: 30px; }
@@ -583,11 +664,10 @@
             .contact-trust-bar { gap: 15px; flex-direction: column; }
             .contact-media-showcase { margin-top: 40px; }
             
-            /* Remove heavy animation filters for mobile and hide floating items */
             #contact-overlay { filter: none !important; transition: opacity 0.5s ease, transform 0.5s ease, visibility 0.5s; }
             #contact-overlay.active { filter: none !important; }
-            .contact-float-item { display: none !important; }
-            .contact-bg-layer { filter: brightness(0.3) !important; } /* Menos lag en fondo celular */
+            .contact-float-item { display: none !important; } 
+            .contact-bg-layer { filter: brightness(0.3) !important; } 
         }
     </style>
 </head>
@@ -600,8 +680,8 @@
     </div>
 
     <div id="bg-presentation">
-        <div class="bg-slide slide-1"></div>
-        <div class="bg-slide slide-2"></div>
+        <div class="bg-slide slide-1" data-animate="true"></div>
+        <div class="bg-slide slide-2" data-animate="true"></div>
         <div class="smoke-overlay"></div>
     </div>
 
@@ -609,7 +689,10 @@
 
     <header id="main-header">
         <img fetchpriority="high" src="LOGO MULTIMEDIA ISOTIPO MORA CREATIK.png" alt="creatik" class="logo-img" id="header-logo" onclick="triggerIntro()">
-        <div class="nav-center"><div class="menu-btn" id="toggle-menu-btn"><span class="dot"></span> Menu</div></div>
+        <div class="nav-center">
+            <div class="menu-btn" id="toggle-menu-btn"><span class="dot"></span> Menú</div>
+            <div class="academy-btn" onclick="document.getElementById('academy').scrollIntoView({behavior: 'smooth'})">Academy</div>
+        </div>
         <div class="nav-right">
             <a href="#">Login</a>
             <button class="btn-demo-outline" id="toggle-paquetes-btn">PAQUETES</button>
@@ -619,7 +702,7 @@
     <div id="full-menu-overlay">
         <div class="overlay-text-bg">HISTORIA INOLVIDABLE</div>
         <div class="menu-overlay-content">
-            <div class="menu-pill-container">
+            <div class="menu-pill-container" data-animate="true">
                 <span class="menu-pill-text t1" style="animation-delay: 0s;">única</span>
                 <span class="menu-pill-text t2" style="animation-delay: 2.5s;">memorable</span>
                 <span class="menu-pill-text t3" style="animation-delay: 5s;">eterna</span>
@@ -631,19 +714,19 @@
             </div>
             <p class="menu-desc">En Creatik, capturamos la esencia de cada momento porque sabemos que tu realidad es lo más importante. No solo entregamos una imagen, entregamos un recuerdo con alma.</p>
             <div class="menu-interactive-area">
-                <div class="float-tag ft-smm">
+                <div class="float-tag ft-smm" data-animate="true">
                     <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></svg></div>
                     <span>Fotografía</span>
                 </div>
-                <div class="float-tag ft-sms">
+                <div class="float-tag ft-sms" data-animate="true">
                     <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V4h-4z"/></svg></div>
                     <span>Video</span>
                 </div>
-                <div class="float-tag ft-user">
+                <div class="float-tag ft-user" data-animate="true">
                     <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.97 4.43c-.16.09-.33.14-.5.14s-.34-.05-.5-.14l-7.97-4.43c-.32-.17-.53-.5-.53-.88V7.5c0-.38.21-.71.53-.88l7.97-4.43c.16-.09.33-.14.5-.14s.34.05.5.14l7.97 4.43c.32.17.53.5.53.88v9zM12 4.15L6.04 7.5 12 10.85l5.96-3.35L12 4.15z"/></svg></div>
                     <span>Diseño Gráfico</span>
                 </div>
-                <div class="float-tag ft-txt">
+                <div class="float-tag ft-txt" data-animate="true">
                     <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
                     <span>Pasión</span>
                 </div>
@@ -702,25 +785,25 @@
     </div>
 
     <div id="contact-overlay">
-        <div class="contact-bg-layer cbg-1"></div>
-        <div class="contact-bg-layer cbg-2"></div>
-        <div class="contact-bg-layer cbg-3"></div>
-        <div class="contact-bg-layer cbg-4"></div>
-        <div class="contact-bg-layer cbg-5"></div>
-        <div class="contact-bg-layer cbg-6"></div>
-        <div class="contact-bg-layer cbg-7"></div>
-        <div class="contact-bg-layer cbg-8"></div>
+        <div class="contact-bg-layer cbg-1" data-animate="true"></div>
+        <div class="contact-bg-layer cbg-2" data-animate="true"></div>
+        <div class="contact-bg-layer cbg-3" data-animate="true"></div>
+        <div class="contact-bg-layer cbg-4" data-animate="true"></div>
+        <div class="contact-bg-layer cbg-5" data-animate="true"></div>
+        <div class="contact-bg-layer cbg-6" data-animate="true"></div>
+        <div class="contact-bg-layer cbg-7" data-animate="true"></div>
+        <div class="contact-bg-layer cbg-8" data-animate="true"></div>
         <div class="contact-backdrop"></div>
 
         <button class="contact-close-btn" id="close-contact-btn">✖ Cerrar</button>
         
-        <img src="img10.jpg" class="contact-float-item f-img1" alt="Float">
-        <img src="img5.jpg" class="contact-float-item f-img2" alt="Float">
-        <img src="STICKER/sticker1.png" class="contact-float-item f-stk1" alt="Sticker">
-        <img src="STICKER/sticker3.png" class="contact-float-item f-stk2" alt="Sticker">
+        <img src="img10.jpg" class="contact-float-item f-img1" alt="Float" data-animate="true">
+        <img src="img5.jpg" class="contact-float-item f-img2" alt="Float" data-animate="true">
+        <img src="STICKER/sticker1.png" class="contact-float-item f-stk1" alt="Sticker" data-animate="true">
+        <img src="STICKER/sticker3.png" class="contact-float-item f-stk2" alt="Sticker" data-animate="true">
 
         <div class="contact-content-wrapper">
-            <div class="contact-pill-container">
+            <div class="contact-pill-container" data-animate="true">
                 <span class="contact-pill-text" style="animation-delay: 0s;">HABLEMOS</span>
                 <span class="contact-pill-text" style="animation-delay: 2.5s;">COTIZA HOY</span>
                 <span class="contact-pill-text" style="animation-delay: 5s;">FOTOGRAFÍA</span>
@@ -782,6 +865,20 @@
         <div class="marquee-content"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"></div>
     </div>
 
+    <section class="academy-section" id="academy">
+        <div class="academy-content">
+            <div class="academy-badge">✨ PROYECTO SOCIAL</div>
+            <h2>Creatik <span>Academy</span></h2>
+            <p style="margin-bottom: 15px; font-weight: 700; color: #a855f7; letter-spacing: 1px;">MÁS ALLÁ DE LA PANTALLA</p>
+            <p>En Creatik, nuestra visión no termina en el lente. Llevamos más de dos años y medio impulsando nuestro proyecto social <strong>Creatik Academy</strong>.</p>
+            <p style="margin-top: 10px;">Es un espacio de formación y convivencia donde unimos a apasionados del arte visual. A través de nuestras salidas de campo, transformamos la fotografía en una herramienta de integración. Formamos talento, unimos territorios y demostramos que el arte puede cambiar realidades.</p>
+        </div>
+        
+        <div class="academy-square-slideshow">
+            <img id="academy-auto-slider" loading="lazy" src="Creatik Academy/academy1.jpg" alt="Proyectos Creatik Academy">
+        </div>
+    </section>
+
     <div class="dashboard-container" id="scroll-panel">
         <div class="dash-left"><h2>Nuestros<br>Trabajos<span style="color: #a855f7;">.</span></h2><div class="glass-box"><div class="viewer-box"><img id="main-viewer" src="" alt=""></div></div></div>
         <div class="dash-center">
@@ -810,12 +907,57 @@
     </div>
 
     <script>
-        // Log de protección
+        // --- BLOQUEO ANTICOPIA (NO CLIC DERECHO, NO SELECCIONAR) ---
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.addEventListener('dragstart', event => event.preventDefault());
+
+        // Log de protección de autoría
         console.log("%c==========================================", "color: #0ea5e9; font-weight: bold; font-size: 14px;");
         console.log("%cCREADO POR ROGER MÉNDEZ", "color: #0ea5e9; font-weight: bold; font-size: 16px;");
         console.log("%cTodos los derechos reservados. Uso no autorizado prohibido.", "color: white; font-size: 12px;");
         console.log("%c==========================================", "color: #0ea5e9; font-weight: bold; font-size: 14px;");
 
+        // --- OPTIMIZACIÓN DE RECURSOS (INTERSECTION OBSERVER) ---
+        // Se le quitó al marquee para que nunca se detenga.
+        document.addEventListener("DOMContentLoaded", function() {
+            const animatedElements = document.querySelectorAll('[data-animate="true"], .bg-slide');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.remove('paused-animation');
+                    } else {
+                        entry.target.classList.add('paused-animation');
+                    }
+                });
+            }, { rootMargin: '50px 0px', threshold: 0.01 });
+
+            animatedElements.forEach(el => observer.observe(el));
+        });
+
+        // --- ROTACIÓN DE IMÁGENES ACADEMY ---
+        let currentAcademyId = 1;
+        const totalAcademyImages = 15;
+        const academySlider = document.getElementById('academy-auto-slider');
+
+        if (academySlider) {
+            setInterval(() => {
+                currentAcademyId++;
+                if (currentAcademyId > totalAcademyImages) {
+                    currentAcademyId = 1;
+                }
+                // Hacemos que se desvanezca
+                academySlider.style.opacity = 0;
+                
+                // Esperamos un momento y cambiamos la foto
+                setTimeout(() => {
+                    academySlider.src = `Creatik Academy/academy${currentAcademyId}.jpg`;
+                    academySlider.style.opacity = 1;
+                }, 500); // 500ms coincide con la transición CSS
+            }, 3500); // Cambia cada 3.5 segundos
+        }
+
+        // --- RESTO DE VARIABLES Y LÓGICA EXISTENTE ---
         const loader = document.getElementById('intro-loader');
         const introText = document.getElementById('intro-text');
         const glow = document.querySelector('.cursor-glow');
@@ -837,7 +979,6 @@
         const originalLogoSrc = 'LOGO MULTIMEDIA ISOTIPO MORA CREATIK.png';
         const paquetesLogoSrc = 'STICKER/sticker1.png';
 
-        // Variables para la nueva sección de contacto
         const btnContactOpen = document.getElementById('btn-contact-open');
         const contactOverlay = document.getElementById('contact-overlay');
         const btnContactClose = document.getElementById('close-contact-btn');
@@ -872,7 +1013,7 @@
                 menuOverlay.classList.remove('active');
                 menuBtn.classList.remove('active-btn');
                 document.body.style.overflow = 'auto';
-                menuBtn.innerHTML = '<span class="dot"></span> Menu';
+                menuBtn.innerHTML = '<span class="dot"></span> Menú';
                 const scrollVal = window.scrollY;
                 const fadeFactor = Math.max(0, 1 - scrollVal / 300);
                 mainHeader.style.opacity = fadeFactor;
@@ -886,7 +1027,7 @@
                 menuOverlay.classList.remove('active');
                 menuBtn.classList.remove('active-btn');
                 mainHeader.classList.remove('menu-mode');
-                menuBtn.innerHTML = '<span class="dot"></span> Menu';
+                menuBtn.innerHTML = '<span class="dot"></span> Menú';
                 if (slideshowInterval) { clearInterval(slideshowInterval); slideshowInterval = null; }
             }
             isPaquetesOpen = !isPaquetesOpen;
@@ -912,12 +1053,11 @@
             }
         });
 
-        // LÓGICA DE OVERLAY DE CONTACTO
         btnContactOpen.addEventListener('click', () => {
             contactOverlay.scrollTop = 0;
             contactOverlay.classList.add('active');
             document.body.style.overflow = 'hidden';
-            mainHeader.style.opacity = 0; // Escondemos header para enfoque total
+            mainHeader.style.opacity = 0; 
             mainHeader.style.pointerEvents = 'none';
         });
 
@@ -926,11 +1066,10 @@
             document.body.style.overflow = 'auto';
             const scrollVal = window.scrollY;
             const fadeFactor = Math.max(0, 1 - scrollVal / 300);
-            mainHeader.style.opacity = fadeFactor; // Restaurar opacidad del header
+            mainHeader.style.opacity = fadeFactor; 
             mainHeader.style.pointerEvents = 'auto';
         });
 
-        // LÓGICA DEL CARRUSEL AUTOMÁTICO
         const viewer = document.getElementById('main-viewer');
         const thumbBoxes = document.querySelectorAll('#thumbnail-grid .icon-box');
         const dashImages = [
@@ -939,11 +1078,15 @@
             'img7_7.jpg', 'img8.jpg', 'img9.jpg'
         ];
         let dashIdx = 0;
+        let imageInterval;
 
         function autoShowImage() {
             if (!viewer || thumbBoxes.length === 0) return;
             
-            // Si es celular, detenemos la animación y dejamos las fotos fijas
+            // Pausar si no está en pantalla para ahorrar memoria visual
+            const panelRect = panel.getBoundingClientRect();
+            if (panelRect.bottom < 0 || panelRect.top > window.innerHeight) return;
+
             if (window.innerWidth <= 900) {
                 thumbBoxes.forEach(box => {
                     box.style.borderColor = 'rgba(255,255,255,0.08)';
@@ -975,7 +1118,6 @@
             }, 300); 
         }
 
-        // OPTIMIZACIÓN 1000% DEL CURSOR
         let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
         let ballX = window.innerWidth / 2, ballY = window.innerHeight / 2;
         
@@ -1009,6 +1151,10 @@
             let currentIndex = 0;
             
             function updateText() {
+                // Solo animar si está visible
+                const boxRect = box.getBoundingClientRect();
+                if (boxRect.bottom < 0 || boxRect.top > window.innerHeight) return;
+
                 words[currentIndex].classList.remove('active');
                 currentIndex = (currentIndex + 1) % words.length;
                 const nextWord = words[currentIndex];
@@ -1034,7 +1180,6 @@
             });
         }
 
-        // SCROLL
         let isScrolling = false;
         window.addEventListener('scroll', () => {
             if(isMenuOpen || isPaquetesOpen || contactOverlay.classList.contains('active')) return;
@@ -1065,7 +1210,7 @@
             initDynamicBox(); 
             if (viewer) {
                 autoShowImage();
-                setInterval(autoShowImage, 3500); 
+                imageInterval = setInterval(autoShowImage, 3500); 
             }
         });
     </script>
