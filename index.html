@@ -10,14 +10,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Pacifico&display=swap" rel="stylesheet">
     
     <style>
-        /* --- RESET Y ACELERACIÓN POR HARDWARE --- */
+        /* --- RESET Y PROTECCIÓN ANTICOPIA --- */
         *, *::before, *::after { box-sizing: border-box; }
         
-        /* --- PROTECCIÓN ANTICOPIA --- */
         body {
             -webkit-user-select: none; /* Safari */
-            -ms-user-select: none; /* IE 10 and IE 11 */
-            user-select: none; /* Standard syntax */
+            -ms-user-select: none; /* IE 10+ */
+            user-select: none; /* Standard */
             margin: 0; padding: 0;
             max-width: 100vw; 
             overflow-x: hidden !important; 
@@ -30,9 +29,7 @@
         }
 
         /* Bloquear el arrastre de todas las imágenes */
-        img {
-            -webkit-user-drag: none;
-        }
+        img { -webkit-user-drag: none; }
 
         /* --- CLASE PARA DETENER ANIMACIONES (AHORRO DE RECURSOS) --- */
         .paused-animation, .paused-animation * {
@@ -62,28 +59,14 @@
         /* --- CAPA DE FONDOS DINÁMICOS --- */
         #bg-presentation {
             position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-            z-index: 0; pointer-events: none; overflow: hidden;
-            will-change: opacity;
+            z-index: 0; pointer-events: none; overflow: hidden; will-change: opacity;
         }
         .bg-slide {
-            position: absolute; top: 0; left: -10%; width: 120%; height: 100%;
-            background-size: cover; background-position: center;
-            opacity: 0; filter: blur(4px) brightness(0.4); 
-            animation: slideAnimation 16s infinite linear; 
-            will-change: transform, opacity; 
-            backface-visibility: hidden;
+            position: absolute; top: 0; left: -10%; width: 120%; height: 100%; background-size: cover; background-position: center;
+            opacity: 0; filter: blur(4px) brightness(0.4); animation: slideAnimation 16s infinite linear; will-change: transform, opacity; backface-visibility: hidden;
         }
-        .smoke-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: url('https://www.transparenttextures.com/patterns/asfalt-dark.png');
-            opacity: 0.2; mix-blend-mode: screen;
-        }
-        @keyframes slideAnimation {
-            0% { opacity: 0; transform: translate3d(0,0,0); }
-            10% { opacity: 0.15; } 40% { opacity: 0.15; }
-            50% { opacity: 0; transform: translate3d(5%, 0, 0); }
-            100% { opacity: 0; }
-        }
+        .smoke-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url('https://www.transparenttextures.com/patterns/asfalt-dark.png'); opacity: 0.2; mix-blend-mode: screen; }
+        @keyframes slideAnimation { 0% { opacity: 0; transform: translate3d(0,0,0); } 10% { opacity: 0.15; } 40% { opacity: 0.15; } 50% { opacity: 0; transform: translate3d(5%, 0, 0); } 100% { opacity: 0; } }
         .slide-1 { background-image: url('FONDOS/_DSC7958.jpg'); animation-delay: 0s; }
         .slide-2 { background-image: url('FONDOS/DSC03921.jpg'); animation-delay: 8s; }
 
@@ -93,231 +76,155 @@
             opacity: 0.5; mix-blend-mode: overlay; pointer-events: none; z-index: 2;
         }
         
-        /* --- CURSOR GLOW --- */
-        .cursor-glow {
-            position: fixed; width: 500px; height: 500px;
-            background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 60%);
-            border-radius: 50%; top: 0; left: 0; pointer-events: none; z-index: 1; 
-            will-change: transform; transform: translate3d(-50%, -50%, 0);
-        }
+        .cursor-glow { position: fixed; width: 500px; height: 500px; background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 60%); border-radius: 50%; top: 0; left: 0; pointer-events: none; z-index: 1; will-change: transform; transform: translate3d(-50%, -50%, 0); }
 
-        /* --- HEADER --- */
+        /* --- HEADER PRINCIPAL --- */
         header { 
-            position: fixed; top: 0; width: 100%; z-index: 10000; 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 20px 3vw; box-sizing: border-box; will-change: opacity; transition: opacity 0.4s ease;
+            position: fixed; top: 0; width: 100%; z-index: 10000; display: flex; justify-content: space-between; align-items: center; 
+            padding: 20px 3vw; box-sizing: border-box; will-change: opacity; transition: opacity 0.4s ease, visibility 0.4s;
         }
         .logo-img { height: 45px; width: auto; cursor: pointer; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), height 0.3s ease; margin-left: -10px; }
         .logo-img:hover { transform: scale(1.1) translate3d(0,0,0); filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.6)); }
+
+        .nav-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; align-items: center; }
+        .nav-right { display: flex; align-items: center; gap: 20px; }
         
-        header.paquetes-mode .logo-img { height: 65px; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.6)); }
-        header.paquetes-mode .logo-img:hover { transform: scale(1.1) rotate(-5deg) translate3d(0,0,0); }
+        /* Ocultar botones cuando se abre el menú u overlays */
+        header.menu-mode .academy-btn,
+        header.menu-mode .nav-right { display: none !important; }
 
-        .nav-center, .nav-right { transition: opacity 0.3s ease, visibility 0.3s ease; opacity: 1; visibility: visible; }
-        header.paquetes-mode .nav-center, header.paquetes-mode .nav-right a { opacity: 0; visibility: hidden; pointer-events: none; }
-        header.menu-mode .nav-right { opacity: 0; visibility: hidden; pointer-events: none; }
-
-        .nav-center { 
-            position: absolute; left: 50%; transform: translateX(-50%); 
-            display: flex; gap: 15px; align-items: center;
-        }
         .menu-btn, .academy-btn {
-            background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 8px 20px; border-radius: 20px; display: flex; align-items: center; gap: 8px;
-            font-size: 0.85rem; font-weight: 600; cursor: pointer; color: white; 
-            backdrop-filter: blur(10px); transition: 0.3s;
+            background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 8px 20px; border-radius: 20px; display: flex; align-items: center; gap: 8px;
+            font-size: 0.85rem; font-weight: 600; cursor: pointer; color: white; backdrop-filter: blur(10px); transition: 0.3s;
         }
         .academy-btn { border-color: rgba(168, 85, 247, 0.3); color: #d8b4fe; }
         .menu-btn .dot { width: 6px; height: 6px; background-color: #f97316; border-radius: 50%; box-shadow: 0 0 8px #f97316; transition: background-color 0.3s, box-shadow 0.3s; }
         .menu-btn.active-btn .dot { background-color: #ef4444; box-shadow: 0 0 8px #ef4444; }
-        
         .menu-btn:hover, .academy-btn:hover { background-color: rgba(255, 255, 255, 0.15); border-color: #a855f7; }
 
-        .nav-right { display: flex; align-items: center; gap: 20px; }
         .nav-right a { color: white; text-decoration: none; font-size: 0.9rem; opacity: 0.7; transition: 0.3s; }
         .nav-right a:hover { opacity: 1; }
-        .btn-demo-outline {
-            background: transparent; border: 1px solid rgba(255, 255, 255, 0.2); color: white; 
-            padding: 8px 20px; border-radius: 20px; cursor: pointer; font-size: 0.9rem; font-weight: bold; transition: 0.3s;
+        .btn-demo-outline { background: transparent; border: 1px solid rgba(255, 255, 255, 0.2); color: white; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-size: 0.9rem; font-weight: bold; transition: 0.3s; }
+        .btn-demo-outline:hover { background: white; color: black; border-color: white; }
+
+        /* --- ICONOS Y BOTONES FIJOS EN LAS VENTANAS OVERLAY --- */
+        .overlay-fixed-logo {
+            /* AJUSTE DE TAMAÑO Y POSICIÓN DEL STICKER PC */
+            position: fixed; top: 15px; left: 1.5vw; height: 90px; 
+            z-index: 99999;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.6)); cursor: pointer;
+            transition: transform 0.3s ease;
         }
-        .btn-demo-outline:hover, .btn-demo-outline.active-btn { background: white; color: black; border-color: white; }
+        .overlay-fixed-logo:hover { transform: scale(1.05) rotate(-5deg); }
+        
+        .overlay-fixed-close {
+            position: fixed; top: 25px; right: 3vw; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            color: white; padding: 10px 25px; border-radius: 30px; cursor: pointer; backdrop-filter: blur(10px); z-index: 99999; font-weight: bold; font-size: 0.85rem; transition: 0.3s;
+        }
+        .overlay-fixed-close:hover { background: rgba(255,255,255,0.1); border-color: #db2777; color: #db2777; }
+
 
         /* --- HERO SECTION --- */
-        .hero-section {
-            min-height: 85vh; display: flex; justify-content: space-between; align-items: center;
-            padding: 80px 5vw 40px 5vw; z-index: 3; position: relative; width: 100%; box-sizing: border-box;
-        }
+        .hero-section { min-height: 85vh; display: flex; justify-content: space-between; align-items: center; padding: 80px 5vw 40px 5vw; z-index: 3; position: relative; width: 100%; box-sizing: border-box; }
         .side-text { width: 250px; font-size: 0.85rem; line-height: 1.6; color: rgba(255, 255, 255, 0.6); }
         .center-hero { display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1; max-width: 100%; }
         
         .dynamic-title-container { position: relative; height: 140px; width: 100%; display: flex; justify-content: center; }
-        
-        .title-group { 
-            position: absolute; top: 0; display: flex; flex-direction: column; align-items: center; 
-            width: 100%; opacity: 0; transform: translate3d(0, -15px, 0); filter: blur(8px);
-            transition: opacity 0.8s ease, transform 0.8s ease, filter 0.8s ease;
-            pointer-events: none; will-change: transform, opacity;
-        }
+        .title-group { position: absolute; top: 0; display: flex; flex-direction: column; align-items: center; width: 100%; opacity: 0; transform: translate3d(0, -15px, 0); filter: blur(8px); transition: opacity 0.8s ease, transform 0.8s ease, filter 0.8s ease; pointer-events: none; will-change: transform, opacity; }
         .title-group h1 { font-size: 4.5rem; margin: 0; font-weight: 700; letter-spacing: -2px; white-space: nowrap; }
         .title-group h2 { font-size: 1.5rem; margin: 0 0 20px 0; font-weight: 400; }
         .title-group.active { opacity: 1; filter: blur(0px); transform: translate3d(0, 0, 0); }
 
-        .text-box-container {
-            position: relative; height: 110px; margin-bottom: 40px; display: flex; justify-content: center; align-items: center; z-index: 10; cursor: pointer;
-            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s ease;
-            border-radius: 12px; width: 200px; will-change: width, transform;
-        }
+        .text-box-container { position: relative; height: 110px; margin-bottom: 40px; display: flex; justify-content: center; align-items: center; z-index: 10; cursor: pointer; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s ease; border-radius: 12px; width: 200px; will-change: width, transform; }
         .text-box-container:hover { transform: scale(1.05) translate3d(0,0,0); }
-        .glow-background {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 15, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; backdrop-filter: blur(12px); z-index: -1;
-        }
-        .world-text {
-            font-family: 'Pacifico', cursive; font-size: 3.5rem; color: #ffffff; text-shadow: 0px 4px 15px rgba(255, 255, 255, 0.3);
-            position: absolute; opacity: 0; filter: blur(8px); transform: scale(0.85) translate3d(0, -15px, 0);
-            transition: opacity 0.8s ease, transform 0.8s ease, filter 0.8s ease;
-            white-space: nowrap; pointer-events: none; will-change: transform, opacity;
-        }
+        .glow-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 15, 0.5); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; backdrop-filter: blur(12px); z-index: -1; }
+        .world-text { font-family: 'Pacifico', cursive; font-size: 3.5rem; color: #ffffff; text-shadow: 0px 4px 15px rgba(255, 255, 255, 0.3); position: absolute; opacity: 0; filter: blur(8px); transform: scale(0.85) translate3d(0, -15px, 0); transition: opacity 0.8s ease, transform 0.8s ease, filter 0.8s ease; white-space: nowrap; pointer-events: none; will-change: transform, opacity; }
         .world-text.active { opacity: 1; filter: blur(0px); transform: scale(1) translate3d(0, 0, 0); }
 
-        .btn-demo-glow {
-            background: linear-gradient(90deg, #6b21a8, #a855f7); border: none; color: white; padding: 10px 35px; border-radius: 25px;
-            font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 0 25px rgba(168, 85, 247, 0.5); transition: transform 0.2s ease; margin-bottom: 20px; 
-            will-change: transform;
-        }
+        .btn-demo-glow { background: linear-gradient(90deg, #6b21a8, #a855f7); border: none; color: white; padding: 10px 35px; border-radius: 25px; font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 0 25px rgba(168, 85, 247, 0.5); transition: transform 0.2s ease; margin-bottom: 20px; will-change: transform; }
         .btn-demo-glow:hover { transform: scale(1.05) translate3d(0,0,0); }
-
         .bottom-slogan { display: none; }
 
-        /* --- MARQUEE INFINITO (0 LAG) --- */
-        .marquee-wrapper {
-            width: 100%; overflow: hidden; background: rgba(0, 0, 0, 0.15); padding: 30px 0; position: relative; z-index: 3;
-            border-top: 1px solid rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-            display: flex; flex-wrap: nowrap; pointer-events: none; transform: translateZ(0);
-        }
-        .marquee-content { 
-            display: flex; flex-shrink: 0; width: max-content; align-items: center; 
-            animation: marqueeFlow 25s linear infinite; 
-            will-change: transform; backface-visibility: hidden; 
-        }
+        /* --- MARQUEE INFINITO --- */
+        .marquee-wrapper { width: 100%; overflow: hidden; background: rgba(0, 0, 0, 0.15); padding: 30px 0; position: relative; z-index: 3; border-top: 1px solid rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.03); display: flex; flex-wrap: nowrap; pointer-events: none; transform: translateZ(0); }
+        .marquee-content { display: flex; flex-shrink: 0; width: max-content; align-items: center; animation: marqueeFlow 25s linear infinite; will-change: transform; backface-visibility: hidden; }
         .marquee-img { height: 32px; width: auto; margin: 0 60px; display: block; opacity: 0.9; flex-shrink: 0; max-width: none; }
         
-        .overlay-marquee {
-            width: 100%; overflow: hidden; padding: 50px 0; position: relative; z-index: 5;
-            background: rgba(0, 0, 0, 0.2); border-top: 1px solid rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-            display: flex; flex-wrap: nowrap; pointer-events: none; transform: translateZ(0);
-        }
+        .overlay-marquee { width: 100%; overflow: hidden; padding: 50px 0; position: relative; z-index: 5; background: rgba(0, 0, 0, 0.2); border-top: 1px solid rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.03); display: flex; flex-wrap: nowrap; pointer-events: none; transform: translateZ(0); }
         @keyframes marqueeFlow { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
-        /* --- CREATIK ACADEMY (CUADRADO DINÁMICO) --- */
+        /* --- OVERLAYS CONFIGURACIÓN (MENÚ, PAQUETES Y ACADEMY) --- */
+        #full-menu-overlay, #paquetes-overlay, #academy-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9000; opacity: 0; visibility: hidden; transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
+            display: flex; flex-direction: column; align-items: center; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth;
+        }
+        #full-menu-overlay { background: radial-gradient(circle at 50% 80%, #0a0f24 0%, #030409 60%); }
+        #paquetes-overlay { background-color: #050505; background-image: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px); background-size: 50px 50px; }
+        
+        /* Fondo base para Academy Overlay */
+        #academy-overlay { 
+            background: #0a0a0a; /* Fondo oscuro neutro */
+            justify-content: center;
+        }
+        
+        #full-menu-overlay::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
+        #full-menu-overlay.active, #paquetes-overlay.active, #academy-overlay.active { opacity: 1; visibility: visible; }
+
+        /* --- NUEVO ESTILO ACADEMY SECCIÓN (INSPIRACIÓN F1) --- */
         .academy-section {
-            width: 90%; max-width: 1200px; margin: 80px auto;
-            display: flex; align-items: center; justify-content: space-between; gap: 50px;
-            background: rgba(20, 10, 35, 0.4); border: 1px solid rgba(168, 85, 247, 0.2);
-            border-radius: 30px; padding: 50px; position: relative; z-index: 5;
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-        }
-        .academy-content { flex: 1.2; }
-        .academy-badge {
-            display: inline-block; background: rgba(168, 85, 247, 0.15); border: 1px solid #a855f7;
-            color: #d8b4fe; font-size: 0.75rem; font-weight: 800; padding: 6px 15px;
-            border-radius: 50px; margin-bottom: 20px; letter-spacing: 1px;
-        }
-        .academy-content h2 {
-            font-size: 3rem; font-weight: 900; line-height: 1; margin: 0 0 20px 0; color: #ffffff;
-            letter-spacing: -1px;
-        }
-        .academy-content h2 span { color: #a855f7; font-family: 'Pacifico', cursive; font-weight: 300; font-size: 3.5rem; }
-        .academy-content p {
-            font-size: 0.95rem; color: rgba(255, 255, 255, 0.7); line-height: 1.7;
-        }
-        
-        /* Cuadrado de fotos Academy */
-        .academy-square-slideshow {
-            flex: 0.8;
-            width: 100%;
-            max-width: 400px;
-            aspect-ratio: 1; /* Esto lo hace perfectamente cuadrado */
-            border-radius: 20px;
+            width: 90%; max-width: 1100px; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 40px;
+            /* Panel de control principal - Estilo F1 Dark Tech */
+            background: rgba(20, 10, 30, 0.85); /* Base oscura transparente */
+            border: 1px solid rgba(255, 50, 50, 0.3); /* Borde tecnológico rojo sutil */
+            border-radius: 30px; padding: 60px; position: relative; z-index: 5;
+            box-shadow: 0 0 40px rgba(255, 50, 50, 0.1), inset 0 0 30px rgba(20, 10, 30, 0.8);
+            backdrop-filter: blur(20px); /* Efecto de vidrio fuerte */
             overflow: hidden;
-            position: relative;
-            box-shadow: 0 15px 40px rgba(168, 85, 247, 0.25);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .academy-square-slideshow img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-            will-change: opacity, transform;
-        }
-        .academy-square-slideshow:hover img {
-            transform: scale(1.05);
         }
 
-        /* --- DASHBOARD --- */
-        .dashboard-container {
-            display: grid; grid-template-columns: 1.2fr 1fr 1.2fr; gap: 30px; width: 90%; max-width: 1200px; margin: 60px auto 100px auto; padding: 50px;
-            background: rgba(30, 10, 50, 0.2); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 40px; 
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
-            box-shadow: 0 30px 60px rgba(0,0,0,0.6); transform: translate3d(0, 100px, 0); opacity: 0; 
-            transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 1s ease; z-index: 3; position: relative; 
-            will-change: transform, opacity; backface-visibility: hidden; 
+        /* Efecto de fondo tecnológico (Grid y líneas de velocidad) */
+        .academy-section::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(135deg, transparent 45%, rgba(255, 20, 60, 0.1) 50%, transparent 55%); /* Línea roja de velocidad */
+            background-size: 30px 30px, 30px 30px, 200% 200%;
+            pointer-events: none; z-index: 0; animation: techScan 12s linear infinite;
         }
-        .dashboard-container.visible { transform: translate3d(0, 0, 0); opacity: 1; }
-        
-        .dash-left h2 { font-size: 3rem; line-height: 0.9; margin-bottom: 20px; font-weight: 800; letter-spacing: -1px;}
-        .glass-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; overflow: hidden; width: 100%; box-sizing: border-box; }
-        .viewer-box { width: 100%; height: 250px; border-radius: 15px; background: rgba(255,255,255,0.05); display: flex; justify-content: center; align-items: center; position: relative; overflow: hidden; }
-        
-        #main-viewer { 
-            width: 100%; height: 100%; object-fit: cover; border-radius: 15px; 
-            opacity: 0; transition: opacity 0.4s ease-in-out; 
-            object-position: center top; will-change: opacity; transform: translateZ(0); 
-        }
-        
-        .idea-container { text-align: center; margin-bottom: 20px; }
-        .idea-box { background: linear-gradient(90deg, #a855f7, #6b21a8); color: white; font-size: 0.8rem; font-weight: bold; padding: 5px 15px; border-radius: 5px; display: inline-block; margin-bottom: 5px; }
-        .nosotros-text { font-size: 3rem; font-weight: 900; color: #ffffff; margin: 0; line-height: 0.9; }
-        .creamos-text { font-size: 3rem; font-weight: 900; color: #ffffff; margin: 0; line-height: 0.9; background: linear-gradient(to bottom, #ffffff 50%, #e0e0e0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .icon-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
-        
-        .icon-box { 
-            aspect-ratio: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); 
-            border-radius: 15px; display: flex; justify-content: center; align-items: center; overflow: hidden; 
-            transition: all 0.4s ease-in-out; will-change: transform, border-color, background-color; 
-            backface-visibility: hidden;
-        }
-        .icon-box img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .service-item { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); padding: 14px 20px; border-radius: 50px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; cursor: pointer; font-size: 0.8rem; font-weight: 700; text-decoration: none; color: #ffffff; width: 100%; box-sizing: border-box; }
-        .service-item:hover { transform: translate3d(10px, 0, 0); background: rgba(255,255,255,0.06); }
-        .dot-icon { width: 32px; height: 32px; border-radius: 50%; background: #a855f7; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 15px #a855f7; flex-shrink: 0; }
-        .dot-icon img { width: 60%; height: 60%; object-fit: contain; }
+        @keyframes techScan { 0% { background-position: 0 0, 0 0, 0% 0%; } 100% { background-position: 0 0, 0 0, 100% 100%; } }
 
-        /* =========================================
-           OVERLAYS (MENU & PAQUETES)
-           ========================================= */
-        #full-menu-overlay, #paquetes-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: radial-gradient(circle at 50% 80%, #0a0f24 0%, #030409 60%);
-            z-index: 9000; opacity: 0; visibility: hidden;
-            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
-            display: flex; flex-direction: column; align-items: center; 
-            overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth;
+        /* Tarjeta de texto - Panel de datos transparente */
+        .academy-card {
+            flex: 1; background: rgba(40, 40, 50, 0.6); /* Panel más claro y transparente */
+            border: 1px solid rgba(255, 255, 255, 0.1); border-left: 4px solid #ff3232; /* Acento rojo F1 */
+            border-radius: 20px; padding: 40px;
+            position: relative; z-index: 2; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
-        #paquetes-overlay {
-            background-color: #050505; 
-            background-image: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
-            background-size: 50px 50px;
-        }
-        #full-menu-overlay::before {
-            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-            background-size: 40px 40px; pointer-events: none; z-index: 0;
-        }
-        #full-menu-overlay.active, #paquetes-overlay.active { opacity: 1; visibility: visible; }
 
+        .academy-badge { display: inline-block; background: rgba(255, 50, 50, 0.15); border: 1px solid #ff3232; color: #ff9090; font-size: 0.75rem; font-weight: 800; padding: 6px 15px; border-radius: 50px; margin-bottom: 20px; letter-spacing: 1px; }
+        .academy-card h2 { font-size: 2.8rem; font-weight: 900; line-height: 1; margin: 0 0 20px 0; color: #ffffff; letter-spacing: -1px; }
+        .academy-card h2 span { color: #ff3232; /* Acento rojo F1 */ font-family: 'Pacifico', cursive; font-weight: 300; font-size: 3.2rem; }
+        .academy-card p { font-size: 0.95rem; color: rgba(255, 255, 255, 0.8); line-height: 1.7; }
+        
+        /* Contenedor de visuales - Pantalla de alta tecnología */
+        .academy-visuals {
+            flex: 1; display: flex; justify-content: center; align-items: center; position: relative; z-index: 2;
+        }
+        .dual-slide-wrap { 
+            width: 100%; max-width: 500px; aspect-ratio: 4 / 3;
+            border-radius: 20px; overflow: hidden; position: relative; 
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(255, 50, 50, 0.3); /* Resplandor rojo */
+            border: 3px solid rgba(255, 50, 50, 0.6); /* Marco rojo brillante */
+            background: #000; 
+        }
+        
+        /* Efecto Disolución Cruzada */
+        .fade-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.8s ease-in-out; will-change: opacity; }
+        .fade-img.active { opacity: 1; z-index: 2; }
+
+
+        /* --- MENU OVERLAY CONTENIDO --- */
         .menu-overlay-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 900px; padding-top: 120px; padding-bottom: 100px; text-align: center; }
         .menu-pill-container { border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(5px); margin-bottom: 25px; position: relative; display: flex; justify-content: center; align-items: center; height: 30px; overflow: hidden; animation: dynamicPillWidth 10s infinite cubic-bezier(0.8, 0, 0.1, 1); transform: translate3d(0, 20px, 0); opacity: 0; transition: all 0.5s ease 0.1s; will-change: width; }
         #full-menu-overlay.active .menu-pill-container { transform: translate3d(0, 0, 0); opacity: 1; }
@@ -334,22 +241,11 @@
         #full-menu-overlay.active .menu-desc { transform: translate3d(0, 0, 0); opacity: 1; }
         .overlay-text-bg { position: fixed; top: 45%; left: 50%; transform: translate3d(-50%, -50%, 0); font-size: 10rem; font-weight: 900; color: rgba(255,255,255,0.02); white-space: nowrap; pointer-events: none; z-index: 1; text-transform: uppercase; letter-spacing: -5px; }
 
-        .menu-interactive-area { 
-            position: relative; width: 100%; height: 450px; display: flex; justify-content: center; align-items: center; 
-            transform: translate3d(0, 30px, 0) scale(0.95); opacity: 0; transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.4s; margin-top: 20px;
-        }
+        .menu-interactive-area { position: relative; width: 100%; height: 450px; display: flex; justify-content: center; align-items: center; transform: translate3d(0, 30px, 0) scale(0.95); opacity: 0; transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.4s; margin-top: 20px; }
         #full-menu-overlay.active .menu-interactive-area { transform: translate3d(0, 0, 0) scale(1); opacity: 1; }
         
-        .ft-smm { top: 20%; left: calc(50% - 240px); }
-        .ft-sms { bottom: 20%; left: calc(50% - 240px); }
-        .ft-user { top: 20%; right: calc(50% - 240px); }
-        .ft-txt { bottom: 20%; right: calc(50% - 240px); }
-
-        .phone-center { 
-            width: 300px; height: 180px; background: rgba(30, 27, 75, 0.2); backdrop-filter: blur(10px); 
-            border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 20px 50px rgba(0,0,0,0.4); 
-            position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; z-index: 5; 
-        }
+        .ft-smm { top: 20%; left: calc(50% - 240px); } .ft-sms { bottom: 20%; left: calc(50% - 240px); } .ft-user { top: 20%; right: calc(50% - 240px); } .ft-txt { bottom: 20%; right: calc(50% - 240px); }
+        .phone-center { width: 300px; height: 180px; background: rgba(30, 27, 75, 0.2); backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 20px 50px rgba(0,0,0,0.4); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; z-index: 5; }
         .phone-center::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 60%; background: radial-gradient(circle at top right, #f97316 0%, transparent 60%); opacity: 0.3; z-index: 3; pointer-events: none; }
         .phone-center::after { content: ''; position: absolute; top: 30%; left: -20%; width: 80%; height: 60%; background: radial-gradient(circle at center, #ea580c 0%, transparent 70%); opacity: 0.2; z-index: 3; pointer-events: none; }
         .phone-slideshow .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: center center; border-radius: 20px; opacity: 0; transition: opacity 1.5s ease-in-out; z-index: 1; filter: saturate(1.2); }
@@ -357,12 +253,49 @@
         
         .float-tag { position: absolute; background: rgba(20, 20, 25, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); padding: 8px 15px; border-radius: 12px; display: flex; align-items: center; gap: 10px; backdrop-filter: blur(8px); font-size: 0.8rem; font-weight: 700; box-shadow: 0 10px 20px rgba(0,0,0,0.5); animation: floatAnim 6s ease-in-out infinite; z-index: 4; color: white; white-space: nowrap; will-change: transform; }
         @keyframes floatAnim { 0%, 100% { transform: translate3d(0, 0px, 0); } 50% { transform: translate3d(0, -15px, 0); } }
-        
-        .f-icon { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; }
-        .f-icon svg { width: 100%; height: 100%; fill: #f97316; filter: drop-shadow(0 0 5px #f97316); }
-
+        .f-icon { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; } .f-icon svg { width: 100%; height: 100%; fill: #f97316; filter: drop-shadow(0 0 5px #f97316); }
         .bottom-glow-arc { position: fixed; bottom: -400px; left: 50%; transform: translateX(-50%); width: 150vw; height: 500px; border-radius: 50%; background: radial-gradient(ellipse at top, rgba(249, 115, 22, 0.4) 0%, transparent 60%); box-shadow: 0 -20px 100px rgba(249, 115, 22, 0.3); z-index: 1; pointer-events: none; }
         .slider-deco { position: absolute; bottom: -30px; width: 300px; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); }
+
+        /* --- DASHBOARD --- */
+        .dashboard-container { display: grid; grid-template-columns: 1.2fr 1fr 1.2fr; gap: 30px; width: 90%; max-width: 1200px; margin: 60px auto 100px auto; padding: 50px; background: rgba(30, 10, 50, 0.2); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 40px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 30px 60px rgba(0,0,0,0.6); transform: translate3d(0, 100px, 0); opacity: 0; transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 1s ease; z-index: 3; position: relative; will-change: transform, opacity; backface-visibility: hidden; }
+        .dashboard-container.visible { transform: translate3d(0, 0, 0); opacity: 1; }
+        .dash-left h2 { font-size: 3rem; line-height: 0.9; margin-bottom: 20px; font-weight: 800; letter-spacing: -1px;}
+        .glass-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; overflow: hidden; width: 100%; box-sizing: border-box; }
+        .viewer-box { width: 100%; height: 250px; border-radius: 15px; background: rgba(255,255,255,0.05); display: flex; justify-content: center; align-items: center; position: relative; overflow: hidden; }
+        #main-viewer { width: 100%; height: 100%; object-fit: cover; border-radius: 15px; opacity: 0; transition: opacity 0.4s ease-in-out; object-position: center top; will-change: opacity; transform: translateZ(0); }
+        .idea-container { text-align: center; margin-bottom: 20px; }
+        .idea-box { background: linear-gradient(90deg, #a855f7, #6b21a8); color: white; font-size: 0.8rem; font-weight: bold; padding: 5px 15px; border-radius: 5px; display: inline-block; margin-bottom: 5px; }
+        .nosotros-text { font-size: 3rem; font-weight: 900; color: #ffffff; margin: 0; line-height: 0.9; }
+        .creamos-text { font-size: 3rem; font-weight: 900; color: #ffffff; margin: 0; line-height: 0.9; background: linear-gradient(to bottom, #ffffff 50%, #e0e0e0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .icon-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
+        .icon-box { aspect-ratio: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 15px; display: flex; justify-content: center; align-items: center; overflow: hidden; transition: all 0.4s ease-in-out; will-change: transform, border-color, background-color; backface-visibility: hidden; }
+        .icon-box img { width: 100%; height: 100%; object-fit: cover; }
+        .service-item { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); padding: 14px 20px; border-radius: 50px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; cursor: pointer; font-size: 0.8rem; font-weight: 700; text-decoration: none; color: #ffffff; width: 100%; box-sizing: border-box; }
+        .service-item:hover { transform: translate3d(10px, 0, 0); background: rgba(255,255,255,0.06); }
+        .dot-icon { width: 32px; height: 32px; border-radius: 50%; background: #a855f7; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 15px #a855f7; flex-shrink: 0; }
+        .dot-icon img { width: 60%; height: 60%; object-fit: contain; }
+
+        /* --- PRECIOS PC --- */
+        .pricing-section { position: relative; padding: 40px 1vw 150px 1vw; min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow: visible; }
+        .pricing-header { text-align: center; margin-bottom: 50px; position: relative; z-index: 5; }
+        .pricing-header h2 { font-family: 'Pacifico', cursive; color: #db2777; font-size: 4rem; margin: 0; text-transform: uppercase; }
+        .pricing-header p { font-size: 1.5rem; font-weight: 700; margin-top: -10px; text-transform: uppercase; letter-spacing: 3px; }
+        .plans-container { display: flex; justify-content: center; align-items: stretch; gap: 1vw; width: 100%; max-width: 1700px; position: relative; z-index: 5; flex-wrap: nowrap; padding: 40px 15px; }
+        .plan-card { background: rgba(15, 15, 20, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 25px 12px; flex: 1 1 0; min-width: 0; text-align: center; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.4s, border-color 0.4s, box-shadow 0.4s; position: relative; backdrop-filter: blur(10px); display: flex; flex-direction: column; justify-content: space-between; z-index: 1; }
+        .plan-card:hover { transform: scale(1.12) translate3d(0, -10px, 0); background: rgba(25, 25, 30, 1); border-color: rgba(219, 39, 119, 0.8); z-index: 50; box-shadow: 0 25px 60px rgba(0,0,0,0.9), 0 0 20px rgba(219, 39, 119, 0.3); }
+        .plan-card.popular { border: 2px solid #ffd700; box-shadow: 0 0 40px rgba(255, 215, 0, 0.15); z-index: 10; }
+        .popular-sticker { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #ffd700; color: #000; font-weight: 900; font-size: 0.6rem; padding: 4px 10px; border-radius: 5px; text-transform: uppercase; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4); white-space: nowrap; }
+        .plan-name { font-size: 0.7rem; font-weight: 800; color: rgba(255, 255, 255, 0.6); margin-bottom: 8px; text-transform: uppercase; height: 35px; display: flex; align-items: center; justify-content: center; line-height: 1.1; }
+        .plan-time { font-size: 0.65rem; color: #ffd700; font-weight: 600; margin-bottom: 12px; }
+        .plan-price { font-size: 1.9rem; font-weight: 900; color: #db2777; margin-bottom: 2px; font-family: 'Inter', sans-serif; }
+        .plan-deposit { font-size: 0.6rem; color: rgba(255, 255, 255, 0.5); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
+        .plan-features { list-style: none; padding: 0; text-align: left; margin-bottom: 20px; flex-grow: 1; }
+        .plan-features li { font-size: 0.65rem; margin-bottom: 10px; color: rgba(255, 255, 255, 0.8); display: flex; align-items: flex-start; gap: 5px; line-height: 1.2; }
+        .plan-features li::before { content: '✓'; color: #db2777; font-weight: bold; }
+        .btn-plan { background: transparent; border: 1px solid rgba(255, 255, 255, 0.2); color: #fff; padding: 10px 0; width: 100%; border-radius: 30px; font-weight: 700; font-size: 0.65rem; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
+        .popular .btn-plan { background: #ffd700; color: #000; border: none; }
+        .btn-plan:hover { background: #fff; color: #000; }
 
         .sticker-wall-section { position: relative; min-height: 100vh; width: 100%; display: flex; justify-content: center; align-items: center; overflow: hidden; }
         .sticker-center-text { text-align: center; z-index: 50; pointer-events: none; transform: translate3d(0, 30px, 0); opacity: 0; transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s; position: relative; }
@@ -383,192 +316,41 @@
         .user-avatar { width: 60px; height: 60px; border-radius: 50%; border: 2px solid #ffd700; }
         .stars { color: #ffd700; }
 
-        /* --- PRECIOS (AJUSTADO PARA PC EN UNA LÍNEA) --- */
-        .pricing-section { position: relative; padding: 40px 1vw 150px 1vw; min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow: visible; }
-        .pricing-header { text-align: center; margin-bottom: 50px; position: relative; z-index: 5; }
-        .pricing-header h2 { font-family: 'Pacifico', cursive; color: #db2777; font-size: 4rem; margin: 0; text-transform: uppercase; }
-        .pricing-header p { font-size: 1.5rem; font-weight: 700; margin-top: -10px; text-transform: uppercase; letter-spacing: 3px; }
+        /* --- OVERLAY CONTÁCTANOS --- */
+        #contact-overlay { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            background-color: #020005; 
+            z-index: 99000; display: flex; flex-direction: column; align-items: center; overflow-y: auto; overflow-x: hidden; opacity: 0; visibility: hidden; transform: perspective(1000px) rotateX(15deg) translateY(80px) scale(0.95); transition: opacity 0.7s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0.8s; 
+        }
+        #contact-overlay.active { opacity: 1; visibility: visible; transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1); filter: blur(0px); }
+        .contact-backdrop { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            background-image: radial-gradient(circle at 50% -20%, rgba(14, 165, 233, 0.25) 0%, transparent 60%), linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 100% 100%, 40px 40px, 40px 40px; z-index: 1; pointer-events: none; 
+        }
         
-        .plans-container { 
-            display: flex; justify-content: center; align-items: stretch; gap: 1vw; 
-            width: 100%; max-width: 1700px; position: relative; z-index: 5; 
-            flex-wrap: nowrap; /* EVITA QUE SE ROMPAN EN DOS LÍNEAS EN PC */
-            padding: 40px 15px; 
-        }
-        .plan-card { 
-            background: rgba(15, 15, 20, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; 
-            padding: 25px 12px; flex: 1 1 0; min-width: 0; text-align: center; /* ESTO HACE QUE SE ACOPLEN UNIFORMES */
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.4s, border-color 0.4s, box-shadow 0.4s; 
-            position: relative; backdrop-filter: blur(10px); display: flex; flex-direction: column; justify-content: space-between; z-index: 1; 
-        }
-        .plan-card:hover { transform: scale(1.12) translate3d(0, -10px, 0); background: rgba(25, 25, 30, 1); border-color: rgba(219, 39, 119, 0.8); z-index: 50; box-shadow: 0 25px 60px rgba(0,0,0,0.9), 0 0 20px rgba(219, 39, 119, 0.3); }
-        .plan-card.popular { border: 2px solid #ffd700; box-shadow: 0 0 40px rgba(255, 215, 0, 0.15); z-index: 10; }
-        .popular-sticker { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #ffd700; color: #000; font-weight: 900; font-size: 0.6rem; padding: 4px 10px; border-radius: 5px; text-transform: uppercase; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4); white-space: nowrap; }
-        .plan-name { font-size: 0.7rem; font-weight: 800; color: rgba(255, 255, 255, 0.6); margin-bottom: 8px; text-transform: uppercase; height: 35px; display: flex; align-items: center; justify-content: center; line-height: 1.1; }
-        .plan-time { font-size: 0.65rem; color: #ffd700; font-weight: 600; margin-bottom: 12px; }
-        .plan-price { font-size: 1.9rem; font-weight: 900; color: #db2777; margin-bottom: 2px; font-family: 'Inter', sans-serif; }
-        .plan-deposit { font-size: 0.6rem; color: rgba(255, 255, 255, 0.5); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
-        .plan-features { list-style: none; padding: 0; text-align: left; margin-bottom: 20px; flex-grow: 1; }
-        .plan-features li { font-size: 0.65rem; margin-bottom: 10px; color: rgba(255, 255, 255, 0.8); display: flex; align-items: flex-start; gap: 5px; line-height: 1.2; }
-        .plan-features li::before { content: '✓'; color: #db2777; font-weight: bold; }
-        .btn-plan { background: transparent; border: 1px solid rgba(255, 255, 255, 0.2); color: #fff; padding: 10px 0; width: 100%; border-radius: 30px; font-weight: 700; font-size: 0.65rem; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
-        .popular .btn-plan { background: #ffd700; color: #000; border: none; }
-        .btn-plan:hover { background: #fff; color: #000; }
-
-        /* =========================================
-           OVERLAY CONTÁCTANOS (FUTURISTA AZUL)
-           ========================================= */
-        #contact-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background-color: transparent; 
-            z-index: 99000; 
-            display: flex; flex-direction: column; align-items: center;
-            overflow-y: auto; overflow-x: hidden;
-            opacity: 0; visibility: hidden;
-            transform: perspective(1000px) rotateX(15deg) translateY(80px) scale(0.95);
-            filter: blur(15px);
-            transition: opacity 0.7s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.8s ease, visibility 0.8s;
-        }
-        #contact-overlay.active {
-            opacity: 1; visibility: visible;
-            transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1);
-            filter: blur(0px);
-        }
-
-        /* FONDO ROTATIVO DESENFOCADO */
-        .contact-bg-layer {
-            position: fixed; top: -5%; left: -5%; width: 110vw; height: 110vh;
-            background-size: cover; background-position: center;
-            opacity: 0; filter: blur(8px) brightness(0.6);
-            animation: contactSlideAnim 40s infinite linear;
-            will-change: opacity, transform;
-            z-index: 0; pointer-events: none;
-        }
-        .contact-backdrop {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background-color: rgba(2, 6, 23, 0.85);
-            background-image: 
-                radial-gradient(circle at 50% -20%, rgba(14, 165, 233, 0.35) 0%, transparent 60%),
-                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), 
-                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-            background-size: 100% 100%, 40px 40px, 40px 40px;
-            z-index: 1; pointer-events: none;
-        }
-
-        @keyframes contactSlideAnim {
-            0% { opacity: 0; transform: scale(1); }
-            5% { opacity: 0.5; }
-            12.5% { opacity: 0.5; }
-            17.5% { opacity: 0; transform: scale(1.05); }
-            100% { opacity: 0; }
-        }
-        .cbg-1 { background-image: url('FOTOS HORIZONTALES/img1H.jpg'); animation-delay: 0s; }
-        .cbg-2 { background-image: url('FOTOS HORIZONTALES/img2H.jpg'); animation-delay: 5s; }
-        .cbg-3 { background-image: url('FOTOS HORIZONTALES/img3H.jpg'); animation-delay: 10s; }
-        .cbg-4 { background-image: url('FOTOS HORIZONTALES/img4H.jpg'); animation-delay: 15s; }
-        .cbg-5 { background-image: url('FOTOS HORIZONTALES/img5H.jpg'); animation-delay: 20s; }
-        .cbg-6 { background-image: url('FOTOS HORIZONTALES/img6H.jpg'); animation-delay: 25s; }
-        .cbg-7 { background-image: url('FOTOS HORIZONTALES/img7H.jpg'); animation-delay: 30s; }
-        .cbg-8 { background-image: url('FOTOS HORIZONTALES/img8H.jpg'); animation-delay: 35s; }
-        
-        .contact-close-btn {
-            position: absolute; top: 30px; right: 5vw;
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            color: white; padding: 10px 20px; border-radius: 30px; cursor: pointer;
-            backdrop-filter: blur(10px); z-index: 10; font-weight: bold; font-size: 0.8rem;
-            transition: 0.3s;
-        }
-        .contact-close-btn:hover { background: rgba(255,255,255,0.1); border-color: #0ea5e9; color: #0ea5e9; }
-
-        .contact-pill-container { 
-            border: 1px solid rgba(14, 165, 233, 0.4); border-radius: 50px; 
-            background: rgba(14, 165, 233, 0.1); box-shadow: 0 0 20px rgba(14, 165, 233, 0.2);
-            margin-bottom: 30px; position: relative; display: flex; justify-content: center; align-items: center; 
-            height: 35px; overflow: hidden; animation: dynamicContactPillWidth 10s infinite cubic-bezier(0.8, 0, 0.1, 1); 
-            will-change: width; z-index: 10;
-        }
-        .contact-pill-text { 
-            font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; color: #0ea5e9; 
-            text-transform: uppercase; position: absolute; opacity: 0; visibility: hidden; 
-            animation: textCyclePillStrict 10s infinite linear; white-space: nowrap;
-        }
+        .contact-pill-container { border: 1px solid rgba(14, 165, 233, 0.4); border-radius: 50px; background: rgba(14, 165, 233, 0.1); box-shadow: 0 0 20px rgba(14, 165, 233, 0.2); margin-bottom: 30px; position: relative; display: flex; justify-content: center; align-items: center; height: 35px; overflow: hidden; animation: dynamicContactPillWidth 10s infinite cubic-bezier(0.8, 0, 0.1, 1); will-change: width; z-index: 10; }
+        .contact-pill-text { font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; color: #0ea5e9; text-transform: uppercase; position: absolute; opacity: 0; visibility: hidden; animation: textCyclePillStrict 10s infinite linear; white-space: nowrap; }
         @keyframes dynamicContactPillWidth { 0%, 22% { width: 120px; } 25%, 47% { width: 140px; } 50%, 72% { width: 130px; } 75%, 97% { width: 150px; } 100% { width: 120px; } }
-
-        .contact-content-wrapper {
-            position: relative; z-index: 2; width: 100%; max-width: 900px;
-            padding: 100px 5vw 50px 5vw; text-align: center;
-            display: flex; flex-direction: column; align-items: center;
-        }
-
-        .contact-title {
-            font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 900; line-height: 1.05;
-            letter-spacing: -2px; margin: 0 0 20px 0; color: white; position: relative; z-index: 10;
-        }
+        .contact-content-wrapper { position: relative; z-index: 2; width: 100%; max-width: 900px; padding: 100px 5vw 50px 5vw; text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .contact-title { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px; margin: 0 0 20px 0; color: white; position: relative; z-index: 10; }
         .contact-title span { color: #0ea5e9; text-shadow: 0 0 30px rgba(14, 165, 233, 0.4); }
-
-        .contact-desc {
-            font-size: clamp(0.9rem, 2vw, 1.1rem); color: rgba(255,255,255,0.6);
-            max-width: 650px; line-height: 1.6; margin-bottom: 40px; position: relative; z-index: 10;
-        }
-
-        .contact-cta-btn {
-            background: linear-gradient(90deg, #0284c7, #0ea5e9); color: white;
-            text-decoration: none; font-size: 1.2rem; font-weight: 900;
-            padding: 18px 50px; border-radius: 15px; display: inline-block;
-            box-shadow: 0 15px 35px rgba(14, 165, 233, 0.3);
-            transition: transform 0.3s, box-shadow 0.3s;
-            border: 1px solid #38bdf8; cursor: pointer; position: relative; z-index: 10;
-        }
-        .contact-cta-btn:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 20px 50px rgba(14, 165, 233, 0.5);
-        }
-
-        .contact-trust-bar {
-            display: flex; align-items: center; justify-content: center; gap: 30px;
-            margin-top: 40px; flex-wrap: wrap; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.05);
-            width: 100%; max-width: 600px; position: relative; z-index: 10;
-        }
+        .contact-desc { font-size: clamp(0.9rem, 2vw, 1.1rem); color: rgba(255,255,255,0.6); max-width: 650px; line-height: 1.6; margin-bottom: 40px; position: relative; z-index: 10; }
+        .contact-cta-btn { background: linear-gradient(90deg, #0284c7, #0ea5e9); color: white; text-decoration: none; font-size: 1.2rem; font-weight: 900; padding: 18px 50px; border-radius: 15px; display: inline-block; box-shadow: 0 15px 35px rgba(14, 165, 233, 0.3); transition: transform 0.3s, box-shadow 0.3s; border: 1px solid #38bdf8; cursor: pointer; position: relative; z-index: 10; }
+        .contact-cta-btn:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 20px 50px rgba(14, 165, 233, 0.5); }
+        .contact-trust-bar { display: flex; align-items: center; justify-content: center; gap: 30px; margin-top: 40px; flex-wrap: wrap; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.05); width: 100%; max-width: 600px; position: relative; z-index: 10; }
         .trust-item { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; font-weight: 600; color: #fff; }
-        .trust-avatars { display: flex; }
-        .trust-avatars img { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #020617; margin-left: -10px; }
-        .trust-avatars img:first-child { margin-left: 0; }
+        .trust-avatars { display: flex; } .trust-avatars img { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #020617; margin-left: -10px; } .trust-avatars img:first-child { margin-left: 0; }
         .trust-stars { color: #0ea5e9; font-size: 1.1rem; letter-spacing: 2px; }
-
-        .contact-media-showcase {
-            margin-top: 60px; width: 100%; max-width: 800px; height: clamp(200px, 40vw, 450px);
-            border-radius: 20px; padding: 10px;
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(14, 165, 233, 0.2);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 40px rgba(14, 165, 233, 0.15);
-            position: relative; z-index: 10;
-        }
-        .contact-media-showcase img {
-            width: 100%; height: 100%; object-fit: cover; border-radius: 15px; opacity: 0.8;
-        }
-        .contact-media-showcase::after {
-            content: '▶'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            font-size: 2rem; color: white; background: rgba(14, 165, 233, 0.8);
-            width: 60px; height: 60px; display: flex; justify-content: center; align-items: center;
-            border-radius: 50%; cursor: pointer; backdrop-filter: blur(5px);
-            box-shadow: 0 0 20px rgba(14,165,233,0.5); padding-left: 5px; box-sizing: border-box;
-        }
-
-        /* FOTOS FLOTANTES EN EL OVERLAY 3D */
-        .contact-float-item {
-            position: absolute; z-index: 2; pointer-events: none;
-            will-change: transform; opacity: 0; transition: opacity 1s ease 0.5s;
-        }
+        .contact-media-showcase { margin-top: 60px; width: 100%; max-width: 800px; height: clamp(200px, 40vw, 450px); border-radius: 20px; padding: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(14, 165, 233, 0.2); box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 40px rgba(14, 165, 233, 0.15); position: relative; z-index: 10; }
+        .contact-media-showcase img { width: 100%; height: 100%; object-fit: cover; border-radius: 15px; opacity: 0.8; }
+        .contact-media-showcase::after { content: '▶'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2rem; color: white; background: rgba(14, 165, 233, 0.8); width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; border-radius: 50%; cursor: pointer; backdrop-filter: blur(5px); box-shadow: 0 0 20px rgba(14,165,233,0.5); padding-left: 5px; box-sizing: border-box; }
+        .contact-float-item { position: absolute; z-index: 2; pointer-events: none; will-change: transform; opacity: 0; transition: opacity 1s ease 0.5s; }
         #contact-overlay.active .contact-float-item { opacity: 0.7; }
-        
         .f-img1 { width: 14vw; max-width: 180px; height: 220px; object-fit: cover; top: 20%; left: 8%; border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); border: 1px solid rgba(14, 165, 233, 0.3); animation: cFloat1 8s ease-in-out infinite; }
         .f-img2 { width: 16vw; max-width: 200px; height: 140px; object-fit: cover; bottom: 15%; right: 8%; border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); border: 1px solid rgba(14, 165, 233, 0.3); animation: cFloat2 10s ease-in-out infinite; }
         .f-stk1 { width: 10vw; max-width: 120px; top: 15%; right: 12%; filter: drop-shadow(0 0 15px rgba(14, 165, 233, 0.4)); animation: cFloat3 9s ease-in-out infinite; }
         .f-stk2 { width: 15vw; max-width: 180px; bottom: 25%; left: 5%; filter: drop-shadow(0 0 15px rgba(14, 165, 233, 0.4)); animation: cFloat4 11s ease-in-out infinite; }
-        
-        @keyframes cFloat1 { 0%, 100% { transform: translateY(0) rotate(-10deg); } 50% { transform: translateY(-20px) rotate(-5deg); } }
-        @keyframes cFloat2 { 0%, 100% { transform: translateY(0) rotate(15deg); } 50% { transform: translateY(20px) rotate(10deg); } }
-        @keyframes cFloat3 { 0%, 100% { transform: translateY(0) rotate(20deg); } 50% { transform: translateY(-15px) rotate(25deg); } }
-        @keyframes cFloat4 { 0%, 100% { transform: translateY(0) rotate(-15deg); } 50% { transform: translateY(15px) rotate(-20deg); } }
+        @keyframes cFloat1 { 0%, 100% { transform: translateY(0) rotate(-10deg); } 50% { transform: translateY(-20px) rotate(-5deg); } } @keyframes cFloat2 { 0%, 100% { transform: translateY(0) rotate(15deg); } 50% { transform: translateY(20px) rotate(10deg); } } @keyframes cFloat3 { 0%, 100% { transform: translateY(0) rotate(20deg); } 50% { transform: translateY(-15px) rotate(25deg); } } @keyframes cFloat4 { 0%, 100% { transform: translateY(0) rotate(-15deg); } 50% { transform: translateY(15px) rotate(-20deg); } }
 
         /* =========================================
            ADAPTACIÓN RESPONSIVA CELULARES
@@ -579,17 +361,10 @@
             .cursor-glow { display: none !important; }
             .bg-slide { filter: brightness(0.3) !important; } 
 
-            .glow-background, .dashboard-container, .phone-center, .menu-pill-container, .testi-card, .plan-card { 
-                backdrop-filter: none !important; -webkit-backdrop-filter: none !important; 
-            }
+            .glow-background, .dashboard-container, .phone-center, .menu-pill-container, .testi-card, .plan-card { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
             .glow-background { background: rgba(20, 10, 30, 0.9) !important; }
             
-            .dashboard-container { 
-                background: rgba(20, 5, 35, 0.98) !important;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.5) !important;
-                transform: translate3d(0,0,0) !important; opacity: 1 !important;
-            }
-
+            .dashboard-container { background: rgba(20, 5, 35, 0.98) !important; box-shadow: 0 5px 15px rgba(0,0,0,0.5) !important; transform: translate3d(0,0,0) !important; opacity: 1 !important; }
             .title-group, .world-text { filter: none !important; transition: opacity 0.8s ease, transform 0.8s ease !important; }
             .title-group.active, .world-text.active { filter: none !important; }
             .text-box-container { width: 100% !important; max-width: 260px !important; transition: transform 0.2s ease !important; }
@@ -605,6 +380,10 @@
             .btn-demo-outline { padding: 6px 12px; font-size: 0.8rem; }
             .menu-btn, .academy-btn { padding: 6px 12px; font-size: 0.75rem; }
             
+            /* Ajustes CERRAR y STICKER Fijos en Celular */
+            .overlay-fixed-logo { top: 10px; left: 10px; height: 60px; /* AJUSTADO PARA MÓVIL */ }
+            .overlay-fixed-close { top: 15px; right: 15px; padding: 8px 15px; font-size: 0.75rem; }
+
             .hero-section { flex-direction: column; justify-content: flex-start; text-align: center; padding: 150px 5vw 30px 5vw !important; min-height: auto !important; gap: 0 !important; }
             .title-group h1 { font-size: clamp(3rem, 15vw, 4.5rem) !important; line-height: 1; } 
             .title-group h2 { font-size: 1.4rem !important; }
@@ -613,13 +392,16 @@
             .text-box-container { height: 75px !important; margin-bottom: 30px !important; }
             .btn-demo-glow { margin-top: 10px !important; }
             
-            .academy-section { 
-                flex-direction: column; padding: 40px 20px !important; margin: 40px auto !important; width: 92%; text-align: center; 
-            }
-            .academy-content { flex: none; max-width: 100%; order: 2; }
-            .academy-square-slideshow { flex: none; width: 100%; max-width: 250px; order: 1; margin-bottom: 20px; }
-            .academy-content h2 { font-size: 2.5rem; }
-            .academy-content h2 span { font-size: 2.8rem; }
+            /* Paquetes Celular (Lista Vertical) */
+            .plans-container { flex-direction: column !important; padding: 100px 5vw 20px 5vw !important; gap: 30px !important; align-items: center !important; overflow: visible !important; width: 100% !important; }
+            .plan-card { width: 100% !important; max-width: 350px !important; flex: none !important; transform: scale(1) translate3d(0,0,0) !important; background: rgba(15, 15, 20, 0.98) !important; margin: 0 auto !important; }
+
+            /* NUEVA Academy Overlay Celular */
+            .academy-section { flex-direction: column; padding: 40px 20px !important; text-align: center; gap: 30px; }
+            .academy-card { padding: 30px 20px; }
+            .academy-card h2 { font-size: 2.2rem; }
+            .academy-card h2 span { font-size: 2.6rem; }
+            .dual-slide-wrap { max-width: 100%; border-width: 5px; }
 
             .dashboard-container { grid-template-columns: 1fr; padding: 30px 15px !important; margin: 20px auto 50px auto !important; max-width: 450px; }
             .dash-left { display: none !important; } 
@@ -629,35 +411,16 @@
             .service-item { padding: 12px 15px !important; font-size: 0.75rem !important; }
 
             .menu-interactive-area { height: 350px !important; }
-            .ft-smm { top: 10%; left: 5%; }
-            .ft-sms { bottom: 10%; left: 5%; }
-            .ft-user { top: 10%; right: 5%; }
-            .ft-txt { bottom: 10%; right: 5%; }
+            .ft-smm { top: 10%; left: 5%; } .ft-sms { bottom: 10%; left: 5%; } .ft-user { top: 10%; right: 5%; } .ft-txt { bottom: 10%; right: 5%; }
             .phone-center { width: 240px !important; height: 160px !important; }
-
-            .menu-overlay-title h1 { font-size: 2.2rem; }
-            .menu-overlay-title h2 { font-size: 1.5rem; }
+            .menu-overlay-title h1 { font-size: 2.2rem; } .menu-overlay-title h2 { font-size: 1.5rem; }
             .sticker-center-text { width: 90vw !important; padding: 0 !important; }
-            .sticker-line1 { flex-direction: column !important; gap: 5px !important; }
-            .sticker-logo-img { height: auto !important; width: 90% !important; max-width: 250px !important; }
-            .sticker-line1 span { font-size: 1rem !important; margin-top: 5px !important; }
-            .sticker-line2 { font-size: clamp(3rem, 15vw, 4rem) !important; margin-top: 0 !important; }
+            .sticker-line1 { flex-direction: column !important; gap: 5px !important; } .sticker-logo-img { height: auto !important; width: 90% !important; max-width: 250px !important; }
+            .sticker-line1 span { font-size: 1rem !important; margin-top: 5px !important; } .sticker-line2 { font-size: clamp(3rem, 15vw, 4rem) !important; margin-top: 0 !important; }
 
             .testimonials-section { padding: 80px 0 !important; }
             .testi-card { width: 90% !important; max-width: 320px !important; margin: 0 auto 20px auto !important; background: rgba(20, 20, 25, 0.98) !important; }
-            
-            /* Corrección de Paquetes Celular (Lista Vertical) */
-            .plans-container { 
-                flex-direction: column !important; padding: 20px 5vw !important; gap: 30px !important; 
-                align-items: center !important; overflow: visible !important; width: 100% !important; 
-            }
-            .plan-card { 
-                width: 100% !important; max-width: 350px !important; flex: none !important; 
-                transform: scale(1) translate3d(0,0,0) !important; background: rgba(15, 15, 20, 0.98) !important; 
-                margin: 0 auto !important;
-            }
 
-            .contact-close-btn { top: 15px; right: 15px; padding: 8px 15px; font-size: 0.75rem; }
             .contact-content-wrapper { padding-top: 80px; }
             .contact-desc { font-size: 0.85rem; margin-bottom: 30px; }
             .contact-cta-btn { font-size: 1rem; padding: 15px 30px; width: 100%; text-align: center; justify-content: center; }
@@ -667,7 +430,6 @@
             #contact-overlay { filter: none !important; transition: opacity 0.5s ease, transform 0.5s ease, visibility 0.5s; }
             #contact-overlay.active { filter: none !important; }
             .contact-float-item { display: none !important; } 
-            .contact-bg-layer { filter: brightness(0.3) !important; } 
         }
     </style>
 </head>
@@ -691,13 +453,33 @@
         <img fetchpriority="high" src="LOGO MULTIMEDIA ISOTIPO MORA CREATIK.png" alt="creatik" class="logo-img" id="header-logo" onclick="triggerIntro()">
         <div class="nav-center">
             <div class="menu-btn" id="toggle-menu-btn"><span class="dot"></span> Menú</div>
-            <div class="academy-btn" onclick="document.getElementById('academy').scrollIntoView({behavior: 'smooth'})">Academy</div>
+            <div class="academy-btn" id="open-academy-btn">Academy</div>
         </div>
         <div class="nav-right">
             <a href="#">Login</a>
             <button class="btn-demo-outline" id="toggle-paquetes-btn">PAQUETES</button>
         </div>
     </header>
+
+    <div id="academy-overlay">
+        <button class="overlay-fixed-close" id="close-academy-btn">✖ Cerrar</button>
+        <section class="academy-section">
+            <div class="academy-card">
+                <div class="academy-badge">✨ PROYECTO SOCIAL</div>
+                <h2>Creatik <span>Academy</span></h2>
+                <p style="margin-bottom: 15px; font-weight: 700; color: #ff3232; letter-spacing: 1px;">MÁS ALLÁ DE LA PANTALLA</p>
+                <p>En Creatik, nuestra visión no termina en el lente. Llevamos más de dos años y medio impulsando nuestro proyecto social <strong>Creatik Academy</strong>.</p>
+                <p style="margin-top: 10px;">Es un espacio de formación y convivencia donde unimos a apasionados del arte visual. A través de nuestras salidas de campo, transformamos la fotografía en una herramienta de integración. Formamos talento, unimos territorios y demostramos que el arte puede cambiar realidades.</p>
+            </div>
+            
+            <div class="academy-visuals">
+                <div class="dual-slide-wrap">
+                    <img id="academy-A" class="fade-img active" loading="lazy" src="Creatik Academy/academy1.jpg" alt="Creatik Academy">
+                    <img id="academy-B" class="fade-img" loading="lazy" src="" alt="Creatik Academy">
+                </div>
+            </div>
+        </section>
+    </div>
 
     <div id="full-menu-overlay">
         <div class="overlay-text-bg">HISTORIA INOLVIDABLE</div>
@@ -714,19 +496,19 @@
             </div>
             <p class="menu-desc">En Creatik, capturamos la esencia de cada momento porque sabemos que tu realidad es lo más importante. No solo entregamos una imagen, entregamos un recuerdo con alma.</p>
             <div class="menu-interactive-area">
-                <div class="float-tag ft-smm" data-animate="true">
+                <div class="float-tag ft-smm">
                     <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></svg></div>
                     <span>Fotografía</span>
                 </div>
-                <div class="float-tag ft-sms" data-animate="true">
+                <div class="float-tag ft-sms">
                     <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V4h-4z"/></svg></div>
                     <span>Video</span>
                 </div>
-                <div class="float-tag ft-user" data-animate="true">
+                <div class="float-tag ft-user">
                     <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.97 4.43c-.16.09-.33.14-.5.14s-.34-.05-.5-.14l-7.97-4.43c-.32-.17-.53-.5-.53-.88V7.5c0-.38.21-.71.53-.88l7.97-4.43c.16-.09.33-.14.5-.14s.34.05.5.14l7.97 4.43c.32.17.53.5.53.88v9zM12 4.15L6.04 7.5 12 10.85l5.96-3.35L12 4.15z"/></svg></div>
                     <span>Diseño Gráfico</span>
                 </div>
-                <div class="float-tag ft-txt" data-animate="true">
+                <div class="float-tag ft-txt">
                     <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
                     <span>Pasión</span>
                 </div>
@@ -745,6 +527,9 @@
     </div>
 
     <div id="paquetes-overlay">
+        <img src="STICKER/sticker1.png" class="overlay-fixed-logo" id="paquetes-logo-btn" alt="Creatik">
+        <button class="overlay-fixed-close" id="close-paquetes-mobile-btn">✖ Cerrar</button>
+
         <section class="sticker-wall-section">
             <div class="sticker-center-text">
                 <h2 class="sticker-line1"><img loading="lazy" src="Copia de creatik letter.png" alt="Creatik" class="sticker-logo-img"><span>— Paquetes</span></h2>
@@ -785,23 +570,10 @@
     </div>
 
     <div id="contact-overlay">
-        <div class="contact-bg-layer cbg-1" data-animate="true"></div>
-        <div class="contact-bg-layer cbg-2" data-animate="true"></div>
-        <div class="contact-bg-layer cbg-3" data-animate="true"></div>
-        <div class="contact-bg-layer cbg-4" data-animate="true"></div>
-        <div class="contact-bg-layer cbg-5" data-animate="true"></div>
-        <div class="contact-bg-layer cbg-6" data-animate="true"></div>
-        <div class="contact-bg-layer cbg-7" data-animate="true"></div>
-        <div class="contact-bg-layer cbg-8" data-animate="true"></div>
         <div class="contact-backdrop"></div>
 
-        <button class="contact-close-btn" id="close-contact-btn">✖ Cerrar</button>
+        <button class="overlay-fixed-close" id="close-contact-btn">✖ Cerrar</button>
         
-        <img src="img10.jpg" class="contact-float-item f-img1" alt="Float" data-animate="true">
-        <img src="img5.jpg" class="contact-float-item f-img2" alt="Float" data-animate="true">
-        <img src="STICKER/sticker1.png" class="contact-float-item f-stk1" alt="Sticker" data-animate="true">
-        <img src="STICKER/sticker3.png" class="contact-float-item f-stk2" alt="Sticker" data-animate="true">
-
         <div class="contact-content-wrapper">
             <div class="contact-pill-container" data-animate="true">
                 <span class="contact-pill-text" style="animation-delay: 0s;">HABLEMOS</span>
@@ -861,23 +633,9 @@
     </main>
 
     <div class="marquee-wrapper" id="marquee-transition">
-        <div class="marquee-content"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"></div>
+        <div class="marquee-content"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"></div>
         <div class="marquee-content"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"></div>
     </div>
-
-    <section class="academy-section" id="academy">
-        <div class="academy-content">
-            <div class="academy-badge">✨ PROYECTO SOCIAL</div>
-            <h2>Creatik <span>Academy</span></h2>
-            <p style="margin-bottom: 15px; font-weight: 700; color: #a855f7; letter-spacing: 1px;">MÁS ALLÁ DE LA PANTALLA</p>
-            <p>En Creatik, nuestra visión no termina en el lente. Llevamos más de dos años y medio impulsando nuestro proyecto social <strong>Creatik Academy</strong>.</p>
-            <p style="margin-top: 10px;">Es un espacio de formación y convivencia donde unimos a apasionados del arte visual. A través de nuestras salidas de campo, transformamos la fotografía en una herramienta de integración. Formamos talento, unimos territorios y demostramos que el arte puede cambiar realidades.</p>
-        </div>
-        
-        <div class="academy-square-slideshow">
-            <img id="academy-auto-slider" loading="lazy" src="Creatik Academy/academy1.jpg" alt="Proyectos Creatik Academy">
-        </div>
-    </section>
 
     <div class="dashboard-container" id="scroll-panel">
         <div class="dash-left"><h2>Nuestros<br>Trabajos<span style="color: #a855f7;">.</span></h2><div class="glass-box"><div class="viewer-box"><img id="main-viewer" src="" alt=""></div></div></div>
@@ -907,81 +665,108 @@
     </div>
 
     <script>
-        // --- BLOQUEO ANTICOPIA (NO CLIC DERECHO, NO SELECCIONAR) ---
+        // --- BLOQUEO ANTICOPIA ---
         document.addEventListener('contextmenu', event => event.preventDefault());
         document.addEventListener('dragstart', event => event.preventDefault());
 
-        // Log de protección de autoría
         console.log("%c==========================================", "color: #0ea5e9; font-weight: bold; font-size: 14px;");
         console.log("%cCREADO POR ROGER MÉNDEZ", "color: #0ea5e9; font-weight: bold; font-size: 16px;");
         console.log("%cTodos los derechos reservados. Uso no autorizado prohibido.", "color: white; font-size: 12px;");
         console.log("%c==========================================", "color: #0ea5e9; font-weight: bold; font-size: 14px;");
 
-        // --- OPTIMIZACIÓN DE RECURSOS (INTERSECTION OBSERVER) ---
-        // Se le quitó al marquee para que nunca se detenga.
-        document.addEventListener("DOMContentLoaded", function() {
-            const animatedElements = document.querySelectorAll('[data-animate="true"], .bg-slide');
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.remove('paused-animation');
-                    } else {
-                        entry.target.classList.add('paused-animation');
-                    }
-                });
-            }, { rootMargin: '50px 0px', threshold: 0.01 });
+        // --- SISTEMA DISOLUCIÓN CRUZADA (CROSSFADE) ACADEMY CORREGIDO ---
+        const academyImagesList = [
+            'academy1.jpg', 'academy2.jpg', 'academy3.jpg', 'academy4.jpg', 
+            'academy5.jpg', 'academy6.jpg', 'academy7.jpg', 'academy8.jpg', 
+            'academy9.jpg', 'academy10.jpg', 'academy11.jpg', 'academy12.jpg', 
+            'academy13.jpg', 'academy14.jpg', '_DSC7744.jpg'
+        ];
+        let currentPairIndex = 0;
+        let activeLayer = 'A'; // 'A' o 'B'
 
-            animatedElements.forEach(el => observer.observe(el));
-        });
-
-        // --- ROTACIÓN DE IMÁGENES ACADEMY ---
-        let currentAcademyId = 1;
-        const totalAcademyImages = 15;
-        const academySlider = document.getElementById('academy-auto-slider');
-
-        if (academySlider) {
-            setInterval(() => {
-                currentAcademyId++;
-                if (currentAcademyId > totalAcademyImages) {
-                    currentAcademyId = 1;
-                }
-                // Hacemos que se desvanezca
-                academySlider.style.opacity = 0;
-                
-                // Esperamos un momento y cambiamos la foto
-                setTimeout(() => {
-                    academySlider.src = `Creatik Academy/academy${currentAcademyId}.jpg`;
-                    academySlider.style.opacity = 1;
-                }, 500); // 500ms coincide con la transición CSS
-            }, 3500); // Cambia cada 3.5 segundos
+        function shuffleArray(arr) {
+            let array = arr.slice();
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
         }
 
-        // --- RESTO DE VARIABLES Y LÓGICA EXISTENTE ---
+        let shuffledAcademy = shuffleArray(academyImagesList);
+
+        function changeAcademyImages() {
+            if (!document.getElementById('academy-A')) return;
+
+            // Reiniciar y barajar si llegamos al final
+            if (currentPairIndex >= shuffledAcademy.length) {
+                let lastImage = shuffledAcademy[shuffledAcademy.length - 1];
+                let newShuffle;
+                // Evitar que la primera imagen del nuevo mazo sea la misma que la última del anterior
+                do {
+                    newShuffle = shuffleArray(academyImagesList);
+                } while (newShuffle[0] === lastImage);
+                shuffledAcademy = newShuffle;
+                currentPairIndex = 0;
+            }
+
+            let nextImage = shuffledAcademy[currentPairIndex];
+            currentPairIndex++;
+
+            // Lógica de Crossfade: Identificar capa visible y capa oculta
+            const layerOut = document.getElementById(`academy-${activeLayer}`);
+            activeLayer = activeLayer === 'A' ? 'B' : 'A';
+            const layerIn = document.getElementById(`academy-${activeLayer}`);
+
+            // Cargar nueva imagen en la capa oculta
+            // Se usa un evento 'load' para asegurar que la imagen esté lista antes de mostrarla
+            const tempImg = new Image();
+            tempImg.onload = function() {
+                layerIn.src = this.src;
+                // Una vez cargada, hacer el cruce de opacidad
+                layerIn.classList.add('active');
+                layerOut.classList.remove('active');
+            };
+            // Si la imagen falla, se intenta con la siguiente en el próximo ciclo
+            tempImg.onerror = function() {
+                 console.error("Error cargando imagen: " + this.src);
+                 // Opcional: Forzar el siguiente cambio más rápido si falla
+            };
+            tempImg.src = `Creatik Academy/${nextImage}`;
+        }
+        // Iniciar el pase de diapositivas
+        setInterval(changeAcademyImages, 4000); 
+
+        // --- VARIABLES GLOBALES DEL NAVEGADOR ---
         const loader = document.getElementById('intro-loader');
         const introText = document.getElementById('intro-text');
         const glow = document.querySelector('.cursor-glow');
         const panel = document.getElementById('scroll-panel');
         const bgPresentation = document.getElementById('bg-presentation');
-        const mainHeader = document.getElementById('main-header');
         const marquee = document.getElementById('marquee-transition');
+        const mainHeader = document.getElementById('main-header');
+        
+        let isMenuOpen = false, isPaquetesOpen = false, isAcademyOpen = false;
+        
         const menuBtn = document.getElementById('toggle-menu-btn');
         const menuOverlay = document.getElementById('full-menu-overlay');
-        let isMenuOpen = false;
+        
         const paquetesBtn = document.getElementById('toggle-paquetes-btn');
         const paquetesOverlay = document.getElementById('paquetes-overlay');
-        let isPaquetesOpen = false;
-        let slideshowInterval;
-        const slides = document.querySelectorAll('.phone-slideshow .slide');
-        let currentSlideIdx = 0;
-
-        const headerLogo = document.getElementById('header-logo');
-        const originalLogoSrc = 'LOGO MULTIMEDIA ISOTIPO MORA CREATIK.png';
-        const paquetesLogoSrc = 'STICKER/sticker1.png';
-
+        const closePaquetesMobileBtn = document.getElementById('close-paquetes-mobile-btn');
+        const paquetesLogoBtn = document.getElementById('paquetes-logo-btn');
+        
         const btnContactOpen = document.getElementById('btn-contact-open');
         const contactOverlay = document.getElementById('contact-overlay');
         const btnContactClose = document.getElementById('close-contact-btn');
+
+        const btnAcademyOpen = document.getElementById('open-academy-btn');
+        const academyOverlay = document.getElementById('academy-overlay');
+        const btnAcademyClose = document.getElementById('close-academy-btn');
+
+        let slideshowInterval;
+        const slides = document.querySelectorAll('.phone-slideshow .slide');
+        let currentSlideIdx = 0;
 
         function nextSlide() {
             slides[currentSlideIdx].classList.remove('active');
@@ -989,130 +774,121 @@
             slides[currentSlideIdx].classList.add('active');
         }
 
-        menuBtn.addEventListener('click', () => {
-            if (isPaquetesOpen) {
-                isPaquetesOpen = false;
-                paquetesOverlay.classList.remove('active');
-                paquetesBtn.innerHTML = 'PAQUETES';
-                paquetesBtn.classList.remove('active-btn');
-                mainHeader.classList.remove('paquetes-mode');
-                headerLogo.src = originalLogoSrc; 
+        // --- SISTEMA AVANZADO PARA PREVENIR LAG (Detiene los fondos) ---
+        function updateHeaderVisibility() {
+            if (isPaquetesOpen || isAcademyOpen || contactOverlay.classList.contains('active') || isMenuOpen) {
+                // Detenemos el fondo que consume gráfica
+                bgPresentation.classList.add('paused-animation');
+                marquee.classList.add('paused-animation');
+
+                if (!isMenuOpen) {
+                    mainHeader.style.opacity = '0';
+                    mainHeader.style.visibility = 'hidden';
+                    mainHeader.style.pointerEvents = 'none';
+                }
+            } else {
+                // Reactivamos todo al volver al inicio
+                bgPresentation.classList.remove('paused-animation');
+                marquee.classList.remove('paused-animation');
+
+                mainHeader.style.visibility = 'visible';
+                mainHeader.style.pointerEvents = 'auto';
+                mainHeader.style.opacity = Math.max(0, 1 - window.scrollY / 300);
             }
+        }
+
+        function triggerIntro() {
+            loader.classList.remove('hidden'); introText.classList.remove('animate-letters');
+            void introText.offsetWidth; introText.classList.add('animate-letters');
+            setTimeout(() => loader.classList.add('hidden'), window.innerWidth <= 900 ? 5000 : 2500);
+        }
+
+        // --- LÓGICA DE BOTONES ---
+        menuBtn.addEventListener('click', () => {
             isMenuOpen = !isMenuOpen;
-            
             mainHeader.classList.toggle('menu-mode', isMenuOpen);
 
             if (isMenuOpen) {
-                menuOverlay.classList.add('active');
-                menuBtn.classList.add('active-btn');
-                document.body.style.overflow = 'hidden';
-                menuBtn.innerHTML = '<span class="dot"></span> Cerrar';
-                mainHeader.style.opacity = 1; 
+                menuOverlay.classList.add('active'); menuBtn.classList.add('active-btn'); document.body.style.overflow = 'hidden';
+                menuBtn.innerHTML = '<span class="dot"></span> Cerrar'; mainHeader.style.opacity = 1; 
                 if (!slideshowInterval && slides.length > 0) slideshowInterval = setInterval(nextSlide, 3000);
             } else {
-                menuOverlay.classList.remove('active');
-                menuBtn.classList.remove('active-btn');
-                document.body.style.overflow = 'auto';
+                menuOverlay.classList.remove('active'); menuBtn.classList.remove('active-btn'); document.body.style.overflow = 'auto';
                 menuBtn.innerHTML = '<span class="dot"></span> Menú';
-                const scrollVal = window.scrollY;
-                const fadeFactor = Math.max(0, 1 - scrollVal / 300);
-                mainHeader.style.opacity = fadeFactor;
                 if (slideshowInterval) { clearInterval(slideshowInterval); slideshowInterval = null; }
             }
+            updateHeaderVisibility();
         });
 
         paquetesBtn.addEventListener('click', () => {
-            if (isMenuOpen) {
-                isMenuOpen = false;
-                menuOverlay.classList.remove('active');
-                menuBtn.classList.remove('active-btn');
-                mainHeader.classList.remove('menu-mode');
-                menuBtn.innerHTML = '<span class="dot"></span> Menú';
-                if (slideshowInterval) { clearInterval(slideshowInterval); slideshowInterval = null; }
-            }
-            isPaquetesOpen = !isPaquetesOpen;
-            if (isPaquetesOpen) {
-                paquetesOverlay.scrollTop = 0;
-                paquetesOverlay.classList.add('active');
-                paquetesBtn.classList.add('active-btn');
-                paquetesBtn.innerHTML = 'CERRAR';
-                document.body.style.overflow = 'hidden';
-                mainHeader.style.opacity = 1;
-                mainHeader.classList.add('paquetes-mode');
-                headerLogo.src = paquetesLogoSrc; 
-            } else {
-                paquetesOverlay.classList.remove('active');
-                paquetesBtn.classList.remove('active-btn');
-                paquetesBtn.innerHTML = 'PAQUETES';
-                document.body.style.overflow = 'auto';
-                mainHeader.classList.remove('paquetes-mode');
-                headerLogo.src = originalLogoSrc; 
-                const scrollVal = window.scrollY;
-                const fadeFactor = Math.max(0, 1 - scrollVal / 300);
-                mainHeader.style.opacity = fadeFactor;
-            }
+            isPaquetesOpen = true;
+            paquetesOverlay.scrollTop = 0; paquetesOverlay.classList.add('active'); document.body.style.overflow = 'hidden';
+            updateHeaderVisibility();
+        });
+
+        closePaquetesMobileBtn.addEventListener('click', () => {
+            isPaquetesOpen = false;
+            paquetesOverlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            updateHeaderVisibility();
+        });
+
+        // NUEVO: Funcionalidad del logo en Paquetes
+        paquetesLogoBtn.addEventListener('click', () => {
+            isPaquetesOpen = false;
+            paquetesOverlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            updateHeaderVisibility();
+            triggerIntro(); // Lanza animación de carga para dar sensación de ir a 'Home'
         });
 
         btnContactOpen.addEventListener('click', () => {
-            contactOverlay.scrollTop = 0;
-            contactOverlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            mainHeader.style.opacity = 0; 
-            mainHeader.style.pointerEvents = 'none';
+            contactOverlay.scrollTop = 0; contactOverlay.classList.add('active'); document.body.style.overflow = 'hidden';
+            updateHeaderVisibility();
         });
 
         btnContactClose.addEventListener('click', () => {
-            contactOverlay.classList.remove('active');
-            document.body.style.overflow = 'auto';
-            const scrollVal = window.scrollY;
-            const fadeFactor = Math.max(0, 1 - scrollVal / 300);
-            mainHeader.style.opacity = fadeFactor; 
-            mainHeader.style.pointerEvents = 'auto';
+            contactOverlay.classList.remove('active'); document.body.style.overflow = 'auto';
+            updateHeaderVisibility();
         });
 
+        btnAcademyOpen.addEventListener('click', () => {
+            isAcademyOpen = true;
+            academyOverlay.scrollTop = 0;
+            academyOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            updateHeaderVisibility();
+        });
+
+        btnAcademyClose.addEventListener('click', () => {
+            isAcademyOpen = false;
+            academyOverlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            updateHeaderVisibility();
+        });
+
+        // --- DASHBOARD IMÁGENES ---
         const viewer = document.getElementById('main-viewer');
         const thumbBoxes = document.querySelectorAll('#thumbnail-grid .icon-box');
-        const dashImages = [
-            'img1.jpg', 'img2_2.jpg', 'img3.jpg', 
-            'img4.jpg', 'img5.jpg', 'img6.jpg', 
-            'img7_7.jpg', 'img8.jpg', 'img9.jpg'
-        ];
+        const dashImages = ['img1.jpg', 'img2_2.jpg', 'img3.jpg', 'img4.jpg', 'img5.jpg', 'img6.jpg', 'img7_7.jpg', 'img8.jpg', 'img9.jpg'];
         let dashIdx = 0;
-        let imageInterval;
 
         function autoShowImage() {
             if (!viewer || thumbBoxes.length === 0) return;
-            
-            // Pausar si no está en pantalla para ahorrar memoria visual
             const panelRect = panel.getBoundingClientRect();
             if (panelRect.bottom < 0 || panelRect.top > window.innerHeight) return;
 
             if (window.innerWidth <= 900) {
-                thumbBoxes.forEach(box => {
-                    box.style.borderColor = 'rgba(255,255,255,0.08)';
-                    box.style.background = 'rgba(255,255,255,0.04)';
-                    box.style.transform = 'scale(1) translate3d(0,0,0)';
-                });
+                thumbBoxes.forEach(box => { box.style.borderColor = 'rgba(255,255,255,0.08)'; box.style.background = 'rgba(255,255,255,0.04)'; box.style.transform = 'scale(1) translate3d(0,0,0)'; });
                 return; 
             }
-
             viewer.style.opacity = 0; 
             setTimeout(() => {
                 const newSrc = dashImages[dashIdx];
-                viewer.src = newSrc;
-                viewer.style.objectPosition = (newSrc.includes('img2') || newSrc.includes('img7')) ? 'center top' : 'center center';
-                viewer.style.opacity = 1;
-                
+                viewer.src = newSrc; viewer.style.objectPosition = (newSrc.includes('img2') || newSrc.includes('img7')) ? 'center top' : 'center center'; viewer.style.opacity = 1;
                 thumbBoxes.forEach((box, i) => {
-                    if (i === dashIdx) {
-                        box.style.borderColor = '#a855f7';
-                        box.style.background = 'rgba(168, 85, 247, 0.25)';
-                        box.style.transform = 'scale(1.05) translate3d(0,0,0)';
-                    } else {
-                        box.style.borderColor = 'rgba(255,255,255,0.08)';
-                        box.style.background = 'rgba(255,255,255,0.04)';
-                        box.style.transform = 'scale(1) translate3d(0,0,0)';
-                    }
+                    if (i === dashIdx) { box.style.borderColor = '#a855f7'; box.style.background = 'rgba(168, 85, 247, 0.25)'; box.style.transform = 'scale(1.05) translate3d(0,0,0)'; } 
+                    else { box.style.borderColor = 'rgba(255,255,255,0.08)'; box.style.background = 'rgba(255,255,255,0.04)'; box.style.transform = 'scale(1) translate3d(0,0,0)'; }
                 });
                 dashIdx = (dashIdx + 1) % dashImages.length;
             }, 300); 
@@ -1121,26 +897,12 @@
         let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
         let ballX = window.innerWidth / 2, ballY = window.innerHeight / 2;
         
-        document.addEventListener('mousemove', (e) => { 
-            mouseX = e.clientX; mouseY = e.clientY; 
-        }, { passive: true });
-        
+        document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; }, { passive: true });
         function animateGlow() {
-            if (window.innerWidth > 900) {
-                ballX += (mouseX - ballX) * 0.1;
-                ballY += (mouseY - ballY) * 0.1;
-                glow.style.transform = `translate3d(${ballX}px, ${ballY}px, 0) translate3d(-50%, -50%, 0)`;
-            }
+            if (window.innerWidth > 900) { ballX += (mouseX - ballX) * 0.1; ballY += (mouseY - ballY) * 0.1; glow.style.transform = `translate3d(${ballX}px, ${ballY}px, 0) translate3d(-50%, -50%, 0)`; }
             requestAnimationFrame(animateGlow);
         }
         animateGlow();
-
-        function triggerIntro() {
-            loader.classList.remove('hidden'); introText.classList.remove('animate-letters');
-            void introText.offsetWidth; introText.classList.add('animate-letters');
-            const loadTime = window.innerWidth <= 900 ? 5000 : 2500;
-            setTimeout(() => loader.classList.add('hidden'), loadTime);
-        }
 
         function initDynamicBox() {
             const words = document.querySelectorAll('#dynamic-box .world-text');
@@ -1151,54 +913,33 @@
             let currentIndex = 0;
             
             function updateText() {
-                // Solo animar si está visible
                 const boxRect = box.getBoundingClientRect();
                 if (boxRect.bottom < 0 || boxRect.top > window.innerHeight) return;
-
-                words[currentIndex].classList.remove('active');
-                currentIndex = (currentIndex + 1) % words.length;
-                const nextWord = words[currentIndex];
-                nextWord.classList.add('active');
-                
-                if(window.innerWidth > 900) {
-                    box.style.width = `${nextWord.scrollWidth + 80}px`;
-                }
-
-                if (nextWord.textContent.trim().toLowerCase() === 'inolvidable') {
-                    titleHistoria.classList.remove('active'); titleHagamos.classList.add('active');
-                } else {
-                    titleHagamos.classList.remove('active'); titleHistoria.classList.add('active');
-                }
+                words[currentIndex].classList.remove('active'); currentIndex = (currentIndex + 1) % words.length; const nextWord = words[currentIndex]; nextWord.classList.add('active');
+                if(window.innerWidth > 900) { box.style.width = `${nextWord.scrollWidth + 80}px`; }
+                if (nextWord.textContent.trim().toLowerCase() === 'inolvidable') { titleHistoria.classList.remove('active'); titleHagamos.classList.add('active'); } 
+                else { titleHagamos.classList.remove('active'); titleHistoria.classList.add('active'); }
             }
             document.fonts.ready.then(() => {
-                words[0].classList.add('active');
-                titleHistoria.classList.add('active'); 
-                if(window.innerWidth > 900) {
-                    box.style.width = `${words[0].scrollWidth + 80}px`;
-                }
+                words[0].classList.add('active'); titleHistoria.classList.add('active'); 
+                if(window.innerWidth > 900) { box.style.width = `${words[0].scrollWidth + 80}px`; }
                 setInterval(updateText, 3000);
             });
         }
 
         let isScrolling = false;
         window.addEventListener('scroll', () => {
-            if(isMenuOpen || isPaquetesOpen || contactOverlay.classList.contains('active')) return;
+            if(isMenuOpen || isPaquetesOpen || contactOverlay.classList.contains('active') || isAcademyOpen) return;
             if (!isScrolling) {
                 window.requestAnimationFrame(() => {
                     const scrollVal = window.scrollY;
                     const fadeFactor = Math.max(0, 1 - scrollVal / 300).toFixed(2);
-                    
-                    bgPresentation.style.opacity = fadeFactor;
-                    mainHeader.style.opacity = fadeFactor;
+                    bgPresentation.style.opacity = fadeFactor; 
                     
                     if (window.innerWidth > 900) {
-                        marquee.style.opacity = fadeFactor;
-                        if (scrollVal > 100) panel.classList.add('visible'); 
-                        else panel.classList.remove('visible');
-                    } else {
-                        marquee.style.opacity = 1; 
+                        mainHeader.style.opacity = fadeFactor;
+                        if (scrollVal > 100) panel.classList.add('visible'); else panel.classList.remove('visible');
                     }
-                    
                     isScrolling = false;
                 });
                 isScrolling = true;
@@ -1206,12 +947,8 @@
         }, { passive: true });
 
         window.addEventListener('load', () => { 
-            triggerIntro(); 
-            initDynamicBox(); 
-            if (viewer) {
-                autoShowImage();
-                imageInterval = setInterval(autoShowImage, 3500); 
-            }
+            triggerIntro(); initDynamicBox(); 
+            if (viewer) { autoShowImage(); setInterval(autoShowImage, 3500); }
         });
     </script>
 </body>
