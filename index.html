@@ -14,39 +14,24 @@
         *, *::before, *::after { box-sizing: border-box; }
         
         body {
-            -webkit-user-select: none; /* Safari */
-            -ms-user-select: none; /* IE 10+ */
-            user-select: none; /* Standard */
-            margin: 0; padding: 0;
-            max-width: 100vw; 
-            overflow-x: hidden !important; 
-            position: relative;
-            scroll-behavior: smooth;
-            background-color: #020005; 
+            -webkit-user-select: none; -ms-user-select: none; user-select: none;
+            margin: 0; padding: 0; max-width: 100vw; overflow-x: hidden !important; 
+            position: relative; scroll-behavior: smooth; background-color: #020005; 
             background-image: radial-gradient(circle at 50% 110%, rgba(107, 33, 168, 0.5) 0%, rgba(30, 10, 50, 0.6) 50%, #020005 90%);
             background-attachment: fixed; color: #ffffff; font-family: 'Inter', sans-serif;
             min-height: 200vh; -webkit-font-smoothing: antialiased;
         }
 
-        /* Bloquear el arrastre de todas las imágenes */
         img { -webkit-user-drag: none; }
-
-        /* --- CLASE PARA DETENER ANIMACIONES (AHORRO DE RECURSOS) --- */
-        .paused-animation, .paused-animation * {
-            animation-play-state: paused !important;
-        }
+        .paused-animation, .paused-animation * { animation-play-state: paused !important; }
 
         /* --- INTRO LOADER --- */
         #intro-loader {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background-color: #000; display: flex; justify-content: center; align-items: center;
-            z-index: 99999; transition: opacity 0.8s ease, visibility 0.8s;
-            visibility: visible; opacity: 1;
+            z-index: 99999; transition: opacity 0.8s ease, visibility 0.8s; opacity: 1;
         }
-        .intro-logo {
-            font-family: 'Inter', sans-serif; font-size: 3.5rem; font-weight: 800;
-            color: white; letter-spacing: -2px; display: flex;
-        }
+        .intro-logo { font-family: 'Inter', sans-serif; font-size: 3.5rem; font-weight: 800; color: white; display: flex; }
         .intro-logo span { display: inline-block; opacity: 0; transform: translate3d(0, 10px, 0); }
         .animate-letters span { animation: letterEntry 0.4s forwards; }
         .intro-logo .c { animation-delay: 0.2s; } .intro-logo .r { animation-delay: 0.3s; }
@@ -56,91 +41,117 @@
         @keyframes letterEntry { to { opacity: 1; transform: translate3d(0, 0, 0); } }
         #intro-loader.hidden { opacity: 0; visibility: hidden; }
 
-        /* --- CAPA DE FONDOS DINÁMICOS --- */
-        #bg-presentation {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-            z-index: 0; pointer-events: none; overflow: hidden; will-change: opacity;
-        }
-        .bg-slide {
-            position: absolute; top: 0; left: -10%; width: 120%; height: 100%; background-size: cover; background-position: center;
-            opacity: 0; filter: blur(4px) brightness(0.4); animation: slideAnimation 16s infinite linear; will-change: transform, opacity; backface-visibility: hidden;
-        }
-        .smoke-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url('https://www.transparenttextures.com/patterns/asfalt-dark.png'); opacity: 0.2; mix-blend-mode: screen; }
-        @keyframes slideAnimation { 0% { opacity: 0; transform: translate3d(0,0,0); } 10% { opacity: 0.15; } 40% { opacity: 0.15; } 50% { opacity: 0; transform: translate3d(5%, 0, 0); } 100% { opacity: 0; } }
+        /* --- FONDOS --- */
+        #bg-presentation { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: 0; pointer-events: none; overflow: hidden; }
+        .bg-slide { position: absolute; top: 0; left: -10%; width: 120%; height: 100%; background-size: cover; background-position: center; opacity: 0; filter: blur(4px) brightness(0.4); animation: slideAnimation 16s infinite linear; }
+        @keyframes slideAnimation { 0% { opacity: 0; } 10% { opacity: 0.15; } 40% { opacity: 0.15; } 50% { opacity: 0; } 100% { opacity: 0; } }
         .slide-1 { background-image: url('FONDOS/_DSC7958.jpg'); animation-delay: 0s; }
         .slide-2 { background-image: url('FONDOS/DSC03921.jpg'); animation-delay: 8s; }
-
-        body::before {
-            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
-            opacity: 0.5; mix-blend-mode: overlay; pointer-events: none; z-index: 2;
-        }
-        
+        body::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E'); opacity: 0.5; mix-blend-mode: overlay; pointer-events: none; z-index: 2; }
         .cursor-glow { position: fixed; width: 500px; height: 500px; background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 60%); border-radius: 50%; top: 0; left: 0; pointer-events: none; z-index: 1; will-change: transform; transform: translate3d(-50%, -50%, 0); }
 
-        /* --- HEADER PRINCIPAL --- */
-        header { 
-            position: fixed; top: 0; width: 100%; z-index: 10000; display: flex; justify-content: space-between; align-items: center; 
-            padding: 20px 3vw; box-sizing: border-box; will-change: opacity; transition: opacity 0.4s ease, visibility 0.4s;
-        }
-        .logo-img { height: 45px; width: auto; cursor: pointer; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), height 0.3s ease; margin-left: -10px; }
-        .logo-img:hover { transform: scale(1.1) translate3d(0,0,0); filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.6)); }
-
-        .nav-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; align-items: center; }
+        /* --- HEADER --- */
+        header { position: fixed; top: 0; width: 100%; z-index: 10000; display: flex; justify-content: space-between; align-items: center; padding: 20px 3vw; transition: 0.4s; }
+        .logo-img { height: 45px; cursor: pointer; transition: 0.3s; margin-left: -10px; }
+        .logo-img:hover { transform: scale(1.1); filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.6)); }
+        .nav-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; }
         .nav-right { display: flex; align-items: center; gap: 20px; }
-        
-        /* Ocultar botones cuando se abre el menú u overlays */
-        header.menu-mode .academy-btn,
-        header.menu-mode .nav-right { display: none !important; }
-
-        .menu-btn, .academy-btn {
-            background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 8px 20px; border-radius: 20px; display: flex; align-items: center; gap: 8px;
-            font-size: 0.85rem; font-weight: 600; cursor: pointer; color: white; backdrop-filter: blur(10px); transition: 0.3s;
-        }
+        header.menu-mode .academy-btn, header.menu-mode .nav-right { display: none !important; }
+        .menu-btn, .academy-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 20px; border-radius: 20px; color: white; cursor: pointer; backdrop-filter: blur(10px); font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; transition: 0.3s;}
         .academy-btn { border-color: rgba(168, 85, 247, 0.3); color: #d8b4fe; }
-        .menu-btn .dot { width: 6px; height: 6px; background-color: #f97316; border-radius: 50%; box-shadow: 0 0 8px #f97316; transition: background-color 0.3s, box-shadow 0.3s; }
+        .menu-btn .dot { width: 6px; height: 6px; background-color: #f97316; border-radius: 50%; box-shadow: 0 0 8px #f97316; transition: 0.3s; }
         .menu-btn.active-btn .dot { background-color: #ef4444; box-shadow: 0 0 8px #ef4444; }
-        .menu-btn:hover, .academy-btn:hover { background-color: rgba(255, 255, 255, 0.15); border-color: #a855f7; }
-
+        .menu-btn:hover, .academy-btn:hover { background: rgba(255,255,255,0.15); border-color: #a855f7; }
         .nav-right a { color: white; text-decoration: none; font-size: 0.9rem; opacity: 0.7; transition: 0.3s; }
         .nav-right a:hover { opacity: 1; }
-        .btn-demo-outline { background: transparent; border: 1px solid rgba(255, 255, 255, 0.2); color: white; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-size: 0.9rem; font-weight: bold; transition: 0.3s; }
+        .btn-demo-outline { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-size: 0.9rem; font-weight: bold; transition: 0.3s; }
         .btn-demo-outline:hover { background: white; color: black; border-color: white; }
 
-        /* --- ICONOS Y BOTONES FIJOS EN LAS VENTANAS OVERLAY --- */
+        /* --- STICKER PAQUETES --- */
         .overlay-fixed-logo {
-            /* AJUSTE DE TAMAÑO Y POSICIÓN DEL STICKER PC */
             position: fixed; top: 15px; left: 1.5vw; height: 90px; 
-            z-index: 99999;
-            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.6)); cursor: pointer;
-            transition: transform 0.3s ease;
+            z-index: 99999; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.6)); cursor: pointer; transition: 0.3s;
         }
         .overlay-fixed-logo:hover { transform: scale(1.05) rotate(-5deg); }
-        
         .overlay-fixed-close {
             position: fixed; top: 25px; right: 3vw; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
             color: white; padding: 10px 25px; border-radius: 30px; cursor: pointer; backdrop-filter: blur(10px); z-index: 99999; font-weight: bold; font-size: 0.85rem; transition: 0.3s;
         }
         .overlay-fixed-close:hover { background: rgba(255,255,255,0.1); border-color: #db2777; color: #db2777; }
 
+        /* --- CHATBOT UI --- */
+        #chatbot-fab {
+            position: fixed; bottom: 40px; right: 4vw; width: 65px; height: 65px;
+            background: linear-gradient(135deg, #a855f7, #db2777); border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; z-index: 8000;
+            box-shadow: 0 10px 25px rgba(219, 39, 119, 0.4); cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s, visibility 0.4s;
+            animation: pulseFab 2.5s infinite;
+        }
+        #chatbot-fab:hover { transform: scale(1.1); animation: none; box-shadow: 0 15px 35px rgba(219, 39, 119, 0.6); }
+        @keyframes pulseFab { 0% { box-shadow: 0 0 0 0 rgba(219, 39, 119, 0.6); } 70% { box-shadow: 0 0 0 15px rgba(219, 39, 119, 0); } 100% { box-shadow: 0 0 0 0 rgba(219, 39, 119, 0); } }
+
+        #chatbot-window {
+            position: fixed; bottom: 120px; right: 4vw; width: 360px; max-width: 90vw; height: 550px; max-height: 75vh;
+            background: rgba(15, 10, 25, 0.95); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 25px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.9), 0 0 30px rgba(168, 85, 247, 0.2);
+            display: flex; flex-direction: column; z-index: 8001; overflow: hidden;
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            opacity: 0; visibility: hidden; transform: translateY(30px) scale(0.9);
+            transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0.4s;
+            transform-origin: bottom right; pointer-events: none;
+        }
+        #chatbot-window.active { opacity: 1; visibility: visible; transform: translateY(0) scale(1); pointer-events: auto; }
+
+        .chatbot-header { display: flex; align-items: center; padding: 18px 20px; background: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(255,255,255,0.08); gap: 15px; }
+        .chatbot-logo { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #a855f7; box-shadow: 0 0 10px rgba(168, 85, 247, 0.5); }
+        .chatbot-title { flex: 1; }
+        .chatbot-title h4 { margin: 0; font-size: 1.1rem; color: #fff; letter-spacing: 0.5px; }
+        .chatbot-title span { font-size: 0.75rem; color: #10b981; display: flex; align-items: center; gap: 5px; margin-top: 3px; font-weight: 600; }
+        .chatbot-title span::before { content: ''; width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; animation: blinkOnline 2s infinite; }
+        @keyframes blinkOnline { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        
+        #close-chatbot-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; font-size: 0.8rem; }
+        #close-chatbot-btn:hover { background: rgba(219, 39, 119, 0.5); border-color: #db2777; transform: scale(1.1); }
+
+        .chatbot-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 18px; scrollbar-width: thin; scrollbar-color: rgba(168, 85, 247, 0.3) transparent; }
+        .chatbot-messages::-webkit-scrollbar { width: 5px; }
+        .chatbot-messages::-webkit-scrollbar-thumb { background: rgba(168, 85, 247, 0.5); border-radius: 10px; }
+
+        .message { max-width: 85%; padding: 14px 18px; border-radius: 20px; font-size: 0.9rem; line-height: 1.5; word-wrap: break-word; animation: msgEntry 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0; transform: translateY(15px) scale(0.95); }
+        @keyframes msgEntry { to { opacity: 1; transform: translateY(0) scale(1); } }
+        .bot-message { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #e2e8f0; border-bottom-left-radius: 4px; align-self: flex-start; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .user-message { background: linear-gradient(135deg, #a855f7, #6b21a8); color: #fff; border-bottom-right-radius: 4px; align-self: flex-end; box-shadow: 0 5px 15px rgba(168, 85, 247, 0.3); border: 1px solid rgba(168, 85, 247, 0.5); }
+        
+        .typing-indicator { display: flex; gap: 5px; padding: 5px; }
+        .typing-dot { width: 6px; height: 6px; background: rgba(255,255,255,0.6); border-radius: 50%; animation: typing 1.4s infinite ease-in-out; }
+        .typing-dot:nth-child(1) { animation-delay: 0s; } .typing-dot:nth-child(2) { animation-delay: 0.2s; } .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); background: #a855f7; box-shadow: 0 0 5px #a855f7; } }
+
+        .chatbot-input-area { padding: 15px; background: rgba(0,0,0,0.5); border-top: 1px solid rgba(255,255,255,0.08); display: flex; gap: 12px; align-items: center; }
+        #chatbot-input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 14px 18px; border-radius: 25px; color: #fff; font-family: 'Inter', sans-serif; font-size: 0.95rem; outline: none; transition: 0.3s; }
+        #chatbot-input:focus { border-color: #a855f7; background: rgba(255,255,255,0.08); box-shadow: inset 0 0 10px rgba(168, 85, 247, 0.1); }
+        #chatbot-input:disabled { opacity: 0.5; cursor: not-allowed; }
+        #chatbot-send-btn { background: linear-gradient(135deg, #a855f7, #db2777); border: none; width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(168, 85, 247, 0.4); flex-shrink: 0; }
+        #chatbot-send-btn:hover { transform: scale(1.1) rotate(-10deg); box-shadow: 0 8px 20px rgba(219, 39, 119, 0.6); }
+        #chatbot-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .hide-chatbot-ui { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; transform: scale(0.5) !important; }
 
         /* --- HERO SECTION --- */
         .hero-section { min-height: 85vh; display: flex; justify-content: space-between; align-items: center; padding: 80px 5vw 40px 5vw; z-index: 3; position: relative; width: 100%; box-sizing: border-box; }
         .side-text { width: 250px; font-size: 0.85rem; line-height: 1.6; color: rgba(255, 255, 255, 0.6); }
         .center-hero { display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1; max-width: 100%; }
-        
         .dynamic-title-container { position: relative; height: 140px; width: 100%; display: flex; justify-content: center; }
         .title-group { position: absolute; top: 0; display: flex; flex-direction: column; align-items: center; width: 100%; opacity: 0; transform: translate3d(0, -15px, 0); filter: blur(8px); transition: opacity 0.8s ease, transform 0.8s ease, filter 0.8s ease; pointer-events: none; will-change: transform, opacity; }
         .title-group h1 { font-size: 4.5rem; margin: 0; font-weight: 700; letter-spacing: -2px; white-space: nowrap; }
         .title-group h2 { font-size: 1.5rem; margin: 0 0 20px 0; font-weight: 400; }
         .title-group.active { opacity: 1; filter: blur(0px); transform: translate3d(0, 0, 0); }
-
         .text-box-container { position: relative; height: 110px; margin-bottom: 40px; display: flex; justify-content: center; align-items: center; z-index: 10; cursor: pointer; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s ease; border-radius: 12px; width: 200px; will-change: width, transform; }
         .text-box-container:hover { transform: scale(1.05) translate3d(0,0,0); }
         .glow-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 15, 0.5); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; backdrop-filter: blur(12px); z-index: -1; }
         .world-text { font-family: 'Pacifico', cursive; font-size: 3.5rem; color: #ffffff; text-shadow: 0px 4px 15px rgba(255, 255, 255, 0.3); position: absolute; opacity: 0; filter: blur(8px); transform: scale(0.85) translate3d(0, -15px, 0); transition: opacity 0.8s ease, transform 0.8s ease, filter 0.8s ease; white-space: nowrap; pointer-events: none; will-change: transform, opacity; }
         .world-text.active { opacity: 1; filter: blur(0px); transform: scale(1) translate3d(0, 0, 0); }
-
         .btn-demo-glow { background: linear-gradient(90deg, #6b21a8, #a855f7); border: none; color: white; padding: 10px 35px; border-radius: 25px; font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 0 25px rgba(168, 85, 247, 0.5); transition: transform 0.2s ease; margin-bottom: 20px; will-change: transform; }
         .btn-demo-glow:hover { transform: scale(1.05) translate3d(0,0,0); }
         .bottom-slogan { display: none; }
@@ -149,7 +160,6 @@
         .marquee-wrapper { width: 100%; overflow: hidden; background: rgba(0, 0, 0, 0.15); padding: 30px 0; position: relative; z-index: 3; border-top: 1px solid rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.03); display: flex; flex-wrap: nowrap; pointer-events: none; transform: translateZ(0); }
         .marquee-content { display: flex; flex-shrink: 0; width: max-content; align-items: center; animation: marqueeFlow 25s linear infinite; will-change: transform; backface-visibility: hidden; }
         .marquee-img { height: 32px; width: auto; margin: 0 60px; display: block; opacity: 0.9; flex-shrink: 0; max-width: none; }
-        
         .overlay-marquee { width: 100%; overflow: hidden; padding: 50px 0; position: relative; z-index: 5; background: rgba(0, 0, 0, 0.2); border-top: 1px solid rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.03); display: flex; flex-wrap: nowrap; pointer-events: none; transform: translateZ(0); }
         @keyframes marqueeFlow { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
@@ -160,69 +170,32 @@
         }
         #full-menu-overlay { background: radial-gradient(circle at 50% 80%, #0a0f24 0%, #030409 60%); }
         #paquetes-overlay { background-color: #050505; background-image: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px); background-size: 50px 50px; }
-        
-        /* Fondo base para Academy Overlay */
-        #academy-overlay { 
-            background: #0a0a0a; /* Fondo oscuro neutro */
-            justify-content: center;
-        }
-        
+        #academy-overlay { background: #0a0a0a; justify-content: center; }
         #full-menu-overlay::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
         #full-menu-overlay.active, #paquetes-overlay.active, #academy-overlay.active { opacity: 1; visibility: visible; }
 
-        /* --- NUEVO ESTILO ACADEMY SECCIÓN (INSPIRACIÓN F1) --- */
+        /* --- ACADEMY SECCIÓN (F1 TECH) --- */
         .academy-section {
             width: 90%; max-width: 1100px; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 40px;
-            /* Panel de control principal - Estilo F1 Dark Tech */
-            background: rgba(20, 10, 30, 0.85); /* Base oscura transparente */
-            border: 1px solid rgba(255, 50, 50, 0.3); /* Borde tecnológico rojo sutil */
-            border-radius: 30px; padding: 60px; position: relative; z-index: 5;
-            box-shadow: 0 0 40px rgba(255, 50, 50, 0.1), inset 0 0 30px rgba(20, 10, 30, 0.8);
-            backdrop-filter: blur(20px); /* Efecto de vidrio fuerte */
-            overflow: hidden;
+            background: rgba(20, 10, 30, 0.85); border: 1px solid rgba(255, 50, 50, 0.3); border-radius: 30px; padding: 60px; position: relative; z-index: 5;
+            box-shadow: 0 0 40px rgba(255, 50, 50, 0.1), inset 0 0 30px rgba(20, 10, 30, 0.8); backdrop-filter: blur(20px); overflow: hidden;
         }
-
-        /* Efecto de fondo tecnológico (Grid y líneas de velocidad) */
         .academy-section::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-image:
-                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
-                linear-gradient(135deg, transparent 45%, rgba(255, 20, 60, 0.1) 50%, transparent 55%); /* Línea roja de velocidad */
-            background-size: 30px 30px, 30px 30px, 200% 200%;
-            pointer-events: none; z-index: 0; animation: techScan 12s linear infinite;
+            background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(135deg, transparent 45%, rgba(255, 20, 60, 0.1) 50%, transparent 55%);
+            background-size: 30px 30px, 30px 30px, 200% 200%; pointer-events: none; z-index: 0; animation: techScan 12s linear infinite;
         }
         @keyframes techScan { 0% { background-position: 0 0, 0 0, 0% 0%; } 100% { background-position: 0 0, 0 0, 100% 100%; } }
 
-        /* Tarjeta de texto - Panel de datos transparente */
-        .academy-card {
-            flex: 1; background: rgba(40, 40, 50, 0.6); /* Panel más claro y transparente */
-            border: 1px solid rgba(255, 255, 255, 0.1); border-left: 4px solid #ff3232; /* Acento rojo F1 */
-            border-radius: 20px; padding: 40px;
-            position: relative; z-index: 2; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
+        .academy-card { flex: 1; background: rgba(40, 40, 50, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-left: 4px solid #ff3232; border-radius: 20px; padding: 40px; position: relative; z-index: 2; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .academy-badge { display: inline-block; background: rgba(255, 50, 50, 0.15); border: 1px solid #ff3232; color: #ff9090; font-size: 0.75rem; font-weight: 800; padding: 6px 15px; border-radius: 50px; margin-bottom: 20px; letter-spacing: 1px; }
         .academy-card h2 { font-size: 2.8rem; font-weight: 900; line-height: 1; margin: 0 0 20px 0; color: #ffffff; letter-spacing: -1px; }
-        .academy-card h2 span { color: #ff3232; /* Acento rojo F1 */ font-family: 'Pacifico', cursive; font-weight: 300; font-size: 3.2rem; }
+        .academy-card h2 span { color: #ff3232; font-family: 'Pacifico', cursive; font-weight: 300; font-size: 3.2rem; }
         .academy-card p { font-size: 0.95rem; color: rgba(255, 255, 255, 0.8); line-height: 1.7; }
-        
-        /* Contenedor de visuales - Pantalla de alta tecnología */
-        .academy-visuals {
-            flex: 1; display: flex; justify-content: center; align-items: center; position: relative; z-index: 2;
-        }
-        .dual-slide-wrap { 
-            width: 100%; max-width: 500px; aspect-ratio: 4 / 3;
-            border-radius: 20px; overflow: hidden; position: relative; 
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(255, 50, 50, 0.3); /* Resplandor rojo */
-            border: 3px solid rgba(255, 50, 50, 0.6); /* Marco rojo brillante */
-            background: #000; 
-        }
-        
-        /* Efecto Disolución Cruzada */
+        .academy-visuals { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; z-index: 2; }
+        .dual-slide-wrap { width: 100%; max-width: 500px; aspect-ratio: 4 / 3; border-radius: 20px; overflow: hidden; position: relative; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(255, 50, 50, 0.3); border: 3px solid rgba(255, 50, 50, 0.6); background: #000; }
         .fade-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.8s ease-in-out; will-change: opacity; }
         .fade-img.active { opacity: 1; z-index: 2; }
-
 
         /* --- MENU OVERLAY CONTENIDO --- */
         .menu-overlay-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 900px; padding-top: 120px; padding-bottom: 100px; text-align: center; }
@@ -317,17 +290,9 @@
         .stars { color: #ffd700; }
 
         /* --- OVERLAY CONTÁCTANOS --- */
-        #contact-overlay { 
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
-            background-color: #020005; 
-            z-index: 99000; display: flex; flex-direction: column; align-items: center; overflow-y: auto; overflow-x: hidden; opacity: 0; visibility: hidden; transform: perspective(1000px) rotateX(15deg) translateY(80px) scale(0.95); transition: opacity 0.7s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0.8s; 
-        }
+        #contact-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #020005; z-index: 99000; display: flex; flex-direction: column; align-items: center; overflow-y: auto; overflow-x: hidden; opacity: 0; visibility: hidden; transform: perspective(1000px) rotateX(15deg) translateY(80px) scale(0.95); transition: opacity 0.7s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0.8s; }
         #contact-overlay.active { opacity: 1; visibility: visible; transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1); filter: blur(0px); }
-        .contact-backdrop { 
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
-            background-image: radial-gradient(circle at 50% -20%, rgba(14, 165, 233, 0.25) 0%, transparent 60%), linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 100% 100%, 40px 40px, 40px 40px; z-index: 1; pointer-events: none; 
-        }
-        
+        .contact-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-image: radial-gradient(circle at 50% -20%, rgba(14, 165, 233, 0.25) 0%, transparent 60%), linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 100% 100%, 40px 40px, 40px 40px; z-index: 1; pointer-events: none; }
         .contact-pill-container { border: 1px solid rgba(14, 165, 233, 0.4); border-radius: 50px; background: rgba(14, 165, 233, 0.1); box-shadow: 0 0 20px rgba(14, 165, 233, 0.2); margin-bottom: 30px; position: relative; display: flex; justify-content: center; align-items: center; height: 35px; overflow: hidden; animation: dynamicContactPillWidth 10s infinite cubic-bezier(0.8, 0, 0.1, 1); will-change: width; z-index: 10; }
         .contact-pill-text { font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; color: #0ea5e9; text-transform: uppercase; position: absolute; opacity: 0; visibility: hidden; animation: textCyclePillStrict 10s infinite linear; white-space: nowrap; }
         @keyframes dynamicContactPillWidth { 0%, 22% { width: 120px; } 25%, 47% { width: 140px; } 50%, 72% { width: 130px; } 75%, 97% { width: 150px; } 100% { width: 120px; } }
@@ -341,16 +306,6 @@
         .trust-item { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; font-weight: 600; color: #fff; }
         .trust-avatars { display: flex; } .trust-avatars img { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #020617; margin-left: -10px; } .trust-avatars img:first-child { margin-left: 0; }
         .trust-stars { color: #0ea5e9; font-size: 1.1rem; letter-spacing: 2px; }
-        .contact-media-showcase { margin-top: 60px; width: 100%; max-width: 800px; height: clamp(200px, 40vw, 450px); border-radius: 20px; padding: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(14, 165, 233, 0.2); box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 40px rgba(14, 165, 233, 0.15); position: relative; z-index: 10; }
-        .contact-media-showcase img { width: 100%; height: 100%; object-fit: cover; border-radius: 15px; opacity: 0.8; }
-        .contact-media-showcase::after { content: '▶'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2rem; color: white; background: rgba(14, 165, 233, 0.8); width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; border-radius: 50%; cursor: pointer; backdrop-filter: blur(5px); box-shadow: 0 0 20px rgba(14,165,233,0.5); padding-left: 5px; box-sizing: border-box; }
-        .contact-float-item { position: absolute; z-index: 2; pointer-events: none; will-change: transform; opacity: 0; transition: opacity 1s ease 0.5s; }
-        #contact-overlay.active .contact-float-item { opacity: 0.7; }
-        .f-img1 { width: 14vw; max-width: 180px; height: 220px; object-fit: cover; top: 20%; left: 8%; border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); border: 1px solid rgba(14, 165, 233, 0.3); animation: cFloat1 8s ease-in-out infinite; }
-        .f-img2 { width: 16vw; max-width: 200px; height: 140px; object-fit: cover; bottom: 15%; right: 8%; border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); border: 1px solid rgba(14, 165, 233, 0.3); animation: cFloat2 10s ease-in-out infinite; }
-        .f-stk1 { width: 10vw; max-width: 120px; top: 15%; right: 12%; filter: drop-shadow(0 0 15px rgba(14, 165, 233, 0.4)); animation: cFloat3 9s ease-in-out infinite; }
-        .f-stk2 { width: 15vw; max-width: 180px; bottom: 25%; left: 5%; filter: drop-shadow(0 0 15px rgba(14, 165, 233, 0.4)); animation: cFloat4 11s ease-in-out infinite; }
-        @keyframes cFloat1 { 0%, 100% { transform: translateY(0) rotate(-10deg); } 50% { transform: translateY(-20px) rotate(-5deg); } } @keyframes cFloat2 { 0%, 100% { transform: translateY(0) rotate(15deg); } 50% { transform: translateY(20px) rotate(10deg); } } @keyframes cFloat3 { 0%, 100% { transform: translateY(0) rotate(20deg); } 50% { transform: translateY(-15px) rotate(25deg); } } @keyframes cFloat4 { 0%, 100% { transform: translateY(0) rotate(-15deg); } 50% { transform: translateY(15px) rotate(-20deg); } }
 
         /* =========================================
            ADAPTACIÓN RESPONSIVA CELULARES
@@ -381,8 +336,12 @@
             .menu-btn, .academy-btn { padding: 6px 12px; font-size: 0.75rem; }
             
             /* Ajustes CERRAR y STICKER Fijos en Celular */
-            .overlay-fixed-logo { top: 10px; left: 10px; height: 60px; /* AJUSTADO PARA MÓVIL */ }
+            .overlay-fixed-logo { top: 10px; left: 15px; height: 75px; }
             .overlay-fixed-close { top: 15px; right: 15px; padding: 8px 15px; font-size: 0.75rem; }
+
+            /* Chatbot Celular */
+            #chatbot-fab { bottom: 20px; right: 20px; width: 55px; height: 55px; }
+            #chatbot-window { bottom: 85px; right: 5vw; width: 90vw; height: 450px; border-radius: 15px; }
 
             .hero-section { flex-direction: column; justify-content: flex-start; text-align: center; padding: 150px 5vw 30px 5vw !important; min-height: auto !important; gap: 0 !important; }
             .title-group h1 { font-size: clamp(3rem, 15vw, 4.5rem) !important; line-height: 1; } 
@@ -396,9 +355,9 @@
             .plans-container { flex-direction: column !important; padding: 100px 5vw 20px 5vw !important; gap: 30px !important; align-items: center !important; overflow: visible !important; width: 100% !important; }
             .plan-card { width: 100% !important; max-width: 350px !important; flex: none !important; transform: scale(1) translate3d(0,0,0) !important; background: rgba(15, 15, 20, 0.98) !important; margin: 0 auto !important; }
 
-            /* NUEVA Academy Overlay Celular */
+            /* Academy Overlay Celular */
             .academy-section { flex-direction: column; padding: 40px 20px !important; text-align: center; gap: 30px; }
-            .academy-card { padding: 30px 20px; }
+            .academy-card { padding: 30px 20px; border-left: none; border-top: 4px solid #ff3232; } 
             .academy-card h2 { font-size: 2.2rem; }
             .academy-card h2 span { font-size: 2.6rem; }
             .dual-slide-wrap { max-width: 100%; border-width: 5px; }
@@ -425,11 +384,6 @@
             .contact-desc { font-size: 0.85rem; margin-bottom: 30px; }
             .contact-cta-btn { font-size: 1rem; padding: 15px 30px; width: 100%; text-align: center; justify-content: center; }
             .contact-trust-bar { gap: 15px; flex-direction: column; }
-            .contact-media-showcase { margin-top: 40px; }
-            
-            #contact-overlay { filter: none !important; transition: opacity 0.5s ease, transform 0.5s ease, visibility 0.5s; }
-            #contact-overlay.active { filter: none !important; }
-            .contact-float-item { display: none !important; } 
         }
     </style>
 </head>
@@ -605,10 +559,6 @@
                     </div>
                 </div>
             </div>
-
-            <div class="contact-media-showcase">
-                <img src="FOTOS HORIZONTALES/img1H.jpg" alt="Video Showcase">
-            </div>
         </div>
     </div>
 
@@ -633,7 +583,7 @@
     </main>
 
     <div class="marquee-wrapper" id="marquee-transition">
-        <div class="marquee-content"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"></div>
+        <div class="marquee-content"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"></div>
         <div class="marquee-content"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"></div>
     </div>
 
@@ -664,6 +614,32 @@
         <div class="dash-right"><a href="https://www.facebook.com/profile.php?id=61587372815271" target="_blank" class="service-item"><span>FACEBOOK</span><div class="dot-icon" style="background: #1877f2;"><img loading="lazy" src="communication.png" alt="Facebook"></div></a><a href="https://www.instagram.com/soycreatik" target="_blank" class="service-item"><span>INSTAGRAM</span><div class="dot-icon" style="background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);"><img loading="lazy" src="instagram (1).png" alt="Instagram"></div></a><a href="https://www.tiktok.com/@soy.creatik?is_from_webapp=1&sender_device=pc" target="_blank" class="service-item"><span>TIKTOK</span><div class="dot-icon" style="background: #000000;"><img loading="lazy" src="tik-tok.png" alt="TikTok"></div></a></div>
     </div>
 
+    <div id="chatbot-fab" title="Chatea con nosotros">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="white"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM9 11H7V9h2v2zm4 0h-2V9h2v2zm4 0h-2V9h2v2z"></path></svg>
+    </div>
+
+    <div id="chatbot-window">
+        <div class="chatbot-header">
+            <img src="LOGO CHAT.png" alt="Creatik Bot" class="chatbot-logo" onerror="this.src='https://i.pravatar.cc/100?img=12'">
+            <div class="chatbot-title">
+                <h4>Creatik IA</h4>
+                <span>En línea</span>
+            </div>
+            <button id="close-chatbot-btn">✖</button>
+        </div>
+        <div class="chatbot-messages" id="chatbot-messages">
+            <div class="message bot-message">
+                ¡Hola! 👋 Soy la IA asistente de Creatik. ¿En qué puedo ayudarte a contar tu historia hoy?
+            </div>
+        </div>
+        <div class="chatbot-input-area">
+            <input type="text" id="chatbot-input" placeholder="Escribe tu mensaje..." autocomplete="off">
+            <button id="chatbot-send-btn">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
+            </button>
+        </div>
+    </div>
+
     <script>
         // --- BLOQUEO ANTICOPIA ---
         document.addEventListener('contextmenu', event => event.preventDefault());
@@ -674,15 +650,16 @@
         console.log("%cTodos los derechos reservados. Uso no autorizado prohibido.", "color: white; font-size: 12px;");
         console.log("%c==========================================", "color: #0ea5e9; font-weight: bold; font-size: 14px;");
 
-        // --- SISTEMA DISOLUCIÓN CRUZADA (CROSSFADE) ACADEMY CORREGIDO ---
+        // --- SISTEMA DISOLUCIÓN CRUZADA ACADEMY ---
+        // Se incluye academy1.jpg y todas las demas en base a la instruccion
         const academyImagesList = [
-            'academy1.jpg', 'academy2.jpg', 'academy3.jpg', 'academy4.jpg', 
+            'academy1.jpg', '_DSC7744.jpg', 'academy2.jpg', 'academy3.jpg', 'academy4.jpg', 
             'academy5.jpg', 'academy6.jpg', 'academy7.jpg', 'academy8.jpg', 
             'academy9.jpg', 'academy10.jpg', 'academy11.jpg', 'academy12.jpg', 
-            'academy13.jpg', 'academy14.jpg', '_DSC7744.jpg'
+            'academy13.jpg', 'academy14.jpg'
         ];
         let currentPairIndex = 0;
-        let activeLayer = 'A'; // 'A' o 'B'
+        let activeLayer = 'A'; 
 
         function shuffleArray(arr) {
             let array = arr.slice();
@@ -698,14 +675,10 @@
         function changeAcademyImages() {
             if (!document.getElementById('academy-A')) return;
 
-            // Reiniciar y barajar si llegamos al final
             if (currentPairIndex >= shuffledAcademy.length) {
                 let lastImage = shuffledAcademy[shuffledAcademy.length - 1];
                 let newShuffle;
-                // Evitar que la primera imagen del nuevo mazo sea la misma que la última del anterior
-                do {
-                    newShuffle = shuffleArray(academyImagesList);
-                } while (newShuffle[0] === lastImage);
+                do { newShuffle = shuffleArray(academyImagesList); } while (newShuffle[0] === lastImage);
                 shuffledAcademy = newShuffle;
                 currentPairIndex = 0;
             }
@@ -713,31 +686,204 @@
             let nextImage = shuffledAcademy[currentPairIndex];
             currentPairIndex++;
 
-            // Lógica de Crossfade: Identificar capa visible y capa oculta
             const layerOut = document.getElementById(`academy-${activeLayer}`);
             activeLayer = activeLayer === 'A' ? 'B' : 'A';
             const layerIn = document.getElementById(`academy-${activeLayer}`);
 
-            // Cargar nueva imagen en la capa oculta
-            // Se usa un evento 'load' para asegurar que la imagen esté lista antes de mostrarla
             const tempImg = new Image();
             tempImg.onload = function() {
                 layerIn.src = this.src;
-                // Una vez cargada, hacer el cruce de opacidad
                 layerIn.classList.add('active');
                 layerOut.classList.remove('active');
             };
-            // Si la imagen falla, se intenta con la siguiente en el próximo ciclo
-            tempImg.onerror = function() {
-                 console.error("Error cargando imagen: " + this.src);
-                 // Opcional: Forzar el siguiente cambio más rápido si falla
-            };
             tempImg.src = `Creatik Academy/${nextImage}`;
         }
-        // Iniciar el pase de diapositivas
         setInterval(changeAcademyImages, 4000); 
 
-        // --- VARIABLES GLOBALES DEL NAVEGADOR ---
+        // --- LÓGICA DEL CHATBOT LOCAL (SIN API) CON SISTEMA COMBINATORIO ---
+        const chatbotFab = document.getElementById('chatbot-fab');
+        const chatbotWindow = document.getElementById('chatbot-window');
+        const closeChatbotBtn = document.getElementById('close-chatbot-btn');
+        const chatbotInput = document.getElementById('chatbot-input');
+        const chatbotSendBtn = document.getElementById('chatbot-send-btn');
+        const chatbotMessages = document.getElementById('chatbot-messages');
+        
+        let isChatbotOpen = false;
+        let userMessageCount = 0;
+        const MAX_MESSAGES = 7;
+
+        // Arrays de respuestas para generar combinaciones únicas
+        const greetings = [
+            "¡Hola, hola! 📸 ", "¡Qué gusto saludarte! ✨ ", "¡Hola! Bienvenido a Creatik. ", 
+            "¡Saludos! 👋 ", "¡Hey! Qué bueno verte por aquí. ", "¡Hola! Estoy listo para ayudarte. "
+        ];
+        
+        const coreResponses = {
+            precios: [
+                "Nuestra Sesión Personal o el plan Emprendimiento Básico arrancan en $50. Si buscas destacar más, el Pro está en $125. Para eventos, te súper recomiendo nuestro paquete Intermedio por $100 (es el favorito de todos). También tenemos la opción Small ($75) y Express ($170).",
+                "¡Claro! Manejamos varias opciones. Para algo rápido: Sesión Personal o Emprendimiento Básico ($50). Si buscas más impacto: Emprendimiento Pro ($125). En eventos, nuestro paquete estrella es el Intermedio de $100. También ofrecemos el Small por $75 o el completo Express por $170.",
+                "¡Te cuento! Nuestros planes básicos (Personal y Emprendimiento) están a $50, el Emprendimiento Pro sube a $125. Si es un evento, el paquete más popular es el Intermedio por $100, pero también tenemos el Small ($75) y el Express ($170). ¡Todo con calidad profesional!"
+            ],
+            academy: [
+                "Creatik Academy es nuestro orgullo social. ✨ Llevamos más de dos años uniendo talentos mediante salidas de campo, usando la fotografía como puente de integración. ¡Es más que cámaras, es cambiar realidades!",
+                "Sobre Creatik Academy te cuento que es nuestro proyecto social. Organizamos convivencias y salidas de campo donde la pasión por el arte visual nos une para generar un impacto positivo.",
+                "¡Me encanta que preguntes por Creatik Academy! Es un espacio formativo y social donde usamos la fotografía para integrar territorios y personas. Es ir más allá de la pantalla."
+            ],
+            servicios: [
+                "En Creatik capturamos momentos reales con el alma. Hacemos Fotografía profesional, Producción de Video y Diseño Gráfico. ¡Hacemos que tu historia sea inolvidable!",
+                "Nos especializamos en contar historias a través de Fotografía, Video y Diseño Gráfico. ¡Si tienes una idea en mente, nosotros la creamos!",
+                "Ofrecemos servicios completos de Fotografía, Video y Diseño Gráfico. Desde sesiones personales hasta cobertura de grandes eventos."
+            ],
+            saludo: [
+                "¿En qué te puedo asesorar el día de hoy? Pregúntame sobre precios, paquetes o nuestros servicios.",
+                "Dime, ¿buscabas información de algún paquete fotográfico o de video en especial?",
+                "¿Tienes algún evento en mente o buscas una cotización en específico?"
+            ],
+            default: [
+                "No estoy seguro de entender todos los detalles, pero me encantaría que un humano de nuestro equipo te asesore mejor.",
+                "Para serte súper sincero, esa pregunta es mejor que la hablemos con más detalle.",
+                "¡Qué interesante! Para darte la mejor respuesta sobre eso, te sugiero hablar con uno de nuestros asesores."
+            ]
+        };
+
+        const closings = [
+            "<br><br>👉 Escríbenos al WhatsApp: +503 7577 8333 o búscanos en Instagram @soycreatik.",
+            "<br><br>📱 Para agendar fechas, dale clic a Contacto o escríbenos al +503 7577 8333.",
+            "<br><br>✨ Si tienes dudas, nuestro equipo humano te atiende en el WhatsApp +503 7577 8333.",
+            "<br><br>📸 Síguenos en Instagram @soycreatik o escríbenos al WhatsApp +503 7577 8333."
+        ];
+
+        // Función para elegir un elemento aleatorio de un array
+        function getRandom(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+
+        // Lógica de detección de intención
+        function getBotResponse(input) {
+            let lowerInput = input.toLowerCase();
+            let intent = 'default';
+            let includeGreeting = false;
+
+            // Detectar saludo
+            if (lowerInput.match(/(hola|buen|salud|que tal|q tal|buenas)/)) {
+                includeGreeting = true;
+                intent = 'saludo';
+            }
+            // Detectar precios/paquetes
+            if (lowerInput.match(/(precio|costo|cuanto|vale|paquete|plan|cobran)/)) {
+                intent = 'precios';
+            }
+            // Detectar academy
+            else if (lowerInput.match(/(academy|curso|aprender|clases|escuela)/)) {
+                intent = 'academy';
+            }
+            // Detectar servicios
+            else if (lowerInput.match(/(servicio|hacen|fotografia|video|diseño)/)) {
+                intent = 'servicios';
+            }
+
+            // Armar respuesta combinada
+            let finalResponse = "";
+            if (includeGreeting && intent !== 'saludo') {
+                finalResponse += getRandom(greetings);
+            } else if (intent === 'saludo') {
+                finalResponse += getRandom(greetings);
+            }
+            
+            finalResponse += coreResponses[intent][Math.floor(Math.random() * coreResponses[intent].length)];
+            finalResponse += getRandom(closings);
+
+            return finalResponse;
+        }
+
+        chatbotFab.addEventListener('click', () => {
+            isChatbotOpen = true;
+            chatbotWindow.classList.add('active');
+            chatbotFab.classList.add('hide-chatbot-ui');
+            setTimeout(() => chatbotInput.focus(), 300);
+        });
+
+        closeChatbotBtn.addEventListener('click', () => {
+            isChatbotOpen = false;
+            chatbotWindow.classList.remove('active');
+            chatbotFab.classList.remove('hide-chatbot-ui'); 
+        });
+
+        function appendUserMessage(text) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'message user-message';
+            msgDiv.textContent = text;
+            chatbotMessages.appendChild(msgDiv);
+            scrollToBottom();
+        }
+
+        function appendBotTyping() {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'message bot-message typing-container';
+            msgDiv.id = 'bot-typing';
+            msgDiv.innerHTML = '<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+            chatbotMessages.appendChild(msgDiv);
+            scrollToBottom();
+        }
+
+        function removeBotTyping() {
+            const typingDiv = document.getElementById('bot-typing');
+            if (typingDiv) typingDiv.remove();
+        }
+
+        function appendBotMessage(text) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'message bot-message';
+            msgDiv.innerHTML = text; // Permite inyectar los <br>
+            chatbotMessages.appendChild(msgDiv);
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }
+
+        function handleSend() {
+            const text = chatbotInput.value.trim();
+            if (!text) return;
+            
+            appendUserMessage(text);
+            chatbotInput.value = '';
+            
+            chatbotInput.disabled = true;
+            chatbotSendBtn.disabled = true;
+            userMessageCount++;
+            
+            appendBotTyping();
+            
+            if (userMessageCount >= MAX_MESSAGES) {
+                setTimeout(() => {
+                    removeBotTyping();
+                    appendBotMessage("¡Me ha encantado platicar contigo! 📸<br><br>Para seguir dándote la mejor atención y afinar los detalles personalizados, por favor escríbenos directamente a nuestro <b>WhatsApp: +503 7577 8333</b> o búscanos en Instagram como <b>@soycreatik</b>.<br><br>¡El equipo humano te espera! 🚀");
+                    chatbotInput.placeholder = "Conversación finalizada. ¡Escríbenos!";
+                }, 1500);
+                return;
+            }
+
+            // Generar respuesta local y simular tiempo de escritura
+            setTimeout(() => {
+                removeBotTyping();
+                const responseText = getBotResponse(text);
+                appendBotMessage(responseText);
+                
+                chatbotInput.disabled = false;
+                chatbotSendBtn.disabled = false;
+                chatbotInput.focus();
+            }, 1200 + Math.random() * 800); // Demora entre 1.2s y 2s
+        }
+
+        chatbotSendBtn.addEventListener('click', handleSend);
+        chatbotInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSend();
+        });
+
+
+        // --- VARIABLES GLOBALES DEL NAVEGADOR Y OVERLAYS ---
         const loader = document.getElementById('intro-loader');
         const introText = document.getElementById('intro-text');
         const glow = document.querySelector('.cursor-glow');
@@ -774,12 +920,15 @@
             slides[currentSlideIdx].classList.add('active');
         }
 
-        // --- SISTEMA AVANZADO PARA PREVENIR LAG (Detiene los fondos) ---
         function updateHeaderVisibility() {
             if (isPaquetesOpen || isAcademyOpen || contactOverlay.classList.contains('active') || isMenuOpen) {
-                // Detenemos el fondo que consume gráfica
                 bgPresentation.classList.add('paused-animation');
                 marquee.classList.add('paused-animation');
+                
+                // Ocultar Chatbot cuando se abre cualquier overlay
+                chatbotFab.classList.add('hide-chatbot-ui');
+                chatbotWindow.classList.remove('active');
+                isChatbotOpen = false;
 
                 if (!isMenuOpen) {
                     mainHeader.style.opacity = '0';
@@ -787,9 +936,11 @@
                     mainHeader.style.pointerEvents = 'none';
                 }
             } else {
-                // Reactivamos todo al volver al inicio
                 bgPresentation.classList.remove('paused-animation');
                 marquee.classList.remove('paused-animation');
+                
+                // Mostrar Chatbot solo en inicio
+                chatbotFab.classList.remove('hide-chatbot-ui');
 
                 mainHeader.style.visibility = 'visible';
                 mainHeader.style.pointerEvents = 'auto';
@@ -803,7 +954,6 @@
             setTimeout(() => loader.classList.add('hidden'), window.innerWidth <= 900 ? 5000 : 2500);
         }
 
-        // --- LÓGICA DE BOTONES ---
         menuBtn.addEventListener('click', () => {
             isMenuOpen = !isMenuOpen;
             mainHeader.classList.toggle('menu-mode', isMenuOpen);
@@ -833,13 +983,12 @@
             updateHeaderVisibility();
         });
 
-        // NUEVO: Funcionalidad del logo en Paquetes
         paquetesLogoBtn.addEventListener('click', () => {
             isPaquetesOpen = false;
             paquetesOverlay.classList.remove('active');
             document.body.style.overflow = 'auto';
             updateHeaderVisibility();
-            triggerIntro(); // Lanza animación de carga para dar sensación de ir a 'Home'
+            triggerIntro(); 
         });
 
         btnContactOpen.addEventListener('click', () => {
@@ -937,7 +1086,7 @@
                     bgPresentation.style.opacity = fadeFactor; 
                     
                     if (window.innerWidth > 900) {
-                        mainHeader.style.opacity = fadeFactor;
+                        if (!isChatbotOpen) mainHeader.style.opacity = fadeFactor;
                         if (scrollVal > 100) panel.classList.add('visible'); else panel.classList.remove('visible');
                     }
                     isScrolling = false;
