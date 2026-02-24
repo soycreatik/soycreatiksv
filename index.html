@@ -112,7 +112,6 @@
             transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0.4s;
             pointer-events: none; 
         }
-        /* Cambio importante: removí 'transform: translateY(0)' de active para que el drag funcione fluido */
         #chatbot-window.active { opacity: 1; visibility: visible; pointer-events: auto; }
         
         #chatbot-window.active:not(.dragged) {
@@ -787,8 +786,9 @@
             video_sesion: ["Si buscas destacar tu imagen, este es el paquete para ti:<br><br><div style='background:rgba(255,255,255,0.05); border:1px solid rgba(168,85,247,0.3); padding:10px; border-radius:10px;'><b>Sesión Personal ($50)</b><br><span style='font-size:0.8rem; color:#ccc;'>1 Hora • 15 fotos editadas • Fotos extras sin editar • Ideal para clips cortos/reels</span></div><br>¿Lo reservamos? 👉 <a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>Escríbenos</a>"],
             video_evento: ["¡Para eventos tenemos las mejores opciones con video incluido!<br><br><div style='background:rgba(255,255,255,0.05); border:1px solid #ffd700; padding:10px; border-radius:10px; margin-bottom:8px;'><b>⭐ Evento Intermedio ($100)</b><br><span style='font-size:0.8rem; color:#ccc;'>2 Horas • 100 fotos editadas • <b>Video de 10 min</b> • 10 fotos impresas</span></div><div style='background:rgba(255,255,255,0.05); border:1px solid rgba(168,85,247,0.3); padding:10px; border-radius:10px;'><b>Evento Express ($170)</b><br><span style='font-size:0.8rem; color:#ccc;'>2.5 Horas • 150 fotos • <b>Filmación 30 min + Video vertical</b> • 16 fotos impresas</span></div><br>¿Qué te parecen? Reserva aquí: <a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>WhatsApp</a>"],
 
-            // ASESORÍA
+            // ASESORÍA Y CONTINUIDAD
             asesoria: ["¡Con gusto! Para darte la mejor asesoría, cuéntame: ¿Cuál es tu presupuesto aproximado? 💸<div style='margin-top:10px;'><button class='chat-option-btn' onclick='sendChatOption(\"Presupuesto Bajo ($50-$75)\")'>Bajo ($50-$75)</button><button class='chat-option-btn' onclick='sendChatOption(\"Presupuesto Medio ($100-$125)\")'>Medio ($100-$125)</button><button class='chat-option-btn' onclick='sendChatOption(\"Presupuesto Pro ($170+)\")'>Pro ($170+)</button></div>"],
+            mas_opciones: ["¡Claro! Manejamos varias opciones adaptadas a lo que buscas. Si me cuentas el tipo de sesión o evento que planeas, te puedo recomendar el mejor paquete. 📸👇"],
             rango_bajo: ["Para ese rango te recomiendo la <b>Sesión Personal ($50)</b> o el <b>Evento Small ($75)</b>. ¡Son ideales para empezar! ¿Quieres agendar por WhatsApp?<br><br>👉 <a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'><b>WhatsApp: +503 7577 8333</b></a>"],
             rango_medio: ["La mejor opción es nuestro <b>Evento Intermedio ($100)</b>, ¡es el favorito! Incluye video de 10 min. ¿Te gustaría apartar tu fecha?<br><br>👉 <a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'><b>WhatsApp: +503 7577 8333</b></a>"],
             rango_alto: ["¡Vas por todo! El <b>Evento Express ($170)</b> es el más completo: incluye asistente, video para redes y 16 fotos impresas. Escríbenos para confirmar disponibilidad:<br><br>👉 <a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'><b>WhatsApp: +503 7577 8333</b></a>"],
@@ -872,6 +872,7 @@
             { name: 'viaticos', regex: "\\b(fuera de san salvador|fuera de ss|otro departamento|interior del pais|viaticos|transporte|cobran extra|costo adicional|lejos|santa ana|san miguel|chalatenango|sonsonate|usulutan|la libertad|la paz|cabanas|cuscatlan|morazan|san vicente|la union|ahuachapan|viajan)\\b" },
             
             // 7. ASESORÍA Y PAQUETES
+            { name: 'mas_opciones', regex: "\\b(otro mas|otros mas|tienen otro|tienes otro|mas paquetes|otras opciones|mas opciones|algun otro|otro paquete)\\b" },
             { name: 'asesoria', regex: "\\b(asesoria|asesorar|asesorame|ayudame a elegir|no se que elegir|recomiendame|ayuda|orientacion|que me recomiendas)\\b" },
             { name: 'rango_bajo', regex: "\\b(bajo|economico|barato|50|75|menos de 100|presupuesto bajo)\\b" },
             { name: 'rango_medio', regex: "\\b(medio|intermedio|100|125|equilibrado|presupuesto medio)\\b" },
@@ -982,6 +983,16 @@
             if (intent === 'servicios_info' && lastTopic === 'academy') {
                 return "En Creatik Academy realizamos salidas de campo, talleres y actividades prácticas para enseñar fotografía, integrar jóvenes y crear comunidad. ¡Usamos el arte para cambiar realidades! ✨";
             }
+            
+            // CONTEXTO: Si piden "otro más"
+            if (intent === 'mas_opciones') {
+                if (lastTopic === 'evento') {
+                    return "Además del Intermedio y el Express, tenemos el <b>Evento Small ($75)</b> que cubre 1 hora con 50 fotos editadas. ¡Perfecto para algo íntimo! ¿Te suena bien?";
+                } else if (lastTopic === 'empresa') {
+                    return "Para empresas tenemos el <b>Básico ($50)</b> y el <b>Pro ($125)</b> con ambientación avanzada. ¡Ambos incluyen fotos editadas y crudas!";
+                }
+                return botResponses.mas_opciones[0];
+            }
 
             if (intent === 'interjeccion') {
                 if (lastTopic === 'servicios_info') response = "¡Así es! Nos apasiona crear contenido de alta calidad. ✨ ¿Te gustaría ver nuestros paquetes de precios?";
@@ -1004,8 +1015,14 @@
             if (intent !== 'default') {
                 response = getRandom(botResponses[intent]);
             } else {
-                // CUANDO NO ENTIENDE, RESPONDE PROACTIVAMENTE CON BOTONES
-                let fallbackMsg = "¡Hola! Estoy listo para ayudarte a resolver cualquier duda. ¿De qué tema te gustaría hablar? 👇";
+                // CUANDO NO ENTIENDE Y NO ES EL PRIMER MENSAJE, NO SALUDA DE NUEVO.
+                let fallbackMsg = "";
+                if (userMessageCount <= 1) {
+                    fallbackMsg = "¡Hola! Estoy listo para ayudarte a resolver cualquier duda. ¿De qué tema te gustaría hablar? 👇";
+                } else {
+                    fallbackMsg = "¿Te ayudo con algo más específico? Elige una opción rápida: 👇";
+                }
+                
                 const btnStyle = "display:block; width:100%; margin-top:8px; padding:10px; background:rgba(168,85,247,0.15); border:1px solid rgba(168,85,247,0.5); color:white; border-radius:10px; cursor:pointer; text-align:left; font-family:inherit; transition:0.3s; font-size: 0.85rem;";
                 
                 let buttonsHTML = `
