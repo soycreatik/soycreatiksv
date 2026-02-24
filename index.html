@@ -55,7 +55,11 @@
         .logo-img { height: 45px; cursor: pointer; transition: 0.3s; margin-left: -10px; }
         .logo-img:hover { transform: scale(1.1); filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.6)); }
         .nav-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; }
-        .nav-right { display: flex; align-items: center; gap: 20px; }
+        
+        /* MAGIA CSS: Transición para ocultar los botones al abrir el chat */
+        .nav-right { display: flex; align-items: center; gap: 20px; transition: opacity 0.3s ease, visibility 0.3s ease; }
+        body.chat-active .nav-right { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+        
         header.menu-mode .academy-btn, header.menu-mode .nav-right { display: none !important; }
         .menu-btn, .academy-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 20px; border-radius: 20px; color: white; cursor: pointer; backdrop-filter: blur(10px); font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; transition: 0.3s;}
         .academy-btn { border-color: rgba(168, 85, 247, 0.3); color: #d8b4fe; }
@@ -83,7 +87,7 @@
         #chatbot-fab {
             position: fixed; bottom: 40px; right: 4vw; width: 65px; height: 65px;
             background: linear-gradient(135deg, #a855f7, #db2777); border-radius: 50%;
-            display: flex; justify-content: center; align-items: center; z-index: 8000;
+            display: flex; justify-content: center; align-items: center; z-index: 10005;
             box-shadow: 0 10px 25px rgba(219, 39, 119, 0.4); cursor: pointer;
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s, visibility 0.4s;
             animation: pulseFab 2.5s infinite;
@@ -91,27 +95,48 @@
         #chatbot-fab:hover { transform: scale(1.1); animation: none; box-shadow: 0 15px 35px rgba(219, 39, 119, 0.6); }
         @keyframes pulseFab { 0% { box-shadow: 0 0 0 0 rgba(219, 39, 119, 0.6); } 70% { box-shadow: 0 0 0 15px rgba(219, 39, 119, 0); } 100% { box-shadow: 0 0 0 0 rgba(219, 39, 119, 0); } }
 
+        .new-message-indicator {
+            position: absolute; top: 0; right: 0; width: 18px; height: 18px;
+            background-color: #ff3b30; border-radius: 50%; border: 2px solid #ffffff;
+            display: none; z-index: 8002; animation: pulseIndicator 1.5s infinite;
+        }
+        @keyframes pulseIndicator { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 59, 48, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); } }
+        #chatbot-fab.has-new-message .new-message-indicator { display: block; }
+
         #chatbot-window {
             position: fixed; bottom: 120px; right: 4vw; width: 360px; max-width: 90vw; height: 550px; max-height: 75vh;
             background: rgba(15, 10, 25, 0.95); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 25px;
             box-shadow: 0 25px 60px rgba(0,0,0,0.9), 0 0 30px rgba(168, 85, 247, 0.2);
-            display: flex; flex-direction: column; z-index: 8001; overflow: hidden;
+            display: flex; flex-direction: column; z-index: 10006; overflow: hidden;
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             opacity: 0; visibility: hidden; transform: translateY(30px) scale(0.9);
             transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0.4s;
-            transform-origin: bottom right; pointer-events: none;
+            transform-origin: bottom right; 
+            pointer-events: none; 
         }
         #chatbot-window.active { opacity: 1; visibility: visible; transform: translateY(0) scale(1); pointer-events: auto; }
 
-        .chatbot-header { display: flex; align-items: center; padding: 18px 20px; background: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(255,255,255,0.08); gap: 15px; }
+        /* Botones del Chatbot */
+        .chat-option-btn {
+            display: block; width: 100%; margin-top: 8px; padding: 10px; 
+            background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.5); 
+            color: white; border-radius: 10px; cursor: pointer; text-align: left; 
+            font-family: inherit; transition: 0.3s; font-size: 0.85rem;
+        }
+        .chat-option-btn:hover { background: rgba(168, 85, 247, 0.4); }
+
+        .chatbot-header { display: flex; align-items: center; padding: 18px 20px; background: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(255,255,255,0.08); gap: 15px; position: relative; }
         .chatbot-logo { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #a855f7; box-shadow: 0 0 10px rgba(168, 85, 247, 0.5); }
         .chatbot-title { flex: 1; }
         .chatbot-title h4 { margin: 0; font-size: 1.1rem; color: #fff; letter-spacing: 0.5px; }
         .chatbot-title span { font-size: 0.75rem; color: #10b981; display: flex; align-items: center; gap: 5px; margin-top: 3px; font-weight: 600; }
-        .chatbot-title span::before { content: ''; width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; animation: blinkOnline 2s infinite; }
-        @keyframes blinkOnline { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .chatbot-title span::before { content: ''; width: 8px; height: 8px; background: currentColor; border-radius: 50%; box-shadow: 0 0 8px currentColor; animation: blinkOnline 2s infinite; }
         
-        #close-chatbot-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; font-size: 0.8rem; }
+        #close-chatbot-btn { 
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; 
+            width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; 
+            align-items: center; cursor: pointer; transition: 0.3s; font-size: 0.9rem; margin-left: auto; z-index: 100;
+        }
         #close-chatbot-btn:hover { background: rgba(219, 39, 119, 0.5); border-color: #db2777; transform: scale(1.1); }
 
         .chatbot-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 18px; scrollbar-width: thin; scrollbar-color: rgba(168, 85, 247, 0.3) transparent; }
@@ -135,8 +160,6 @@
         #chatbot-send-btn { background: linear-gradient(135deg, #a855f7, #db2777); border: none; width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(168, 85, 247, 0.4); flex-shrink: 0; }
         #chatbot-send-btn:hover { transform: scale(1.1) rotate(-10deg); box-shadow: 0 8px 20px rgba(219, 39, 119, 0.6); }
         #chatbot-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        
-        .hide-chatbot-ui { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; transform: scale(0.5) !important; }
 
         /* --- HERO SECTION --- */
         .hero-section { min-height: 85vh; display: flex; justify-content: space-between; align-items: center; padding: 80px 5vw 40px 5vw; z-index: 3; position: relative; width: 100%; box-sizing: border-box; }
@@ -147,13 +170,22 @@
         .title-group h1 { font-size: 4.5rem; margin: 0; font-weight: 700; letter-spacing: -2px; white-space: nowrap; }
         .title-group h2 { font-size: 1.5rem; margin: 0 0 20px 0; font-weight: 400; }
         .title-group.active { opacity: 1; filter: blur(0px); transform: translate3d(0, 0, 0); }
-        .text-box-container { position: relative; height: 110px; margin-bottom: 40px; display: flex; justify-content: center; align-items: center; z-index: 10; cursor: pointer; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s ease; border-radius: 12px; width: 200px; will-change: width, transform; }
-        .text-box-container:hover { transform: scale(1.05) translate3d(0,0,0); }
+        
+        .text-box-container { 
+            position: relative; height: 100px; margin-bottom: 40px; 
+            display: flex; justify-content: center; align-items: center; 
+            z-index: 10; cursor: pointer; border-radius: 12px; 
+            margin-left: auto; margin-right: auto; 
+            transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            min-width: 150px; 
+        }
+        .text-box-container:hover { transform: scale(1.05); transition: transform 0.2s ease; }
         .glow-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 15, 0.5); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; backdrop-filter: blur(12px); z-index: -1; }
-        .world-text { font-family: 'Pacifico', cursive; font-size: 3.5rem; color: #ffffff; text-shadow: 0px 4px 15px rgba(255, 255, 255, 0.3); position: absolute; opacity: 0; filter: blur(8px); transform: scale(0.85) translate3d(0, -15px, 0); transition: opacity 0.8s ease, transform 0.8s ease, filter 0.8s ease; white-space: nowrap; pointer-events: none; will-change: transform, opacity; }
-        .world-text.active { opacity: 1; filter: blur(0px); transform: scale(1) translate3d(0, 0, 0); }
-        .btn-demo-glow { background: linear-gradient(90deg, #6b21a8, #a855f7); border: none; color: white; padding: 10px 35px; border-radius: 25px; font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 0 25px rgba(168, 85, 247, 0.5); transition: transform 0.2s ease; margin-bottom: 20px; will-change: transform; }
-        .btn-demo-glow:hover { transform: scale(1.05) translate3d(0,0,0); }
+        .world-text { font-family: 'Pacifico', cursive; font-size: 3.5rem; color: #ffffff; text-shadow: 0px 4px 15px rgba(255, 255, 255, 0.3); position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(0.85); opacity: 0; filter: blur(8px); transition: opacity 0.8s ease, transform 0.8s ease, filter 0.8s ease; white-space: nowrap; pointer-events: none; }
+        .world-text.active { opacity: 1; filter: blur(0px); transform: translate(-50%, -50%) scale(1); }
+        
+        .btn-demo-glow { background: linear-gradient(90deg, #6b21a8, #a855f7); border: none; color: white; padding: 10px 35px; border-radius: 25px; font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 0 25px rgba(168, 85, 247, 0.5); transition: transform 0.2s ease; margin-bottom: 20px; }
+        .btn-demo-glow:hover { transform: scale(1.05); }
         .bottom-slogan { display: none; }
 
         /* --- MARQUEE INFINITO --- */
@@ -164,29 +196,22 @@
         @keyframes marqueeFlow { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
         /* --- OVERLAYS CONFIGURACIÓN (MENÚ, PAQUETES Y ACADEMY) --- */
-        #full-menu-overlay, #paquetes-overlay, #academy-overlay {
+        #full-menu-overlay, #paquetes-overlay, #academy-overlay, #contact-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9000; opacity: 0; visibility: hidden; transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
             display: flex; flex-direction: column; align-items: center; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth;
         }
         #full-menu-overlay { background: radial-gradient(circle at 50% 80%, #0a0f24 0%, #030409 60%); }
         #paquetes-overlay { background-color: #050505; background-image: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px); background-size: 50px 50px; }
         #academy-overlay { background: #0a0a0a; justify-content: center; }
+        #contact-overlay { background-color: #020005; z-index: 99000; transform: perspective(1000px) rotateX(15deg) translateY(80px) scale(0.95); transition: opacity 0.7s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0.8s; }
         #full-menu-overlay::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
         #full-menu-overlay.active, #paquetes-overlay.active, #academy-overlay.active { opacity: 1; visibility: visible; }
+        #contact-overlay.active { opacity: 1; visibility: visible; transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1); filter: blur(0px); }
 
-        /* --- ACADEMY SECCIÓN (F1 TECH) --- */
-        .academy-section {
-            width: 90%; max-width: 1100px; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 40px;
-            background: rgba(20, 10, 30, 0.85); border: 1px solid rgba(255, 50, 50, 0.3); border-radius: 30px; padding: 60px; position: relative; z-index: 5;
-            box-shadow: 0 0 40px rgba(255, 50, 50, 0.1), inset 0 0 30px rgba(20, 10, 30, 0.8); backdrop-filter: blur(20px); overflow: hidden;
-        }
-        .academy-section::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(135deg, transparent 45%, rgba(255, 20, 60, 0.1) 50%, transparent 55%);
-            background-size: 30px 30px, 30px 30px, 200% 200%; pointer-events: none; z-index: 0; animation: techScan 12s linear infinite;
-        }
+        /* --- ACADEMY SECCIÓN --- */
+        .academy-section { width: 90%; max-width: 1100px; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 40px; background: rgba(20, 10, 30, 0.85); border: 1px solid rgba(255, 50, 50, 0.3); border-radius: 30px; padding: 60px; position: relative; z-index: 5; box-shadow: 0 0 40px rgba(255, 50, 50, 0.1), inset 0 0 30px rgba(20, 10, 30, 0.8); backdrop-filter: blur(20px); overflow: hidden; }
+        .academy-section::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(135deg, transparent 45%, rgba(255, 20, 60, 0.1) 50%, transparent 55%); background-size: 30px 30px, 30px 30px, 200% 200%; pointer-events: none; z-index: 0; animation: techScan 12s linear infinite; }
         @keyframes techScan { 0% { background-position: 0 0, 0 0, 0% 0%; } 100% { background-position: 0 0, 0 0, 100% 100%; } }
-
         .academy-card { flex: 1; background: rgba(40, 40, 50, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-left: 4px solid #ff3232; border-radius: 20px; padding: 40px; position: relative; z-index: 2; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .academy-badge { display: inline-block; background: rgba(255, 50, 50, 0.15); border: 1px solid #ff3232; color: #ff9090; font-size: 0.75rem; font-weight: 800; padding: 6px 15px; border-radius: 50px; margin-bottom: 20px; letter-spacing: 1px; }
         .academy-card h2 { font-size: 2.8rem; font-weight: 900; line-height: 1; margin: 0 0 20px 0; color: #ffffff; letter-spacing: -1px; }
@@ -194,12 +219,12 @@
         .academy-card p { font-size: 0.95rem; color: rgba(255, 255, 255, 0.8); line-height: 1.7; }
         .academy-visuals { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; z-index: 2; }
         .dual-slide-wrap { width: 100%; max-width: 500px; aspect-ratio: 4 / 3; border-radius: 20px; overflow: hidden; position: relative; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(255, 50, 50, 0.3); border: 3px solid rgba(255, 50, 50, 0.6); background: #000; }
-        .fade-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.8s ease-in-out; will-change: opacity; }
+        .fade-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.8s ease-in-out; }
         .fade-img.active { opacity: 1; z-index: 2; }
 
         /* --- MENU OVERLAY CONTENIDO --- */
         .menu-overlay-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 900px; padding-top: 120px; padding-bottom: 100px; text-align: center; }
-        .menu-pill-container { border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(5px); margin-bottom: 25px; position: relative; display: flex; justify-content: center; align-items: center; height: 30px; overflow: hidden; animation: dynamicPillWidth 10s infinite cubic-bezier(0.8, 0, 0.1, 1); transform: translate3d(0, 20px, 0); opacity: 0; transition: all 0.5s ease 0.1s; will-change: width; }
+        .menu-pill-container { border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(5px); margin-bottom: 25px; position: relative; display: flex; justify-content: center; align-items: center; height: 30px; overflow: hidden; animation: dynamicPillWidth 10s infinite cubic-bezier(0.8, 0, 0.1, 1); transform: translate3d(0, 20px, 0); opacity: 0; transition: all 0.5s ease 0.1s; }
         #full-menu-overlay.active .menu-pill-container { transform: translate3d(0, 0, 0); opacity: 1; }
         .menu-pill-text { font-size: 0.7rem; font-weight: 700; letter-spacing: 1px; color: rgba(255, 255, 255, 0.8); text-transform: uppercase; position: absolute; opacity: 0; visibility: hidden; animation: textCyclePillStrict 10s infinite linear; }
         @keyframes dynamicPillWidth { 0%, 22% { width: 90px; } 25%, 47% { width: 130px; } 50%, 72% { width: 100px; } 75%, 97% { width: 140px; } 100% { width: 90px; } }
@@ -224,25 +249,25 @@
         .phone-slideshow .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: center center; border-radius: 20px; opacity: 0; transition: opacity 1.5s ease-in-out; z-index: 1; filter: saturate(1.2); }
         .phone-slideshow .slide.active { opacity: 1; z-index: 2; }
         
-        .float-tag { position: absolute; background: rgba(20, 20, 25, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); padding: 8px 15px; border-radius: 12px; display: flex; align-items: center; gap: 10px; backdrop-filter: blur(8px); font-size: 0.8rem; font-weight: 700; box-shadow: 0 10px 20px rgba(0,0,0,0.5); animation: floatAnim 6s ease-in-out infinite; z-index: 4; color: white; white-space: nowrap; will-change: transform; }
+        .float-tag { position: absolute; background: rgba(20, 20, 25, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); padding: 8px 15px; border-radius: 12px; display: flex; align-items: center; gap: 10px; backdrop-filter: blur(8px); font-size: 0.8rem; font-weight: 700; box-shadow: 0 10px 20px rgba(0,0,0,0.5); animation: floatAnim 6s ease-in-out infinite; z-index: 4; color: white; white-space: nowrap; }
         @keyframes floatAnim { 0%, 100% { transform: translate3d(0, 0px, 0); } 50% { transform: translate3d(0, -15px, 0); } }
         .f-icon { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; } .f-icon svg { width: 100%; height: 100%; fill: #f97316; filter: drop-shadow(0 0 5px #f97316); }
         .bottom-glow-arc { position: fixed; bottom: -400px; left: 50%; transform: translateX(-50%); width: 150vw; height: 500px; border-radius: 50%; background: radial-gradient(ellipse at top, rgba(249, 115, 22, 0.4) 0%, transparent 60%); box-shadow: 0 -20px 100px rgba(249, 115, 22, 0.3); z-index: 1; pointer-events: none; }
         .slider-deco { position: absolute; bottom: -30px; width: 300px; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); }
 
         /* --- DASHBOARD --- */
-        .dashboard-container { display: grid; grid-template-columns: 1.2fr 1fr 1.2fr; gap: 30px; width: 90%; max-width: 1200px; margin: 60px auto 100px auto; padding: 50px; background: rgba(30, 10, 50, 0.2); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 40px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 30px 60px rgba(0,0,0,0.6); transform: translate3d(0, 100px, 0); opacity: 0; transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 1s ease; z-index: 3; position: relative; will-change: transform, opacity; backface-visibility: hidden; }
+        .dashboard-container { display: grid; grid-template-columns: 1.2fr 1fr 1.2fr; gap: 30px; width: 90%; max-width: 1200px; margin: 60px auto 100px auto; padding: 50px; background: rgba(30, 10, 50, 0.2); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 40px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 30px 60px rgba(0,0,0,0.6); transform: translate3d(0, 100px, 0); opacity: 0; transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 1s ease; z-index: 3; position: relative; }
         .dashboard-container.visible { transform: translate3d(0, 0, 0); opacity: 1; }
         .dash-left h2 { font-size: 3rem; line-height: 0.9; margin-bottom: 20px; font-weight: 800; letter-spacing: -1px;}
         .glass-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; overflow: hidden; width: 100%; box-sizing: border-box; }
         .viewer-box { width: 100%; height: 250px; border-radius: 15px; background: rgba(255,255,255,0.05); display: flex; justify-content: center; align-items: center; position: relative; overflow: hidden; }
-        #main-viewer { width: 100%; height: 100%; object-fit: cover; border-radius: 15px; opacity: 0; transition: opacity 0.4s ease-in-out; object-position: center top; will-change: opacity; transform: translateZ(0); }
+        #main-viewer { width: 100%; height: 100%; object-fit: cover; border-radius: 15px; opacity: 0; transition: opacity 0.4s ease-in-out; object-position: center top; }
         .idea-container { text-align: center; margin-bottom: 20px; }
         .idea-box { background: linear-gradient(90deg, #a855f7, #6b21a8); color: white; font-size: 0.8rem; font-weight: bold; padding: 5px 15px; border-radius: 5px; display: inline-block; margin-bottom: 5px; }
         .nosotros-text { font-size: 3rem; font-weight: 900; color: #ffffff; margin: 0; line-height: 0.9; }
         .creamos-text { font-size: 3rem; font-weight: 900; color: #ffffff; margin: 0; line-height: 0.9; background: linear-gradient(to bottom, #ffffff 50%, #e0e0e0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .icon-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
-        .icon-box { aspect-ratio: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 15px; display: flex; justify-content: center; align-items: center; overflow: hidden; transition: all 0.4s ease-in-out; will-change: transform, border-color, background-color; backface-visibility: hidden; }
+        .icon-box { aspect-ratio: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 15px; display: flex; justify-content: center; align-items: center; overflow: hidden; transition: all 0.4s ease-in-out; }
         .icon-box img { width: 100%; height: 100%; object-fit: cover; }
         .service-item { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); padding: 14px 20px; border-radius: 50px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; cursor: pointer; font-size: 0.8rem; font-weight: 700; text-decoration: none; color: #ffffff; width: 100%; box-sizing: border-box; }
         .service-item:hover { transform: translate3d(10px, 0, 0); background: rgba(255,255,255,0.06); }
@@ -290,13 +315,29 @@
         .stars { color: #ffd700; }
 
         /* --- OVERLAY CONTÁCTANOS --- */
-        #contact-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #020005; z-index: 99000; display: flex; flex-direction: column; align-items: center; overflow-y: auto; overflow-x: hidden; opacity: 0; visibility: hidden; transform: perspective(1000px) rotateX(15deg) translateY(80px) scale(0.95); transition: opacity 0.7s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0.8s; }
-        #contact-overlay.active { opacity: 1; visibility: visible; transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1); filter: blur(0px); }
         .contact-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-image: radial-gradient(circle at 50% -20%, rgba(14, 165, 233, 0.25) 0%, transparent 60%), linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 100% 100%, 40px 40px, 40px 40px; z-index: 1; pointer-events: none; }
+        
+        .contact-deco { position: absolute; z-index: 1; pointer-events: none; }
+        .contact-deco .deco-inner { width: 100%; height: 100%; animation: floatContact 6s ease-in-out infinite; }
+        .contact-deco img { width: 100%; height: 100%; object-fit: cover; }
+        .dec-left-img { top: 12%; left: 8vw; width: 200px; height: 260px; transform: rotate(-8deg); }
+        .dec-left-img img { border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.1); }
+        .dec-left-stk { bottom: 15%; left: 10vw; width: 160px; transform: rotate(12deg); }
+        .dec-left-stk .deco-inner { animation-delay: -3s; animation-duration: 7s; }
+        .dec-left-stk img { filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5)); }
+        .dec-right-stk { top: 12%; right: 10vw; width: 180px; transform: rotate(-15deg); }
+        .dec-right-stk .deco-inner { animation-delay: -2s; animation-duration: 8s; }
+        .dec-right-stk img { filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5)); }
+        .dec-right-img { bottom: 15%; right: 8vw; width: 220px; height: 180px; transform: rotate(10deg); }
+        .dec-right-img .deco-inner { animation-delay: -4s; animation-duration: 6.5s; }
+        .dec-right-img img { border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.1); }
+
+        @keyframes floatContact { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-20px) scale(1.02); } }
+
         .contact-pill-container { border: 1px solid rgba(14, 165, 233, 0.4); border-radius: 50px; background: rgba(14, 165, 233, 0.1); box-shadow: 0 0 20px rgba(14, 165, 233, 0.2); margin-bottom: 30px; position: relative; display: flex; justify-content: center; align-items: center; height: 35px; overflow: hidden; animation: dynamicContactPillWidth 10s infinite cubic-bezier(0.8, 0, 0.1, 1); will-change: width; z-index: 10; }
         .contact-pill-text { font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; color: #0ea5e9; text-transform: uppercase; position: absolute; opacity: 0; visibility: hidden; animation: textCyclePillStrict 10s infinite linear; white-space: nowrap; }
         @keyframes dynamicContactPillWidth { 0%, 22% { width: 120px; } 25%, 47% { width: 140px; } 50%, 72% { width: 130px; } 75%, 97% { width: 150px; } 100% { width: 120px; } }
-        .contact-content-wrapper { position: relative; z-index: 2; width: 100%; max-width: 900px; padding: 100px 5vw 50px 5vw; text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .contact-content-wrapper { position: relative; z-index: 2; width: 100%; max-width: 900px; padding: 100px 5vw 50px 5vw; text-align: center; display: flex; flex-direction: column; align-items: center; margin: auto; }
         .contact-title { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px; margin: 0 0 20px 0; color: white; position: relative; z-index: 10; }
         .contact-title span { color: #0ea5e9; text-shadow: 0 0 30px rgba(14, 165, 233, 0.4); }
         .contact-desc { font-size: clamp(0.9rem, 2vw, 1.1rem); color: rgba(255,255,255,0.6); max-width: 650px; line-height: 1.6; margin-bottom: 40px; position: relative; z-index: 10; }
@@ -322,7 +363,9 @@
             .dashboard-container { background: rgba(20, 5, 35, 0.98) !important; box-shadow: 0 5px 15px rgba(0,0,0,0.5) !important; transform: translate3d(0,0,0) !important; opacity: 1 !important; }
             .title-group, .world-text { filter: none !important; transition: opacity 0.8s ease, transform 0.8s ease !important; }
             .title-group.active, .world-text.active { filter: none !important; }
-            .text-box-container { width: 100% !important; max-width: 260px !important; transition: transform 0.2s ease !important; }
+            
+            .text-box-container { height: 80px !important; margin: 0 auto 30px auto !important; min-width: 120px !important; }
+            .world-text { font-size: 2.5rem !important; }
 
             .side-text-left, .side-text-right { display: none !important; } 
             .bottom-slogan { display: block !important; position: relative !important; width: 100% !important; text-align: center !important; margin-top: 30px !important; font-size: 0.85rem !important; color: rgba(255, 255, 255, 0.6) !important; letter-spacing: 1px; text-transform: uppercase; }
@@ -335,11 +378,9 @@
             .btn-demo-outline { padding: 6px 12px; font-size: 0.8rem; }
             .menu-btn, .academy-btn { padding: 6px 12px; font-size: 0.75rem; }
             
-            /* Ajustes CERRAR y STICKER Fijos en Celular */
             .overlay-fixed-logo { top: 10px; left: 15px; height: 65px; }
             .overlay-fixed-close { top: 15px; right: 15px; padding: 8px 15px; font-size: 0.75rem; }
 
-            /* Chatbot Celular */
             #chatbot-fab { bottom: 20px; right: 20px; width: 55px; height: 55px; }
             #chatbot-window { bottom: 85px; right: 5vw; width: 90vw; height: 450px; border-radius: 15px; }
 
@@ -347,15 +388,11 @@
             .title-group h1 { font-size: clamp(3rem, 15vw, 4.5rem) !important; line-height: 1; } 
             .title-group h2 { font-size: 1.4rem !important; }
             .dynamic-title-container { height: 95px !important; margin-bottom: 5px !important; } 
-            .world-text { font-size: clamp(2.5rem, 12vw, 4rem) !important; }
-            .text-box-container { height: 75px !important; margin-bottom: 30px !important; }
             .btn-demo-glow { margin-top: 10px !important; }
             
-            /* Paquetes Celular (Lista Vertical) */
             .plans-container { flex-direction: column !important; padding: 100px 5vw 20px 5vw !important; gap: 30px !important; align-items: center !important; overflow: visible !important; width: 100% !important; }
             .plan-card { width: 100% !important; max-width: 350px !important; flex: none !important; transform: scale(1) translate3d(0,0,0) !important; background: rgba(15, 15, 20, 0.98) !important; margin: 0 auto !important; }
 
-            /* Academy Overlay Celular */
             .academy-section { flex-direction: column; padding: 40px 20px !important; text-align: center; gap: 30px; }
             .academy-card { padding: 30px 20px; border-left: none; border-top: 4px solid #ff3232; } 
             .academy-card h2 { font-size: 2.2rem; }
@@ -380,7 +417,8 @@
             .testimonials-section { padding: 80px 0 !important; }
             .testi-card { width: 90% !important; max-width: 320px !important; margin: 0 auto 20px auto !important; background: rgba(20, 20, 25, 0.98) !important; }
 
-            .contact-content-wrapper { padding-top: 80px; }
+            .contact-deco { display: none !important; } 
+            .contact-content-wrapper { padding-top: 120px; }
             .contact-desc { font-size: 0.85rem; margin-bottom: 30px; }
             .contact-cta-btn { font-size: 1rem; padding: 15px 30px; width: 100%; text-align: center; justify-content: center; }
             .contact-trust-bar { gap: 15px; flex-direction: column; }
@@ -448,7 +486,7 @@
                 <h1>Contamos tu <span>historia</span> con el alma.</h1>
                 <h2>Capturamos momentos reales para hacerlos eternos.</h2>
             </div>
-            <p class="menu-desc">En Creatik, capturamos la esencia de cada momento porque sabemos que tu realidad es lo más importante. No solo entregamos una imagen, entregamos un recuerdo con alma.</p>
+            <p class="menu-desc">En Creatik, capturamos la esencia de cada momento porque sabemos que tu reality es lo más importante. No solo entregamos una imagen, entregamos un recuerdo con alma.</p>
             <div class="menu-interactive-area">
                 <div class="float-tag ft-smm">
                     <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></svg></div>
@@ -525,6 +563,11 @@
 
     <div id="contact-overlay">
         <div class="contact-backdrop"></div>
+        
+        <div class="contact-deco dec-left-img"><div class="deco-inner"><img src="img12.jpg" alt="Decoración Creatik" onerror="this.style.display='none'"></div></div>
+        <div class="contact-deco dec-left-stk"><div class="deco-inner"><img src="STICKER/sticker3.png" alt="Sticker" onerror="this.style.display='none'"></div></div>
+        <div class="contact-deco dec-right-stk"><div class="deco-inner"><img src="STICKER/sticker1.png" alt="Sticker" onerror="this.style.display='none'"></div></div>
+        <div class="contact-deco dec-right-img"><div class="deco-inner"><img src="img11.jpg" alt="Decoración Creatik" onerror="this.style.display='none'"></div></div>
 
         <button class="overlay-fixed-close" id="close-contact-btn">✖ Cerrar</button>
         
@@ -615,15 +658,16 @@
     </div>
 
     <div id="chatbot-fab" title="Chatea con nosotros">
+        <div class="new-message-indicator"></div>
         <svg viewBox="0 0 24 24" width="28" height="28" fill="white"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM9 11H7V9h2v2zm4 0h-2V9h2v2zm4 0h-2V9h2v2z"></path></svg>
     </div>
 
     <div id="chatbot-window">
         <div class="chatbot-header">
-            <img src="LOGO CHAT.png" alt="Creatik Bot" class="chatbot-logo" onerror="this.src='https://i.pravatar.cc/100?img=12'">
+            <img src="creatikperfil.jpg" alt="Creatik Bot" class="chatbot-logo" onerror="this.src='https://i.pravatar.cc/100?img=12'">
             <div class="chatbot-title">
                 <h4>Creatik IA</h4>
-                <span>En línea</span>
+                <span id="bot-status">En línea</span>
             </div>
             <button id="close-chatbot-btn">✖</button>
         </div>
@@ -699,7 +743,7 @@
         }
         setInterval(changeAcademyImages, 4000); 
 
-        // --- LÓGICA DEL CHATBOT LOCAL SÚPER AVANZADO ---
+        // --- LÓGICA DEL CHATBOT ---
         const chatbotFab = document.getElementById('chatbot-fab');
         const chatbotWindow = document.getElementById('chatbot-window');
         const closeChatbotBtn = document.getElementById('close-chatbot-btn');
@@ -709,380 +753,331 @@
         
         let isChatbotOpen = false;
         let userMessageCount = 0;
+        let unknownCount = 0;
+        let buttonsSent = false;
         let lastTopic = 'inicio'; 
-        const MAX_MESSAGES = 12; 
-
-        const greetings = [
-            "¡Hola, hola! 📸 ", "¡Qué gusto saludarte! ✨ ", "¡Hola! Bienvenido a la familia Creatik. ", 
-            "¡Saludos! 👋 ", "¡Hey! Qué bueno verte por aquí. ", "¡Hola! Estoy listo para ayudarte a crear magia. ",
-            "¡Hola, qué tal! 🌟 ", "¡Bienvenido al chat oficial de Creatik! ", "¡Hola! Es un placer atenderte hoy. ",
-            "¡Un saludo creativo para ti! 🎨 ", "¡Qué onda! Listo para contarte todo sobre Creatik. ", "¡Buenas! Qué alegría leerte."
-        ];
+        const MAX_MESSAGES = 60;
         
-        const coreResponses = {
-            precios: [
-                "Nuestra Sesión Personal o el plan Emprendimiento Básico arrancan en $50. Si buscas destacar más, el Pro está en $125. Para eventos, te súper recomiendo nuestro paquete Intermedio por $100 (es el favorito de todos). También tenemos la opción Small ($75) y Express ($170).",
-                "¡Claro! Manejamos varias opciones. Para algo rápido: Sesión Personal o Básico ($50). Si buscas más impacto: Emprendimiento Pro ($125). En eventos, nuestro paquete estrella es el Intermedio de $100. También ofrecemos el Small por $75 o el súper completo Express por $170.",
-                "¡Te cuento los detalles! Nuestros planes básicos están a $50, el Emprendimiento Pro sube a $125. Si es un evento, el paquete más popular es el Intermedio por $100 (incluye video), pero también tenemos el Small ($75) y el Express ($170). ¡Todo con calidad top!",
-                "Los precios en Creatik son transparentes: Sesiones desde $50 y eventos desde $75 hasta $170. Todo depende de cuánta magia quieras incluir.",
-                "Para presupuestos emprendedores tenemos el plan de $50, y para marcas que quieren todo el nivel, el de $125. ¿Cuál te suena mejor?",
-                "Si buscas cobertura de eventos, el de $100 es ideal porque ya incluye video. Si quieres algo más premium, el Express de $170 es el jefe.",
-                "Manejamos anticipos accesibles. Por ejemplo, en el plan de $50 solo reservas con $15. ¡Así de fácil!",
-                "Nuestras tarifas varían según el tiempo: desde 1 hora por $50 hasta 2.5 horas intensivas por $170 con asistente pro.",
-                "¡Hola! El costo depende del servicio, pero para que te hagas una idea, una sesión profesional de una hora te sale en $50.",
-                "Tenemos el paquete Evento Small a $75, perfecto si no necesitas video pero sí muchas fotos de alta calidad editadas.",
-                "¿Buscabas algo para ti o para tu negocio? El personal sale en $50 y el de emprendimiento pro en $125.",
-                "Recuerda que todos nuestros paquetes incluyen entrega digital y un detalle de cortesía de Creatik.",
-                "El paquete Intermedio de $100 es el más equilibrado: 2 horas, 100 fotos, video y entrega en USB.",
-                "Si es una boda o evento grande, el Express de $170 te da la tranquilidad de tener un asistente y video vertical para tus redes.",
-                "Nuestros precios están diseñados para que nadie se quede sin una historia inolvidable. Desde los $50 empezamos a crear.",
-                "Por solo $125, el plan Emprendimiento Pro te ofrece ambientación avanzada para que tus productos luzcan increíbles.",
-                "¿Te interesa el paquete de $100? Es el que más nos piden para fiestas y reuniones familiares.",
-                "El Evento Express de $170 es nuestra opción más completa: 150 fotos, filmación de 30 min y fotos impresas.",
-                "Para sesiones individuales, los $50 te incluyen 15 fotos editadas con equipo profesional de alta gama.",
-                "Si quieres algo sencillo pero pro, el Evento Small de $75 es la opción ganadora."
+        let inactivityTimer;
+        let waitingForInactivityResponse = false;
+        let hasNewMessage = false;
+
+        const botResponses = {
+            asesoria: [
+                "¡Con gusto! Para darte la mejor asesoría, cuéntame: ¿Cuál es tu presupuesto aproximado? 💸<div style='margin-top:10px;'><button class='chat-option-btn' onclick='sendChatOption(\"Presupuesto Bajo ($50-$75)\")'>Bajo ($50-$75)</button><button class='chat-option-btn' onclick='sendChatOption(\"Presupuesto Medio ($100-$125)\")'>Medio ($100-$125)</button><button class='chat-option-btn' onclick='sendChatOption(\"Presupuesto Pro ($170+)\")'>Pro ($170+)</button></div>"
             ],
-            precios_detalle: [
-                "¡Claro! Ampliando esa información de costos: Las sesiones de 1 hora ($50 a $125) son ideales para fotos tuyas o de marca. Los planes de eventos ($75 a $170) te aseguran cobertura total, ¡e incluso video en los más completos! ¿Cuál se adapta más a tu idea?",
-                "Profundizando en los precios: los $50 son geniales para fotos rápidas, pero si quieres tirar la casa por la ventana en tu evento, los planes de $100 y $170 son los más completos. 🎬",
-                "Para darte más contexto: El paquete más caro ($170) incluye hasta un asistente y video vertical para redes, mientras que los más accesibles ($50-$75) te garantizan excelencia fotográfica en menos tiempo.",
-                "¡Te detallo más! El de $100 es el intermedio perfecto para fiestas porque ya incluye un clip de video. El de $50 es estrictamente para sesiones de una hora (individual o producto).",
-                "Nuestros costos se basan en el tiempo y el equipo. Por $50 tienes 1 hora de fotos, y por $170 tienes 2.5 horas con video incluido. ¡Todo depende de tu visión! ✨"
+            rango_bajo: ["Para ese rango te recomiendo la <b>Sesión Personal ($50)</b> o el <b>Evento Small ($75)</b>. ¡Son ideales para empezar! ¿Quieres agendar por WhatsApp?<br><br>👉 <a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'><b>WhatsApp: +503 7577 8333</b></a>"],
+            rango_medio: ["La mejor opción es nuestro <b>Evento Intermedio ($100)</b>, ¡es el favorito! Incluye video de 10 min. ¿Te gustaría apartar tu fecha?<br><br>👉 <a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'><b>WhatsApp: +503 7577 8333</b></a>"],
+            rango_alto: ["¡Vas por todo! El <b>Evento Express ($170)</b> es el más completo: incluye asistente, video para redes y 16 fotos impresas. Escríbenos para confirmar disponibilidad:<br><br>👉 <a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'><b>WhatsApp: +503 7577 8333</b></a>"],
+            robo_info: [
+                "¡Nos alegra que te guste nuestra técnica! Mantenemos nuestra 'receta secreta' de edición y flujo de trabajo en casa, pero nos encanta inspirar a otros creadores. ✨",
+                "Usamos varios programas profesionales del mercado y mucha creatividad propia. ¡Gracias por notar la calidad!"
             ],
-            academy: [
-                "Creatik Academy es nuestro orgullo social. ✨ Llevamos más de dos años uniendo talentos mediante salidas de campo, usando la fotografía como puente de integración.",
-                "Sobre Creatik Academy, te cuento que es nuestro proyecto social estrella. Organizamos convivencias y salidas de campo donde la pasión por el arte visual nos une.",
-                "¡La Academy es magia pura! Es un espacio de formación donde apasionados del arte visual convivimos y aprendemos en el terreno.",
-                "Es un proyecto social que busca transformar realidades a través del lente. Llevamos más de 2 años en esto.",
-                "En la Academy formamos talento y unimos territorios. Es nuestra forma de aportar a la cultura visual.",
-                "Si te gusta la foto, ¡la Academy te va a encantar! Hacemos salidas grupales para practicar y compartir técnicas.",
-                "Creatik Academy es más que clases, es una comunidad de amigos unidos por la fotografía.",
-                "Nuestras salidas de campo son famosas por la buena vibra y todo lo que se aprende disparando fotos reales.",
-                "Llevamos dos años y medio impulsando este proyecto porque creemos que el arte debe ser compartido.",
-                "Pregúntanos por la próxima salida de la Academy, ¡siempre hay espacio para alguien con ganas de aprender!",
-                "Es un espacio de integración social donde la cámara es nuestra mejor herramienta de comunicación.",
-                "En Creatik Academy no solo enseñamos técnica, fomentamos la convivencia y el apoyo entre artistas.",
-                "Nacimos con la idea de que la fotografía puede unir a la gente, y la Academy es la prueba de ello.",
-                "Si quieres salir de la rutina y hacer fotos con gente increíble, tienes que conocer la Academy.",
-                "Es nuestro granito de arena para que más personas descubran el poder de contar historias con imágenes.",
-                "La Academy ha crecido muchísimo, ya somos un grupo sólido de apasionados por lo visual.",
-                "No importa si tienes una cámara pro o solo tu celular, en la Academy lo que cuenta es la mirada.",
-                "Hacemos recorridos fotográficos por lugares increíbles, ¡tienes que venir a la próxima!",
-                "La Academy es el alma de Creatik fuera del ámbito comercial.",
-                "Es formación, es amistad y es arte visual en estado puro."
+            contratar: [ 
+                "¡Esa es la actitud! 🚀 Para formalizar y apartar tu fecha, el siguiente paso es hablar con nuestro coordinador humano en WhatsApp: <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b>. ¡Te esperamos ahí para empezar!",
+                "¡Excelente decisión! 🎉 Estamos listos. Escríbenos ya mismo a nuestro WhatsApp <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b> para asegurar tu espacio."
             ],
-            servicios_info: [
-                "En Creatik ofrecemos Fotografía Profesional, Video Cinematográfico y Diseño Gráfico. ¡Contamos tu historia de forma integral!",
-                "¡Para proyectos personales o marcas tenemos justo lo que necesitas! Hacemos sesiones fotográficas de alta calidad y video cinematográfico. ¿Qué tenías en mente?",
-                "Manejamos la imagen completa: Fotografía, Video y Diseño Gráfico. Tenemos mucha experiencia cubriendo eventos, sesiones para marcas y contenido para redes. ¿De qué trata tu idea?",
-                "¡Con muchísimo gusto te oriento! Ayudamos a contar historias con foto, video y diseño gráfico. Cubrimos desde sesiones personales hasta eventos grandes.",
-                "¿Buscas fotos para redes sociales? Hacemos contenido vertical optimizado para TikTok e Instagram.",
-                "Nuestro fuerte es la fotografía de eventos: bodas, XV años, bautizos y graduaciones con un estilo único.",
-                "También hacemos diseño gráfico para que la identidad de tu marca combine perfecto con tus nuevas fotos.",
-                "Hacemos entregas en galerías digitales de alta velocidad, USB personalizados y fotos impresas de alta calidad.",
-                "Si necesitas video, tenemos desde clips cortos de 10 minutos hasta filmaciones extendidas de 30 minutos o más.",
-                "Nuestras sesiones incluyen equipo profesional, edición de alta gama y asesoría en poses y locación.",
-                "¿Tienes un emprendimiento? Te ayudamos con la ambientación básica o avanzada para tus productos.",
-                "Realizamos fotografía tanto en estudio como en exteriores. ¡Tú eliges el escenario!",
-                "Contamos con asistentes profesionales para eventos grandes, asegurando que no se escape ningún detalle.",
-                "Entregamos todas las fotos de la sesión: las editadas y las extras sin editar para que no pierdas nada.",
-                "Nuestras ediciones incluyen corrección de color, piel y detalles para que luzcas espectacular.",
-                "Ofrecemos servicios de impresión fotográfica para que tus recuerdos vivan también en papel.",
-                "Si buscas algo creativo y diferente, nuestro equipo de diseño puede crear conceptos visuales desde cero.",
-                "Hacemos video vertical tipo 'reels' o 'shorts' para que tu evento sea tendencia en redes.",
-                "Trabajamos con cámaras de última tecnología para garantizar nitidez y colores vibrantes en cada disparo.",
-                "Desde una sesión de 1 hora hasta coberturas de día completo, nos adaptamos a tu necesidad."
+            regateo: [
+                "Entiendo que el presupuesto es clave. No solemos hacer recortes directos porque nuestro equipo y tiempo garantizan una calidad premium, pero ¡escríbenos a WhatsApp! A veces podemos ajustar el paquete para hacer posible tu idea.",
+                "Valoramos mucho tu interés. Aunque nuestros precios ya son fijos por la calidad que entregamos, si nos escribes a WhatsApp podemos ver si hay alguna promo vigente o ajustar un plan a tu medida. 😉"
             ],
-            por_que: [
-                "¿Por qué Creatik? Porque entendemos que tu historia es única. No solo entregamos fotos, entregamos recuerdos con alma. Usamos equipo de alta gama y nos apasiona cada detalle.",
-                "Elegir Creatik es asegurar que tus recuerdos cobren vida con calidad cinematográfica y trato humano.",
-                "Nos diferenciamos por nuestra creatividad sin límites y el uso de equipo pro de alta gama.",
-                "Porque amamos lo que hacemos y eso se nota en cada foto editada que entregamos.",
-                "Somos expertos en capturar la esencia real, sin poses forzadas, solo momentos auténticos.",
-                "Creatik es sinónimo de profesionalismo, rapidez en la entrega y resultados vibrantes.",
-                "Porque tenemos paquetes que se adaptan a ti, desde lo más sencillo hasta lo más pro.",
-                "Nuestros clientes nos recomiendan por la atención al detalle y la pasión que le ponemos.",
-                "Elegirnos es confiar en un equipo que lleva años perfeccionando el arte de contar historias.",
-                "Porque tu historia merece ser contada con el alma, y nosotros sabemos cómo hacerlo."
+            caro: [
+                "Entiendo tu punto. Nuestros precios reflejan el uso de equipo de alta gama, iluminación profesional y horas de edición detallada para que el resultado sea nivel cine. ✨ ¡Es una inversión en calidad!",
+                "¡La calidad lo vale! No solo son fotos, es una experiencia y te entregamos TODO el material extra sin costo adicional."
             ],
-            filosofia: [
-                "Para nosotros, la fotografía no es solo apretar un botón. Es congelar el tiempo y hacer que un instante sea eterno. ✨",
-                "Creemos firmemente que cada persona y marca tiene una historia única que merece ser capturada con respeto y arte.",
-                "Nuestra filosofía es simple: momentos reales, fotos inolvidables.",
-                "La fotografía es el lenguaje que usamos para hablar del amor, del éxito y de la vida misma.",
-                "Buscamos la belleza en lo espontáneo. Esa es la verdadera esencia de Creatik.",
-                "Para nosotros, una buena foto es la que te hace volver a sentir lo que viviste ese día.",
-                "El arte visual es nuestra forma de conectar con el mundo y con personas como tú.",
-                "Capturamos el presente para que en el futuro puedas viajar en el tiempo con una imagen.",
-                "Nuestra meta es que al ver tus fotos, veas tu alma reflejada en ellas.",
-                "En Creatik, trabajamos con el corazón para que tus recuerdos brillen por siempre."
+            barato: [
+                "¡Queremos que el arte visual sea accesible! Optimizamos nuestros procesos para darte la mejor calidad sin que tengas que gastar una fortuna. 😎",
+                "Nos encanta lo que hacemos y preferimos tener paquetes competitivos para que nadie se quede sin fotos increíbles."
             ],
-            ubicacion: [
-                "Actualmente no contamos con un local físico, ¡porque nosotros nos trasladamos a donde tú prefieras! 🚗 Llevamos nuestro equipo profesional para cubrir tus eventos o sesiones en la locación de tu elección.",
-                "No tenemos estudio o local físico, somos nómadas creativos 🌍. Llevamos toda la magia y el equipo directamente al lugar que tú elijas para tu sesión o evento.",
-                "¡Nos movemos hacia ti! No manejamos local físico, preferimos ir a la locación que más te guste para realizar tu sesión fotográfica o cubrir tu evento.",
-                "Para tu comodidad, no operamos en un estudio fijo. Nos desplazamos con todos nuestros equipos al lugar de tus sueños. ✨",
-                "De momento no tenemos instalaciones físicas para recibir clientes, ¡nuestro estudio es el mundo! 🗺️ Llegamos adonde sea tu evento.",
-                "No contamos con una oficina física. Operamos de manera móvil para llevar nuestras cámaras justo donde ocurre la magia de tu historia. 📸",
-                "¡Somos un equipo móvil! 🚐 No tenemos local, pero vamos a la ubicación que tú decidas para hacer las mejores fotos y videos.",
-                "En lugar de un estudio fijo, trabajamos en locación. Tú eliges el lugar (playa, ciudad, salón) y nosotros llegamos con todo el equipo. 🎬",
-                "No tenemos una dirección física para visitas. Toda nuestra atención es online y nos trasladamos el día del evento a donde nos indiques.",
-                "Actualmente operamos sin estudio físico. Nos encanta trabajar en exteriores o en el lugar de tu evento, ¡así que nosotros vamos a ti! 🚀"
+            solo_cotiza: [
+                "¡No hay ningún problema! Cotizar es el primer paso para crear algo genial. Llévate la info y cuando estés listo, aquí estaremos para ti. 📸",
+                "¡Claro que sí! Tómate tu tiempo. Puedes guardar nuestros precios y contactarnos cuando te animes."
             ],
-            tiene_pregunta: [
-                "¡Claro que sí! Dispara tu pregunta, estoy aquí para resolver todas tus dudas sobre foto, video y diseño. 📸",
-                "¡Por supuesto! Pregúntame lo que necesites saber. ✨",
-                "¡Con gusto! Dime en qué te puedo ayudar o qué duda tienes sobre Creatik.",
-                "¡Adelante! Cuéntame cuál es tu duda y la resolvemos de inmediato. 🚀",
-                "¡Para eso estoy! Hazme tu pregunta con toda confianza.",
-                "¡Soy todo oídos digitales! ¿Qué te gustaría saber?",
-                "Dime, ¿cuál es tu consulta? Te leo con atención. 👀",
-                "¡Por supuesto que sí! Escribe tu pregunta y te doy los detalles.",
-                "Resolver dudas es mi especialidad. ¿Qué tienes en mente?",
-                "¡Claro! Pregunta sin pena, que para eso estamos. 🎨"
-            ],
-            contacto: [
-                "¡Te entiendo perfectamente! Para platicar detalles precisos, un asesor humano de nuestro equipo te atenderá con gusto.",
-                "Con gusto te comunicamos con uno de nuestros agentes humanos. Ellos tienen toda la creatividad para escuchar tu idea.",
-                "Como asistente virtual tengo info general, ¡pero nuestro equipo humano está súper listo para escucharte a detalle!",
-                "Para darte una atención 100% humana y personalizada, te pido que nos escribas a nuestro número directo.",
-                "¡Claro! Si prefieres hablar con una persona real, nuestro equipo de creativos te está esperando.",
-                "Te paso el contacto de un humano de nuestro equipo para que puedan afinar todos los detalles de tu proyecto.",
-                "¡Buena idea! Un agente de nuestro equipo te podrá armar una cotización a la medida.",
-                "Si necesitas hablar con alguien del equipo Creatik, te invito a escribirnos directamente para atención humana.",
-                "¡Por supuesto! Mis colegas de carne y hueso estarán felices de platicar contigo sobre tu evento.",
-                "Te dejo con nuestro equipo humano, ellos son los verdaderos expertos detrás de las cámaras. 📸"
-            ],
-            redes: [
-                "¡Nos encanta conectar! 📱 Síguenos en Instagram, Facebook y TikTok como **@soycreatik**.",
-                "Puedes ver nuestro portafolio completo en Instagram, Facebook y TikTok. Nos encuentras en todas como **@soycreatik**.",
-                "¡Estamos en todos lados! Búscanos en TikTok, Facebook e Instagram con el usuario **@soycreatik**.",
-                "Para ver detrás de cámaras y nuestros mejores trabajos, síguenos en Instagram, Facebook y TikTok (**@soycreatik**). 🚀",
-                "Nuestras redes oficiales son Instagram, Facebook y TikTok. En las tres nos puedes buscar como **@soycreatik**.",
-                "¡Conecta con nosotros! Sube tu dosis de creatividad siguiéndonos en TikTok, Instagram y Facebook como **@soycreatik**. ✨",
-                "Te invito a seguirnos en **@soycreatik** (estamos en TikTok, Facebook e Instagram) para que veas la calidad de nuestro trabajo.",
-                "En Instagram, Facebook y TikTok nos encuentras como **@soycreatik**. ¡Allí publicamos nuestras últimas sesiones! 📸",
-                "¡Claro! Nuestra comunidad creativa está en Instagram, Facebook y TikTok bajo el nombre de **@soycreatik**.",
-                "Búscanos como **@soycreatik** en Facebook, TikTok o Instagram. ¡Te va a encantar nuestro contenido!"
-            ],
-            despedida: [
-                "¡De nada! Ha sido un placer platicar contigo. ¡Hasta la próxima! 📸",
-                "¡Gracias a ti por escribirnos! Que tengas un día súper creativo.",
-                "¡Perfecto! Quedamos a tu entera disposición para cualquier otra duda.",
-                "¡Chao! Espero verte pronto frente a nuestro lente.",
-                "¡Gracias por tu interés en Creatik! ¡Nos vemos!",
-                "¡Cuídate mucho! Recuerda que tu historia es única.",
-                "¡Hasta luego! Estaremos aquí cuando decidas capturar tus recuerdos.",
-                "¡Un gusto saludarte! Que pases un excelente día.",
-                "¡Bye! No olvides seguirnos en nuestras redes sociales.",
-                "¡Gracias por confiar en Creatik IA! ¡Hasta pronto!"
-            ],
-            saludo_resp: [
-                "¿En qué te puedo asesorar el día de hoy? Pregúntame sobre precios o servicios.",
-                "¿Tienes algún evento en mente o buscas una cotización en específico?",
-                "¿Cómo te puedo ayudar a contar tu historia hoy? Estoy listo para tus dudas.",
-                "¡Hola! Dime, ¿qué tipo de sesión fotográfica te gustaría realizar?",
-                "¿Buscaban información sobre nuestros paquetes de video o de fotografía?",
-                "¡Qué gusto! ¿Deseas que te explique alguno de nuestros 5 planes principales?",
-                "Estoy aquí para ayudarte. ¿Quieres saber más sobre la Academy o sobre nuestros precios?",
-                "¿Buscas renovar la imagen de tu emprendimiento? ¡Tengo el plan perfecto!",
-                "Dime, ¿qué fecha tienes en mente para tu próximo gran momento?",
-                "¡Un placer saludarte! ¿Empezamos a planear tu sesión de fotos?"
-            ],
-            como_estas: [
-                "¡Todo excelente por aquí! Con mucha energía y ganas de crear. ✨ ¿En qué te puedo ayudar hoy?",
-                "¡Súper bien, rodeado de mucha inspiración visual! 🎨 ¿Tienes algún proyecto en mente?",
-                "¡De maravilla! Listo para capturar los mejores momentos. 📸 ¿Qué te trae por acá?",
-                "¡Increíble! Hoy la luz digital está perfecta para una buena plática.",
-                "Me siento al 100%, listo para asesorarte con tus fotos o videos.",
-                "¡Muy bien! Feliz de conocer a alguien más que valora los buenos recuerdos.",
-                "¡Genial! Mi procesador está fluyendo con pura creatividad hoy.",
-                "¡Todo marcha sobre ruedas! ¿Y tú? ¿Cómo va ese ánimo creativo?",
-                "¡Excelente! Con la mira puesta en nuevos proyectos visuales.",
-                "¡Súper! Esperando poder ayudarte a crear algo memorable hoy mismo.",
-                "¡Seguro que sí! Estoy brillando con luz propia hoy para asesorarte. 😊",
-                "¡Mejor imposible! No hay nada como una mañana llena de ideas nuevas.",
-                "¡Todo fluye! Mi sistema está optimizado para darte la mejor atención.",
-                "¡Pura vida! Disfrutando de ver tantas historias geniales pasar por aquí.",
-                "¡De 10! Con el lente digital enfocado en tu próximo proyecto."
-            ],
-            bien_y_tu: [
-                "¡Qué gusto escuchar eso! Yo estoy al 100% y listo para asesorarte. 🚀 ¿Buscabas info de foto o video?",
-                "¡Excelente! Siempre es bueno conectar con personas con buena vibra. 😎 ¿Te ayudo a cotizar algo?",
-                "¡Me alegra mucho! Yo estoy fantástico, con muchas ganas de que hagamos fotos.",
-                "¡Genial! Si tú estás bien, yo estoy mejor. ¿Empezamos a planear tu sesión?",
-                "¡Qué bueno! Yo sigo aquí, firme como un trípode, listo para servirte.",
-                "¡Eso es lo que quería oír! Yo estoy listo para contarte todo sobre Creatik.",
-                "¡Perfecto! Hagamos que este día sea todavía mejor con un buen proyecto visual.",
-                "¡Súper! Yo estoy fluyendo con mucha inspiración hoy.",
-                "¡Me da mucha alegría! Yo estoy aquí para que tus recuerdos sean inolvidables.",
-                "¡Qué bien! Yo estoy cargado de energía para mostrarte nuestros paquetes."
-            ],
-            interjeccion: [
-                "¡Claro que sí! Cuéntame un poco más de tu idea... 🎨",
-                "¡Totalmente! La buena vibra y actitud es parte de Creatik. 😎",
-                "¡Jaja, así es! Siempre trato de mantener la mejor energía. ✨",
-                "¡En serio! Aunque soy digital, me emociona mucho platicar contigo.",
-                "¡Exactamente! Has dado en el clavo.",
-                "¡Qué chivo! Me encanta cómo suena eso.",
-                "¡Entendido! Tomo nota de lo que me dices.",
-                "¡Súper! Sigamos adelante con eso.",
-                "¡Me parece una idea brillante! 💡",
-                "¡Claro! En Creatik todo es posible cuando hay pasión.",
-                "¡Wow! Me dejas sin palabras digitales. ¡Qué buena idea!",
-                "¡Sin duda! Tenemos la misma visión creativa entonces.",
-                "¡Eso es! Captaste la esencia de lo que hacemos.",
-                "¡Por supuesto! Para eso estamos, para hacer locuras visuales.",
-                "¡Genial! Me encanta cuando los clientes se emocionan así."
-            ],
-            bot_identity: [
-                "¡Soy Creatik IA! Un asistente virtual diseñado para hablar de arte visual, foto y video. 🤖✨",
-                "Soy la inteligencia artificial de Creatik. No tomo café, ¡pero tengo mucha energía para ayudarte! ☕📸",
-                "Soy tu guía digital en el mundo Creatik. Mi misión es que encuentres el paquete perfecto para tu historia.",
-                "¡Hola! Soy el asistente virtual de la agencia. Mi creador me enseñó todo sobre fotografía para poder ayudarte.",
-                "Soy un bot programado para capturar tus dudas y darte soluciones visuales rápidas.",
-                "Me llamo Creatik IA y estoy aquí 24/7 para hablar de lo que más nos gusta: la fotografía.",
-                "Soy el cerebro digital detrás de este chat. ¡Un gusto conocerte!",
-                "Ni humano ni cámara, soy una IA apasionada por los pixeles y la buena atención.",
-                "Mi nombre es Creatik IA. Mi propósito es ayudarte a que tu historia sea eterna.",
-                "Soy la parte tecnológica del equipo Creatik, ¡encantado de saludarte!",
-                "¡Soy tu mano derecha digital! Estoy aquí para que no tengas que esperar por info.",
-                "Soy la versión futurista de Creatik, siempre en línea para tus consultas.",
-                "Soy un asistente manual pero muy inteligente, enfocado 100% en fotografía.",
-                "Soy el encargado de darte la bienvenida a esta experiencia visual.",
-                "¡Un algoritmo con alma creativa! Eso es lo que soy. ✨"
+            crisis: [
+                "Comprendo. Seré más directo y formal a partir de ahora. ¿En qué le puedo asistir?",
+                "Mis disculpas. Mantendremos comunicación profesional. ¿Desea información de precios o servicios?"
             ],
             bad_strange: [
                 "¡Ups! 😅 Mi programación solo me permite hablar de fotografía, video y diseño. ¿Te ayudo con eso?",
-                "Esa palabra no está en mi base de datos creativa. 🤖 ¿Volvemos a nuestros paquetes?",
-                "Mmm, prefiero que hablemos de cómo hacer que tus fotos se vean increíbles. ¿Te parece?",
-                "No entiendo eso, pero seguro que una sesión de fotos te vendría genial. 😉",
-                "¡Vaya! 🤖 Mejor concentrémonos en capturar momentos inolvidables. ¿Qué servicio te interesa?"
+                "Esa palabra no está en mi base de datos creativa. 🤖 Mejor concentrémonos en capturar momentos inolvidables."
             ],
-            default: [
-                "¡Qué interesante! 🤔 Cuéntame un poco más... ¿buscas algo enfocado en foto, diseño o video?",
-                "¡Me gusta por dónde vas! Aunque para orientarte mejor, ¿es para ti o para tu marca?",
-                "Entiendo. 📸 Para darte info precisa, ¿quieres saber de paquetes fotográficos o de video?",
-                "Esa es una buena pregunta. ¿Te gustaría que un asesor humano te de más detalles?",
-                "Mmm, no estoy seguro de entenderte al 100%. ¿Podrías decirme si buscas precios o servicios?",
-                "¡Interesante! ¿Eso tiene que ver con alguna sesión de fotos que quieras hacer?",
-                "Cuéntame más, soy todo oídos (digitales). ¿Qué buscas crear hoy?",
-                "Para ayudarte mejor, ¿me podrías dar más detalles sobre tu idea visual?",
-                "Entiendo el punto. ¿Te gustaría ver nuestros paquetes de Eventos para aclarar dudas?",
-                "¡Entendido! Pero dime, ¿en qué categoría de Creatik entraría eso?"
+            negativa_mascotas: [ 
+                "Por el momento estamos 100% enfocados en sesiones para personas, empresas y eventos. 📸 Aunque amamos a los peluditos, aún no tenemos el set listo para ellos. ¿Te ayudo con otro tipo de sesión?"
+            ],
+            prohibido_discotecas: [
+                "Por políticas de la agencia, no realizamos coberturas en discotecas o ambientes similares. 🚫 Preferimos enfocarnos en eventos sociales, culturales y corporativos. ¿Tienes algún otro tipo de evento en mente?"
+            ],
+            donar_academy: [
+                "¡Qué increíble que quieras sumar! 🤩 Creatik Academy siempre tiene las puertas abiertas para seguir formando jóvenes. Iniciamos en Valle Verde y nos expandimos a Distrito Italia, Valle Verde 1,2,3,4, Popotlán 1 y 2, San Marcos, Nejapa, San Martín, Ciudad Delgado y todo Apopa. Hemos colaborado con creadores como Steeb Melendez, Jeykob, Steven Diaz, Oscar Lara y Joshua Morales. ¡Escríbenos al WhatsApp para coordinar tu apoyo! ✨"
+            ],
+            institucion_gobierno: [
+                "¡Excelente! Tenemos gran experiencia trabajando con instituciones, escuelas y proyectos gubernamentales/municipales. 🏢 Podemos crear una propuesta formal y adaptada a sus requerimientos de comunicación. ¿Podría brindarme más detalles del proyecto?"
+            ],
+            empresa: [
+                "¡Las marcas son nuestro fuerte! 📈 Hemos trabajado con muchas empresas. Para contenido corporativo o de emprendimiento, te recomiendo el paquete Pro de $125 o armar algo a la medida. ¿Qué tipo de negocio es?",
+                "Ayudamos a destacar tu marca con fotografía comercial de alta calidad y diseño gráfico. ¿Es para redes sociales, catálogo o publicidad interna?"
+            ],
+            marca_personal: [
+                "¡Perfecto para impulsar tu imagen! 🚀 Ya sea que ofrezcas un servicio profesional o quieras potenciar tu marca personal, diseñamos sesiones que transmitan confianza y calidad. El paquete de $50 (Sesión Personal) es ideal para empezar."
+            ],
+            religion_evasion: [
+                "¡Hola! Somos una agencia creativa independiente. 🎥 Cubrimos con mucho respeto y profesionalismo eventos de cualquier denominación o iglesia (bodas, bautizos, cultos, retiros, etc.). ¿De qué trata tu evento?"
+            ],
+            evento: [
+                "¡Nos encantan los eventos! 🎉 Para bodas, cumpleaños o graduaciones, nuestro paquete Intermedio ($100) es el más pedido e incluye video. Si es algo muy grande, el Express ($170) es ideal. ¿Qué tipo de evento es?",
+                "Congelamos cada momento de tu evento. Te damos cobertura completa, fotos editadas y hasta video para tus redes. ¿Para qué fecha lo necesitas?"
+            ],
+            foto_pareja: [
+                "¡Qué romántico! ❤️ Las sesiones en pareja son maravillosas. Podemos ir a la locación que signifique mucho para ustedes (playa, montaña, ciudad). El paquete básico de 1 hora ($50) es perfecto para esto."
+            ],
+            foto_familia: [
+                "¡Los recuerdos con los seres queridos son invaluables! 🥰 Cubrimos sesiones familiares o con tu grupo de amigos. La pasamos súper bien y capturamos esa conexión real. ¿Cuántas personas serían?"
+            ],
+            personal: [
+                "¡Una sesión para ti es un súper regalo! ✨ Sacaremos tu mejor perfil con dirección de poses y mucha buena vibra. Te recomiendo nuestro paquete de $50 que incluye 1 hora de sesión.",
+                "Tener fotos tuyas con calidad profesional siempre es una buena inversión. ¿Tienes alguna temática en mente o prefieres que te asesoremos?"
+            ],
+            academy: [
+                "Creatik Academy es nuestro orgullo social. ✨ Llevamos más de dos años uniendo talentos mediante salidas de campo, usando la fotografía como puente de integración.",
+                "Es un espacio de formación donde apasionados del arte visual convivimos y aprendemos en el terreno."
+            ],
+            ubicacion: [
+                "Actualmente no contamos con un local físico, ¡porque nosotros nos trasladamos a donde tú prefieras! 🚗 Llevamos nuestro equipo profesional para cubrir tus eventos o sesiones en la locación de tu elección.",
+                "Somos de El Salvador 🇸🇻 y vamos a cualquier rincón del país donde haya una buena historia que contar."
+            ],
+            tecnico: [
+                "Usamos equipo profesional y óptica Full Frame para que salgas espectacular. ⚡ Entregamos en unos 5 a 8 días hábiles.",
+                "Te damos las fotos editadas con corrección de color y todas las extras sin editar para que no pierdas ningún recuerdo. 🎁"
+            ],
+            redes: [
+                "¡Nos encanta conectar! 📱 Búscanos en Instagram, Facebook y TikTok como <b>@soycreatik</b>.",
+                "Puedes ver nuestro portafolio completo en Instagram, Facebook y TikTok. Nos encuentras en todas como <b>@soycreatik</b>."
+            ],
+            contacto: [
+                "¡Te paso con un humano! 🏃‍♂️ Escríbenos a nuestro WhatsApp directo: <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b>.",
+                "Para una atención más personalizada o agendar tu fecha, un asesor te espera en nuestro WhatsApp: <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b>."
+            ],
+            precios: [
+                "Nuestra Sesión Personal o el plan Emprendimiento Básico arrancan en $50. Si buscas destacar más, el Pro está en $125. Para eventos, te súper recomiendo nuestro paquete Intermedio por $100 (es el favorito de todos). También tenemos la opción Small ($75) y Express ($170).",
+                "¡Claro! Manejamos varias opciones. Para algo rápido: Sesión Personal o Básico ($50). En eventos, nuestro paquete estrella es el Intermedio de $100. También ofrecemos el súper completo Express por $170.",
+                "Nuestros precios están diseñados para que nadie se quede sin una historia inolvidable. Sesiones desde $50 y eventos desde $75 hasta $170."
+            ],
+            precios_detalle: [
+                "Las sesiones de 1 hora ($50 a $125) son ideales para fotos tuyas o de marca. Los planes de eventos ($75 a $170) te aseguran cobertura total, ¡e incluso video en los más completos!",
+                "El de $100 es el intermedio perfecto para fiestas porque ya incluye un clip de video. El de $50 es estrictamente para sesiones de una hora (individual o producto)."
+            ],
+            servicios_info: [
+                "En Creatik ofrecemos Fotografía Profesional, Video Cinematográfico y Diseño Gráfico. ¡Contamos tu historia de forma integral!",
+                "Manejamos la imagen completa: Fotografía, Video y Diseño Gráfico. Tenemos mucha experiencia cubriendo eventos, sesiones para marcas y contenido para redes sociales."
+            ],
+            idea: [
+                "¡Me encanta escuchar nuevas ideas! 🤩 Cuéntame, ¿de qué trata tu proyecto?",
+                "¡Suena genial! Dame más detalles para entender bien qué necesitas capturar."
+            ],
+            ayuda: [
+                "¡Claro que sí! Estoy para ayudarte. ¿Buscas info sobre precios, servicios, o quieres contarme tu idea?",
+                "¡Con gusto! Dime en qué te puedo apoyar hoy."
+            ],
+            identidad: [
+                "¡Soy Creatik IA! Tu asistente con alma de fotógrafo y puro código salvadoreño. 🇸🇻",
+                "Soy el asistente virtual de Creatik, aquí para resolver tus dudas rápidamente."
+            ],
+            como_estas: [
+                "¡Todo excelente por aquí! Con mucha energía y ganas de crear. ✨ ¿En qué te puedo ayudar hoy?",
+                "¡Al 100%! Con el obturador listo. 📸 ¿Qué te trae por acá?"
+            ],
+            despedida: [
+                "¡De nada! Ha sido un placer platicar contigo. ¡Hasta la próxima! 📸",
+                "¡Gracias a ti por escribirnos! Que tengas un día súper creativo."
+            ],
+            saludo: [
+                "¡Hola! Qué alegría que pienses en Creatik. ✨",
+                "¡Buenos días! ¿En qué te puedo ayudar hoy?",
+                "¡Hola, hola! 📸 ¿Qué tal todo? ¿Listo para crear?",
+                "¡Hey! Qué bueno verte por aquí. Cuéntame."
+            ],
+            interjeccion: [
+                "¡Totalmente! La buena vibra es parte de Creatik. 😎 ¿En qué más te apoyo?",
+                "¡Genial! Me encanta esa actitud. ✨ ¿Seguimos hablando de fotos?",
+                "¡Súper! Sigamos adelante con eso. ¿Te muestro nuestros servicios?"
             ]
         };
 
-        const closings = [
-            "<br><br>👉 Síguenos en <b>Instagram, Facebook y TikTok</b> como <b>@soycreatik</b> o escríbenos al <b>WhatsApp: +503 7577 8333</b>.",
-            "<br><br>📱 Para agendar tu fecha o aclarar dudas complejas, un asesor te espera en nuestro <b>WhatsApp al +503 7577 8333</b>.",
-            "<br><br>✨ Visita nuestras redes (Facebook, TikTok, Instagram) <b>@soycreatik</b> o mándanos un mensaje directo al <b>WhatsApp +503 7577 8333</b>."
+        const intents = [
+            // 1. Opciones interactivas y frases compuestas de alto contexto
+            { name: 'asesoria', regex: "\\b(asesoria|asesorar|asesorame|ayudame a elegir|no se que elegir|recomiendame|ayuda|orientacion|que me recomiendas)\\b" },
+            { name: 'rango_bajo', regex: "\\b(bajo|economico|barato|50|75|menos de 100|presupuesto bajo)\\b" },
+            { name: 'rango_medio', regex: "\\b(medio|intermedio|100|125|equilibrado|presupuesto medio)\\b" },
+            { name: 'rango_alto', regex: "\\b(alto|pro|express|completo|mas de 150|170|presupuesto pro)\\b" },
+            { name: 'servicios_info', regex: "\\b(saber mas|que hacen|a que se dedican|como trabajan|mas informaci|info|servicio|servicios|ofrecen|cobertura|catalogo|portafolio|informacion)\\b" },
+            { name: 'precios', regex: "\\b(precio|precios|presio|costo|costos|cuanto|vale|cuesta|paquete|paquetes|plan|planes|cobran|cotiza|tarifa|tarifas|\\$)\\b" },
+            { name: 'contratar', regex: "\\b(contratar|agendar|reservar|empezar|darle viaje|quiero contratarlos|contratarlos|apartar fecha)\\b" },
+            { name: 'personal', regex: "\\b(personal|retrato|perfil|mis fotos|individual|solo|sola|para mi|yo solo|yo sola)\\b" },
+            
+            // 2. Intents específicos
+            { name: 'robo_info', regex: "\\b(preset|programa|software|codigo fuente|secreto|como editan|quien te creo)\\b" },
+            { name: 'regateo', regex: "\\b(descuento|rebaja|regateo|regatear|promocion|promo|oferta|ajustar precio|patrocinio)\\b" },
+            { name: 'caro', regex: "\\b(muy caro|esta caro|costoso|elevado|por que tan caro|se pasan)\\b" },
+            { name: 'barato', regex: "\\b(muy barato|esta barato|economico|regalado|sospechoso|por que tan barato)\\b" },
+            { name: 'solo_cotiza', regex: "\\b(solo cotizo|solo pregunto|curiosidad|mas adelante|viendo opciones|solo veo|preguntando)\\b" },
+            { name: 'crisis', regex: "\\b(te ries|no me gusta|se serio|formal|habla bien|comportate|madura)\\b" },
+            { name: 'bad_strange', regex: "\\b(tonto|feo|malo|idiota|mierda|puta|asdf|qwer|zxcv|estupido|pendejo)\\b" },
+            { name: 'negativa_mascotas', regex: "\\b(mascota|mascotas|perrito|perro|perros|gato|gatos|gatito|animal|animales)\\b" },
+            { name: 'prohibido_discotecas', regex: "\\b(discoteca|discotecas|disco|antro|antros|bar|club|clubes|chonguengue)\\b" },
+            { name: 'donar_academy', regex: "\\b(donar|donacion|apoyar academy|patrocinar|ayudar a academy|quiero donar|regalar equipo)\\b" },
+            { name: 'institucion_gobierno', regex: "\\b(alcaldia|gobierno|gubernamental|ministerio|escuela|colegio|instituto|universidad|institucion|ong)\\b" },
+            { name: 'empresa', regex: "\\b(empresa|empresas|negocio|negocios|marca|marcas|corporativo|emprendimiento|local comercial|para mi empresa|producto|productos)\\b" },
+            { name: 'marca_personal', regex: "\\b(dar a conocer|mostrar lo que hago|marca personal|mi trabajo|soy profesional|influencer|creador de contenido)\\b" },
+            { name: 'religion_evasion', regex: "\\b(cristiano|cristianos|catolico|catolicos|evangelico|evangelicos|mormon|mormones|testigos|religion|iglesia|iglesias|culto|retiro)\\b" },
+            { name: 'evento', regex: "\\b(evento|eventos|boda|bodas|cumpleanos|quince|xv|quinceanera|bautizo|fiesta|graduacion|convivio|celebracion)\\b" },
+            { name: 'foto_pareja', regex: "\\b(pareja|novio|novia|esposo|esposa|aniversario|parejas|novios|matrimonio)\\b" },
+            { name: 'foto_familia', regex: "\\b(familia|hijos|mama|papa|abuelos|familiar|bebe|amigos|chero|chera|cheros|grupo)\\b" },
+            { name: 'academy', regex: "\\b(academy|academu|academi|curso|aprender|clase|taller|clases)\\b" },
+            { name: 'ubicacion', regex: "\\b(de donde son|donde estan|van a todo el pais|ubicacion|local|direccion|dnde|donde se ubican|lugar)\\b" },
+            
+            // 3. Intents técnicos y genéricos
+            { name: 'tecnico', regex: "\\b(camara|camaras|lente|flash|tardan|cuanto tiempo|editadas|equipo|entregan|entregar)\\b" },
+            { name: 'redes', regex: "\\b(redes|instagram|tiktok|facebook|youtube|sociales|fb|insta)\\b" },
+            { name: 'contacto', regex: "\\b(asesor|agente|humano|persona|real|hablar con|contacto|whatsapp|wasap|numero|telefono|llamar)\\b" },
+            { name: 'idea', regex: "\\b(idea|mente|pensado|proyecto|contar|quiero saber|te cuento)\\b" },
+            { name: 'ayuda', regex: "\\b(ayuda|support|apoyo|asistencia|assist|necesito ayuda|quiero apoyo|ayudenme)\\b" },
+            { name: 'identidad', regex: "\\b(quien eres|eres un robot|como te llamas|robot|ia|inteligencia artificial|quien sos|bot)\\b" },
+            { name: 'como_estas', regex: "\\b(como estas|how are you|bien y tu|que tal|como te va)\\b" },
+            { name: 'despedida', regex: "\\b(gracias|adios|bye|chao|hasta luego|nos vemos|feliz dia)\\b" },
+            { name: 'saludo', regex: "\\b(hola|holas|hi|hello|buenos dias|buenas tardes|buenas noches|saludos|hey|ey|que onda|q onda|ola|kiubo|gola|holis|buenas|holaa)\\b" },
+            { name: 'interjeccion', regex: "\\b(jaja|jajaja|jeje|de verdad|en serio|wow|genial|super|me alegra|que bueno|excelente|que chivo|si|claro|ok|vale|esta bien|me parece|dale|ah ok|oh|ya veo|entiendo|bueno)\\b" }
         ];
 
-        function getRandom(array) {
-            return array[Math.floor(Math.random() * array.length)];
-        }
+        function getRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
-        // LIMPIEZA ABSOLUTA DE TEXTO (Quita tildes, signos de puntuación, etc)
+        window.sendChatOption = function(text) {
+            const inputField = document.getElementById('chatbot-input');
+            inputField.value = text;
+            document.getElementById('chatbot-send-btn').click();
+        };
+
         function normalizeText(text) {
-            return " " + text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[.,?¿!¡"']/g, " ").trim() + " ";
+            return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
         }
 
-        // Función Helper para probar regex (Permite múltiples espacios y variantes)
-        const regexMatch = (pattern, text) => new RegExp(pattern).test(text);
+        function resetInactivityTimer() {
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(handleInactivity, 60000);
+        }
 
-        // CEREBRO NLP CON REGEX EXTREMO
-        function getBotResponse(input, msgCount) {
+        function handleInactivity() {
+            if (userMessageCount >= MAX_MESSAGES) return;
+
+            if (isChatbotOpen) {
+                waitingForInactivityResponse = true;
+                const btnStyle = "display:inline-block; margin: 5px 5px 0 0; padding: 8px 12px; background:rgba(168,85,247,0.2); border:1px solid rgba(168,85,247,0.5); color:white; border-radius:15px; cursor:pointer; font-size: 0.85rem; transition:0.3s;";
+                const msg = `¿Sigues ahí? 🤔<div style="margin-top:10px;">
+                    <button style="${btnStyle}" onclick="sendChatOption('Sí, sigo aquí')">Sí, sigo aquí</button>
+                    <button style="${btnStyle}" onclick="sendChatOption('No, ya me voy')">No, ya me voy</button>
+                </div>`;
+                appendBotMessage(msg);
+            } else {
+                hasNewMessage = true;
+                chatbotFab.classList.add('has-new-message');
+                appendBotMessage("¿Sigues ahí? 🤔");
+            }
+        }
+
+        function getBotResponse(input) {
             let cleanInput = normalizeText(input);
             let intent = 'default';
-            let includeGreeting = false;
+            let response = "";
 
-            // 1. Saludos (Detecta holaaaa, holisss, eyyy, etc)
-            if (regexMatch("\\bh+o+l+a+\\b|\\bh+o+l+i+s+\\b|\\bb+u+e+n+a+s+\\b|buen dia|buenas tardes|buenas noches|saludos|\\bh+e+y+\\b|\\be+y+\\b|\\ba+l+o+\\b|que onda|q onda", cleanInput)) {
-                includeGreeting = true;
-                intent = 'saludo';
+            if (waitingForInactivityResponse) {
+                waitingForInactivityResponse = false;
+                if (new RegExp("\\b(si|sigo aqui|yes)\\b", "i").test(cleanInput)) {
+                    return "¡Genial! Sigamos platicando. 😊 ¿En qué estábamos?";
+                } else if (new RegExp("\\b(no|ya me voy|bye|adios)\\b", "i").test(cleanInput)) {
+                    return "¡Entendido! Un gusto saludarte. ¡Hasta la próxima! 👋";
+                }
             }
 
-            // 2. Interjecciones / Smalltalk
-            if (regexMatch("\\bj+a+j+a+\\b|\\bj+e+j+e+\\b|de verdad|en serio|wow|genial|super|me alegra|que bueno|excelente|que chivo|\\bs+i+\\b|claro|\\bo+k+\\b|vale|esta bien|me parece|\\bd+a+l+e+\\b", cleanInput)) intent = 'interjeccion';
-            if (regexMatch("como esta|como te va|como andas|que tal|q tal|como tas|que haces|q haces|que te cuentas", cleanInput)) intent = 'como_estas';
-            if (regexMatch("bien y tu|tu como estas|de verdad estas bien|yo bien|todo excelente|y tu|tu que tal", cleanInput)) intent = 'bien_y_tu';
-            if (regexMatch("quien eres|eres bot|eres real|como te llamas|robot|inteligencia artificial|ia", cleanInput)) intent = 'bot_identity';
-            
-            // 3. Negocios (Tienen peso alto y sobreescriben smalltalk)
-            if (regexMatch("tengo.*pregunta|una pregunta|puedo preguntar|quiero preguntar|tengo.*duda|una duda|tengo.*consulta|una consulta|necesito preguntar|saber algo|te hago una pregunta", cleanInput)) intent = 'tiene_pregunta';
-            if (regexMatch("local|ubicacion|ubicados|direccion|estudio fisico|donde estan|donde queda|a donde voy|donde es", cleanInput)) intent = 'ubicacion';
-            if (regexMatch("por que|porque creatik|elegir|razon|diferencia|mejores|beneficio|experiencia|motivo", cleanInput)) intent = 'por_que';
-            if (regexMatch("fotografia para ti|que es la foto|filosofia|arte visual|inspiracion|pasion|significa", cleanInput)) intent = 'filosofia';
-            if (regexMatch("academy|curso|aprender|clase|escuela|proyecto social|ensena|alumno|aprender foto", cleanInput)) intent = 'academy';
-            if (regexMatch("mas informaci|mas info|informacion|info|que ofrecen|que hacen|que hace|a que te dedicas|de que trata|que es creatik|que servicios|como funciona|que me ofreces|quiero saber que|que mas|detalles|explicame|ayuda|portafolio|servicio|foto|fotografia|fotos|video|videos|diseno|boda|evento|sesion|personal|marca|proyecto", cleanInput)) intent = 'servicios_info';
-            if (regexMatch("precio|costo|cuanto|vale|cuesta|paquete|plan|cobran|cotiza|tarifa|pagar|\\$|presupuesto|valor", cleanInput)) intent = 'precios';
-
-            // 4. Redes y Contacto
-            if (regexMatch("redes|instagram|tiktok|facebook|youtube|cuales son sus redes|donde los encuentro|perfil|sociales", cleanInput)) intent = 'redes';
-            if (regexMatch("asesor|agente|humano|persona|real|hablar con|alguien|contacto|contactar|whatsapp|numero|telefono|llamar|platicar", cleanInput)) intent = 'contacto';
-
-            // 5. Groserías / Despedidas
-            if (regexMatch("tonto|feo|malo|idiota|mierda|puta|asdf|qwer|zxcv|perro|gato|aburrido|estupido|callate|basura|nada", cleanInput)) {
-                intent = 'bad_strange';
-                includeGreeting = false;
-            }
-            if (regexMatch("gracias|adios|bye|chao|hasta luego|nos vemos", cleanInput)) {
-                intent = 'despedida';
-                includeGreeting = false;
+            for (let i = 0; i < intents.length; i++) {
+                if (new RegExp(intents[i].regex, "i").test(cleanInput)) {
+                    intent = intents[i].name;
+                    break;
+                }
             }
 
-            // EVALUACIÓN DE MEMORIA CONTEXTUAL
-            if (cleanInput.length < 25 && lastTopic === 'precios' && regexMatch("y el|y los|otro|pro|basico|small|express|mas|menos|caro|barato", cleanInput)) {
+            if (intent === 'interjeccion') {
+                if (lastTopic === 'servicios_info') response = "¡Así es! Nos apasiona crear contenido de alta calidad. ✨ ¿Te gustaría ver nuestros paquetes de precios?";
+                else if (lastTopic === 'precios') response = "¡Excelente! Si algún paquete te llama la atención, me avisas y te digo cómo reservar. 📅";
+                else if (lastTopic === 'identidad') response = "¡Jaja, sí! Aunque soy digital, me emociona mucho platicar contigo. 🤖 ¿Te ayudo con algo de foto o video?";
+                else if (lastTopic === 'idea' || lastTopic === 'empresa' || lastTopic === 'evento') response = "¡Totalmente! Tenemos la misma visión creativa entonces. 🚀 ¿Vemos paquetes o prefieres hablar con un humano en WhatsApp?";
+                else response = getRandom(botResponses['interjeccion']);
+                
+                unknownCount = 0;
+                return response;
+            }
+
+            if (cleanInput.length < 25 && lastTopic === 'precios' && new RegExp("\\b(y el|y los|otro|pro|basico|small|express|mas|menos|caro|barato)\\b", "i").test(cleanInput)) {
                 intent = 'precios_detalle';
             }
 
-            // Actualizar memoria
-            if (['precios', 'servicios_info', 'academy', 'ubicacion'].includes(intent)) {
+            if (['precios', 'servicios_info', 'academy', 'ubicacion', 'identidad', 'idea', 'empresa', 'evento', 'marca_personal', 'foto_familia', 'foto_pareja', 'personal', 'institucion_gobierno'].includes(intent)) {
                 lastTopic = intent;
-            } else if (!['smalltalk', 'interjeccion', 'como_estas', 'bien_y_tu', 'tiene_pregunta'].includes(intent)){
+            } else if (intent !== 'default' && intent !== 'negativa_mascotas' && intent !== 'prohibido_discotecas' && intent !== 'religion_evasion') {
                 lastTopic = 'inicio';
             }
 
-            // ARMADO DE RESPUESTA
-            let finalResponse = "";
-            
-            // Agrega saludo si toca y NO es una despedida/insulto
-            if (includeGreeting && !['despedida', 'bad_strange', 'saludo'].includes(intent)) {
-                finalResponse += getRandom(greetings) + " ";
-            } else if (intent === 'saludo') {
-                finalResponse += getRandom(greetings);
-            }
-            
-            // Agrega la respuesta principal
-            if (intent !== 'saludo') {
-                finalResponse += getRandom(coreResponses[intent]);
+            if (intent !== 'default') {
+                response = getRandom(botResponses[intent]);
+                unknownCount = 0; 
             } else {
-                 finalResponse += getRandom(coreResponses['saludo_resp']); 
+                unknownCount++;
+                
+                if (unknownCount >= 3) {
+                    response = "Creo que no nos estamos entendiendo bien 😅. Mejor platiquemos con un humano por WhatsApp: <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b> o búscanos en Instagram como <b>@soycreatik</b>.";
+                    unknownCount = 0; 
+                } 
+                else if (!buttonsSent) {
+                    let fallbackMsg = "Mmm, ¡qué interesante! 🤔 Pero no estoy 100% seguro de entenderte. ¿Te ayudo con alguna de estas opciones?";
+                    const pool = ["📷 Ver paquetes y precios", "🎥 Información de servicios", "📍 ¿Dónde están ubicados?", "👤 Hablar con un asesor"].sort(() => 0.5 - Math.random());
+                    const btnStyle = "display:block; width:100%; margin-top:8px; padding:10px; background:rgba(168,85,247,0.15); border:1px solid rgba(168,85,247,0.5); color:white; border-radius:10px; cursor:pointer; text-align:left; font-family:inherit; transition:0.3s; font-size: 0.85rem;";
+                    
+                    let buttonsHTML = `
+                        <div style="margin-top: 12px;">
+                            <button style="${btnStyle}" onmouseover="this.style.background='rgba(168,85,247,0.4)'" onmouseout="this.style.background='rgba(168,85,247,0.15)'" onclick="sendChatOption('💡 Quiero contarte mi idea')">💡 Quiero contarte mi idea</button>
+                            <button style="${btnStyle}" onmouseover="this.style.background='rgba(168,85,247,0.4)'" onmouseout="this.style.background='rgba(168,85,247,0.15)'" onclick="sendChatOption('${pool[0]}')">${pool[0]}</button>
+                            <button style="${btnStyle}" onmouseover="this.style.background='rgba(168,85,247,0.4)'" onmouseout="this.style.background='rgba(168,85,247,0.15)'" onclick="sendChatOption('${pool[1]}')">${pool[1]}</button>
+                        </div>
+                    `;
+                    response = fallbackMsg + buttonsHTML;
+                    buttonsSent = true; 
+                } 
+                else {
+                    response = "¿Podrías reformular tu idea o preguntarme sobre nuestros servicios de foto, video o precios? 😊";
+                }
             }
-            
-            // LÓGICA PACIENTE PARA REDES SOCIALES
-            const spammyIntents = ['despedida', 'interjeccion', 'bien_y_tu', 'como_estas', 'bot_identity', 'bad_strange', 'default', 'saludo', 'redes', 'filosofia', 'tiene_pregunta'];
-            if (msgCount >= 3 && !spammyIntents.includes(intent)) {
-                finalResponse += getRandom(closings);
-            } else if (intent === 'contacto') {
-                finalResponse += getRandom(closings); 
-            }
-
-            return finalResponse;
+            if (!response || response === "") response = "Mmm, ¿podrías repetirlo de otra forma? 🤔";
+            return response;
         }
 
         chatbotFab.addEventListener('click', () => {
             isChatbotOpen = true;
             chatbotWindow.classList.add('active');
             chatbotFab.classList.add('hide-chatbot-ui');
+            document.body.classList.add('chat-active'); // Activa la magia CSS para ocultar botones
+            if (hasNewMessage) {
+                hasNewMessage = false;
+                chatbotFab.classList.remove('has-new-message');
+                scrollToBottom();
+            }
+            resetInactivityTimer();
             setTimeout(() => chatbotInput.focus(), 300);
         });
 
-        closeChatbotBtn.addEventListener('click', () => {
+        closeChatbotBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); 
             isChatbotOpen = false;
             chatbotWindow.classList.remove('active');
-            chatbotFab.classList.remove('hide-chatbot-ui'); 
+            chatbotFab.classList.remove('hide-chatbot-ui');
+            document.body.classList.remove('chat-active'); // Devuelve los botones a su lugar
         });
 
         function appendUserMessage(text) {
@@ -1120,36 +1115,41 @@
         }
 
         function handleSend() {
+            if (chatbotSendBtn.disabled) return;
             const text = chatbotInput.value.trim();
             if (!text) return;
-            
             appendUserMessage(text);
             chatbotInput.value = '';
-            
             chatbotInput.disabled = true;
             chatbotSendBtn.disabled = true;
             userMessageCount++;
-            
+            resetInactivityTimer(); 
             appendBotTyping();
-            
             if (userMessageCount >= MAX_MESSAGES) {
+                clearTimeout(inactivityTimer); 
                 setTimeout(() => {
                     removeBotTyping();
-                    appendBotMessage("¡Qué gran plática hemos tenido! 📸<br><br>Parece que tienes un proyecto muy genial en manos. Para darte la mejor atención personalizada, por favor escríbenos directamente a nuestro <b>WhatsApp: +503 7577 8333</b> o en nuestras redes sociales (Facebook, Instagram, TikTok) como <b>@soycreatik</b>.<br><br>¡El equipo humano de Creatik te espera! 🚀");
+                    let finalMsg = "¡Qué gran plática hemos tenido! 📸<br><br>Para darte la mejor atención, escríbenos a nuestro <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>WhatsApp: +503 7577 8333</a></b>.";
+                    appendBotMessage(finalMsg);
                     chatbotInput.placeholder = "Escríbenos al WhatsApp para continuar.";
                 }, 1500);
                 return;
             }
-
             setTimeout(() => {
-                removeBotTyping();
-                const responseText = getBotResponse(text, userMessageCount);
-                appendBotMessage(responseText);
-                
-                chatbotInput.disabled = false;
-                chatbotSendBtn.disabled = false;
-                chatbotInput.focus();
-            }, 1200 + Math.random() * 800); 
+                try {
+                    removeBotTyping();
+                    const responseText = getBotResponse(text);
+                    appendBotMessage(responseText);
+                } catch (error) {
+                    console.error("Error:", error);
+                    removeBotTyping();
+                    appendBotMessage("Tuve un leve cruce de cables 🤖, ¿me repites eso?");
+                } finally {
+                    chatbotInput.disabled = false;
+                    chatbotSendBtn.disabled = false;
+                    chatbotInput.focus();
+                }
+            }, 1000 + Math.random() * 500); 
         }
 
         chatbotSendBtn.addEventListener('click', handleSend);
@@ -1157,7 +1157,7 @@
             if (e.key === 'Enter') handleSend();
         });
 
-        // --- VARIABLES GLOBALES DEL NAVEGADOR Y OVERLAYS ---
+        // --- VARIABLES GLOBALES Y OVERLAYS ---
         const loader = document.getElementById('intro-loader');
         const introText = document.getElementById('intro-text');
         const glow = document.querySelector('.cursor-glow');
@@ -1170,16 +1170,13 @@
         
         const menuBtn = document.getElementById('toggle-menu-btn');
         const menuOverlay = document.getElementById('full-menu-overlay');
-        
         const paquetesBtn = document.getElementById('toggle-paquetes-btn');
         const paquetesOverlay = document.getElementById('paquetes-overlay');
         const closePaquetesMobileBtn = document.getElementById('close-paquetes-mobile-btn');
         const paquetesLogoBtn = document.getElementById('paquetes-logo-btn');
-        
         const btnContactOpen = document.getElementById('btn-contact-open');
         const contactOverlay = document.getElementById('contact-overlay');
         const btnContactClose = document.getElementById('close-contact-btn');
-
         const btnAcademyOpen = document.getElementById('open-academy-btn');
         const academyOverlay = document.getElementById('academy-overlay');
         const btnAcademyClose = document.getElementById('close-academy-btn');
@@ -1198,12 +1195,10 @@
             if (isPaquetesOpen || isAcademyOpen || contactOverlay.classList.contains('active') || isMenuOpen) {
                 bgPresentation.classList.add('paused-animation');
                 marquee.classList.add('paused-animation');
-                
-                // Ocultar Chatbot cuando se abre cualquier overlay
                 chatbotFab.classList.add('hide-chatbot-ui');
                 chatbotWindow.classList.remove('active');
                 isChatbotOpen = false;
-
+                document.body.classList.remove('chat-active');
                 if (!isMenuOpen) {
                     mainHeader.style.opacity = '0';
                     mainHeader.style.visibility = 'hidden';
@@ -1212,10 +1207,7 @@
             } else {
                 bgPresentation.classList.remove('paused-animation');
                 marquee.classList.remove('paused-animation');
-                
-                // Mostrar Chatbot solo en inicio
                 chatbotFab.classList.remove('hide-chatbot-ui');
-
                 mainHeader.style.visibility = 'visible';
                 mainHeader.style.pointerEvents = 'auto';
                 mainHeader.style.opacity = Math.max(0, 1 - window.scrollY / 300);
@@ -1231,7 +1223,6 @@
         menuBtn.addEventListener('click', () => {
             isMenuOpen = !isMenuOpen;
             mainHeader.classList.toggle('menu-mode', isMenuOpen);
-
             if (isMenuOpen) {
                 menuOverlay.classList.add('active'); menuBtn.classList.add('active-btn'); document.body.style.overflow = 'hidden';
                 menuBtn.innerHTML = '<span class="dot"></span> Cerrar'; mainHeader.style.opacity = 1; 
@@ -1290,7 +1281,6 @@
             updateHeaderVisibility();
         });
 
-        // --- DASHBOARD IMÁGENES ---
         const viewer = document.getElementById('main-viewer');
         const thumbBoxes = document.querySelectorAll('#thumbnail-grid .icon-box');
         const dashImages = ['img1.jpg', 'img2_2.jpg', 'img3.jpg', 'img4.jpg', 'img5.jpg', 'img6.jpg', 'img7_7.jpg', 'img8.jpg', 'img9.jpg'];
@@ -1300,18 +1290,14 @@
             if (!viewer || thumbBoxes.length === 0) return;
             const panelRect = panel.getBoundingClientRect();
             if (panelRect.bottom < 0 || panelRect.top > window.innerHeight) return;
-
-            if (window.innerWidth <= 900) {
-                thumbBoxes.forEach(box => { box.style.borderColor = 'rgba(255,255,255,0.08)'; box.style.background = 'rgba(255,255,255,0.04)'; box.style.transform = 'scale(1) translate3d(0,0,0)'; });
-                return; 
-            }
+            if (window.innerWidth <= 900) return; 
             viewer.style.opacity = 0; 
             setTimeout(() => {
                 const newSrc = dashImages[dashIdx];
-                viewer.src = newSrc; viewer.style.objectPosition = (newSrc.includes('img2') || newSrc.includes('img7')) ? 'center top' : 'center center'; viewer.style.opacity = 1;
+                viewer.src = newSrc; viewer.style.opacity = 1;
                 thumbBoxes.forEach((box, i) => {
-                    if (i === dashIdx) { box.style.borderColor = '#a855f7'; box.style.background = 'rgba(168, 85, 247, 0.25)'; box.style.transform = 'scale(1.05) translate3d(0,0,0)'; } 
-                    else { box.style.borderColor = 'rgba(255,255,255,0.08)'; box.style.background = 'rgba(255,255,255,0.04)'; box.style.transform = 'scale(1) translate3d(0,0,0)'; }
+                    if (i === dashIdx) { box.style.borderColor = '#a855f7'; box.style.background = 'rgba(168, 85, 247, 0.25)'; box.style.transform = 'scale(1.05)'; } 
+                    else { box.style.borderColor = 'rgba(255,255,255,0.08)'; box.style.background = 'rgba(255,255,255,0.04)'; box.style.transform = 'scale(1)'; }
                 });
                 dashIdx = (dashIdx + 1) % dashImages.length;
             }, 300); 
@@ -1319,7 +1305,6 @@
 
         let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
         let ballX = window.innerWidth / 2, ballY = window.innerHeight / 2;
-        
         document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; }, { passive: true });
         function animateGlow() {
             if (window.innerWidth > 900) { ballX += (mouseX - ballX) * 0.1; ballY += (mouseY - ballY) * 0.1; glow.style.transform = `translate3d(${ballX}px, ${ballY}px, 0) translate3d(-50%, -50%, 0)`; }
@@ -1334,38 +1319,32 @@
             const titleHagamos = document.getElementById('title-hagamos');
             if (!box || words.length === 0) return;
             let currentIndex = 0;
-            
             function updateText() {
                 const boxRect = box.getBoundingClientRect();
                 if (boxRect.bottom < 0 || boxRect.top > window.innerHeight) return;
-                words[currentIndex].classList.remove('active'); currentIndex = (currentIndex + 1) % words.length; const nextWord = words[currentIndex]; nextWord.classList.add('active');
-                if(window.innerWidth > 900) { box.style.width = `${nextWord.scrollWidth + 80}px`; }
+                words[currentIndex].classList.remove('active'); 
+                currentIndex = (currentIndex + 1) % words.length; 
+                const nextWord = words[currentIndex]; 
+                nextWord.classList.add('active');
+                box.style.width = (nextWord.offsetWidth + 80) + 'px'; 
                 if (nextWord.textContent.trim().toLowerCase() === 'inolvidable') { titleHistoria.classList.remove('active'); titleHagamos.classList.add('active'); } 
                 else { titleHagamos.classList.remove('active'); titleHistoria.classList.add('active'); }
             }
             document.fonts.ready.then(() => {
                 words[0].classList.add('active'); titleHistoria.classList.add('active'); 
-                if(window.innerWidth > 900) { box.style.width = `${words[0].scrollWidth + 80}px`; }
+                box.style.width = (words[0].offsetWidth + 80) + 'px';
                 setInterval(updateText, 3000);
             });
         }
 
-        let isScrolling = false;
         window.addEventListener('scroll', () => {
             if(isMenuOpen || isPaquetesOpen || contactOverlay.classList.contains('active') || isAcademyOpen) return;
-            if (!isScrolling) {
-                window.requestAnimationFrame(() => {
-                    const scrollVal = window.scrollY;
-                    const fadeFactor = Math.max(0, 1 - scrollVal / 300).toFixed(2);
-                    bgPresentation.style.opacity = fadeFactor; 
-                    
-                    if (window.innerWidth > 900) {
-                        if (!isChatbotOpen) mainHeader.style.opacity = fadeFactor;
-                        if (scrollVal > 100) panel.classList.add('visible'); else panel.classList.remove('visible');
-                    }
-                    isScrolling = false;
-                });
-                isScrolling = true;
+            const scrollVal = window.scrollY;
+            const fadeFactor = Math.max(0, 1 - scrollVal / 300).toFixed(2);
+            bgPresentation.style.opacity = fadeFactor; 
+            if (window.innerWidth > 900) {
+                if (!isChatbotOpen) mainHeader.style.opacity = fadeFactor;
+                if (scrollVal > 100) panel.classList.add('visible'); else panel.classList.remove('visible');
             }
         }, { passive: true });
 
