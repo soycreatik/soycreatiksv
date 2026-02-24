@@ -336,7 +336,7 @@
             .menu-btn, .academy-btn { padding: 6px 12px; font-size: 0.75rem; }
             
             /* Ajustes CERRAR y STICKER Fijos en Celular */
-            .overlay-fixed-logo { top: 10px; left: 15px; height: 75px; }
+            .overlay-fixed-logo { top: 10px; left: 15px; height: 80px; }
             .overlay-fixed-close { top: 15px; right: 15px; padding: 8px 15px; font-size: 0.75rem; }
 
             /* Chatbot Celular */
@@ -651,7 +651,6 @@
         console.log("%c==========================================", "color: #0ea5e9; font-weight: bold; font-size: 14px;");
 
         // --- SISTEMA DISOLUCIÓN CRUZADA ACADEMY ---
-        // Se incluye academy1.jpg y todas las demas en base a la instruccion
         const academyImagesList = [
             'academy1.jpg', '_DSC7744.jpg', 'academy2.jpg', 'academy3.jpg', 'academy4.jpg', 
             'academy5.jpg', 'academy6.jpg', 'academy7.jpg', 'academy8.jpg', 
@@ -700,7 +699,7 @@
         }
         setInterval(changeAcademyImages, 4000); 
 
-        // --- LÓGICA DEL CHATBOT LOCAL (SIN API) CON SISTEMA COMBINATORIO ---
+        // --- LÓGICA DEL CHATBOT LOCAL CON SISTEMA COMBINATORIO ---
         const chatbotFab = document.getElementById('chatbot-fab');
         const chatbotWindow = document.getElementById('chatbot-window');
         const closeChatbotBtn = document.getElementById('close-chatbot-btn');
@@ -712,86 +711,119 @@
         let userMessageCount = 0;
         const MAX_MESSAGES = 7;
 
-        // Arrays de respuestas para generar combinaciones únicas
+        // Arrays de respuestas
         const greetings = [
-            "¡Hola, hola! 📸 ", "¡Qué gusto saludarte! ✨ ", "¡Hola! Bienvenido a Creatik. ", 
-            "¡Saludos! 👋 ", "¡Hey! Qué bueno verte por aquí. ", "¡Hola! Estoy listo para ayudarte. "
+            "¡Hola, hola! 📸 ", "¡Qué gusto saludarte! ✨ ", "¡Hola! Bienvenido a la familia Creatik. ", 
+            "¡Saludos! 👋 ", "¡Hey! Qué bueno verte por aquí. ", "¡Hola! Estoy listo para ayudarte a crear magia. ",
+            "¡Hola, qué tal! 🌟 ", "¡Bienvenido al chat oficial de Creatik! ", "¡Hola! Es un placer atenderte hoy. ",
+            "¡Un saludo creativo para ti! 🎨 ", "¡Hola! Qué emoción tenerte por aquí. ", "¡Buenas! 🚀 Cuéntame en qué te ayudo. "
         ];
         
         const coreResponses = {
             precios: [
                 "Nuestra Sesión Personal o el plan Emprendimiento Básico arrancan en $50. Si buscas destacar más, el Pro está en $125. Para eventos, te súper recomiendo nuestro paquete Intermedio por $100 (es el favorito de todos). También tenemos la opción Small ($75) y Express ($170).",
-                "¡Claro! Manejamos varias opciones. Para algo rápido: Sesión Personal o Emprendimiento Básico ($50). Si buscas más impacto: Emprendimiento Pro ($125). En eventos, nuestro paquete estrella es el Intermedio de $100. También ofrecemos el Small por $75 o el completo Express por $170.",
-                "¡Te cuento! Nuestros planes básicos (Personal y Emprendimiento) están a $50, el Emprendimiento Pro sube a $125. Si es un evento, el paquete más popular es el Intermedio por $100, pero también tenemos el Small ($75) y el Express ($170). ¡Todo con calidad profesional!"
+                "¡Claro! Manejamos varias opciones. Para algo rápido: Sesión Personal o Básico ($50). Si buscas más impacto: Emprendimiento Pro ($125). En eventos, nuestro paquete estrella es el Intermedio de $100. También ofrecemos el Small por $75 o el súper completo Express por $170.",
+                "¡Te cuento los detalles! Nuestros planes básicos están a $50, el Emprendimiento Pro sube a $125. Si es un evento, el paquete más popular es el Intermedio por $100 (incluye video), pero también tenemos el Small ($75) y el Express ($170). ¡Todo con calidad top!",
+                "Los precios varían según la magia que busques. Iniciamos desde $50 para sesiones personales. Para marcas, tenemos de $50 y $125. Y para que no olvides tus eventos, los planes van desde $75, pasando por el más cotizado de $100, hasta $170."
             ],
             academy: [
                 "Creatik Academy es nuestro orgullo social. ✨ Llevamos más de dos años uniendo talentos mediante salidas de campo, usando la fotografía como puente de integración. ¡Es más que cámaras, es cambiar realidades!",
-                "Sobre Creatik Academy te cuento que es nuestro proyecto social. Organizamos convivencias y salidas de campo donde la pasión por el arte visual nos une para generar un impacto positivo.",
-                "¡Me encanta que preguntes por Creatik Academy! Es un espacio formativo y social donde usamos la fotografía para integrar territorios y personas. Es ir más allá de la pantalla."
+                "Sobre Creatik Academy, te cuento que es nuestro proyecto social estrella. Organizamos convivencias y salidas de campo donde la pasión por el arte visual nos une para generar un impacto súper positivo.",
+                "¡Me encanta que preguntes por Creatik Academy! Es un espacio formativo y social donde usamos la fotografía para integrar territorios y personas. Es nuestra forma de ir más allá de la pantalla."
             ],
             servicios: [
-                "En Creatik capturamos momentos reales con el alma. Hacemos Fotografía profesional, Producción de Video y Diseño Gráfico. ¡Hacemos que tu historia sea inolvidable!",
-                "Nos especializamos en contar historias a través de Fotografía, Video y Diseño Gráfico. ¡Si tienes una idea en mente, nosotros la creamos!",
-                "Ofrecemos servicios completos de Fotografía, Video y Diseño Gráfico. Desde sesiones personales hasta cobertura de grandes eventos."
+                "En Creatik capturamos momentos reales con el alma. Hacemos Fotografía profesional, Producción de Video y Diseño Gráfico de alto impacto. ¡Hacemos que tu historia sea inolvidable!",
+                "Nos especializamos en contar historias a través de Fotografía, Video cinematográfico y Diseño Gráfico. ¡Si tienes una idea loca en mente, nosotros la hacemos realidad!",
+                "Ofrecemos servicios integrales de Fotografía, Video y Diseño Gráfico. Desde sesiones personales hasta la cobertura de grandes eventos y campañas para marcas."
+            ],
+            por_que: [
+                "¿Por qué Creatik? Porque entendemos que tu historia es única. No solo entregamos fotos, entregamos recuerdos con alma. Usamos equipo de alta gama y nos apasiona cada detalle.",
+                "Elegir Creatik es asegurar que tus recuerdos cobren vida. Nos diferenciamos por nuestro trato humano, nuestra creatividad sin límites y la calidad visual impecable de nuestros resultados.",
+                "Nuestros clientes nos eligen porque no hacemos contenido genérico. Capturamos la esencia real de tus momentos para hacerlos eternos, respaldados por años de experiencia y reseñas 5 estrellas."
+            ],
+            humano: [
+                "¡Te entiendo perfectamente! Para brindarte una asesoría más cálida y 100% personalizada, un asesor humano de nuestro equipo está listo para ti.",
+                "¡Claro que sí! Para platicar los detalles precisos o cotizar algo a tu medida, te contactaremos directamente con una persona real de nuestro equipo.",
+                "Con gusto te comunico con uno de nuestros agentes humanos. Ellos tienen toda la creatividad para escuchar tu idea y hacerla realidad.",
+                "¡Por supuesto! Como IA te doy la info rápida, pero nuestro equipo humano es el experto en crear magia a tu medida."
+            ],
+            despedida: [
+                "¡De nada! Ha sido un placer. Si decides dar el siguiente paso, aquí estaremos.",
+                "¡Gracias a ti por escribirnos! Que tengas un día súper creativo.",
+                "¡Perfecto! Quedamos a tu entera disposición para cualquier otra duda."
             ],
             saludo: [
                 "¿En qué te puedo asesorar el día de hoy? Pregúntame sobre precios, paquetes o nuestros servicios.",
                 "Dime, ¿buscabas información de algún paquete fotográfico o de video en especial?",
-                "¿Tienes algún evento en mente o buscas una cotización en específico?"
+                "¿Tienes algún evento en mente o buscas una cotización en específico?",
+                "¿Cómo te puedo ayudar a contar tu historia hoy?"
             ],
             default: [
-                "No estoy seguro de entender todos los detalles, pero me encantaría que un humano de nuestro equipo te asesore mejor.",
-                "Para serte súper sincero, esa pregunta es mejor que la hablemos con más detalle.",
-                "¡Qué interesante! Para darte la mejor respuesta sobre eso, te sugiero hablar con uno de nuestros asesores."
+                "¡Uy! Esa es una pregunta súper interesante, pero prefiero que uno de nuestros expertos humanos te la responda con exactitud.",
+                "No estoy 100% seguro de tener el dato exacto sobre eso, ¡pero nuestro equipo creativo sí!",
+                "Para darte la información más precisa sobre ese detalle, te sugiero hablar con uno de nuestros asesores."
             ]
         };
 
         const closings = [
-            "<br><br>👉 Escríbenos al WhatsApp: +503 7577 8333 o búscanos en Instagram @soycreatik.",
-            "<br><br>📱 Para agendar fechas, dale clic a Contacto o escríbenos al +503 7577 8333.",
-            "<br><br>✨ Si tienes dudas, nuestro equipo humano te atiende en el WhatsApp +503 7577 8333.",
-            "<br><br>📸 Síguenos en Instagram @soycreatik o escríbenos al WhatsApp +503 7577 8333."
+            "<br><br>👉 Escríbenos al <b>WhatsApp: +503 7577 8333</b> o búscanos en Facebook, Instagram y TikTok como <b>@soycreatik</b>.",
+            "<br><br>📱 Para agendar tu fecha, escríbenos directamente al <b>+503 7577 8333</b> o en nuestras redes (Facebook, Instagram, TikTok).",
+            "<br><br>✨ Nuestro equipo humano te espera en <b>WhatsApp al +503 7577 8333</b> o en TikTok, Facebook e Instagram como <b>@soycreatik</b>.",
+            "<br><br>📸 Síguenos en Instagram, Facebook o TikTok <b>@soycreatik</b> o mándanos un WhatsApp al <b>+503 7577 8333</b> para reservar.",
+            "<br><br>🚀 ¿Listo para empezar? Contáctanos al <b>WhatsApp +503 7577 8333</b> o en cualquiera de nuestras redes sociales.",
+            "<br><br>💬 Será un honor trabajar contigo. Contáctanos al <b>+503 7577 8333</b> o en redes como <b>@soy.creatik</b>."
         ];
 
-        // Función para elegir un elemento aleatorio de un array
         function getRandom(array) {
             return array[Math.floor(Math.random() * array.length)];
         }
 
         // Lógica de detección de intención
-        function getBotResponse(input) {
+        function getBotResponse(input, msgCount) {
             let lowerInput = input.toLowerCase();
             let intent = 'default';
             let includeGreeting = false;
 
-            // Detectar saludo
-            if (lowerInput.match(/(hola|buen|salud|que tal|q tal|buenas)/)) {
+            if (lowerInput.match(/(hola|buen|salud|que tal|q tal|buenas|hey|hello|empezar)/)) {
                 includeGreeting = true;
                 intent = 'saludo';
             }
-            // Detectar precios/paquetes
-            if (lowerInput.match(/(precio|costo|cuanto|vale|paquete|plan|cobran)/)) {
+            if (lowerInput.match(/(precio|costo|cuanto|vale|paquete|plan|cobran|cotiza|tarifa|pagar|\$)/)) {
                 intent = 'precios';
             }
-            // Detectar academy
-            else if (lowerInput.match(/(academy|curso|aprender|clases|escuela)/)) {
+            else if (lowerInput.match(/(academy|curso|aprender|clases|escuela|proyecto social|enseña|alumnos)/)) {
                 intent = 'academy';
             }
-            // Detectar servicios
-            else if (lowerInput.match(/(servicio|hacen|fotografia|video|diseño)/)) {
+            else if (lowerInput.match(/(servicio|hacen|fotografia|video|diseño|foto|grabar|boda|evento|sesion|logo)/)) {
                 intent = 'servicios';
             }
+            else if (lowerInput.match(/(asesor|agente|humano|persona|real|hablar con|alguien|contacto|whatsapp|numero|telefono|llamar)/)) {
+                intent = 'humano';
+            }
+            else if (lowerInput.match(/(por que|elegir|razon|diferencia|mejores|beneficio|experiencia|motivo)/)) {
+                intent = 'por_que';
+            }
+            else if (lowerInput.match(/(gracias|adios|bye|chao|excelente|perfecto|ok|vale)/)) {
+                intent = 'despedida';
+                includeGreeting = false; 
+            }
 
-            // Armar respuesta combinada
             let finalResponse = "";
+            
             if (includeGreeting && intent !== 'saludo') {
                 finalResponse += getRandom(greetings);
             } else if (intent === 'saludo') {
                 finalResponse += getRandom(greetings);
             }
             
-            finalResponse += coreResponses[intent][Math.floor(Math.random() * coreResponses[intent].length)];
-            finalResponse += getRandom(closings);
+            finalResponse += getRandom(coreResponses[intent]);
+            
+            // Retrasar el CTA de redes sociales hasta el 3er mensaje (o si se despiden)
+            if (msgCount >= 3 && intent !== 'despedida') {
+                finalResponse += getRandom(closings);
+            } else if (intent === 'humano') {
+                finalResponse += getRandom(closings); // Mostrar redes de inmediato si piden humano
+            }
 
             return finalResponse;
         }
@@ -834,7 +866,7 @@
         function appendBotMessage(text) {
             const msgDiv = document.createElement('div');
             msgDiv.className = 'message bot-message';
-            msgDiv.innerHTML = text; // Permite inyectar los <br>
+            msgDiv.innerHTML = text; 
             chatbotMessages.appendChild(msgDiv);
             scrollToBottom();
         }
@@ -859,22 +891,21 @@
             if (userMessageCount >= MAX_MESSAGES) {
                 setTimeout(() => {
                     removeBotTyping();
-                    appendBotMessage("¡Me ha encantado platicar contigo! 📸<br><br>Para seguir dándote la mejor atención y afinar los detalles personalizados, por favor escríbenos directamente a nuestro <b>WhatsApp: +503 7577 8333</b> o búscanos en Instagram como <b>@soycreatik</b>.<br><br>¡El equipo humano te espera! 🚀");
+                    appendBotMessage("¡Me ha encantado platicar contigo! 📸<br><br>Para seguir dándote la mejor atención y afinar los detalles personalizados, por favor escríbenos directamente a nuestro <b>WhatsApp: +503 7577 8333</b> o búscanos en nuestras redes sociales (Facebook, Instagram, TikTok) como <b>@soycreatik</b>.<br><br>¡El equipo humano te espera! 🚀");
                     chatbotInput.placeholder = "Conversación finalizada. ¡Escríbenos!";
                 }, 1500);
                 return;
             }
 
-            // Generar respuesta local y simular tiempo de escritura
             setTimeout(() => {
                 removeBotTyping();
-                const responseText = getBotResponse(text);
+                const responseText = getBotResponse(text, userMessageCount);
                 appendBotMessage(responseText);
                 
                 chatbotInput.disabled = false;
                 chatbotSendBtn.disabled = false;
                 chatbotInput.focus();
-            }, 1200 + Math.random() * 800); // Demora entre 1.2s y 2s
+            }, 1200 + Math.random() * 800); 
         }
 
         chatbotSendBtn.addEventListener('click', handleSend);
@@ -925,7 +956,6 @@
                 bgPresentation.classList.add('paused-animation');
                 marquee.classList.add('paused-animation');
                 
-                // Ocultar Chatbot cuando se abre cualquier overlay
                 chatbotFab.classList.add('hide-chatbot-ui');
                 chatbotWindow.classList.remove('active');
                 isChatbotOpen = false;
@@ -939,7 +969,6 @@
                 bgPresentation.classList.remove('paused-animation');
                 marquee.classList.remove('paused-animation');
                 
-                // Mostrar Chatbot solo en inicio
                 chatbotFab.classList.remove('hide-chatbot-ui');
 
                 mainHeader.style.visibility = 'visible';
