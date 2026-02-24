@@ -127,10 +127,17 @@
         .chatbot-header:active { cursor: grabbing; }
         .chatbot-logo { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #a855f7; box-shadow: 0 0 10px rgba(168, 85, 247, 0.5); pointer-events: none; }
         .chatbot-title { flex: 1; pointer-events: none; }
-        .chatbot-title h4 { margin: 0; font-size: 1.1rem; color: #fff; letter-spacing: 0.5px; }
+        .chatbot-title h4 { margin: 0; font-size: 1.1rem; color: #fff; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px;}
         .chatbot-title span { font-size: 0.75rem; color: #10b981; display: flex; align-items: center; gap: 5px; margin-top: 3px; font-weight: 600; }
         .chatbot-title span::before { content: ''; width: 8px; height: 8px; background: currentColor; border-radius: 50%; box-shadow: 0 0 8px currentColor; animation: blinkOnline 2s infinite; }
         
+        /* Gafete visual del código */
+        #chat-session-badge {
+            background: rgba(255, 215, 0, 0.15); border: 1px solid #ffd700; color: #ffd700; 
+            font-size: 0.6rem; padding: 3px 8px; border-radius: 20px; font-weight: bold;
+            display: none; letter-spacing: 1px; margin-top: 5px; width: max-content;
+        }
+
         #close-chatbot-btn { 
             background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; 
             width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; 
@@ -670,13 +677,14 @@
             <img src="creatikperfil.jpg" alt="Creatik Bot" class="chatbot-logo" onerror="this.src='https://i.pravatar.cc/100?img=12'">
             <div class="chatbot-title">
                 <h4>Creatik IA</h4>
-                <span id="bot-status">En línea</span>
+                <span>En línea</span>
+                <div id="chat-session-badge"></div>
             </div>
             <button id="close-chatbot-btn">✖</button>
         </div>
         <div class="chatbot-messages" id="chatbot-messages">
             <div class="message bot-message">
-                ¡Hola! 👋 Soy la IA de Creatik. Para darte un servicio súper personalizado y generar tu código de gestión, <b>¿me dices tu nombre?</b>
+                ¡Hola! 👋 Soy la IA de Creatik. Para darte un servicio súper personalizado y generar tu código de gestión, <b>¿me dices tu nombre y apellido?</b>
             </div>
         </div>
         <div class="chatbot-input-area">
@@ -691,6 +699,11 @@
         // --- BLOQUEO ANTICOPIA ---
         document.addEventListener('contextmenu', event => event.preventDefault());
         document.addEventListener('dragstart', event => event.preventDefault());
+
+        console.log("%c==========================================", "color: #0ea5e9; font-weight: bold; font-size: 14px;");
+        console.log("%cCREADO POR ROGER MÉNDEZ", "color: #0ea5e9; font-weight: bold; font-size: 16px;");
+        console.log("%cTodos los derechos reservados. Uso no autorizado prohibido.", "color: white; font-size: 12px;");
+        console.log("%c==========================================", "color: #0ea5e9; font-weight: bold; font-size: 14px;");
 
         // --- SISTEMA DISOLUCIÓN CRUZADA ACADEMY ---
         const academyImagesList = [
@@ -710,10 +723,12 @@
             }
             return array;
         }
+
         let shuffledAcademy = shuffleArray(academyImagesList);
 
         function changeAcademyImages() {
             if (!document.getElementById('academy-A')) return;
+
             if (currentPairIndex >= shuffledAcademy.length) {
                 let lastImage = shuffledAcademy[shuffledAcademy.length - 1];
                 let newShuffle;
@@ -721,11 +736,14 @@
                 shuffledAcademy = newShuffle;
                 currentPairIndex = 0;
             }
+
             let nextImage = shuffledAcademy[currentPairIndex];
             currentPairIndex++;
+
             const layerOut = document.getElementById(`academy-${activeLayer}`);
             activeLayer = activeLayer === 'A' ? 'B' : 'A';
             const layerIn = document.getElementById(`academy-${activeLayer}`);
+
             const tempImg = new Image();
             tempImg.onload = function() {
                 layerIn.src = this.src;
@@ -753,7 +771,7 @@
         let waitingForInactivityResponse = false;
         let hasNewMessage = false;
 
-        // NUEVAS VARIABLES PARA EL NOMBRE Y CÓDIGO
+        // ESTADOS DEL FLUJO DEL CHAT
         let chatState = 'ASKING_NAME'; 
         let userName = '';
         let sessionCode = '';
@@ -777,7 +795,7 @@
                 body: JSON.stringify({
                     emisor: emisor,
                     mensaje: mensajeLimpio,
-                    codigo: sessionCode || "Sin Código"
+                    codigo: sessionCode || "En proceso"
                 })
             }).catch(e => console.log(e));
         }
@@ -815,7 +833,7 @@
             bad_strange: ["¡Ups! 😅 Mi programación solo me permite hablar de fotografía, video y diseño. ¿Te ayudo con eso?"],
             negativa_mascotas: ["Por el momento estamos 100% enfocados en sesiones para personas, empresas y eventos. 📸 Aunque amamos a los peluditos, aún no tenemos el set listo para ellos."],
             prohibido_discotecas: ["Por políticas de la agencia, no realizamos coberturas en discotecas o ambientes similares. 🚫 Preferimos enfocarnos en eventos sociales, culturales y corporativos."],
-            donar_academy: ["¡Qué increíble que quieras sumar! 🤩 Creatik Academy siempre tiene las puertas abiertas para seguir formando jóvenes. ¡Escríbenos al WhatsApp para coordinar tu apoyo! ✨"],
+            donar_academy: ["¡Qué increíble que quieras sumar! 🤩 Creatik Academy siempre tiene las puertas abiertas para seguir formando jóvenes. Iniciamos en Valle Verde y nos expandimos a todo Apopa y más municipios. ¡Escríbenos al WhatsApp para coordinar tu apoyo! ✨"],
             institucion_gobierno: ["¡Excelente! Tenemos gran experiencia trabajando con instituciones, escuelas y proyectos. 🏢 Podemos crear una propuesta formal. Escríbenos al WhatsApp para más detalles."],
             empresa: ["¡Las marcas son nuestro fuerte! 📈 Para contenido corporativo o de emprendimiento, te recomiendo el paquete Pro de $125 o armar algo a la medida."],
             marca_personal: ["¡Perfecto para impulsar tu imagen! 🚀 El paquete de $50 (Sesión Personal) es ideal para empezar."],
@@ -842,6 +860,7 @@
         };
 
         const intents = [
+            { name: 'ver_codigo', regex: "\\b(ver mi codigo|cual es mi codigo|numero de gestion|ver codigo|mi codigo)\\b" },
             { name: 'pregunta', regex: "\\b(pregunta|quiero hacer una pregunta|una duda|tengo una duda|consultar)\\b" },
             { name: 'quiero_fotos', regex: "\\b(quiero una sesion|quiero fotos|sesion de fotos|hacerme fotos|necesito fotos|quisiera una sesion|quisiera fotos|cotizar una sesion)\\b" },
             { name: 'solo_video', regex: "\\b(solo video|quiero un video|hacen video|graban video|videografia|hacer un video|servicios de video)\\b" },
@@ -947,6 +966,7 @@
                 }
             }
 
+            if (intent === 'ver_codigo') return `Tu código único de gestión es: <b style="color:#ffd700;">${sessionCode || "Aún no generado"}</b>. ¡Con este código nuestro equipo ya conoce tu idea y ubicación!`;
             if (intent === 'tiempo_hora') return `¡Aquí Creatik IA reportándose! 🤖 Son las <b>${new Date().toLocaleTimeString('es-SV', { hour: '2-digit', minute: '2-digit' })}</b>. ¿En qué te ayudo?`;
             if (intent === 'tiempo_dia') return `Hoy es <b>${new Date().toLocaleDateString('es-SV', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</b>, un día perfecto para planear tu próxima sesión. ✨`;
             
@@ -973,19 +993,23 @@
             if (intent !== 'default') {
                 response = getRandom(botResponses[intent]);
             } else {
-                let fallbackMsg = "¿Te ayudo con algo más específico? Elige una opción rápida: 👇";
+                let fallbackMsg = "";
+                if (userMessageCount <= 1) {
+                    fallbackMsg = "¡Hola! Estoy listo para ayudarte a resolver cualquier duda. ¿De qué tema te gustaría hablar? 👇";
+                } else {
+                    fallbackMsg = "¿Te ayudo con algo más específico? Elige una opción rápida: 👇";
+                }
                 const btnStyle = "display:block; width:100%; margin-top:8px; padding:10px; background:rgba(168,85,247,0.15); border:1px solid rgba(168,85,247,0.5); color:white; border-radius:10px; cursor:pointer; text-align:left; font-family:inherit; transition:0.3s; font-size: 0.85rem;";
                 response = fallbackMsg + `<div style="margin-top: 12px;"><button style="${btnStyle}" onclick="sendChatOption('Ver paquetes y precios')">📷 Ver paquetes y precios</button><button style="${btnStyle}" onclick="sendChatOption('Servicios de video')">🎥 Servicios de Video</button><button style="${btnStyle}" onclick="sendChatOption('Hablar con un asesor')">👤 Hablar con un humano</button></div>`;
             }
             return response;
         }
 
-        // --- APERTURA Y CIERRE DEL CHAT ---
         chatbotFab.addEventListener('click', () => {
             isChatbotOpen = true;
             chatbotWindow.classList.add('active');
             chatbotFab.classList.add('hide-chatbot-ui');
-            document.body.classList.add('chat-active');
+            document.body.classList.add('chat-active'); 
             if (hasNewMessage) {
                 hasNewMessage = false;
                 chatbotFab.classList.remove('has-new-message');
@@ -1000,7 +1024,7 @@
             isChatbotOpen = false;
             chatbotWindow.classList.remove('active');
             chatbotFab.classList.remove('hide-chatbot-ui');
-            document.body.classList.remove('chat-active');
+            document.body.classList.remove('chat-active'); 
             setTimeout(() => {
                 currentTransX = 0; currentTransY = 0;
                 chatbotWindow.style.transform = ''; 
@@ -1008,7 +1032,6 @@
             }, 400); 
         });
 
-        // --- SISTEMA DE ARRASTRE DE VENTANA ---
         let isDraggingChat = false, dragStartX, dragStartY, currentTransX = 0, currentTransY = 0;
 
         function onDragStart(e) {
@@ -1047,7 +1070,6 @@
         document.addEventListener('touchmove', onDragMove, {passive: false});
         document.addEventListener('touchend', onDragEnd);
 
-        // --- FUNCIONES DEL CHAT Y EXCEL ---
         function appendUserMessage(text) {
             const msgDiv = document.createElement('div');
             msgDiv.className = 'message user-message';
@@ -1092,29 +1114,64 @@
             chatbotInput.disabled = true;
             chatbotSendBtn.disabled = true;
 
-            // FASE 1: OBTENER NOMBRE Y GENERAR CÓDIGO
+            // FASE 1: OBTENER NOMBRE Y PREGUNTAR PROYECTO
             if (chatState === 'ASKING_NAME') {
                 userName = text;
                 sessionCode = generarCodigoUnico();
-                chatState = 'READY';
+                chatState = 'ASKING_PROJECT';
                 
-                guardarChatEnGoogle(userName, text);
+                guardarChatEnGoogle(userName, text); 
                 
                 appendBotTyping();
                 setTimeout(() => {
                     removeBotTyping();
-                    const btnStyle = "display:block; width:100%; margin-top:8px; padding:10px; background:rgba(168,85,247,0.15); border:1px solid rgba(168,85,247,0.5); color:white; border-radius:10px; cursor:pointer; text-align:left; font-family:inherit; transition:0.3s; font-size: 0.85rem;";
-                    let welcomeMsg = `¡Mucho gusto, <b>${userName}</b>! ✨ He creado tu número de gestión único: <b style="color:#ffd700;">${sessionCode}</b>. (Guárdalo para futuras referencias).<br><br>¿En qué te puedo ayudar hoy? 👇<div style="margin-top: 12px;"><button style="${btnStyle}" onclick="sendChatOption('Ver paquetes y precios')">📷 Ver paquetes y precios</button><button style="${btnStyle}" onclick="sendChatOption('Servicios de video')">🎥 Servicios de Video</button><button style="${btnStyle}" onclick="sendChatOption('Hablar con un asesor')">👤 Hablar con un humano</button></div>`;
+                    document.getElementById('chat-session-badge').innerText = '🎟️ ' + sessionCode;
+                    document.getElementById('chat-session-badge').style.display = 'block';
                     
-                    appendBotMessage(welcomeMsg);
-                    guardarChatEnGoogle("Creatik IA", `[Código Creado: ${sessionCode}] Bienvenida y botones enviados.`);
+                    let msg = `¡Mucho gusto, <b>${userName}</b>! ✨ He creado tu número de gestión único: <b style="color:#ffd700;">${sessionCode}</b>.<br><br>Para que nuestro equipo pueda darte el mejor servicio, <b>¿podrías describirnos detalladamente qué tipo de fotos o video necesitas?</b> (Ej: Boda, graduación, productos para Instagram...)`;
+                    
+                    appendBotMessage(msg);
+                    guardarChatEnGoogle("Creatik IA", `[Código Creado: ${sessionCode}] Pide descripción de proyecto.`);
                     
                     chatbotInput.disabled = false; chatbotSendBtn.disabled = false; chatbotInput.focus();
                 }, 1000);
                 return;
             }
 
-            // FASE 2: CHAT NORMAL
+            // FASE 2: OBTENER PROYECTO Y PREGUNTAR UBICACIÓN
+            if (chatState === 'ASKING_PROJECT') {
+                guardarChatEnGoogle(userName, text);
+                chatState = 'ASKING_LOCATION';
+                
+                appendBotTyping();
+                setTimeout(() => {
+                    removeBotTyping();
+                    let msg = `¡Excelente! 📝 El equipo ya puede ver tu idea. Ahora, para saber si aplican viáticos, <b>¿en qué municipio o departamento se realizará la sesión?</b>`;
+                    appendBotMessage(msg);
+                    guardarChatEnGoogle("Creatik IA", "Pide ubicación del cliente.");
+                    chatbotInput.disabled = false; chatbotSendBtn.disabled = false; chatbotInput.focus();
+                }, 1000);
+                return;
+            }
+
+            // FASE 3: OBTENER UBICACIÓN Y MOSTRAR MENÚ NORMAL
+            if (chatState === 'ASKING_LOCATION') {
+                guardarChatEnGoogle(userName, text);
+                chatState = 'READY';
+                
+                appendBotTyping();
+                setTimeout(() => {
+                    removeBotTyping();
+                    const btnStyle = "display:block; width:100%; margin-top:8px; padding:10px; background:rgba(168,85,247,0.15); border:1px solid rgba(168,85,247,0.5); color:white; border-radius:10px; cursor:pointer; text-align:left; font-family:inherit; transition:0.3s; font-size: 0.85rem;";
+                    let msg = `¡Perfecto! 📍 Todo tu perfil ha sido guardado con éxito. A partir de aquí, ¿en qué más te puedo ayudar? 👇<div style="margin-top: 12px;"><button style="${btnStyle}" onclick="sendChatOption('Ver paquetes y precios')">📷 Ver paquetes y precios</button><button style="${btnStyle}" onclick="sendChatOption('Servicios de video')">🎥 Servicios de Video</button><button style="${btnStyle}" onclick="sendChatOption('Hablar con un asesor')">👤 Hablar con un humano</button></div>`;
+                    appendBotMessage(msg);
+                    guardarChatEnGoogle("Creatik IA", "Registro completado. Envía opciones principales.");
+                    chatbotInput.disabled = false; chatbotSendBtn.disabled = false; chatbotInput.focus();
+                }, 1000);
+                return;
+            }
+
+            // FASE 4: CHAT NORMAL
             userMessageCount++;
             resetInactivityTimer(); 
             guardarChatEnGoogle(userName || "Usuario", text);
