@@ -128,19 +128,24 @@
         .typing-dot:nth-child(1) { animation-delay: 0s; } .typing-dot:nth-child(2) { animation-delay: 0.2s; } .typing-dot:nth-child(3) { animation-delay: 0.4s; }
         @keyframes typing { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); background: #a855f7; box-shadow: 0 0 5px #a855f7; } }
 
-        /* NUEVOS BOTONES DE OPCIONES DEL CHAT */
         .chat-options-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; animation: msgEntry 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0; transform: translateY(15px) scale(0.95); }
         .chat-option-btn { background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.5); color: #fff; padding: 10px 15px; border-radius: 20px; cursor: pointer; transition: 0.3s; font-size: 0.85rem; font-family: 'Inter', sans-serif; backdrop-filter: blur(5px); }
         .chat-option-btn:hover { background: linear-gradient(135deg, #a855f7, #db2777); border-color: transparent; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(219, 39, 119, 0.4); }
 
         .chatbot-input-area { padding: 15px; background: rgba(0,0,0,0.5); border-top: 1px solid rgba(255,255,255,0.08); display: flex; gap: 12px; align-items: center; }
-        #chatbot-input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 14px 18px; border-radius: 25px; color: #fff; font-family: 'Inter', sans-serif; font-size: 0.95rem; outline: none; transition: 0.3s; }
+        #chatbot-input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 14px 18px; border-radius: 25px; color: #fff; font-family: 'Inter', sans-serif; font-size: 0.95rem; outline: none; transition: 0.3s; min-width: 0;}
         #chatbot-input:focus { border-color: #a855f7; background: rgba(255,255,255,0.08); box-shadow: inset 0 0 10px rgba(168, 85, 247, 0.1); }
         #chatbot-input:disabled { opacity: 0.5; cursor: not-allowed; }
+        
         #chatbot-send-btn { background: linear-gradient(135deg, #a855f7, #db2777); border: none; width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(168, 85, 247, 0.4); flex-shrink: 0; }
         #chatbot-send-btn:hover { transform: scale(1.1) rotate(-10deg); box-shadow: 0 8px 20px rgba(219, 39, 119, 0.6); }
         #chatbot-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        
+
+        #chatbot-verify-btn { background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; flex-shrink: 0; box-shadow: 0 0 10px rgba(16, 185, 129, 0.2); }
+        #chatbot-verify-btn:hover { background: #10b981; transform: scale(1.1); box-shadow: 0 5px 15px rgba(16, 185, 129, 0.5); }
+        #chatbot-verify-btn svg { fill: #10b981; transition: 0.3s; }
+        #chatbot-verify-btn:hover svg { fill: white; }
+
         .hide-chatbot-ui { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; transform: scale(0.5) !important; }
 
         /* --- HERO SECTION --- */
@@ -168,7 +173,7 @@
         .overlay-marquee { width: 100%; overflow: hidden; padding: 50px 0; position: relative; z-index: 5; background: rgba(0, 0, 0, 0.2); border-top: 1px solid rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.03); display: flex; flex-wrap: nowrap; pointer-events: none; transform: translateZ(0); }
         @keyframes marqueeFlow { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
-        /* --- OVERLAYS CONFIGURACIÓN (MENÚ, PAQUETES Y ACADEMY) --- */
+        /* --- OVERLAYS CONFIGURACIÓN --- */
         #full-menu-overlay, #paquetes-overlay, #academy-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9000; opacity: 0; visibility: hidden; transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
             display: flex; flex-direction: column; align-items: center; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth;
@@ -179,7 +184,7 @@
         #full-menu-overlay::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
         #full-menu-overlay.active, #paquetes-overlay.active, #academy-overlay.active { opacity: 1; visibility: visible; }
 
-        /* --- ACADEMY SECCIÓN (F1 TECH) --- */
+        /* --- ACADEMY SECCIÓN --- */
         .academy-section {
             width: 90%; max-width: 1100px; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 40px;
             background: rgba(20, 10, 30, 0.85); border: 1px solid rgba(255, 50, 50, 0.3); border-radius: 30px; padding: 60px; position: relative; z-index: 5;
@@ -298,6 +303,14 @@
         #contact-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #020005; z-index: 99000; display: flex; flex-direction: column; align-items: center; overflow-y: auto; overflow-x: hidden; opacity: 0; visibility: hidden; transform: perspective(1000px) rotateX(15deg) translateY(80px) scale(0.95); transition: opacity 0.7s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0.8s; }
         #contact-overlay.active { opacity: 1; visibility: visible; transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1); filter: blur(0px); }
         .contact-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-image: radial-gradient(circle at 50% -20%, rgba(14, 165, 233, 0.25) 0%, transparent 60%), linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 100% 100%, 40px 40px, 40px 40px; z-index: 1; pointer-events: none; }
+        
+        .contact-floating-img { position: absolute; z-index: 5; pointer-events: none; animation: floatAnimContact 8s ease-in-out infinite; will-change: transform; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5)); }
+        .fl-top-left { top: 10%; left: 8%; width: 180px; border-radius: 15px; transform: rotate(-10deg); animation-delay: 0s; border: 3px solid rgba(255,255,255,0.1); }
+        .fl-top-right { top: 12%; right: 8%; width: 140px; animation-delay: 1s; }
+        .fl-bot-left { bottom: 15%; left: 10%; width: 150px; animation-delay: 2s; }
+        .fl-bot-right { bottom: 10%; right: 8%; width: 200px; border-radius: 15px; transform: rotate(10deg); animation-delay: 3s; border: 3px solid rgba(255,255,255,0.1); }
+        @keyframes floatAnimContact { 0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); } 50% { transform: translateY(-25px) rotate(var(--rot, 0deg)); } }
+
         .contact-pill-container { border: 1px solid rgba(14, 165, 233, 0.4); border-radius: 50px; background: rgba(14, 165, 233, 0.1); box-shadow: 0 0 20px rgba(14, 165, 233, 0.2); margin-bottom: 30px; position: relative; display: flex; justify-content: center; align-items: center; height: 35px; overflow: hidden; animation: dynamicContactPillWidth 10s infinite cubic-bezier(0.8, 0, 0.1, 1); will-change: width; z-index: 10; }
         .contact-pill-text { font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; color: #0ea5e9; text-transform: uppercase; position: absolute; opacity: 0; visibility: hidden; animation: textCyclePillStrict 10s infinite linear; white-space: nowrap; }
         @keyframes dynamicContactPillWidth { 0%, 22% { width: 120px; } 25%, 47% { width: 140px; } 50%, 72% { width: 130px; } 75%, 97% { width: 150px; } 100% { width: 120px; } }
@@ -340,13 +353,16 @@
             .btn-demo-outline { padding: 6px 12px; font-size: 0.8rem; }
             .menu-btn, .academy-btn { padding: 6px 12px; font-size: 0.75rem; }
             
-            /* Ajustes CERRAR y STICKER Fijos en Celular */
             .overlay-fixed-logo { top: 10px; left: 15px; height: 65px; }
             .overlay-fixed-close { top: 15px; right: 15px; padding: 8px 15px; font-size: 0.75rem; }
 
-            /* Chatbot Celular */
             #chatbot-fab { bottom: 20px; right: 20px; width: 55px; height: 55px; }
             #chatbot-window { bottom: 85px; right: 5vw; width: 90vw; height: 450px; border-radius: 15px; }
+            
+            .fl-top-left { top: 5%; left: -5%; width: 100px; opacity: 0.4;}
+            .fl-top-right { top: 2%; right: -5%; width: 80px; opacity: 0.4;}
+            .fl-bot-left { bottom: 5%; left: 0; width: 90px; opacity: 0.4;}
+            .fl-bot-right { bottom: 5%; right: 0; width: 110px; opacity: 0.4;}
 
             .hero-section { flex-direction: column; justify-content: flex-start; text-align: center; padding: 150px 5vw 30px 5vw !important; min-height: auto !important; gap: 0 !important; }
             .title-group h1 { font-size: clamp(3rem, 15vw, 4.5rem) !important; line-height: 1; } 
@@ -356,11 +372,9 @@
             .text-box-container { height: 75px !important; margin-bottom: 30px !important; }
             .btn-demo-glow { margin-top: 10px !important; }
             
-            /* Paquetes Celular (Lista Vertical) */
             .plans-container { flex-direction: column !important; padding: 100px 5vw 20px 5vw !important; gap: 30px !important; align-items: center !important; overflow: visible !important; width: 100% !important; }
             .plan-card { width: 100% !important; max-width: 350px !important; flex: none !important; transform: scale(1) translate3d(0,0,0) !important; background: rgba(15, 15, 20, 0.98) !important; margin: 0 auto !important; }
 
-            /* Academy Overlay Celular */
             .academy-section { flex-direction: column; padding: 40px 20px !important; text-align: center; gap: 30px; }
             .academy-card { padding: 30px 20px; border-left: none; border-top: 4px solid #ff3232; } 
             .academy-card h2 { font-size: 2.2rem; }
@@ -531,6 +545,11 @@
     <div id="contact-overlay">
         <div class="contact-backdrop"></div>
 
+        <img src="img12.jpg" class="contact-floating-img fl-top-left" style="--rot: -10deg;" alt="Galería Creatik">
+        <img src="STICKER/sticker1.png" class="contact-floating-img fl-top-right" style="--rot: 15deg;" alt="Sticker Creatik">
+        <img src="STICKER/sticker3.png" class="contact-floating-img fl-bot-left" style="--rot: -15deg;" alt="Sticker Creatik">
+        <img src="img11.jpg" class="contact-floating-img fl-bot-right" style="--rot: 10deg;" alt="Galería Creatik">
+
         <button class="overlay-fixed-close" id="close-contact-btn">✖ Cerrar</button>
         
         <div class="contact-content-wrapper">
@@ -629,15 +648,16 @@
             <div class="chatbot-title">
                 <h4>Creatik IA</h4>
                 <span>En línea</span>
+                <span id="chatbot-session-display" style="color: #ffd700; font-size: 0.65rem; font-weight: bold; margin-top: 2px; display: block; letter-spacing: 0.5px;"></span>
             </div>
             <button id="close-chatbot-btn">✖</button>
         </div>
         <div class="chatbot-messages" id="chatbot-messages">
-            <div class="message bot-message">
-                ¡Hola! 👋 Soy la IA asistente de Creatik. Para darte un servicio súper personalizado, ¿con quién tengo el gusto? (Por favor, dime tu nombre)
             </div>
-        </div>
         <div class="chatbot-input-area">
+            <button id="chatbot-verify-btn" title="Consultar Gestión">
+                <svg viewBox="0 0 24 24" width="20" height="20"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            </button>
             <input type="text" id="chatbot-input" placeholder="Escribe tu mensaje..." autocomplete="off">
             <button id="chatbot-send-btn">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
@@ -711,23 +731,31 @@
         const chatbotInput = document.getElementById('chatbot-input');
         const chatbotSendBtn = document.getElementById('chatbot-send-btn');
         const chatbotMessages = document.getElementById('chatbot-messages');
+        const chatbotVerifyBtn = document.getElementById('chatbot-verify-btn');
+        const sessionDisplay = document.getElementById('chatbot-session-display');
         
         let isChatbotOpen = false;
         let userMessageCount = 0;
         let lastTopic = 'inicio'; 
         const MAX_MESSAGES = 12; 
 
-        // Variables de estado para el Flujo (Onboarding)
-        let chatState = 'ASK_NAME'; 
-        let userName = '';
+        let sessionId = 'Pendiente...';
+        let chatState = 'INIT'; 
+        let userDetails = { nombre: '', telefono: '', proyecto: '', descripcion: '', departamento: '', municipio: '' };
+        let flowType = ''; 
+        let verifyTimeout = null;
 
-        // --- INTEGRACIÓN CON GOOGLE SHEETS (SISTEMA DE GESTIÓN) ---
+        sessionDisplay.textContent = `Gestión: ${sessionId}`;
+
+        // --- INTEGRACIÓN CON GOOGLE SHEETS ---
+        // IMPORTANTE: REEMPLAZA ESTA URL CON LA NUEVA URL DE TU GOOGLE APPS SCRIPT
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbya4Eq0jSOrY1NZCF6JUgfSu_xM0vm31tB8rZcrBceYn3lOpTRdJ_Cfx3DgHQP1Nj_P/exec'; 
-        const sessionId = 'CHAT-' + Date.now().toString().slice(-6) + Math.floor(Math.random() * 100);
 
-        function enviarABackend(emisor, mensaje, tipo = 'chat', nombre = '') {
-            if (!GOOGLE_SCRIPT_URL) return;
+        function enviarABackend(emisor, mensaje, tipo = 'chat') {
+            if (!GOOGLE_SCRIPT_URL || sessionId === 'Pendiente...') return;
             const mensajeLimpio = mensaje.replace(/<[^>]*>?/gm, ' ');
+            const ubicacionCombinada = (userDetails.departamento && userDetails.municipio) ? userDetails.departamento + " - " + userDetails.municipio : (userDetails.departamento || "");
+
             fetch(GOOGLE_SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
@@ -737,7 +765,9 @@
                     emisor: emisor,
                     mensaje: mensajeLimpio,
                     tipo: tipo,
-                    nombre: nombre
+                    nombre: userDetails.nombre,
+                    telefono: userDetails.telefono,
+                    ubicacion: ubicacionCombinada
                 })
             }).catch(error => console.error('Error guardando historial:', error));
         }
@@ -754,9 +784,7 @@
                 "Nuestra Sesión Personal o el plan Emprendimiento Básico arrancan en $50. Si buscas destacar más, el Pro está en $125. Para eventos, te súper recomiendo nuestro paquete Intermedio por $100 (es el favorito de todos). También tenemos la opción Small ($75) y Express ($170).",
                 "¡Claro! Manejamos varias opciones. Para algo rápido: Sesión Personal o Básico ($50). Si buscas más impacto: Emprendimiento Pro ($125). En eventos, nuestro paquete estrella es el Intermedio de $100. También ofrecemos el Small por $75 o el súper completo Express por $170.",
                 "¡Te cuento los detalles! Nuestros planes básicos están a $50, el Emprendimiento Pro sube a $125. Si es un evento, el paquete más popular es el Intermedio por $100 (incluye video), pero también tenemos el Small ($75) y el Express ($170). ¡Todo con calidad top!",
-                "Los precios en Creatik son transparentes: Sesiones desde $50 y eventos desde $75 hasta $170. Todo depende de cuánta magia quieras incluir.",
-                "Para presupuestos emprendedores tenemos el plan de $50, y para marcas que quieren todo el nivel, el de $125. ¿Cuál te suena mejor?",
-                "Si buscas cobertura de eventos, el de $100 es ideal porque ya incluye video. Si quieres algo más premium, el Express de $170 es el jefe."
+                "Los precios en Creatik son transparentes: Sesiones desde $50 y eventos desde $75 hasta $170. Todo depende de cuánta magia quieras incluir."
             ],
             precios_detalle: [
                 "¡Claro! Ampliando esa información de costos: Las sesiones de 1 hora ($50 a $125) son ideales para fotos tuyas o de marca. Los planes de eventos ($75 a $170) te aseguran cobertura total, ¡e incluso video en los más completos! ¿Cuál se adapta más a tu idea?",
@@ -764,91 +792,58 @@
                 "Para darte más contexto: El paquete más caro ($170) incluye hasta un asistente y video vertical para redes, mientras que los más accesibles ($50-$75) te garantizan excelencia fotográfica en menos tiempo."
             ],
             academy: [
-                "Creatik Academy es nuestro orgullo social. ✨ Llevamos más de dos años uniendo talentos mediante salidas de campo, usando la fotografía como puente de integración.",
-                "Sobre Creatik Academy, te cuento que es nuestro proyecto social estrella. Organizamos convivencias y salidas de campo donde la pasión por el arte visual nos une.",
-                "¡La Academy es magia pura! Es un espacio de formación donde apasionados del arte visual convivimos y aprendemos en el terreno."
+                "Creatik Academy es nuestro orgullo social. ✨ Llevamos más de dos años uniendo talentos mediante salidas de campo, usando la fotografía como puente de integración."
             ],
             servicios_info: [
-                "En Creatik ofrecemos Fotografía Profesional, Video Cinematográfico y Diseño Gráfico. ¡Contamos tu historia de forma integral!",
-                "¡Para proyectos personales o marcas tenemos justo lo que necesitas! Hacemos sesiones fotográficas de alta calidad y video cinematográfico. ¿Qué tenías en mente?",
-                "Manejamos la imagen completa: Fotografía, Video y Diseño Gráfico. Tenemos mucha experiencia cubriendo eventos, sesiones para marcas y contenido para redes. ¿De qué trata tu idea?"
+                "En Creatik ofrecemos Fotografía Profesional, Video Cinematográfico y Diseño Gráfico. ¡Contamos tu historia de forma integral!"
             ],
             por_que: [
-                "¿Por qué Creatik? Porque entendemos que tu historia es única. No solo entregamos fotos, entregamos recuerdos con alma. Usamos equipo de alta gama y nos apasiona cada detalle.",
-                "Elegir Creatik es asegurar que tus recuerdos cobren vida con calidad cinematográfica y trato humano.",
-                "Nos diferenciamos por nuestra creatividad sin límites y el uso de equipo pro de alta gama."
+                "¿Por qué Creatik? Porque entendemos que tu historia es única. No solo entregamos fotos, entregamos recuerdos con alma. Usamos equipo de alta gama y nos apasiona cada detalle."
             ],
             filosofia: [
-                "Para nosotros, la fotografía no es solo apretar un botón. Es congelar el tiempo y hacer que un instante sea eterno. ✨",
-                "Creemos firmemente que cada persona y marca tiene una historia única que merece ser capturada con respeto y arte.",
-                "Nuestra filosofía es simple: momentos reales, fotos inolvidables."
+                "Para nosotros, la fotografía no es solo apretar un botón. Es congelar el tiempo y hacer que un instante sea eterno. ✨"
             ],
             ubicacion: [
-                "Actualmente no contamos con un local físico, ¡porque nosotros nos trasladamos a donde tú prefieras! 🚗 Llevamos nuestro equipo profesional para cubrir tus eventos o sesiones en la locación de tu elección.",
-                "No tenemos estudio o local físico, somos nómadas creativos 🌍. Llevamos toda la magia y el equipo directamente al lugar que tú elijas para tu sesión o evento.",
-                "¡Nos movemos hacia ti! No manejamos local físico, preferimos ir a la locación que más te guste para realizar tu sesión fotográfica o cubrir tu evento."
+                "Actualmente no contamos con un local físico, ¡porque nosotros nos trasladamos a donde tú prefieras! 🚗 Llevamos nuestro equipo profesional para cubrir tus eventos o sesiones en la locación de tu elección."
             ],
             tiene_pregunta: [
-                "¡Claro que sí! Dispara tu pregunta, estoy aquí para resolver todas tus dudas sobre foto, video y diseño. 📸",
-                "¡Por supuesto! Pregúntame lo que necesites saber. ✨",
-                "¡Con gusto! Dime en qué te puedo ayudar o qué duda tienes sobre Creatik."
+                "¡Claro que sí! Dispara tu pregunta, estoy aquí para resolver todas tus dudas sobre foto, video y diseño. 📸"
             ],
             contacto: [
-                "¡Te entiendo perfectamente! Para platicar detalles precisos, un asesor humano de nuestro equipo te atenderá con gusto.",
-                "Con gusto te comunicamos con uno de nuestros agentes humanos. Ellos tienen toda la creatividad para escuchar tu idea.",
-                "Como asistente virtual tengo info general, ¡pero nuestro equipo humano está súper listo para escucharte a detalle!"
+                "¡Te entiendo perfectamente! Para platicar detalles precisos, un asesor humano de nuestro equipo te atenderá con gusto."
             ],
             redes: [
-                "¡Nos encanta conectar! 📱 Síguenos en Instagram, Facebook y TikTok como **@soycreatik**.",
-                "Puedes ver nuestro portafolio completo en Instagram, Facebook y TikTok. Nos encuentras en todas como **@soycreatik**.",
-                "¡Estamos en todos lados! Búscanos en TikTok, Facebook e Instagram con el usuario **@soycreatik**."
+                "¡Nos encanta conectar! 📱 Síguenos en Instagram, Facebook y TikTok como **@soycreatik**."
             ],
             despedida: [
-                "¡De nada! Ha sido un placer platicar contigo. ¡Hasta la próxima! 📸",
-                "¡Gracias a ti por escribirnos! Que tengas un día súper creativo.",
-                "¡Perfecto! Quedamos a tu entera disposición para cualquier otra duda."
+                "¡De nada! Ha sido un placer platicar contigo. ¡Hasta la próxima! 📸"
             ],
             saludo_resp: [
-                "¿En qué te puedo asesorar el día de hoy? Pregúntame sobre precios o servicios.",
-                "¿Tienes algún evento en mente o buscas una cotización en específico?",
-                "¿Cómo te puedo ayudar a contar tu historia hoy? Estoy listo para tus dudas."
+                "¿En qué te puedo asesorar el día de hoy? Pregúntame sobre precios o servicios."
             ],
             como_estas: [
-                "¡Todo excelente por aquí! Con mucha energía y ganas de crear. ✨ ¿En qué te puedo ayudar hoy?",
-                "¡Súper bien, rodeado de mucha inspiración visual! 🎨 ¿Tienes algún proyecto en mente?",
-                "¡De maravilla! Listo para capturar los mejores momentos. 📸 ¿Qué te trae por acá?"
+                "¡Todo excelente por aquí! Con mucha energía y ganas de crear. ✨ ¿En qué te puedo ayudar hoy?"
             ],
             bien_y_tu: [
-                "¡Qué gusto escuchar eso! Yo estoy al 100% y listo para asesorarte. 🚀 ¿Buscabas info de foto o video?",
-                "¡Excelente! Siempre es bueno conectar con personas con buena vibra. 😎 ¿Te ayudo a cotizar algo?",
-                "¡Me alegra mucho! Yo estoy fantástico, con muchas ganas de que hagamos fotos."
+                "¡Qué gusto escuchar eso! Yo estoy al 100% y listo para asesorarte. 🚀 ¿Buscabas info de foto o video?"
             ],
             interjeccion: [
-                "¡Claro que sí! Cuéntame un poco más de tu idea... 🎨",
-                "¡Totalmente! La buena vibra y actitud es parte de Creatik. 😎",
-                "¡Jaja, así es! Siempre trato de mantener la mejor energía. ✨"
+                "¡Claro que sí! Cuéntame un poco más de tu idea... 🎨"
             ],
             bot_identity: [
-                "¡Soy Creatik IA! Un asistente virtual diseñado para hablar de arte visual, foto y video. 🤖✨",
-                "Soy la inteligencia artificial de Creatik. No tomo café, ¡pero tengo mucha energía para ayudarte! ☕📸",
-                "Soy tu guía digital en el mundo Creatik. Mi misión es que encuentres el paquete perfecto para tu historia."
+                "¡Soy Creatik IA! Un asistente virtual diseñado para hablar de arte visual, foto y video. 🤖✨"
             ],
             bad_strange: [
-                "¡Ups! 😅 Mi programación solo me permite hablar de fotografía, video y diseño. ¿Te ayudo con eso?",
-                "Esa palabra no está en mi base de datos creativa. 🤖 ¿Volvemos a nuestros paquetes?",
-                "Mmm, prefiero que hablemos de cómo hacer que tus fotos se vean increíbles. ¿Te parece?"
+                "¡Ups! 😅 Mi programación solo me permite hablar de fotografía, video y diseño. ¿Te ayudo con eso?"
             ],
             default: [
-                "¡Qué interesante! 🤔 Cuéntame un poco más... ¿buscas algo enfocado en foto, diseño o video?",
-                "¡Me gusta por dónde vas! Aunque para orientarte mejor, ¿es para ti o para tu marca?",
-                "Entiendo. 📸 Para darte info precisa, ¿quieres saber de paquetes fotográficos o de video?"
+                "¡Qué interesante! 🤔 Cuéntame un poco más... ¿buscas algo enfocado en foto, diseño o video?"
             ]
         };
 
         const closings = [
             "<br><br>👉 Síguenos en <b>Instagram, Facebook y TikTok</b> como <b>@soycreatik</b> o escríbenos al <b>WhatsApp: +503 7577 8333</b>.",
-            "<br><br>📱 Para agendar tu fecha o aclarar dudas complejas, un asesor te espera en nuestro <b>WhatsApp al +503 7577 8333</b>.",
-            "<br><br>✨ Visita nuestras redes (Facebook, TikTok, Instagram) <b>@soycreatik</b> o mándanos un mensaje directo al <b>WhatsApp +503 7577 8333</b>."
+            "<br><br>📱 Para agendar tu fecha o aclarar dudas complejas, un asesor te espera en nuestro <b>WhatsApp al +503 7577 8333</b>."
         ];
 
         function getRandom(array) {
@@ -930,11 +925,32 @@
             return finalResponse;
         }
 
+        function initChat() {
+            chatbotMessages.innerHTML = '';
+            appendBotMessage("¡Hola! 👋 Soy la IA asistente de Creatik. ¿En qué te puedo ayudar hoy?");
+            appendBotOptions(['COTIZACIÓN', 'CONTRATAR SERVICIOS', 'CONOCER MÁS SOBRE CREATIK']);
+            chatState = 'CHOOSE_INITIAL';
+            chatbotInput.disabled = true;
+            chatbotSendBtn.disabled = true;
+            chatbotInput.placeholder = "Selecciona una opción arriba ⬆️";
+            
+            sessionId = 'Pendiente...';
+            sessionDisplay.textContent = `Gestión: ${sessionId}`;
+            userDetails = { nombre: '', telefono: '', proyecto: '', descripcion: '', departamento: '', municipio: '' };
+        }
+
         chatbotFab.addEventListener('click', () => {
             isChatbotOpen = true;
             chatbotWindow.classList.add('active');
             chatbotFab.classList.add('hide-chatbot-ui');
-            setTimeout(() => chatbotInput.focus(), 300);
+            
+            if (chatbotMessages.children.length === 0) {
+                initChat();
+            }
+            
+            if (!chatbotInput.disabled) {
+                setTimeout(() => chatbotInput.focus(), 300);
+            }
         });
 
         closeChatbotBtn.addEventListener('click', () => {
@@ -973,7 +989,6 @@
             scrollToBottom();
         }
 
-        // --- SISTEMA DE BOTONES PARA EL CHAT ---
         function appendBotOptions(options) {
             const msgDiv = document.createElement('div');
             msgDiv.className = 'chat-options-container';
@@ -1003,7 +1018,26 @@
             chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
         }
 
-        // --- MÁQUINA DE ESTADOS (FLUJO DE BIENVENIDA) ---
+        // --- BOTÓN VERIFICAR GESTIÓN Y TEMPORIZADOR ---
+        chatbotVerifyBtn.addEventListener('click', () => {
+            if (chatState === 'CHOOSE_INITIAL') return; 
+
+            appendBotMessage("Por favor, ingresa el número de gestión que deseas consultar (ej. CTK-1234):");
+            chatState = 'CONSULT_GESTION';
+            chatbotInput.disabled = false;
+            chatbotSendBtn.disabled = false;
+            chatbotInput.placeholder = "Escribe tu número de gestión...";
+            chatbotInput.focus();
+
+            clearTimeout(verifyTimeout);
+            verifyTimeout = setTimeout(() => {
+                if (chatState === 'CONSULT_GESTION') {
+                    appendBotMessage("⏳ Tiempo de espera agotado. Se canceló la consulta. Volvamos a iniciar.");
+                    setTimeout(initChat, 1000);
+                }
+            }, 15000);
+        });
+
         function handleSend() {
             const text = chatbotInput.value.trim();
             if (!text) return;
@@ -1021,63 +1055,231 @@
             }, 1000 + Math.random() * 500); 
         }
 
+        // --- MÁQUINA DE ESTADOS PRINCIPAL ---
         function processState(userText) {
-            if (chatState === 'ASK_NAME') {
-                userName = userText;
-                enviarABackend('Usuario', userText, 'nombre', userName);
+            if (chatState === 'CHOOSE_INITIAL') {
+                flowType = userText;
                 
-                let response = `¡Un gusto, ${userName}! Te he asignado el número de gestión: <b>${sessionId}</b>.<br><br>Para darte la mejor asesoría, ¿qué tipo de proyecto tienes en mente?`;
+                let digits = Math.floor(1000 + Math.random() * 9000);
+                if (userText === 'COTIZACIÓN') {
+                    sessionId = 'CTK-' + digits;
+                } else if (userText === 'CONTRATAR SERVICIOS') {
+                    sessionId = 'CTK-S' + digits;
+                } else if (userText === 'CONOCER MÁS SOBRE CREATIK') {
+                    // Para información NO activa el ID visiblemente
+                    sessionId = 'CTK-I' + digits;
+                    sessionDisplay.textContent = `Gestión Info`;
+                    enviarABackend('Usuario', userText, 'inicio'); 
+                    let response = `¡Hola! Soy la inteligencia artificial de Creatik. 🤖✨ Estoy aquí para resolver todas tus dudas sobre precios, servicios o nuestra filosofía. Cuéntame, ¿qué te gustaría saber?`;
+                    appendBotMessage(response);
+                    enviarABackend('Creatik IA', response, 'chat');
+                    chatState = 'NORMAL_CHAT';
+                    chatbotInput.disabled = false;
+                    chatbotSendBtn.disabled = false;
+                    chatbotInput.placeholder = "Escribe tu mensaje...";
+                    return;
+                }
+                
+                // Si es cotización o contratación, muestra ID
+                sessionDisplay.textContent = `Gestión: ${sessionId}`;
+                enviarABackend('Usuario', userText, 'inicio'); 
+                
+                let response = "";
+                if (userText === 'CONTRATAR SERVICIOS') {
+                    response = `¡Excelente decisión! Estamos súper emocionados de trabajar contigo. 🎉 Para brindarte la atención VIP que mereces, ¿con quién tengo el gusto?`;
+                } else {
+                    response = `¡Excelente elección! Para darte un servicio súper personalizado, ¿con quién tengo el gusto?`;
+                }
                 appendBotMessage(response);
-                enviarABackend('Creatik IA', response, 'chat', userName);
+                enviarABackend('Creatik IA', response, 'chat');
+                chatState = 'ASK_NAME'; 
+
+            } else if (chatState === 'ASK_NAME') {
+                userDetails.nombre = userText;
+                enviarABackend('Usuario', userText, 'nombre');
+                
+                let response = `¡Un gusto, ${userDetails.nombre}! Hemos registrado tu sesión. Para poder contactarte y enviarte información detallada, ¿cuál es tu número de teléfono o WhatsApp?`;
+                appendBotMessage(response);
+                enviarABackend('Creatik IA', response, 'chat');
+                chatState = 'ASK_PHONE';
+
+            } else if (chatState === 'ASK_PHONE') {
+                userDetails.telefono = userText;
+                enviarABackend('Usuario', userText, 'telefono');
+                
+                let response = `¡Gracias! ¿Qué tipo de proyecto tienes en mente?`;
+                appendBotMessage(response);
+                enviarABackend('Creatik IA', response, 'chat');
                 
                 appendBotOptions(['Fotografía Personal', 'Fotografía de Evento', 'Video / Emprendimiento', 'Diseño Gráfico', 'Otro']);
                 chatState = 'WAITING_PROJECT'; 
 
             } else if (chatState === 'WAITING_PROJECT') {
-                enviarABackend('Usuario', userText, 'proyecto', userName);
+                userDetails.proyecto = userText;
+                enviarABackend('Usuario', userText, 'proyecto');
                 
-                let response = `¡Excelente elección! Cuéntame más detalles, ¿qué ideas tienes para este proyecto? (Ej: Boda de día, fotos para restaurante, etc.)`;
-                appendBotMessage(response);
-                enviarABackend('Creatik IA', response, 'chat', userName);
-                chatState = 'ASK_DETAILS';
+                if (userText === 'Diseño Gráfico') {
+                    let response = `Para proyectos de Diseño Gráfico o Publicidad, brindamos atención directa y súper personalizada. Por favor, escríbenos a nuestro WhatsApp al +503 7577 8333 para darle forma a tu idea. 🎨`;
+                    appendBotMessage(response);
+                    enviarABackend('Creatik IA', response, 'chat');
+                    chatState = 'NORMAL_CHAT';
+                } 
+                else if (userText === 'Fotografía de Evento') {
+                    let response = `¡Suena genial! Cuéntame, ¿qué tipo de evento es? (Ej: Boda, Cumpleaños, Aniversario, etc.)`;
+                    appendBotMessage(response);
+                    enviarABackend('Creatik IA', response, 'chat');
+                    chatState = 'ASK_EVENT_TYPE';
+                }
+                else {
+                    // Personal, Emprendimiento, Otro
+                    let response = `¡Perfecto! Cuéntame un poco más sobre la idea o concepto que tienes en mente.`;
+                    appendBotMessage(response);
+                    enviarABackend('Creatik IA', response, 'chat');
+                    chatState = 'ASK_PROJECT_DESC';
+                }
 
-            } else if (chatState === 'ASK_DETAILS') {
-                enviarABackend('Usuario', userText, 'detalles', userName);
+            } else if (chatState === 'ASK_EVENT_TYPE') {
+                const textLower = userText.toLowerCase();
                 
-                let response = `¡Suena increíble! ¿En qué ubicación, ciudad o lugar te gustaría realizarlo?`;
-                appendBotMessage(response);
-                enviarABackend('Creatik IA', response, 'chat', userName);
-                chatState = 'ASK_LOCATION';
+                if (/baile|bailar|discoteca|perreo/.test(textLower)) {
+                    appendBotMessage("Lo sentimos mucho, pero por políticas internas de Creatik no realizamos cobertura de eventos de baile o discoteca. 🚫 ¿Tienes en mente algún otro tipo de proyecto o evento familiar en el que te podamos ayudar?");
+                    chatState = 'NORMAL_CHAT';
+                    return; 
+                }
 
-            } else if (chatState === 'ASK_LOCATION') {
-                enviarABackend('Usuario', userText, 'ubicacion', userName);
+                userDetails.descripcion = userText;
+                enviarABackend('Usuario', userText, 'descripcion_evento');
                 
-                let response = `¡Perfecto! Ya tengo toda tu información resguardada bajo tu gestión <b>${sessionId}</b>.<br><br>Ahora sí, pregúntame libremente sobre nuestros precios, paquetes o servicios. ¿En qué más te ayudo?`;
+                let eventAcknowledge = "Me encanta la idea.";
+                if (/boda|matrimonio|casamiento/.test(textLower)) eventAcknowledge = "¡Qué hermoso! Nos fascina capturar el amor en las bodas. 💍";
+                else if (/cumpleaños|cumple/.test(textLower)) eventAcknowledge = "¡Súper! Un cumpleaños siempre está lleno de momentos increíbles. 🎂";
+                else if (/iglesia|culto|misa/.test(textLower)) eventAcknowledge = "Excelente, tenemos mucha experiencia cubriendo eventos religiosos con el respeto y la solemnidad que merecen. ⛪";
+                else if (/aniversario/.test(textLower)) eventAcknowledge = "¡Felicidades por ese aniversario! Será un honor documentarlo. ✨";
+                else if (/fiesta/.test(textLower)) eventAcknowledge = "¡Genial! Las fiestas familiares siempre dan para fotos muy divertidas. 🎉";
+
+                let response = `${eventAcknowledge} Para asignarte el equipo ideal, ¿de qué departamento de El Salvador nos escribes?`;
                 appendBotMessage(response);
-                enviarABackend('Creatik IA', response, 'chat', userName);
+                enviarABackend('Creatik IA', response, 'chat');
+                
+                const departamentos = ["Ahuachapán", "Santa Ana", "Sonsonate", "Chalatenango", "La Libertad", "San Salvador", "Cuscatlán", "La Paz", "Cabañas", "San Vicente", "Usulután", "San Miguel", "Morazán", "La Unión"];
+                appendBotOptions(departamentos);
+                chatState = 'ASK_DEPARTMENT';
+
+            } else if (chatState === 'ASK_PROJECT_DESC') {
+                userDetails.descripcion = userText;
+                enviarABackend('Usuario', userText, 'descripcion');
+                
+                let response = `Me encanta tu concepto. Para asignarte el equipo ideal, ¿de qué departamento de El Salvador nos escribes?`;
+                appendBotMessage(response);
+                enviarABackend('Creatik IA', response, 'chat');
+                
+                const departamentos = ["Ahuachapán", "Santa Ana", "Sonsonate", "Chalatenango", "La Libertad", "San Salvador", "Cuscatlán", "La Paz", "Cabañas", "San Vicente", "Usulután", "San Miguel", "Morazán", "La Unión"];
+                appendBotOptions(departamentos);
+                chatState = 'ASK_DEPARTMENT';
+
+            } else if (chatState === 'ASK_DEPARTMENT') {
+                userDetails.departamento = userText;
+                enviarABackend('Usuario', userText, 'departamento');
+                
+                let response = `Genial, en ${userText}. Según la nueva distribución gubernamental, ¿a qué municipio o distrito corresponde?`;
+                appendBotMessage(response);
+                enviarABackend('Creatik IA', response, 'chat');
+
+                const municipiosES = {
+                    "Ahuachapán": ["Ahuachapán Norte", "Ahuachapán Centro", "Ahuachapán Sur"],
+                    "Santa Ana": ["Santa Ana Norte", "Santa Ana Centro", "Santa Ana Este", "Santa Ana Oeste"],
+                    "Sonsonate": ["Sonsonate Norte", "Sonsonate Centro", "Sonsonate Este", "Sonsonate Oeste"],
+                    "Chalatenango": ["Chalatenango Norte", "Chalatenango Centro", "Chalatenango Sur"],
+                    "La Libertad": ["La Libertad Norte", "La Libertad Centro", "La Libertad Sur", "La Libertad Este", "La Libertad Oeste", "La Libertad Costa"],
+                    "San Salvador": ["San Salvador Norte", "San Salvador Centro", "San Salvador Sur", "San Salvador Este", "San Salvador Oeste"],
+                    "Cuscatlán": ["Cuscatlán Norte", "Cuscatlán Sur"],
+                    "La Paz": ["La Paz Norte", "La Paz Centro", "La Paz Sur", "La Paz Este", "La Paz Oeste", "La Paz Costa"],
+                    "Cabañas": ["Cabañas Este", "Cabañas Oeste"],
+                    "San Vicente": ["San Vicente Norte", "San Vicente Sur"],
+                    "Usulután": ["Usulután Norte", "Usulután Sur", "Usulután Este", "Usulután Oeste"],
+                    "San Miguel": ["San Miguel Norte", "San Miguel Centro", "San Miguel Sur"],
+                    "Morazán": ["Morazán Norte", "Morazán Sur"],
+                    "La Unión": ["La Unión Norte", "La Unión Sur"]
+                };
+                
+                let opcionesMunicipio = municipiosES[userText] || ["Norte", "Sur", "Centro", "Otro"];
+                appendBotOptions(opcionesMunicipio);
+                chatState = 'ASK_MUNICIPALITY';
+
+            } else if (chatState === 'ASK_MUNICIPALITY') {
+                userDetails.municipio = userText;
+                enviarABackend('Usuario', userText, 'municipio');
+                
+                let response = `¡Excelente! Me encanta cómo suena todo el proyecto. ¿Tienes alguna duda en específico sobre paquetes, precios o cómo trabajamos antes de finalizar?`;
+                appendBotMessage(response);
+                enviarABackend('Creatik IA', response, 'chat');
                 chatState = 'NORMAL_CHAT';
 
+            } else if (chatState === 'CONSULT_GESTION') {
+                clearTimeout(verifyTimeout); // Quita el temporizador de 15s si escribe
+                const queryId = userText.replace(/[-\s]/g, '').toUpperCase();
+                appendBotMessage("Buscando en nuestra base de datos... 🔍");
+                
+                fetch(GOOGLE_SCRIPT_URL + "?id=" + queryId)
+                    .then(res => res.json())
+                    .then(data => {
+                        removeBotTyping();
+                        if (data.found) {
+                            let text = `<span style="color: #10b981; font-weight: bold;">✅ GESTIÓN ENCONTRADA</span><br><br>`;
+                            text += `<b>👤 Nombre:</b> ${data.data.nombre || 'N/A'}<br>`;
+                            text += `<b>📱 Tel/WA:</b> ${data.data.telefono || 'N/A'}<br>`;
+                            text += `<b>🎯 Proyecto:</b> ${data.data.proyecto || 'N/A'}<br>`;
+                            text += `<b>📍 Ubicación:</b> ${data.data.ubicacion || 'N/A'}<br>`;
+                            
+                            if (data.data.mensajes && data.data.mensajes.length > 0) {
+                                let ultimoMsj = data.data.mensajes[data.data.mensajes.length - 1];
+                                text += `<br><b>📝 Último detalle:</b> <i>"${ultimoMsj}"</i>`;
+                            }
+                            text += `<br><br>¿Te ayudo con algo más en nuestra plática actual?`;
+                            appendBotMessage(text);
+                        } else {
+                            appendBotMessage("Lo siento, no he podido encontrar ese número de gestión en nuestra base. 😕 Asegúrate de haberlo escrito correctamente. ¿En qué más te ayudo?");
+                        }
+                        chatState = 'NORMAL_CHAT';
+                        chatbotInput.disabled = false;
+                        chatbotSendBtn.disabled = false;
+                        chatbotInput.placeholder = "Escribe tu mensaje...";
+                        chatbotInput.focus();
+                    })
+                    .catch(err => {
+                        removeBotTyping();
+                        appendBotMessage("Hubo un error al conectar con la base de datos. Volvamos a la plática.");
+                        chatState = 'NORMAL_CHAT';
+                        chatbotInput.disabled = false;
+                        chatbotSendBtn.disabled = false;
+                        chatbotInput.placeholder = "Escribe tu mensaje...";
+                    });
+                
+                return; // Bloquea el flujo aquí mientras hace el fetch
+
             } else if (chatState === 'NORMAL_CHAT') {
-                enviarABackend('Usuario', userText, 'chat', userName);
+                enviarABackend('Usuario', userText, 'chat');
                 userMessageCount++;
                 
                 if (userMessageCount >= MAX_MESSAGES) {
-                    const mensajeDespedida = `¡Qué gran plática hemos tenido! 📸<br><br>Para darte la atención final con tu número de gestión <b>${sessionId}</b>, por favor escríbenos a nuestro <b>WhatsApp: +503 7577 8333</b> o en redes (<b>@soycreatik</b>).<br>¡El equipo humano te espera! 🚀`;
+                    const idMostrar = sessionId.includes("Pendiente") ? "tu solicitud" : `tu gestión <b>${sessionId}</b>`;
+                    const mensajeDespedida = `¡Qué gran plática hemos tenido! 📸<br><br>Para darte la atención final con ${idMostrar}, por favor escríbenos a nuestro <b>WhatsApp: +503 7577 8333</b> o en redes (<b>@soycreatik</b>).<br>¡El equipo humano te espera! 🚀`;
                     appendBotMessage(mensajeDespedida);
-                    enviarABackend('Creatik IA', mensajeDespedida, 'chat', userName);
+                    enviarABackend('Creatik IA', mensajeDespedida, 'chat');
                     chatbotInput.placeholder = "Escríbenos al WhatsApp para continuar.";
                     return; 
                 }
 
                 const responseText = getBotResponse(userText, userMessageCount);
                 appendBotMessage(responseText);
-                enviarABackend('Creatik IA', responseText, 'chat', userName);
+                enviarABackend('Creatik IA', responseText, 'chat');
             }
 
-            // Reactivar input si no es el final
-            if (chatState !== 'WAITING_PROJECT') {
+            // Reactivar input si no está en un estado que requiere botones
+            if (chatState !== 'WAITING_PROJECT' && chatState !== 'ASK_DEPARTMENT' && chatState !== 'ASK_MUNICIPALITY' && chatState !== 'CHOOSE_INITIAL' && chatState !== 'CONSULT_GESTION') {
                 chatbotInput.disabled = false;
                 chatbotSendBtn.disabled = false;
+                chatbotInput.placeholder = "Escribe tu mensaje...";
                 chatbotInput.focus();
             }
         }
@@ -1129,7 +1331,6 @@
                 bgPresentation.classList.add('paused-animation');
                 marquee.classList.add('paused-animation');
                 
-                // Ocultar Chatbot cuando se abre cualquier overlay
                 chatbotFab.classList.add('hide-chatbot-ui');
                 chatbotWindow.classList.remove('active');
                 isChatbotOpen = false;
@@ -1143,7 +1344,6 @@
                 bgPresentation.classList.remove('paused-animation');
                 marquee.classList.remove('paused-animation');
                 
-                // Mostrar Chatbot solo en inicio
                 chatbotFab.classList.remove('hide-chatbot-ui');
 
                 mainHeader.style.visibility = 'visible';
@@ -1152,7 +1352,6 @@
             }
         }
 
-        // --- INTRO LOADER MÁS RÁPIDO ---
         function triggerIntro() {
             loader.classList.remove('hidden'); introText.classList.remove('animate-letters');
             void introText.offsetWidth; introText.classList.add('animate-letters');
