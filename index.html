@@ -644,7 +644,7 @@
 
     <div id="chatbot-window">
         <div class="chatbot-header">
-            <img src="LOGO CHAT.png" alt="Creatik Bot" class="chatbot-logo" onerror="this.src='https://i.pravatar.cc/100?img=12'">
+            <img src="LOGO CHAT.jpg" alt="Creatik Bot" class="chatbot-logo" onerror="this.src='https://i.pravatar.cc/100?img=12'">
             <div class="chatbot-title">
                 <h4>Creatik IA</h4>
                 <span>En línea</span>
@@ -698,7 +698,6 @@
 
         function changeAcademyImages() {
             if (!document.getElementById('academy-A')) return;
-
             if (currentPairIndex >= shuffledAcademy.length) {
                 let lastImage = shuffledAcademy[shuffledAcademy.length - 1];
                 let newShuffle;
@@ -706,14 +705,11 @@
                 shuffledAcademy = newShuffle;
                 currentPairIndex = 0;
             }
-
             let nextImage = shuffledAcademy[currentPairIndex];
             currentPairIndex++;
-
             const layerOut = document.getElementById(`academy-${activeLayer}`);
             activeLayer = activeLayer === 'A' ? 'B' : 'A';
             const layerIn = document.getElementById(`academy-${activeLayer}`);
-
             const tempImg = new Image();
             tempImg.onload = function() {
                 layerIn.src = this.src;
@@ -723,6 +719,82 @@
             tempImg.src = `Creatik Academy/${nextImage}`;
         }
         setInterval(changeAcademyImages, 4000); 
+
+        // --- DATOS POLÍTICOS DE EL SALVADOR ---
+        const svData = {
+            "Ahuachapán": {
+                "Ahuachapán Norte": ["Atiquizaya", "El Refugio", "San Lorenzo", "Turín"],
+                "Ahuachapán Centro": ["Ahuachapán", "Apaneca", "Concepción de Ataco", "Tacuba"],
+                "Ahuachapán Sur": ["Guaymango", "Jujutla", "San Francisco Menendez", "San Pedro Puxtla"]
+            },
+            "San Salvador": {
+                "San Salvador Norte": ["Aguilares", "El Paisnal", "Guazapa"],
+                "San Salvador Oeste": ["Apopa", "Nejapa"],
+                "San Salvador Este": ["llopango", "San Martín", "Soyapango", "Tonacatepeque"],
+                "San Salvador Centro": ["Ayutuxtepeque", "Mejicanos", "San Salvador", "Cuscatancingo", "Ciudad Delgado"],
+                "San Salvador Sur": ["Panchimalco", "Rosario de Mora", "San Marcos", "Santo Tomás", "Santiago Texacuangos"]
+            },
+            "La Libertad": {
+                "La Libertad Norte": ["Quezaltepeque", "San Matías", "San Pablo Tacachico"],
+                "La Libertad Centro": ["San Juan Opico", "Ciudad Arce"],
+                "La Libertad Oeste": ["Colón", "Jayaque", "Sacacoyo", "Tepecoyo", "Talnique"],
+                "La Libertad Este": ["Antiguo Cuscatlán", "Huizucar", "Nuevo Cuscatlán", "San José Villanueva", "Zaragoza"],
+                "La Libertad Costa": ["Chiltuipán", "Jicalapa", "La Libertad", "Tamanique", "Teotepeque"],
+                "La Libertad Sur": ["Comasagua", "Santa Tecla"]
+            },
+            "Chalatenango": {
+                "Chalatenango Norte": ["La Palma", "Citalá", "San Ignacio"],
+                "Chalatenango Centro": ["Nueva Concepción", "Tejutla", "La Reina", "Agua Caliente", "Dulce Nombre de María", "El Paraíso", "San Francisco Morazán", "San Rafael", "Santa Rita", "San Fernando"],
+                "Chalatenango Sur": ["Chalatenango", "Arcatao", "Azacualpa", "Comalapa", "Concepción Quezaltepeque", "El Carrizal", "La Laguna", "Las Vueltas", "Nombre de Jesús", "Nueva Trinidad", "Ojos de Agua", "Potonico", "San Antonio de La Cruz", "San Antonio Los Ranchos", "San Francisco Lempa", "San Isidro Labrador", "San José Cancasque", "San Miguel de Mercedes", "San José Las Flores", "San Luis del Carmen"]
+            },
+            "Cuscatlán": {
+                "Cuscatlán Norte": ["Suchitoto", "San José Guayabal", "Oratorio de Concepción", "San Bartolomé Perulapán", "San Pedro Perulapán"],
+                "Cuscatlán Sur": ["Cojutepeque", "San Rafael Cedros", "Candelaria", "Monte San Juan", "El Carmen", "San Cristóbal", "Santa Cruz Michapa", "San Ramón", "El Rosario", "Santa Cruz Analquito", "Tenancingo"]
+            },
+            "Cabañas": {
+                "Cabañas Este": ["Sensuntepeque", "Victoria", "Dolores", "Guacotecti", "San Isidro"],
+                "Cabañas Oeste": ["llobasco", "Tejutepeque", "Jutiapa", "Cinquera"]
+            },
+            "La Paz": {
+                "La Paz Oeste": ["Cuyultitán", "Olocuilta", "San Juan Talpa", "San Luis Talpa", "San Pedro Masahuat", "Tapalhuaca", "San Francisco Chinameca"],
+                "La Paz Centro": ["El Rosario", "Jerusalén", "Mercedes La Ceiba", "Paraíso de Osorio", "San Antonio Masahuat", "San Emigdio", "San Juan Tepezontes", "San Luis La Herradura", "San Miguel Tepezontes", "San Pedro Nonualco", "Santa María Ostuma", "Santiago Nonualco"],
+                "La Paz Este": ["San Juan Nonualco", "San Rafael Obrajuelo", "Zacatecoluca"]
+            },
+            "La Unión": {
+                "La Unión Norte": ["Anamorós", "Bolivar", "Concepción de Oriente", "El Sauce", "Lislique", "Nueva Esparta", "Pasaquina", "Polorós", "San José La Fuente", "Santa Rosa de Lima"],
+                "La Unión Sur": ["Conchagua", "El Carmen", "lntipucá", "La Unión", "Meanguera del Golfo", "San Alejo", "Yayantique", "Yucuaiquín"]
+            },
+            "Usulután": {
+                "Usulután Norte": ["Santiago de María", "Alegría", "Berlín", "Mercedes Umana", "Jucuapa", "El Triunfo", "Estanzuelas", "San Buenaventura", "Nueva Granada"],
+                "Usulután Este": ["Usulután", "Jucuarán", "San Dionisio", "Concepción Batres", "Santa María", "Ozatlán", "Tecapán", "Santa Elena", "California", "Ereguayquín"],
+                "Usulután Oeste": ["Jiquilisco", "Puerto El Triunfo", "San Agustín", "San Francisco Javier"]
+            },
+            "Sonsonate": {
+                "Sonsonate Norte": ["Juayúa", "Nahuizalco", "Salcoatitán", "Santa Catarina Masahuat"],
+                "Sonsonate Centro": ["Sonsonate", "Sonzacate", "Nahulingo", "San Antonio del Monte", "Santo Domingo de Guzmán"],
+                "Sonsonate Este": ["lzalco", "Armenia", "Caluco", "San Julián", "Cuisnahuat", "Santa Isabel lshuatán"],
+                "Sonsonate Oeste": ["Acajutla"]
+            },
+            "Santa Ana": {
+                "Santa Ana Norte": ["Masahuat", "Metapán", "Santa Rosa Guachipilín", "Texistepeque"],
+                "Santa Ana Centro": ["Santa Ana"],
+                "Santa Ana Este": ["Coatepeque", "El Congo"],
+                "Santa Ana Oeste": ["Candelaria de la Frontera", "Chalchuapa", "El Porvenir", "San Antonio Pajonal", "San Sebastián Salitrillo", "Santiago de La Frontera"]
+            },
+            "San Vicente": {
+                "San Vicente Norte": ["Apastepeque", "Santa Clara", "San Ildefonso", "San Esteban Catarina", "San Sebastián", "San Lorenzo", "Santo Domingo"],
+                "San Vicente Sur": ["San Vicente", "Guadalupe", "Verapaz", "Tepetitán", "Tecoluca", "San Cayetano lstepeque"]
+            },
+            "San Miguel": {
+                "San Miguel Norte": ["Ciudad Barrios", "Sesori", "Nuevo Edén de San Juan", "San Gerardo", "San Luis de La Reina", "Carolina", "San Antonio del Mosco", "Chapeltique"],
+                "San Miguel Centro": ["San Miguel", "Comacarán", "Uluazapa", "Moncagua", "Quelepa", "Chirilagua"],
+                "San Miguel Oeste": ["Chinameca", "Nueva Guadalupe", "Lolotique", "San Jorge", "San Rafael Oriente", "El Tránsito"]
+            },
+            "Morazán": {
+                "Morazán Norte": ["Arambala", "Cacaopera", "Corinto", "El Rosario", "Joateca", "Jocoaitique", "Meanguera", "Perquín", "San Fernando", "San Isidro", "Torola"],
+                "Morazán Sur": ["Chilanga", "Delicias de Concepción", "El Divisadero", "Gualococti", "Guatajiagua", "Jocoro", "Lolotiquillo", "Osicala", "San Carlos", "San Francisco Gotera", "San Simón", "Sensembra", "Sociedad", "Yamabal", "Yoloaiquín"]
+            }
+        };
 
         // --- LÓGICA DEL CHATBOT LOCAL SÚPER AVANZADO ---
         const chatbotFab = document.getElementById('chatbot-fab');
@@ -741,20 +813,25 @@
 
         let sessionId = 'Pendiente...';
         let chatState = 'INIT'; 
-        let userDetails = { nombre: '', telefono: '', proyecto: '', descripcion: '', departamento: '', municipio: '' };
-        let flowType = ''; 
+        let userDetails = { nombre: '', telefono: '', proyecto: '', descripcion: '', departamento: '', municipio: '', distrito: '' };
         let verifyTimeout = null;
 
         sessionDisplay.textContent = `Gestión: ${sessionId}`;
 
         // --- INTEGRACIÓN CON GOOGLE SHEETS ---
-        // IMPORTANTE: REEMPLAZA ESTA URL CON LA NUEVA URL DE TU GOOGLE APPS SCRIPT
+        // IMPORTANTE: REEMPLAZA ESTA URL CON TU NUEVO GOOGLE APPS SCRIPT
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbya4Eq0jSOrY1NZCF6JUgfSu_xM0vm31tB8rZcrBceYn3lOpTRdJ_Cfx3DgHQP1Nj_P/exec'; 
 
         function enviarABackend(emisor, mensaje, tipo = 'chat') {
             if (!GOOGLE_SCRIPT_URL || sessionId === 'Pendiente...') return;
             const mensajeLimpio = mensaje.replace(/<[^>]*>?/gm, ' ');
-            const ubicacionCombinada = (userDetails.departamento && userDetails.municipio) ? userDetails.departamento + " - " + userDetails.municipio : (userDetails.departamento || "");
+            
+            // Une la ubicación completa si existe
+            let arrayUbi = [];
+            if(userDetails.departamento) arrayUbi.push(userDetails.departamento);
+            if(userDetails.municipio) arrayUbi.push(userDetails.municipio);
+            if(userDetails.distrito) arrayUbi.push(userDetails.distrito);
+            const ubicacionCombinada = arrayUbi.join(" - ");
 
             fetch(GOOGLE_SCRIPT_URL, {
                 method: 'POST',
@@ -767,78 +844,26 @@
                     tipo: tipo,
                     nombre: userDetails.nombre,
                     telefono: userDetails.telefono,
-                    ubicacion: ubicacionCombinada
+                    ubicacion: ubicacionCombinada,
+                    proyecto: userDetails.proyecto
                 })
             }).catch(error => console.error('Error guardando historial:', error));
         }
 
         const greetings = [
             "¡Hola, hola! 📸 ", "¡Qué gusto saludarte! ✨ ", "¡Hola! Bienvenido a la familia Creatik. ", 
-            "¡Saludos! 👋 ", "¡Hey! Qué bueno verte por aquí. ", "¡Hola! Estoy listo para ayudarte a crear magia. ",
-            "¡Hola, qué tal! 🌟 ", "¡Bienvenido al chat oficial de Creatik! ", "¡Hola! Es un placer atenderte hoy. ",
-            "¡Un saludo creativo para ti! 🎨 ", "¡Qué onda! Listo para contarte todo sobre Creatik. ", "¡Buenas! Qué alegría leerte."
+            "¡Saludos! 👋 ", "¡Hey! Qué bueno verte por aquí. "
         ];
         
         const coreResponses = {
-            precios: [
-                "Nuestra Sesión Personal o el plan Emprendimiento Básico arrancan en $50. Si buscas destacar más, el Pro está en $125. Para eventos, te súper recomiendo nuestro paquete Intermedio por $100 (es el favorito de todos). También tenemos la opción Small ($75) y Express ($170).",
-                "¡Claro! Manejamos varias opciones. Para algo rápido: Sesión Personal o Básico ($50). Si buscas más impacto: Emprendimiento Pro ($125). En eventos, nuestro paquete estrella es el Intermedio de $100. También ofrecemos el Small por $75 o el súper completo Express por $170.",
-                "¡Te cuento los detalles! Nuestros planes básicos están a $50, el Emprendimiento Pro sube a $125. Si es un evento, el paquete más popular es el Intermedio por $100 (incluye video), pero también tenemos el Small ($75) y el Express ($170). ¡Todo con calidad top!",
-                "Los precios en Creatik son transparentes: Sesiones desde $50 y eventos desde $75 hasta $170. Todo depende de cuánta magia quieras incluir."
-            ],
-            precios_detalle: [
-                "¡Claro! Ampliando esa información de costos: Las sesiones de 1 hora ($50 a $125) son ideales para fotos tuyas o de marca. Los planes de eventos ($75 a $170) te aseguran cobertura total, ¡e incluso video en los más completos! ¿Cuál se adapta más a tu idea?",
-                "Profundizando en los precios: los $50 son geniales para fotos rápidas, pero si quieres tirar la casa por la ventana en tu evento, los planes de $100 y $170 son los más completos. 🎬",
-                "Para darte más contexto: El paquete más caro ($170) incluye hasta un asistente y video vertical para redes, mientras que los más accesibles ($50-$75) te garantizan excelencia fotográfica en menos tiempo."
-            ],
-            academy: [
-                "Creatik Academy es nuestro orgullo social. ✨ Llevamos más de dos años uniendo talentos mediante salidas de campo, usando la fotografía como puente de integración."
-            ],
-            servicios_info: [
-                "En Creatik ofrecemos Fotografía Profesional, Video Cinematográfico y Diseño Gráfico. ¡Contamos tu historia de forma integral!"
-            ],
-            por_que: [
-                "¿Por qué Creatik? Porque entendemos que tu historia es única. No solo entregamos fotos, entregamos recuerdos con alma. Usamos equipo de alta gama y nos apasiona cada detalle."
-            ],
-            filosofia: [
-                "Para nosotros, la fotografía no es solo apretar un botón. Es congelar el tiempo y hacer que un instante sea eterno. ✨"
-            ],
-            ubicacion: [
-                "Actualmente no contamos con un local físico, ¡porque nosotros nos trasladamos a donde tú prefieras! 🚗 Llevamos nuestro equipo profesional para cubrir tus eventos o sesiones en la locación de tu elección."
-            ],
-            tiene_pregunta: [
-                "¡Claro que sí! Dispara tu pregunta, estoy aquí para resolver todas tus dudas sobre foto, video y diseño. 📸"
-            ],
-            contacto: [
-                "¡Te entiendo perfectamente! Para platicar detalles precisos, un asesor humano de nuestro equipo te atenderá con gusto."
-            ],
-            redes: [
-                "¡Nos encanta conectar! 📱 Síguenos en Instagram, Facebook y TikTok como **@soycreatik**."
-            ],
-            despedida: [
-                "¡De nada! Ha sido un placer platicar contigo. ¡Hasta la próxima! 📸"
-            ],
-            saludo_resp: [
-                "¿En qué te puedo asesorar el día de hoy? Pregúntame sobre precios o servicios."
-            ],
-            como_estas: [
-                "¡Todo excelente por aquí! Con mucha energía y ganas de crear. ✨ ¿En qué te puedo ayudar hoy?"
-            ],
-            bien_y_tu: [
-                "¡Qué gusto escuchar eso! Yo estoy al 100% y listo para asesorarte. 🚀 ¿Buscabas info de foto o video?"
-            ],
-            interjeccion: [
-                "¡Claro que sí! Cuéntame un poco más de tu idea... 🎨"
-            ],
-            bot_identity: [
-                "¡Soy Creatik IA! Un asistente virtual diseñado para hablar de arte visual, foto y video. 🤖✨"
-            ],
-            bad_strange: [
-                "¡Ups! 😅 Mi programación solo me permite hablar de fotografía, video y diseño. ¿Te ayudo con eso?"
-            ],
-            default: [
-                "¡Qué interesante! 🤔 Cuéntame un poco más... ¿buscas algo enfocado en foto, diseño o video?"
-            ]
+            academy: ["Creatik Academy es nuestro orgullo social. ✨ Organizamos convivencias y salidas fotográficas."],
+            servicios_info: ["En Creatik ofrecemos Fotografía, Video Cinematográfico y Diseño Gráfico. ¡Contamos tu historia de forma integral!"],
+            por_que: ["Entendemos que tu historia es única. No solo entregamos fotos, entregamos recuerdos con alma."],
+            filosofia: ["Para nosotros, la fotografía no es solo apretar un botón. Es hacer que un instante sea eterno. ✨"],
+            ubicacion: ["¡Somos nómadas! Nos trasladamos al lugar que tú prefieras, con todo nuestro equipo profesional."],
+            contacto: ["¡Claro! Escríbenos a nuestro WhatsApp al +503 7577 8333 y un asesor humano de Creatik te atenderá."],
+            redes: ["Síguenos en Instagram, Facebook y TikTok como **@soycreatik**."],
+            bot_identity: ["¡Soy Creatik IA! Un asistente virtual diseñado para guiarte en todo lo relacionado a arte visual. 🤖✨"]
         };
 
         const closings = [
@@ -846,9 +871,7 @@
             "<br><br>📱 Para agendar tu fecha o aclarar dudas complejas, un asesor te espera en nuestro <b>WhatsApp al +503 7577 8333</b>."
         ];
 
-        function getRandom(array) {
-            return array[Math.floor(Math.random() * array.length)];
-        }
+        function getRandom(array) { return array[Math.floor(Math.random() * array.length)]; }
 
         function normalizeText(text) {
             return " " + text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[.,?¿!¡"']/g, " ").trim() + " ";
@@ -856,76 +879,85 @@
 
         const regexMatch = (pattern, text) => new RegExp(pattern).test(text);
 
+        // --- SISTEMA DINÁMICO DE EVALUACIÓN DE PRECIOS ---
+        function getPriceResponse(budget) {
+            if (budget > 170) {
+                return `¡Excelente presupuesto! Con esto podemos armarte algo espectacular y totalmente completo a tu medida. Para coordinar los detalles VIP y bloquear tu fecha, por favor escríbenos directamente a nuestro WhatsApp: +503 7577 8333.`;
+            }
+            
+            const packages = [
+                { name: "Sesión Personal o Emprendimiento Básico", price: 50, desc: "1 hora, equipo profesional y 15 fotos editadas" },
+                { name: "Evento Small", price: 75, desc: "1 hora, 50 fotos editadas, entrega en USB y 5 fotos impresas" },
+                { name: "Evento Intermedio", price: 100, desc: "2 horas de cobertura, 100 fotos editadas, video de 10 minutos, USB y 10 impresas" },
+                { name: "Emprendimiento Pro", price: 125, desc: "1 hora con ambientación avanzada, 25 fotos ultra editadas y entrega digital" },
+                { name: "Evento Express", price: 170, desc: "2.5 horas, 150 fotos, video vertical para redes, filmación de 30 min, asistente pro y 16 impresas" }
+            ];
+
+            let sorted = packages.map(p => ({...p, diff: Math.abs(p.price - budget)})).sort((a, b) => a.diff - b.diff);
+            let closest = sorted[0];
+            let secondClosest = sorted[1];
+            
+            return `Revisando tus datos, el paquete que más se ajusta a tu presupuesto es el **${closest.name} por $${closest.price}** (incluye ${closest.desc}).\n\nAdemás, como una segunda excelente opción cercana a lo que buscas, tenemos el **${secondClosest.name} por $${secondClosest.price}** (incluye ${secondClosest.desc}).\n\n¿Cuál de los dos te parece mejor para tu proyecto?`;
+        }
+
+        // --- SISTEMA DE ENTENDIMIENTO NORMAL (SI SALE DEL FLUJO DE VENTAS) ---
         function getBotResponse(input, msgCount) {
             let cleanInput = normalizeText(input);
             let intent = 'default';
             let includeGreeting = false;
-
-            if (regexMatch("\\bh+o+l+a+\\b|\\bh+o+l+i+s+\\b|\\bb+u+e+n+a+s+\\b|buen dia|buenas tardes|buenas noches|saludos|\\bh+e+y+\\b|\\be+y+\\b|\\ba+l+o+\\b|que onda|q onda", cleanInput)) {
-                includeGreeting = true;
-                intent = 'saludo';
-            }
-
-            if (regexMatch("\\bj+a+j+a+\\b|\\bj+e+j+e+\\b|de verdad|en serio|wow|genial|super|me alegra|que bueno|excelente|que chivo|\\bs+i+\\b|claro|\\bo+k+\\b|vale|esta bien|me parece|\\bd+a+l+e+\\b", cleanInput)) intent = 'interjeccion';
-            if (regexMatch("como esta|como te va|como andas|que tal|q tal|como tas|que haces|q haces|que te cuentas", cleanInput)) intent = 'como_estas';
-            if (regexMatch("bien y tu|tu como estas|de verdad estas bien|yo bien|todo excelente|y tu|tu que tal", cleanInput)) intent = 'bien_y_tu';
-            if (regexMatch("quien eres|eres bot|eres real|como te llamas|robot|inteligencia artificial|ia", cleanInput)) intent = 'bot_identity';
-            
-            if (regexMatch("tengo.*pregunta|una pregunta|puedo preguntar|quiero preguntar|tengo.*duda|una duda|tengo.*consulta|una consulta|necesito preguntar|saber algo|te hago una pregunta", cleanInput)) intent = 'tiene_pregunta';
-            if (regexMatch("local|ubicacion|ubicados|direccion|estudio fisico|donde estan|donde queda|a donde voy|donde es", cleanInput)) intent = 'ubicacion';
-            if (regexMatch("por que|porque creatik|elegir|razon|diferencia|mejores|beneficio|experiencia|motivo", cleanInput)) intent = 'por_que';
-            if (regexMatch("fotografia para ti|que es la foto|filosofia|arte visual|inspiracion|pasion|significa", cleanInput)) intent = 'filosofia';
-            if (regexMatch("academy|curso|aprender|clase|escuela|proyecto social|ensena|alumno|aprender foto", cleanInput)) intent = 'academy';
-            if (regexMatch("mas informaci|mas info|informacion|info|que ofrecen|que hacen|que hace|a que te dedicas|de que trata|que es creatik|que servicios|como funciona|que me ofreces|quiero saber que|que mas|detalles|explicame|ayuda|portafolio|servicio|foto|fotografia|fotos|video|videos|diseno|boda|evento|sesion|personal|marca|proyecto", cleanInput)) intent = 'servicios_info';
-            if (regexMatch("precio|costo|cuanto|vale|cuesta|paquete|plan|cobran|cotiza|tarifa|pagar|\\$|presupuesto|valor", cleanInput)) intent = 'precios';
-
-            if (regexMatch("redes|instagram|tiktok|facebook|youtube|cuales son sus redes|donde los encuentro|perfil|sociales", cleanInput)) intent = 'redes';
-            if (regexMatch("asesor|agente|humano|persona|real|hablar con|alguien|contacto|contactar|whatsapp|numero|telefono|llamar|platicar", cleanInput)) intent = 'contacto';
-
-            if (regexMatch("tonto|feo|malo|idiota|mierda|puta|asdf|qwer|zxcv|perro|gato|aburrido|estupido|callate|basura|nada", cleanInput)) {
-                intent = 'bad_strange';
-                includeGreeting = false;
-            }
-            if (regexMatch("gracias|adios|bye|chao|hasta luego|nos vemos", cleanInput)) {
-                intent = 'despedida';
-                includeGreeting = false;
-            }
-
-            if (cleanInput.length < 25 && lastTopic === 'precios' && regexMatch("y el|y los|otro|pro|basico|small|express|mas|menos|caro|barato", cleanInput)) {
-                intent = 'precios_detalle';
-            }
-
-            if (['precios', 'servicios_info', 'academy', 'ubicacion'].includes(intent)) {
-                lastTopic = intent;
-            } else if (!['smalltalk', 'interjeccion', 'como_estas', 'bien_y_tu', 'tiene_pregunta'].includes(intent)){
-                lastTopic = 'inicio';
-            }
-
             let finalResponse = "";
+
+            // 1. Evaluación de precios o números en la frase
+            let numMatch = cleanInput.match(/\b(\d{2,3})\b/);
+            let matchedPrice = 0;
             
-            if (includeGreeting && !['despedida', 'bad_strange', 'saludo'].includes(intent)) {
-                finalResponse += getRandom(greetings) + " ";
-            } else if (intent === 'saludo') {
-                finalResponse += getRandom(greetings);
-            }
-            
-            if (intent !== 'saludo') {
-                finalResponse += getRandom(coreResponses[intent]);
-            } else {
-                 finalResponse += getRandom(coreResponses['saludo_resp']); 
-            }
-            
-            const spammyIntents = ['despedida', 'interjeccion', 'bien_y_tu', 'como_estas', 'bot_identity', 'bad_strange', 'default', 'saludo', 'redes', 'filosofia', 'tiene_pregunta'];
-            if (msgCount >= 3 && !spammyIntents.includes(intent)) {
-                finalResponse += getRandom(closings);
-            } else if (intent === 'contacto') {
-                finalResponse += getRandom(closings); 
+            if (regexMatch("personal|basico", cleanInput)) matchedPrice = 50;
+            else if (regexMatch("small|pequeno", cleanInput)) matchedPrice = 75;
+            else if (regexMatch("intermedio", cleanInput)) matchedPrice = 100;
+            else if (regexMatch("pro", cleanInput)) matchedPrice = 125;
+            else if (regexMatch("express", cleanInput)) matchedPrice = 170;
+            else if (numMatch) {
+                let val = parseInt(numMatch[1], 10);
+                if (val >= 20 && val <= 1000) matchedPrice = val;
             }
 
+            if (matchedPrice > 0 || regexMatch("precio|costo|cuanto|vale|cuesta|paquete|plan|cobran|cotiza|tarifa|pagar|presupuesto|valor", cleanInput)) {
+                if (matchedPrice > 0) {
+                    return getPriceResponse(matchedPrice) + getRandom(closings);
+                } else {
+                    return "Para darte la información más precisa sobre nuestros paquetes, ¿alrededor de qué presupuesto estabas pensando invertir? (Ej: $75, $100, etc.)";
+                }
+            }
+
+            // 2. Evaluación de Negación
+            if (regexMatch("\\b(n+o+|no me gusta|no me parece|muy caro|no quiero|no gracias|paso|otro|no me convence)\\b", cleanInput)) {
+                return "Entiendo perfectamente. Queremos que te sientas 100% cómodo con tu inversión. ¿Qué tal si nos escribes al WhatsApp al +503 7577 8333 para armarte un paquete personalizado a tu medida? ¡Seguro encontramos algo genial para ti!";
+            }
+
+            // 3. Evaluación de Afirmación VIP
+            if (regexMatch("\\b(si+|s+i+ p+o+r+f+a+v+o+r+|me parece|me gusta|excelente|de acuerdo|lo quiero|ese|claro que si|hagamoslo|super|bien|esta bien)\\b", cleanInput)) {
+                return "¡Qué emoción! 🎉 Me alegra muchísimo. Para que el equipo tenga todo tu registro perfecto y apartemos tu fecha, por favor escríbenos a nuestro **WhatsApp al +503 7577 8333**. ¡Te estamos esperando! 🚀";
+            }
+
+            // 4. Intentos Generales
+            if (regexMatch("\\bh+o+l+a+\\b|buenas|saludos", cleanInput)) { includeGreeting = true; intent = 'saludo'; }
+            if (regexMatch("como esta|que tal|q tal", cleanInput)) intent = 'como_estas';
+            if (regexMatch("bot|robot|ia", cleanInput)) intent = 'bot_identity';
+            if (regexMatch("ubicacion|direccion|donde estan", cleanInput)) intent = 'ubicacion';
+            if (regexMatch("academy", cleanInput)) intent = 'academy';
+            if (regexMatch("info|servicios", cleanInput)) intent = 'servicios_info';
+            if (regexMatch("redes|instagram", cleanInput)) intent = 'redes';
+            if (regexMatch("asesor|humano|whatsapp", cleanInput)) intent = 'contacto';
+
+            if (includeGreeting) finalResponse += getRandom(greetings) + " ";
+            if (intent !== 'saludo' && intent !== 'default') finalResponse += getRandom(coreResponses[intent]);
+            if (intent === 'default' || intent === 'saludo') finalResponse += "¿Te gustaría que cotizáramos un servicio o tienes dudas sobre algo específico?";
+            
             return finalResponse;
         }
 
         function initChat() {
+            clearTimeout(verifyTimeout);
             chatbotMessages.innerHTML = '';
             appendBotMessage("¡Hola! 👋 Soy la IA asistente de Creatik. ¿En qué te puedo ayudar hoy?");
             appendBotOptions(['COTIZACIÓN', 'CONTRATAR SERVICIOS', 'CONOCER MÁS SOBRE CREATIK']);
@@ -936,21 +968,15 @@
             
             sessionId = 'Pendiente...';
             sessionDisplay.textContent = `Gestión: ${sessionId}`;
-            userDetails = { nombre: '', telefono: '', proyecto: '', descripcion: '', departamento: '', municipio: '' };
+            userDetails = { nombre: '', telefono: '', proyecto: '', descripcion: '', departamento: '', municipio: '', distrito: '' };
         }
 
         chatbotFab.addEventListener('click', () => {
             isChatbotOpen = true;
             chatbotWindow.classList.add('active');
             chatbotFab.classList.add('hide-chatbot-ui');
-            
-            if (chatbotMessages.children.length === 0) {
-                initChat();
-            }
-            
-            if (!chatbotInput.disabled) {
-                setTimeout(() => chatbotInput.focus(), 300);
-            }
+            if (chatbotMessages.children.length === 0) initChat();
+            if (!chatbotInput.disabled) setTimeout(() => chatbotInput.focus(), 300);
         });
 
         closeChatbotBtn.addEventListener('click', () => {
@@ -1003,22 +1029,21 @@
                     chatbotInput.disabled = true;
                     chatbotSendBtn.disabled = true;
                     appendBotTyping();
-                    setTimeout(() => {
-                        removeBotTyping();
-                        processState(opt);
-                    }, 800);
+                    setTimeout(() => { removeBotTyping(); processState(opt); }, 800);
                 };
                 msgDiv.appendChild(btn);
             });
             chatbotMessages.appendChild(msgDiv);
             scrollToBottom();
+            
+            // Garantizar que input se quede bloqueado al mostrar opciones
+            chatbotInput.disabled = true;
+            chatbotSendBtn.disabled = true;
+            chatbotInput.placeholder = "Selecciona una opción arriba ⬆️";
         }
 
-        function scrollToBottom() {
-            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-        }
+        function scrollToBottom() { chatbotMessages.scrollTop = chatbotMessages.scrollHeight; }
 
-        // --- BOTÓN VERIFICAR GESTIÓN Y TEMPORIZADOR ---
         chatbotVerifyBtn.addEventListener('click', () => {
             if (chatState === 'CHOOSE_INITIAL') return; 
 
@@ -1033,7 +1058,7 @@
             verifyTimeout = setTimeout(() => {
                 if (chatState === 'CONSULT_GESTION') {
                     appendBotMessage("⏳ Tiempo de espera agotado. Se canceló la consulta. Volvamos a iniciar.");
-                    setTimeout(initChat, 1000);
+                    setTimeout(initChat, 2000);
                 }
             }, 15000);
         });
@@ -1048,25 +1073,18 @@
             chatbotSendBtn.disabled = true;
             
             appendBotTyping();
-            
-            setTimeout(() => {
-                removeBotTyping();
-                processState(text);
-            }, 1000 + Math.random() * 500); 
+            setTimeout(() => { removeBotTyping(); processState(text); }, 1000 + Math.random() * 500); 
         }
 
-        // --- MÁQUINA DE ESTADOS PRINCIPAL ---
+        // --- FLUJO DE ESTADOS PRINCIPAL ---
         function processState(userText) {
+            const textLower = normalizeText(userText);
+
             if (chatState === 'CHOOSE_INITIAL') {
-                flowType = userText;
-                
                 let digits = Math.floor(1000 + Math.random() * 9000);
-                if (userText === 'COTIZACIÓN') {
-                    sessionId = 'CTK-' + digits;
-                } else if (userText === 'CONTRATAR SERVICIOS') {
-                    sessionId = 'CTK-S' + digits;
-                } else if (userText === 'CONOCER MÁS SOBRE CREATIK') {
-                    // Para información NO activa el ID visiblemente
+                if (userText === 'COTIZACIÓN') sessionId = 'CTK-' + digits;
+                else if (userText === 'CONTRATAR SERVICIOS') sessionId = 'CTK-S' + digits;
+                else if (userText === 'CONOCER MÁS SOBRE CREATIK') {
                     sessionId = 'CTK-I' + digits;
                     sessionDisplay.textContent = `Gestión Info`;
                     enviarABackend('Usuario', userText, 'inicio'); 
@@ -1074,22 +1092,16 @@
                     appendBotMessage(response);
                     enviarABackend('Creatik IA', response, 'chat');
                     chatState = 'NORMAL_CHAT';
-                    chatbotInput.disabled = false;
-                    chatbotSendBtn.disabled = false;
-                    chatbotInput.placeholder = "Escribe tu mensaje...";
+                    chatbotInput.disabled = false; chatbotSendBtn.disabled = false; chatbotInput.placeholder = "Escribe tu mensaje...";
                     return;
                 }
                 
-                // Si es cotización o contratación, muestra ID
                 sessionDisplay.textContent = `Gestión: ${sessionId}`;
                 enviarABackend('Usuario', userText, 'inicio'); 
                 
-                let response = "";
-                if (userText === 'CONTRATAR SERVICIOS') {
-                    response = `¡Excelente decisión! Estamos súper emocionados de trabajar contigo. 🎉 Para brindarte la atención VIP que mereces, ¿con quién tengo el gusto?`;
-                } else {
-                    response = `¡Excelente elección! Para darte un servicio súper personalizado, ¿con quién tengo el gusto?`;
-                }
+                let response = (userText === 'CONTRATAR SERVICIOS') 
+                    ? `¡Excelente decisión! Estamos súper emocionados de trabajar contigo. 🎉 Para brindarte la atención VIP que mereces, ¿con quién tengo el gusto?`
+                    : `¡Excelente elección! Para darte un servicio súper personalizado, ¿con quién tengo el gusto?`;
                 appendBotMessage(response);
                 enviarABackend('Creatik IA', response, 'chat');
                 chatState = 'ASK_NAME'; 
@@ -1097,8 +1109,7 @@
             } else if (chatState === 'ASK_NAME') {
                 userDetails.nombre = userText;
                 enviarABackend('Usuario', userText, 'nombre');
-                
-                let response = `¡Un gusto, ${userDetails.nombre}! Hemos registrado tu sesión. Para poder contactarte y enviarte información detallada, ¿cuál es tu número de teléfono o WhatsApp?`;
+                let response = `¡Un gusto, ${userDetails.nombre}! Hemos registrado tu sesión. Para poder contactarte, ¿cuál es tu número de teléfono o WhatsApp?`;
                 appendBotMessage(response);
                 enviarABackend('Creatik IA', response, 'chat');
                 chatState = 'ASK_PHONE';
@@ -1106,12 +1117,10 @@
             } else if (chatState === 'ASK_PHONE') {
                 userDetails.telefono = userText;
                 enviarABackend('Usuario', userText, 'telefono');
-                
                 let response = `¡Gracias! ¿Qué tipo de proyecto tienes en mente?`;
                 appendBotMessage(response);
                 enviarABackend('Creatik IA', response, 'chat');
-                
-                appendBotOptions(['Fotografía Personal', 'Fotografía de Evento', 'Video / Emprendimiento', 'Diseño Gráfico', 'Otro']);
+                appendBotOptions(['Fotografía Personal', 'Fotografía de Evento', 'Video / Emprendimiento', 'Diseño Gráfico']);
                 chatState = 'WAITING_PROJECT'; 
 
             } else if (chatState === 'WAITING_PROJECT') {
@@ -1119,7 +1128,7 @@
                 enviarABackend('Usuario', userText, 'proyecto');
                 
                 if (userText === 'Diseño Gráfico') {
-                    let response = `Para proyectos de Diseño Gráfico o Publicidad, brindamos atención directa y súper personalizada. Por favor, escríbenos a nuestro WhatsApp al +503 7577 8333 para darle forma a tu idea. 🎨`;
+                    let response = `Para proyectos de Diseño Gráfico o Publicidad, brindamos atención directa y súper personalizada. Por favor, escríbenos directamente a nuestro WhatsApp al +503 7577 8333 para darle forma a tu idea. 🎨`;
                     appendBotMessage(response);
                     enviarABackend('Creatik IA', response, 'chat');
                     chatState = 'NORMAL_CHAT';
@@ -1131,29 +1140,27 @@
                     chatState = 'ASK_EVENT_TYPE';
                 }
                 else {
-                    // Personal, Emprendimiento, Otro
                     let response = `¡Perfecto! Cuéntame un poco más sobre la idea o concepto que tienes en mente.`;
                     appendBotMessage(response);
                     enviarABackend('Creatik IA', response, 'chat');
-                    chatState = 'ASK_PROJECT_DESC';
+                    chatState = 'ASK_PROJECT_DESC'; 
                 }
 
             } else if (chatState === 'ASK_EVENT_TYPE') {
-                const textLower = userText.toLowerCase();
-                
                 if (/baile|bailar|discoteca|perreo/.test(textLower)) {
-                    appendBotMessage("Lo sentimos mucho, pero por políticas internas de Creatik no realizamos cobertura de eventos de baile o discoteca. 🚫 ¿Tienes en mente algún otro tipo de proyecto o evento familiar en el que te podamos ayudar?");
+                    let banMsj = "Lo sentimos mucho, pero por políticas internas de Creatik no realizamos cobertura de eventos de baile o discoteca. 🚫 ¿Tienes en mente algún otro tipo de proyecto familiar en el que te podamos ayudar?";
+                    appendBotMessage(banMsj);
+                    enviarABackend('Creatik IA', banMsj, 'chat');
                     chatState = 'NORMAL_CHAT';
                     return; 
                 }
 
-                userDetails.descripcion = userText;
                 enviarABackend('Usuario', userText, 'descripcion_evento');
                 
                 let eventAcknowledge = "Me encanta la idea.";
                 if (/boda|matrimonio|casamiento/.test(textLower)) eventAcknowledge = "¡Qué hermoso! Nos fascina capturar el amor en las bodas. 💍";
                 else if (/cumpleaños|cumple/.test(textLower)) eventAcknowledge = "¡Súper! Un cumpleaños siempre está lleno de momentos increíbles. 🎂";
-                else if (/iglesia|culto|misa/.test(textLower)) eventAcknowledge = "Excelente, tenemos mucha experiencia cubriendo eventos religiosos con el respeto y la solemnidad que merecen. ⛪";
+                else if (/iglesia|culto|misa/.test(textLower)) eventAcknowledge = "Excelente, tenemos mucha experiencia cubriendo eventos religiosos con respeto. ⛪";
                 else if (/aniversario/.test(textLower)) eventAcknowledge = "¡Felicidades por ese aniversario! Será un honor documentarlo. ✨";
                 else if (/fiesta/.test(textLower)) eventAcknowledge = "¡Genial! Las fiestas familiares siempre dan para fotos muy divertidas. 🎉";
 
@@ -1161,8 +1168,7 @@
                 appendBotMessage(response);
                 enviarABackend('Creatik IA', response, 'chat');
                 
-                const departamentos = ["Ahuachapán", "Santa Ana", "Sonsonate", "Chalatenango", "La Libertad", "San Salvador", "Cuscatlán", "La Paz", "Cabañas", "San Vicente", "Usulután", "San Miguel", "Morazán", "La Unión"];
-                appendBotOptions(departamentos);
+                appendBotOptions(Object.keys(svData));
                 chatState = 'ASK_DEPARTMENT';
 
             } else if (chatState === 'ASK_PROJECT_DESC') {
@@ -1173,51 +1179,128 @@
                 appendBotMessage(response);
                 enviarABackend('Creatik IA', response, 'chat');
                 
-                const departamentos = ["Ahuachapán", "Santa Ana", "Sonsonate", "Chalatenango", "La Libertad", "San Salvador", "Cuscatlán", "La Paz", "Cabañas", "San Vicente", "Usulután", "San Miguel", "Morazán", "La Unión"];
-                appendBotOptions(departamentos);
+                appendBotOptions(Object.keys(svData));
                 chatState = 'ASK_DEPARTMENT';
 
             } else if (chatState === 'ASK_DEPARTMENT') {
                 userDetails.departamento = userText;
                 enviarABackend('Usuario', userText, 'departamento');
                 
-                let response = `Genial, en ${userText}. Según la nueva distribución gubernamental, ¿a qué municipio o distrito corresponde?`;
-                appendBotMessage(response);
-                enviarABackend('Creatik IA', response, 'chat');
-
-                const municipiosES = {
-                    "Ahuachapán": ["Ahuachapán Norte", "Ahuachapán Centro", "Ahuachapán Sur"],
-                    "Santa Ana": ["Santa Ana Norte", "Santa Ana Centro", "Santa Ana Este", "Santa Ana Oeste"],
-                    "Sonsonate": ["Sonsonate Norte", "Sonsonate Centro", "Sonsonate Este", "Sonsonate Oeste"],
-                    "Chalatenango": ["Chalatenango Norte", "Chalatenango Centro", "Chalatenango Sur"],
-                    "La Libertad": ["La Libertad Norte", "La Libertad Centro", "La Libertad Sur", "La Libertad Este", "La Libertad Oeste", "La Libertad Costa"],
-                    "San Salvador": ["San Salvador Norte", "San Salvador Centro", "San Salvador Sur", "San Salvador Este", "San Salvador Oeste"],
-                    "Cuscatlán": ["Cuscatlán Norte", "Cuscatlán Sur"],
-                    "La Paz": ["La Paz Norte", "La Paz Centro", "La Paz Sur", "La Paz Este", "La Paz Oeste", "La Paz Costa"],
-                    "Cabañas": ["Cabañas Este", "Cabañas Oeste"],
-                    "San Vicente": ["San Vicente Norte", "San Vicente Sur"],
-                    "Usulután": ["Usulután Norte", "Usulután Sur", "Usulután Este", "Usulután Oeste"],
-                    "San Miguel": ["San Miguel Norte", "San Miguel Centro", "San Miguel Sur"],
-                    "Morazán": ["Morazán Norte", "Morazán Sur"],
-                    "La Unión": ["La Unión Norte", "La Unión Sur"]
-                };
-                
-                let opcionesMunicipio = municipiosES[userText] || ["Norte", "Sur", "Centro", "Otro"];
-                appendBotOptions(opcionesMunicipio);
-                chatState = 'ASK_MUNICIPALITY';
+                if (svData[userText]) {
+                    let response = `Genial, en ${userText}. Según la nueva distribución gubernamental, ¿a qué municipio corresponde?`;
+                    appendBotMessage(response);
+                    enviarABackend('Creatik IA', response, 'chat');
+                    appendBotOptions(Object.keys(svData[userText]));
+                    chatState = 'ASK_MUNICIPALITY';
+                } else {
+                    let response = `Perfecto. ¿A qué municipio corresponde?`;
+                    appendBotMessage(response);
+                    enviarABackend('Creatik IA', response, 'chat');
+                    chatState = 'ASK_MUNICIPALITY';
+                }
 
             } else if (chatState === 'ASK_MUNICIPALITY') {
                 userDetails.municipio = userText;
                 enviarABackend('Usuario', userText, 'municipio');
                 
-                let response = `¡Excelente! Me encanta cómo suena todo el proyecto. ¿Tienes alguna duda en específico sobre paquetes, precios o cómo trabajamos antes de finalizar?`;
+                let distritos = [];
+                if (userDetails.departamento && svData[userDetails.departamento] && svData[userDetails.departamento][userText]) {
+                    distritos = svData[userDetails.departamento][userText];
+                }
+
+                if (distritos.length > 0) {
+                    let response = `¡Excelente! ¿Y en qué distrito exactamente?`;
+                    appendBotMessage(response);
+                    enviarABackend('Creatik IA', response, 'chat');
+                    appendBotOptions(distritos);
+                    chatState = 'ASK_DISTRITO';
+                } else {
+                    let response = `¡Excelente! Para afinar la propuesta ideal, ¿alrededor de qué **presupuesto** estabas pensando invertir para esto? (Ej: $100, 150, etc.)`;
+                    appendBotMessage(response);
+                    enviarABackend('Creatik IA', response, 'chat');
+                    chatState = 'ASK_BUDGET';
+                }
+
+            } else if (chatState === 'ASK_DISTRITO') {
+                userDetails.distrito = userText;
+                enviarABackend('Usuario', userText, 'distrito');
+                let response = `¡Ubicación registrada! Para afinar la propuesta ideal, ¿alrededor de qué **presupuesto** estabas pensando invertir para esto? (Ej: $100, 150, etc.)`;
+                appendBotMessage(response);
+                enviarABackend('Creatik IA', response, 'chat');
+                chatState = 'ASK_BUDGET';
+
+            } else if (chatState === 'ASK_BUDGET') {
+                enviarABackend('Usuario', userText, 'presupuesto');
+                
+                let matchedPrice = 0;
+                let numMatch = textLower.match(/\b(\d{2,3})\b/);
+                if (numMatch) {
+                    let val = parseInt(numMatch[1], 10);
+                    if (val >= 0 && val <= 1000) matchedPrice = val;
+                }
+
+                let response = "";
+                if (matchedPrice > 0) {
+                    response = getPriceResponse(matchedPrice);
+                } else {
+                    response = `Te doy un panorama rápido: Tenemos el plan Personal o Básico a $50, Eventos desde $75 (Small), el más popular que es el Intermedio por $100 (incluye video), y el Express por $170. ¿Cuál de esos rangos se adapta más a lo que buscas?`;
+                }
+                
+                appendBotMessage(response);
+                enviarABackend('Creatik IA', response, 'chat');
+                chatState = 'WAITING_CONFIRMATION';
+
+            } else if (chatState === 'WAITING_CONFIRMATION') {
+                enviarABackend('Usuario', userText, 'confirmacion');
+                
+                let numMatch = textLower.match(/\b(\d{2,3})\b/);
+                let matchedPrice = 0;
+                if (regexMatch("personal|basico", textLower)) matchedPrice = 50;
+                else if (regexMatch("small|pequeno", textLower)) matchedPrice = 75;
+                else if (regexMatch("intermedio", textLower)) matchedPrice = 100;
+                else if (regexMatch("pro", textLower)) matchedPrice = 125;
+                else if (regexMatch("express", textLower)) matchedPrice = 170;
+                else if (numMatch) {
+                    let val = parseInt(numMatch[1], 10);
+                    if (val >= 20 && val <= 1000) matchedPrice = val;
+                }
+
+                if (regexMatch("\\b(si+|s+i+ p+o+r+f+a+v+o+r+|me parece|me gusta|excelente|de acuerdo|lo quiero|ese|claro que si|hagamoslo|super|bien|esta bien)\\b", textLower) && !matchedPrice) {
+                    let response = `¡Qué emoción! 🎉 Me alegra muchísimo que te encante la propuesta. Para que el equipo tenga todo tu registro perfecto, descríbeme en un solo mensaje los detalles finales de tu idea (colores, estilo, si hay sorpresas, locación exacta, etc).`;
+                    appendBotMessage(response);
+                    enviarABackend('Creatik IA', response, 'chat');
+                    chatState = 'ASK_EXTRA_DETAILS';
+                } 
+                else if (regexMatch("\\b(n+o+|no me gusta|no me parece|muy caro|no quiero|no gracias|paso|otro|no me convence)\\b", textLower)) {
+                    let response = `Entiendo perfectamente. Queremos que te sientas 100% cómodo con tu inversión. ¿Qué tal si nos escribes al WhatsApp al +503 7577 8333 para armarte un paquete súper personalizado a tu medida? ¡Seguro encontramos algo genial!`;
+                    appendBotMessage(response);
+                    enviarABackend('Creatik IA', response, 'chat');
+                    chatState = 'NORMAL_CHAT';
+                } 
+                else if (matchedPrice > 0) {
+                    let response = getPriceResponse(matchedPrice);
+                    appendBotMessage(response);
+                    enviarABackend('Creatik IA', response, 'chat');
+                }
+                else {
+                    let responseText = getBotResponse(userText, userMessageCount);
+                    appendBotMessage(responseText);
+                    enviarABackend('Creatik IA', responseText, 'chat');
+                    chatState = 'NORMAL_CHAT';
+                }
+
+            } else if (chatState === 'ASK_EXTRA_DETAILS') {
+                userDetails.descripcion = userText;
+                enviarABackend('Usuario', userText, 'detalle_final');
+                
+                let response = `¡Anotadísimo! 📝 Todo tu proyecto ha quedado guardado exitosamente bajo la gestión **${sessionId}**.<br><br>Para apartar tu fecha formalmente y cerrar el trato, por favor mándanos un mensajito rápido a nuestro **WhatsApp: +503 7577 8333**. ¡Te estamos esperando! 🚀`;
                 appendBotMessage(response);
                 enviarABackend('Creatik IA', response, 'chat');
                 chatState = 'NORMAL_CHAT';
 
             } else if (chatState === 'CONSULT_GESTION') {
-                clearTimeout(verifyTimeout); // Quita el temporizador de 15s si escribe
-                const queryId = userText.replace(/[-\s]/g, '').toUpperCase();
+                clearTimeout(verifyTimeout); 
+                const queryId = userText.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
                 appendBotMessage("Buscando en nuestra base de datos... 🔍");
                 
                 fetch(GOOGLE_SCRIPT_URL + "?id=" + queryId)
@@ -1230,32 +1313,28 @@
                             text += `<b>📱 Tel/WA:</b> ${data.data.telefono || 'N/A'}<br>`;
                             text += `<b>🎯 Proyecto:</b> ${data.data.proyecto || 'N/A'}<br>`;
                             text += `<b>📍 Ubicación:</b> ${data.data.ubicacion || 'N/A'}<br>`;
+                            text += `<br><b>📝 Resumen de la plática:</b><br><i>"${data.data.resumen}"</i>`;
                             
-                            if (data.data.mensajes && data.data.mensajes.length > 0) {
-                                let ultimoMsj = data.data.mensajes[data.data.mensajes.length - 1];
-                                text += `<br><b>📝 Último detalle:</b> <i>"${ultimoMsj}"</i>`;
-                            }
-                            text += `<br><br>¿Te ayudo con algo más en nuestra plática actual?`;
                             appendBotMessage(text);
+                            appendBotMessage("⏳ En 10 segundos el chat se reiniciará por seguridad para que puedas realizar otra acción...");
+                            
+                            setTimeout(() => { initChat(); }, 10000);
+                            
                         } else {
                             appendBotMessage("Lo siento, no he podido encontrar ese número de gestión en nuestra base. 😕 Asegúrate de haberlo escrito correctamente. ¿En qué más te ayudo?");
+                            chatState = 'NORMAL_CHAT';
+                            chatbotInput.disabled = false; chatbotSendBtn.disabled = false;
+                            chatbotInput.placeholder = "Escribe tu mensaje..."; chatbotInput.focus();
                         }
-                        chatState = 'NORMAL_CHAT';
-                        chatbotInput.disabled = false;
-                        chatbotSendBtn.disabled = false;
-                        chatbotInput.placeholder = "Escribe tu mensaje...";
-                        chatbotInput.focus();
                     })
                     .catch(err => {
                         removeBotTyping();
                         appendBotMessage("Hubo un error al conectar con la base de datos. Volvamos a la plática.");
                         chatState = 'NORMAL_CHAT';
-                        chatbotInput.disabled = false;
-                        chatbotSendBtn.disabled = false;
+                        chatbotInput.disabled = false; chatbotSendBtn.disabled = false;
                         chatbotInput.placeholder = "Escribe tu mensaje...";
                     });
-                
-                return; // Bloquea el flujo aquí mientras hace el fetch
+                return; 
 
             } else if (chatState === 'NORMAL_CHAT') {
                 enviarABackend('Usuario', userText, 'chat');
@@ -1275,8 +1354,9 @@
                 enviarABackend('Creatik IA', responseText, 'chat');
             }
 
-            // Reactivar input si no está en un estado que requiere botones
-            if (chatState !== 'WAITING_PROJECT' && chatState !== 'ASK_DEPARTMENT' && chatState !== 'ASK_MUNICIPALITY' && chatState !== 'CHOOSE_INITIAL' && chatState !== 'CONSULT_GESTION') {
+            // Desbloqueo seguro de la caja de texto
+            const lockedStates = ['WAITING_PROJECT', 'ASK_DEPARTMENT', 'ASK_MUNICIPALITY', 'ASK_DISTRITO', 'CHOOSE_INITIAL'];
+            if (!lockedStates.includes(chatState)) {
                 chatbotInput.disabled = false;
                 chatbotSendBtn.disabled = false;
                 chatbotInput.placeholder = "Escribe tu mensaje...";
@@ -1289,7 +1369,7 @@
             if (e.key === 'Enter') handleSend();
         });
 
-        // --- VARIABLES GLOBALES DEL NAVEGADOR Y OVERLAYS ---
+        // --- NAVEGADOR Y OVERLAYS ---
         const loader = document.getElementById('intro-loader');
         const introText = document.getElementById('intro-text');
         const glow = document.querySelector('.cursor-glow');
@@ -1302,16 +1382,13 @@
         
         const menuBtn = document.getElementById('toggle-menu-btn');
         const menuOverlay = document.getElementById('full-menu-overlay');
-        
         const paquetesBtn = document.getElementById('toggle-paquetes-btn');
         const paquetesOverlay = document.getElementById('paquetes-overlay');
         const closePaquetesMobileBtn = document.getElementById('close-paquetes-mobile-btn');
         const paquetesLogoBtn = document.getElementById('paquetes-logo-btn');
-        
         const btnContactOpen = document.getElementById('btn-contact-open');
         const contactOverlay = document.getElementById('contact-overlay');
         const btnContactClose = document.getElementById('close-contact-btn');
-
         const btnAcademyOpen = document.getElementById('open-academy-btn');
         const academyOverlay = document.getElementById('academy-overlay');
         const btnAcademyClose = document.getElementById('close-academy-btn');
@@ -1328,26 +1405,13 @@
 
         function updateHeaderVisibility() {
             if (isPaquetesOpen || isAcademyOpen || contactOverlay.classList.contains('active') || isMenuOpen) {
-                bgPresentation.classList.add('paused-animation');
-                marquee.classList.add('paused-animation');
-                
-                chatbotFab.classList.add('hide-chatbot-ui');
-                chatbotWindow.classList.remove('active');
-                isChatbotOpen = false;
-
-                if (!isMenuOpen) {
-                    mainHeader.style.opacity = '0';
-                    mainHeader.style.visibility = 'hidden';
-                    mainHeader.style.pointerEvents = 'none';
-                }
+                bgPresentation.classList.add('paused-animation'); marquee.classList.add('paused-animation');
+                chatbotFab.classList.add('hide-chatbot-ui'); chatbotWindow.classList.remove('active'); isChatbotOpen = false;
+                if (!isMenuOpen) { mainHeader.style.opacity = '0'; mainHeader.style.visibility = 'hidden'; mainHeader.style.pointerEvents = 'none'; }
             } else {
-                bgPresentation.classList.remove('paused-animation');
-                marquee.classList.remove('paused-animation');
-                
+                bgPresentation.classList.remove('paused-animation'); marquee.classList.remove('paused-animation');
                 chatbotFab.classList.remove('hide-chatbot-ui');
-
-                mainHeader.style.visibility = 'visible';
-                mainHeader.style.pointerEvents = 'auto';
+                mainHeader.style.visibility = 'visible'; mainHeader.style.pointerEvents = 'auto';
                 mainHeader.style.opacity = Math.max(0, 1 - window.scrollY / 300);
             }
         }
@@ -1361,7 +1425,6 @@
         menuBtn.addEventListener('click', () => {
             isMenuOpen = !isMenuOpen;
             mainHeader.classList.toggle('menu-mode', isMenuOpen);
-
             if (isMenuOpen) {
                 menuOverlay.classList.add('active'); menuBtn.classList.add('active-btn'); document.body.style.overflow = 'hidden';
                 menuBtn.innerHTML = '<span class="dot"></span> Cerrar'; mainHeader.style.opacity = 1; 
@@ -1374,53 +1437,14 @@
             updateHeaderVisibility();
         });
 
-        paquetesBtn.addEventListener('click', () => {
-            isPaquetesOpen = true;
-            paquetesOverlay.scrollTop = 0; paquetesOverlay.classList.add('active'); document.body.style.overflow = 'hidden';
-            updateHeaderVisibility();
-        });
+        paquetesBtn.addEventListener('click', () => { isPaquetesOpen = true; paquetesOverlay.scrollTop = 0; paquetesOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; updateHeaderVisibility(); });
+        closePaquetesMobileBtn.addEventListener('click', () => { isPaquetesOpen = false; paquetesOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; updateHeaderVisibility(); });
+        paquetesLogoBtn.addEventListener('click', () => { isPaquetesOpen = false; paquetesOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; updateHeaderVisibility(); triggerIntro(); });
+        btnContactOpen.addEventListener('click', () => { contactOverlay.scrollTop = 0; contactOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; updateHeaderVisibility(); });
+        btnContactClose.addEventListener('click', () => { contactOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; updateHeaderVisibility(); });
+        btnAcademyOpen.addEventListener('click', () => { isAcademyOpen = true; academyOverlay.scrollTop = 0; academyOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; updateHeaderVisibility(); });
+        btnAcademyClose.addEventListener('click', () => { isAcademyOpen = false; academyOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; updateHeaderVisibility(); });
 
-        closePaquetesMobileBtn.addEventListener('click', () => {
-            isPaquetesOpen = false;
-            paquetesOverlay.classList.remove('active');
-            document.body.style.overflow = 'auto';
-            updateHeaderVisibility();
-        });
-
-        paquetesLogoBtn.addEventListener('click', () => {
-            isPaquetesOpen = false;
-            paquetesOverlay.classList.remove('active');
-            document.body.style.overflow = 'auto';
-            updateHeaderVisibility();
-            triggerIntro(); 
-        });
-
-        btnContactOpen.addEventListener('click', () => {
-            contactOverlay.scrollTop = 0; contactOverlay.classList.add('active'); document.body.style.overflow = 'hidden';
-            updateHeaderVisibility();
-        });
-
-        btnContactClose.addEventListener('click', () => {
-            contactOverlay.classList.remove('active'); document.body.style.overflow = 'auto';
-            updateHeaderVisibility();
-        });
-
-        btnAcademyOpen.addEventListener('click', () => {
-            isAcademyOpen = true;
-            academyOverlay.scrollTop = 0;
-            academyOverlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            updateHeaderVisibility();
-        });
-
-        btnAcademyClose.addEventListener('click', () => {
-            isAcademyOpen = false;
-            academyOverlay.classList.remove('active');
-            document.body.style.overflow = 'auto';
-            updateHeaderVisibility();
-        });
-
-        // --- DASHBOARD IMÁGENES ---
         const viewer = document.getElementById('main-viewer');
         const thumbBoxes = document.querySelectorAll('#thumbnail-grid .icon-box');
         const dashImages = ['img1.jpg', 'img2_2.jpg', 'img3.jpg', 'img4.jpg', 'img5.jpg', 'img6.jpg', 'img7_7.jpg', 'img8.jpg', 'img9.jpg'];
@@ -1430,11 +1454,7 @@
             if (!viewer || thumbBoxes.length === 0) return;
             const panelRect = panel.getBoundingClientRect();
             if (panelRect.bottom < 0 || panelRect.top > window.innerHeight) return;
-
-            if (window.innerWidth <= 900) {
-                thumbBoxes.forEach(box => { box.style.borderColor = 'rgba(255,255,255,0.08)'; box.style.background = 'rgba(255,255,255,0.04)'; box.style.transform = 'scale(1) translate3d(0,0,0)'; });
-                return; 
-            }
+            if (window.innerWidth <= 900) { thumbBoxes.forEach(box => { box.style.borderColor = 'rgba(255,255,255,0.08)'; box.style.background = 'rgba(255,255,255,0.04)'; box.style.transform = 'scale(1) translate3d(0,0,0)'; }); return; }
             viewer.style.opacity = 0; 
             setTimeout(() => {
                 const newSrc = dashImages[dashIdx];
@@ -1449,12 +1469,8 @@
 
         let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
         let ballX = window.innerWidth / 2, ballY = window.innerHeight / 2;
-        
         document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; }, { passive: true });
-        function animateGlow() {
-            if (window.innerWidth > 900) { ballX += (mouseX - ballX) * 0.1; ballY += (mouseY - ballY) * 0.1; glow.style.transform = `translate3d(${ballX}px, ${ballY}px, 0) translate3d(-50%, -50%, 0)`; }
-            requestAnimationFrame(animateGlow);
-        }
+        function animateGlow() { if (window.innerWidth > 900) { ballX += (mouseX - ballX) * 0.1; ballY += (mouseY - ballY) * 0.1; glow.style.transform = `translate3d(${ballX}px, ${ballY}px, 0) translate3d(-50%, -50%, 0)`; } requestAnimationFrame(animateGlow); }
         animateGlow();
 
         function initDynamicBox() {
@@ -1464,20 +1480,14 @@
             const titleHagamos = document.getElementById('title-hagamos');
             if (!box || words.length === 0) return;
             let currentIndex = 0;
-            
             function updateText() {
                 const boxRect = box.getBoundingClientRect();
                 if (boxRect.bottom < 0 || boxRect.top > window.innerHeight) return;
                 words[currentIndex].classList.remove('active'); currentIndex = (currentIndex + 1) % words.length; const nextWord = words[currentIndex]; nextWord.classList.add('active');
                 if(window.innerWidth > 900) { box.style.width = `${nextWord.scrollWidth + 80}px`; }
-                if (nextWord.textContent.trim().toLowerCase() === 'inolvidable') { titleHistoria.classList.remove('active'); titleHagamos.classList.add('active'); } 
-                else { titleHagamos.classList.remove('active'); titleHistoria.classList.add('active'); }
+                if (nextWord.textContent.trim().toLowerCase() === 'inolvidable') { titleHistoria.classList.remove('active'); titleHagamos.classList.add('active'); } else { titleHagamos.classList.remove('active'); titleHistoria.classList.add('active'); }
             }
-            document.fonts.ready.then(() => {
-                words[0].classList.add('active'); titleHistoria.classList.add('active'); 
-                if(window.innerWidth > 900) { box.style.width = `${words[0].scrollWidth + 80}px`; }
-                setInterval(updateText, 3000);
-            });
+            document.fonts.ready.then(() => { words[0].classList.add('active'); titleHistoria.classList.add('active'); if(window.innerWidth > 900) { box.style.width = `${words[0].scrollWidth + 80}px`; } setInterval(updateText, 3000); });
         }
 
         let isScrolling = false;
@@ -1488,21 +1498,14 @@
                     const scrollVal = window.scrollY;
                     const fadeFactor = Math.max(0, 1 - scrollVal / 300).toFixed(2);
                     bgPresentation.style.opacity = fadeFactor; 
-                    
-                    if (window.innerWidth > 900) {
-                        if (!isChatbotOpen) mainHeader.style.opacity = fadeFactor;
-                        if (scrollVal > 100) panel.classList.add('visible'); else panel.classList.remove('visible');
-                    }
+                    if (window.innerWidth > 900) { if (!isChatbotOpen) mainHeader.style.opacity = fadeFactor; if (scrollVal > 100) panel.classList.add('visible'); else panel.classList.remove('visible'); }
                     isScrolling = false;
                 });
                 isScrolling = true;
             }
         }, { passive: true });
 
-        window.addEventListener('load', () => { 
-            triggerIntro(); initDynamicBox(); 
-            if (viewer) { autoShowImage(); setInterval(autoShowImage, 3500); }
-        });
+        window.addEventListener('load', () => { triggerIntro(); initDynamicBox(); if (viewer) { autoShowImage(); setInterval(autoShowImage, 3500); } });
     </script>
 </body>
 </html>
