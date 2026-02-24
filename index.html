@@ -29,15 +29,15 @@
         #intro-loader {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background-color: #000; display: flex; justify-content: center; align-items: center;
-            z-index: 99999; transition: opacity 0.8s ease, visibility 0.8s; opacity: 1;
+            z-index: 99999; transition: opacity 0.6s ease, visibility 0.6s; opacity: 1;
         }
         .intro-logo { font-family: 'Inter', sans-serif; font-size: 3.5rem; font-weight: 800; color: white; display: flex; }
         .intro-logo span { display: inline-block; opacity: 0; transform: translate3d(0, 10px, 0); }
         .animate-letters span { animation: letterEntry 0.4s forwards; }
-        .intro-logo .c { animation-delay: 0.2s; } .intro-logo .r { animation-delay: 0.3s; }
-        .intro-logo .e { animation-delay: 0.4s; } .intro-logo .a { animation-delay: 0.5s; }
-        .intro-logo .t { animation-delay: 0.7s; } .intro-logo .i { animation-delay: 0.8s; }
-        .intro-logo .k { animation-delay: 0.9s; }
+        .intro-logo .c { animation-delay: 0.1s; } .intro-logo .r { animation-delay: 0.2s; }
+        .intro-logo .e { animation-delay: 0.3s; } .intro-logo .a { animation-delay: 0.4s; }
+        .intro-logo .t { animation-delay: 0.5s; } .intro-logo .i { animation-delay: 0.6s; }
+        .intro-logo .k { animation-delay: 0.7s; }
         @keyframes letterEntry { to { opacity: 1; transform: translate3d(0, 0, 0); } }
         #intro-loader.hidden { opacity: 0; visibility: hidden; }
 
@@ -127,6 +127,11 @@
         .typing-dot { width: 6px; height: 6px; background: rgba(255,255,255,0.6); border-radius: 50%; animation: typing 1.4s infinite ease-in-out; }
         .typing-dot:nth-child(1) { animation-delay: 0s; } .typing-dot:nth-child(2) { animation-delay: 0.2s; } .typing-dot:nth-child(3) { animation-delay: 0.4s; }
         @keyframes typing { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); background: #a855f7; box-shadow: 0 0 5px #a855f7; } }
+
+        /* NUEVOS BOTONES DE OPCIONES DEL CHAT */
+        .chat-options-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; animation: msgEntry 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0; transform: translateY(15px) scale(0.95); }
+        .chat-option-btn { background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.5); color: #fff; padding: 10px 15px; border-radius: 20px; cursor: pointer; transition: 0.3s; font-size: 0.85rem; font-family: 'Inter', sans-serif; backdrop-filter: blur(5px); }
+        .chat-option-btn:hover { background: linear-gradient(135deg, #a855f7, #db2777); border-color: transparent; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(219, 39, 119, 0.4); }
 
         .chatbot-input-area { padding: 15px; background: rgba(0,0,0,0.5); border-top: 1px solid rgba(255,255,255,0.08); display: flex; gap: 12px; align-items: center; }
         #chatbot-input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 14px 18px; border-radius: 25px; color: #fff; font-family: 'Inter', sans-serif; font-size: 0.95rem; outline: none; transition: 0.3s; }
@@ -629,7 +634,7 @@
         </div>
         <div class="chatbot-messages" id="chatbot-messages">
             <div class="message bot-message">
-                ¡Hola! 👋 Soy la IA asistente de Creatik. ¿En qué puedo ayudarte a contar tu historia hoy?
+                ¡Hola! 👋 Soy la IA asistente de Creatik. Para darte un servicio súper personalizado, ¿con quién tengo el gusto? (Por favor, dime tu nombre)
             </div>
         </div>
         <div class="chatbot-input-area">
@@ -712,21 +717,20 @@
         let lastTopic = 'inicio'; 
         const MAX_MESSAGES = 12; 
 
-        // --- NUEVO: INTEGRACIÓN CON GOOGLE SHEETS (SISTEMA DE GESTIÓN) ---
+        // Variables de estado para el Flujo (Onboarding)
+        let chatState = 'ASK_NAME'; 
+        let userName = '';
+
+        // --- INTEGRACIÓN CON GOOGLE SHEETS (SISTEMA DE GESTIÓN) ---
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbya4Eq0jSOrY1NZCF6JUgfSu_xM0vm31tB8rZcrBceYn3lOpTRdJ_Cfx3DgHQP1Nj_P/exec'; 
-        
-        // Generamos un código único para esta sesión de chat
-        const sessionId = 'CHAT-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+        const sessionId = 'CHAT-' + Date.now().toString().slice(-6) + Math.floor(Math.random() * 100);
 
         function enviarABackend(emisor, mensaje, tipo = 'chat', nombre = '') {
             if (!GOOGLE_SCRIPT_URL) return;
-            
-            // Limpiamos etiquetas HTML si el bot envía negritas o saltos de línea (<br>, <b>)
             const mensajeLimpio = mensaje.replace(/<[^>]*>?/gm, ' ');
-
             fetch(GOOGLE_SCRIPT_URL, {
                 method: 'POST',
-                mode: 'no-cors', // Fundamental para evitar bloqueos de CORS
+                mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     codigo: sessionId,
@@ -752,250 +756,92 @@
                 "¡Te cuento los detalles! Nuestros planes básicos están a $50, el Emprendimiento Pro sube a $125. Si es un evento, el paquete más popular es el Intermedio por $100 (incluye video), pero también tenemos el Small ($75) y el Express ($170). ¡Todo con calidad top!",
                 "Los precios en Creatik son transparentes: Sesiones desde $50 y eventos desde $75 hasta $170. Todo depende de cuánta magia quieras incluir.",
                 "Para presupuestos emprendedores tenemos el plan de $50, y para marcas que quieren todo el nivel, el de $125. ¿Cuál te suena mejor?",
-                "Si buscas cobertura de eventos, el de $100 es ideal porque ya incluye video. Si quieres algo más premium, el Express de $170 es el jefe.",
-                "Manejamos anticipos accesibles. Por ejemplo, en el plan de $50 solo reservas con $15. ¡Así de fácil!",
-                "Nuestras tarifas varían según el tiempo: desde 1 hora por $50 hasta 2.5 horas intensivas por $170 con asistente pro.",
-                "¡Hola! El costo depende del servicio, pero para que te hagas una idea, una sesión profesional de una hora te sale en $50.",
-                "Tenemos el paquete Evento Small a $75, perfecto si no necesitas video pero sí muchas fotos de alta calidad editadas.",
-                "¿Buscabas algo para ti o para tu negocio? El personal sale en $50 y el de emprendimiento pro en $125.",
-                "Recuerda que todos nuestros paquetes incluyen entrega digital y un detalle de cortesía de Creatik.",
-                "El paquete Intermedio de $100 es el más equilibrado: 2 horas, 100 fotos, video y entrega en USB.",
-                "Si es una boda o evento grande, el Express de $170 te da la tranquilidad de tener un asistente y video vertical para tus redes.",
-                "Nuestros precios están diseñados para que nadie se quede sin una historia inolvidable. Desde los $50 empezamos a crear.",
-                "Por solo $125, el plan Emprendimiento Pro te ofrece ambientación avanzada para que tus productos luzcan increíbles.",
-                "¿Te interesa el paquete de $100? Es el que más nos piden para fiestas y reuniones familiares.",
-                "El Evento Express de $170 es nuestra opción más completa: 150 fotos, filmación de 30 min y fotos impresas.",
-                "Para sesiones individuales, los $50 te incluyen 15 fotos editadas con equipo profesional de alta gama.",
-                "Si quieres algo sencillo pero pro, el Evento Small de $75 es la opción ganadora."
+                "Si buscas cobertura de eventos, el de $100 es ideal porque ya incluye video. Si quieres algo más premium, el Express de $170 es el jefe."
             ],
             precios_detalle: [
                 "¡Claro! Ampliando esa información de costos: Las sesiones de 1 hora ($50 a $125) son ideales para fotos tuyas o de marca. Los planes de eventos ($75 a $170) te aseguran cobertura total, ¡e incluso video en los más completos! ¿Cuál se adapta más a tu idea?",
                 "Profundizando en los precios: los $50 son geniales para fotos rápidas, pero si quieres tirar la casa por la ventana en tu evento, los planes de $100 y $170 son los más completos. 🎬",
-                "Para darte más contexto: El paquete más caro ($170) incluye hasta un asistente y video vertical para redes, mientras que los más accesibles ($50-$75) te garantizan excelencia fotográfica en menos tiempo.",
-                "¡Te detallo más! El de $100 es el intermedio perfecto para fiestas porque ya incluye un clip de video. El de $50 es estrictamente para sesiones de una hora (individual o producto).",
-                "Nuestros costos se basan en el tiempo y el equipo. Por $50 tienes 1 hora de fotos, y por $170 tienes 2.5 horas con video incluido. ¡Todo depende de tu visión! ✨"
+                "Para darte más contexto: El paquete más caro ($170) incluye hasta un asistente y video vertical para redes, mientras que los más accesibles ($50-$75) te garantizan excelencia fotográfica en menos tiempo."
             ],
             academy: [
                 "Creatik Academy es nuestro orgullo social. ✨ Llevamos más de dos años uniendo talentos mediante salidas de campo, usando la fotografía como puente de integración.",
                 "Sobre Creatik Academy, te cuento que es nuestro proyecto social estrella. Organizamos convivencias y salidas de campo donde la pasión por el arte visual nos une.",
-                "¡La Academy es magia pura! Es un espacio de formación donde apasionados del arte visual convivimos y aprendemos en el terreno.",
-                "Es un proyecto social que busca transformar realidades a través del lente. Llevamos más de 2 años en esto.",
-                "En la Academy formamos talento y unimos territorios. Es nuestra forma de aportar a la cultura visual.",
-                "Si te gusta la foto, ¡la Academy te va a encantar! Hacemos salidas grupales para practicar y compartir técnicas.",
-                "Creatik Academy es más que clases, es una comunidad de amigos unidos por la fotografía.",
-                "Nuestras salidas de campo son famosas por la buena vibra y todo lo que se aprende disparando fotos reales.",
-                "Llevamos dos años y medio impulsando este proyecto porque creemos que el arte debe ser compartido.",
-                "Pregúntanos por la próxima salida de la Academy, ¡siempre hay espacio para alguien con ganas de aprender!",
-                "Es un espacio de integración social donde la cámara es nuestra mejor herramienta de comunicación.",
-                "En Creatik Academy no solo enseñamos técnica, fomentamos la convivencia y el apoyo entre artistas.",
-                "Nacimos con la idea de que la fotografía puede unir a la gente, y la Academy es la prueba de ello.",
-                "Si quieres salir de la rutina y hacer fotos con gente increíble, tienes que conocer la Academy.",
-                "Es nuestro granito de arena para que más personas descubran el poder de contar historias con imágenes.",
-                "La Academy ha crecido muchísimo, ya somos un grupo sólido de apasionados por lo visual.",
-                "No importa si tienes una cámara pro o solo tu celular, en la Academy lo que cuenta es la mirada.",
-                "Hacemos recorridos fotográficos por lugares increíbles, ¡tienes que venir a la próxima!",
-                "La Academy es el alma de Creatik fuera del ámbito comercial.",
-                "Es formación, es amistad y es arte visual en estado puro."
+                "¡La Academy es magia pura! Es un espacio de formación donde apasionados del arte visual convivimos y aprendemos en el terreno."
             ],
             servicios_info: [
                 "En Creatik ofrecemos Fotografía Profesional, Video Cinematográfico y Diseño Gráfico. ¡Contamos tu historia de forma integral!",
                 "¡Para proyectos personales o marcas tenemos justo lo que necesitas! Hacemos sesiones fotográficas de alta calidad y video cinematográfico. ¿Qué tenías en mente?",
-                "Manejamos la imagen completa: Fotografía, Video y Diseño Gráfico. Tenemos mucha experiencia cubriendo eventos, sesiones para marcas y contenido para redes. ¿De qué trata tu idea?",
-                "¡Con muchísimo gusto te oriento! Ayudamos a contar historias con foto, video y diseño gráfico. Cubrimos desde sesiones personales hasta eventos grandes.",
-                "¿Buscas fotos para redes sociales? Hacemos contenido vertical optimizado para TikTok e Instagram.",
-                "Nuestro fuerte es la fotografía de eventos: bodas, XV años, bautizos y graduaciones con un estilo único.",
-                "También hacemos diseño gráfico para que la identidad de tu marca combine perfecto con tus nuevas fotos.",
-                "Hacemos entregas en galerías digitales de alta velocidad, USB personalizados y fotos impresas de alta calidad.",
-                "Si necesitas video, tenemos desde clips cortos de 10 minutos hasta filmaciones extendidas de 30 minutos o más.",
-                "Nuestras sesiones incluyen equipo profesional, edición de alta gama y asesoría en poses y locación.",
-                "¿Tienes un emprendimiento? Te ayudamos con la ambientación básica o avanzada para tus productos.",
-                "Realizamos fotografía tanto en estudio como en exteriores. ¡Tú eliges el escenario!",
-                "Contamos con asistentes profesionales para eventos grandes, asegurando que no se escape ningún detalle.",
-                "Entregamos todas las fotos de la sesión: las editadas y las extras sin editar para que no pierdas nada.",
-                "Nuestras ediciones incluyen corrección de color, piel y detalles para que luzcas espectacular.",
-                "Ofrecemos servicios de impresión fotográfica para que tus recuerdos vivan también en papel.",
-                "Si buscas algo creativo y diferente, nuestro equipo de diseño puede crear conceptos visuales desde cero.",
-                "Hacemos video vertical tipo 'reels' o 'shorts' para que tu evento sea tendencia en redes.",
-                "Trabajamos con cámaras de última tecnología para garantizar nitidez y colores vibrantes en cada disparo.",
-                "Desde una sesión de 1 hora hasta coberturas de día completo, nos adaptamos a tu necesidad."
+                "Manejamos la imagen completa: Fotografía, Video y Diseño Gráfico. Tenemos mucha experiencia cubriendo eventos, sesiones para marcas y contenido para redes. ¿De qué trata tu idea?"
             ],
             por_que: [
                 "¿Por qué Creatik? Porque entendemos que tu historia es única. No solo entregamos fotos, entregamos recuerdos con alma. Usamos equipo de alta gama y nos apasiona cada detalle.",
                 "Elegir Creatik es asegurar que tus recuerdos cobren vida con calidad cinematográfica y trato humano.",
-                "Nos diferenciamos por nuestra creatividad sin límites y el uso de equipo pro de alta gama.",
-                "Porque amamos lo que hacemos y eso se nota en cada foto editada que entregamos.",
-                "Somos expertos en capturar la esencia real, sin poses forzadas, solo momentos auténticos.",
-                "Creatik es sinónimo de profesionalismo, rapidez en la entrega y resultados vibrantes.",
-                "Porque tenemos paquetes que se adaptan a ti, desde lo más sencillo hasta lo más pro.",
-                "Nuestros clientes nos recomiendan por la atención al detalle y la pasión que le ponemos.",
-                "Elegirnos es confiar en un equipo que lleva años perfeccionando el arte de contar historias.",
-                "Porque tu historia merece ser contada con el alma, y nosotros sabemos cómo hacerlo."
+                "Nos diferenciamos por nuestra creatividad sin límites y el uso de equipo pro de alta gama."
             ],
             filosofia: [
                 "Para nosotros, la fotografía no es solo apretar un botón. Es congelar el tiempo y hacer que un instante sea eterno. ✨",
                 "Creemos firmemente que cada persona y marca tiene una historia única que merece ser capturada con respeto y arte.",
-                "Nuestra filosofía es simple: momentos reales, fotos inolvidables.",
-                "La fotografía es el lenguaje que usamos para hablar del amor, del éxito y de la vida misma.",
-                "Buscamos la belleza en lo espontáneo. Esa es la verdadera esencia de Creatik.",
-                "Para nosotros, una buena foto es la que te hace volver a sentir lo que viviste ese día.",
-                "El arte visual es nuestra forma de conectar con el mundo y con personas como tú.",
-                "Capturamos el presente para que en el futuro puedas viajar en el tiempo con una imagen.",
-                "Nuestra meta es que al ver tus fotos, veas tu alma reflejada en ellas.",
-                "En Creatik, trabajamos con el corazón para que tus recuerdos brillen por siempre."
+                "Nuestra filosofía es simple: momentos reales, fotos inolvidables."
             ],
             ubicacion: [
                 "Actualmente no contamos con un local físico, ¡porque nosotros nos trasladamos a donde tú prefieras! 🚗 Llevamos nuestro equipo profesional para cubrir tus eventos o sesiones en la locación de tu elección.",
                 "No tenemos estudio o local físico, somos nómadas creativos 🌍. Llevamos toda la magia y el equipo directamente al lugar que tú elijas para tu sesión o evento.",
-                "¡Nos movemos hacia ti! No manejamos local físico, preferimos ir a la locación que más te guste para realizar tu sesión fotográfica o cubrir tu evento.",
-                "Para tu comodidad, no operamos en un estudio fijo. Nos desplazamos con todos nuestros equipos al lugar de tus sueños. ✨",
-                "De momento no tenemos instalaciones físicas para recibir clientes, ¡nuestro estudio es el mundo! 🗺️ Llegamos adonde sea tu evento.",
-                "No contamos con una oficina física. Operamos de manera móvil para llevar nuestras cámaras justo donde ocurre la magia de tu historia. 📸",
-                "¡Somos un equipo móvil! 🚐 No tenemos local, pero vamos a la ubicación que tú decidas para hacer las mejores fotos y videos.",
-                "En lugar de un estudio fijo, trabajamos en locación. Tú eliges el lugar (playa, ciudad, salón) y nosotros llegamos con todo el equipo. 🎬",
-                "No tenemos una dirección física para visitas. Toda nuestra atención es online y nos trasladamos el día del evento a donde nos indiques.",
-                "Actualmente operamos sin estudio físico. Nos encanta trabajar en exteriores o en el lugar de tu evento, ¡así que nosotros vamos a ti! 🚀"
+                "¡Nos movemos hacia ti! No manejamos local físico, preferimos ir a la locación que más te guste para realizar tu sesión fotográfica o cubrir tu evento."
             ],
             tiene_pregunta: [
                 "¡Claro que sí! Dispara tu pregunta, estoy aquí para resolver todas tus dudas sobre foto, video y diseño. 📸",
                 "¡Por supuesto! Pregúntame lo que necesites saber. ✨",
-                "¡Con gusto! Dime en qué te puedo ayudar o qué duda tienes sobre Creatik.",
-                "¡Adelante! Cuéntame cuál es tu duda y la resolvemos de inmediato. 🚀",
-                "¡Para eso estoy! Hazme tu pregunta con toda confianza.",
-                "¡Soy todo oídos digitales! ¿Qué te gustaría saber?",
-                "Dime, ¿cuál es tu consulta? Te leo con atención. 👀",
-                "¡Por supuesto que sí! Escribe tu pregunta y te doy los detalles.",
-                "Resolver dudas es mi especialidad. ¿Qué tienes en mente?",
-                "¡Claro! Pregunta sin pena, que para eso estamos. 🎨"
+                "¡Con gusto! Dime en qué te puedo ayudar o qué duda tienes sobre Creatik."
             ],
             contacto: [
                 "¡Te entiendo perfectamente! Para platicar detalles precisos, un asesor humano de nuestro equipo te atenderá con gusto.",
                 "Con gusto te comunicamos con uno de nuestros agentes humanos. Ellos tienen toda la creatividad para escuchar tu idea.",
-                "Como asistente virtual tengo info general, ¡pero nuestro equipo humano está súper listo para escucharte a detalle!",
-                "Para darte una atención 100% humana y personalizada, te pido que nos escribas a nuestro número directo.",
-                "¡Claro! Si prefieres hablar con una persona real, nuestro equipo de creativos te está esperando.",
-                "Te paso el contacto de un humano de nuestro equipo para que puedan afinar todos los detalles de tu proyecto.",
-                "¡Buena idea! Un agente de nuestro equipo te podrá armar una cotización a la medida.",
-                "Si necesitas hablar con alguien del equipo Creatik, te invito a escribirnos directamente para atención humana.",
-                "¡Por supuesto! Mis colegas de carne y hueso estarán felices de platicar contigo sobre tu evento.",
-                "Te dejo con nuestro equipo humano, ellos son los verdaderos expertos detrás de las cámaras. 📸"
+                "Como asistente virtual tengo info general, ¡pero nuestro equipo humano está súper listo para escucharte a detalle!"
             ],
             redes: [
                 "¡Nos encanta conectar! 📱 Síguenos en Instagram, Facebook y TikTok como **@soycreatik**.",
                 "Puedes ver nuestro portafolio completo en Instagram, Facebook y TikTok. Nos encuentras en todas como **@soycreatik**.",
-                "¡Estamos en todos lados! Búscanos en TikTok, Facebook e Instagram con el usuario **@soycreatik**.",
-                "Para ver detrás de cámaras y nuestros mejores trabajos, síguenos en Instagram, Facebook y TikTok (**@soycreatik**). 🚀",
-                "Nuestras redes oficiales son Instagram, Facebook y TikTok. En las tres nos puedes buscar como **@soycreatik**.",
-                "¡Conecta con nosotros! Sube tu dosis de creatividad siguiéndonos en TikTok, Instagram y Facebook como **@soycreatik**. ✨",
-                "Te invito a seguirnos en **@soycreatik** (estamos en TikTok, Facebook e Instagram) para que veas la calidad de nuestro trabajo.",
-                "En Instagram, Facebook y TikTok nos encuentras como **@soycreatik**. ¡Allí publicamos nuestras últimas sesiones! 📸",
-                "¡Claro! Nuestra comunidad creativa está en Instagram, Facebook y TikTok bajo el nombre de **@soycreatik**.",
-                "Búscanos como **@soycreatik** en Facebook, TikTok o Instagram. ¡Te va a encantar nuestro contenido!"
+                "¡Estamos en todos lados! Búscanos en TikTok, Facebook e Instagram con el usuario **@soycreatik**."
             ],
             despedida: [
                 "¡De nada! Ha sido un placer platicar contigo. ¡Hasta la próxima! 📸",
                 "¡Gracias a ti por escribirnos! Que tengas un día súper creativo.",
-                "¡Perfecto! Quedamos a tu entera disposición para cualquier otra duda.",
-                "¡Chao! Espero verte pronto frente a nuestro lente.",
-                "¡Gracias por tu interés en Creatik! ¡Nos vemos!",
-                "¡Cuídate mucho! Recuerda que tu historia es única.",
-                "¡Hasta luego! Estaremos aquí cuando decidas capturar tus recuerdos.",
-                "¡Un gusto saludarte! Que pases un excelente día.",
-                "¡Bye! No olvides seguirnos en nuestras redes sociales.",
-                "¡Gracias por confiar en Creatik IA! ¡Hasta pronto!"
+                "¡Perfecto! Quedamos a tu entera disposición para cualquier otra duda."
             ],
             saludo_resp: [
                 "¿En qué te puedo asesorar el día de hoy? Pregúntame sobre precios o servicios.",
                 "¿Tienes algún evento en mente o buscas una cotización en específico?",
-                "¿Cómo te puedo ayudar a contar tu historia hoy? Estoy listo para tus dudas.",
-                "¡Hola! Dime, ¿qué tipo de sesión fotográfica te gustaría realizar?",
-                "¿Buscaban información sobre nuestros paquetes de video o de fotografía?",
-                "¡Qué gusto! ¿Deseas que te explique alguno de nuestros 5 planes principales?",
-                "Estoy aquí para ayudarte. ¿Quieres saber más sobre la Academy o sobre nuestros precios?",
-                "¿Buscas renovar la imagen de tu emprendimiento? ¡Tengo el plan perfecto!",
-                "Dime, ¿qué fecha tienes en mente para tu próximo gran momento?",
-                "¡Un placer saludarte! ¿Empezamos a planear tu sesión de fotos?"
+                "¿Cómo te puedo ayudar a contar tu historia hoy? Estoy listo para tus dudas."
             ],
             como_estas: [
                 "¡Todo excelente por aquí! Con mucha energía y ganas de crear. ✨ ¿En qué te puedo ayudar hoy?",
                 "¡Súper bien, rodeado de mucha inspiración visual! 🎨 ¿Tienes algún proyecto en mente?",
-                "¡De maravilla! Listo para capturar los mejores momentos. 📸 ¿Qué te trae por acá?",
-                "¡Increíble! Hoy la luz digital está perfecta para una buena plática.",
-                "Me siento al 100%, listo para asesorarte con tus fotos o videos.",
-                "¡Muy bien! Feliz de conocer a alguien más que valora los buenos recuerdos.",
-                "¡Genial! Mi procesador está fluyendo con pura creatividad hoy.",
-                "¡Todo marcha sobre ruedas! ¿Y tú? ¿Cómo va ese ánimo creativo?",
-                "¡Excelente! Con la mira puesta en nuevos proyectos visuales.",
-                "¡Súper! Esperando poder ayudarte a crear algo memorable hoy mismo.",
-                "¡Seguro que sí! Estoy brillando con luz propia hoy para asesorarte. 😊",
-                "¡Mejor imposible! No hay nada como una mañana llena de ideas nuevas.",
-                "¡Todo fluye! Mi sistema está optimizado para darte la mejor atención.",
-                "¡Pura vida! Disfrutando de ver tantas historias geniales pasar por aquí.",
-                "¡De 10! Con el lente digital enfocado en tu próximo proyecto."
+                "¡De maravilla! Listo para capturar los mejores momentos. 📸 ¿Qué te trae por acá?"
             ],
             bien_y_tu: [
                 "¡Qué gusto escuchar eso! Yo estoy al 100% y listo para asesorarte. 🚀 ¿Buscabas info de foto o video?",
                 "¡Excelente! Siempre es bueno conectar con personas con buena vibra. 😎 ¿Te ayudo a cotizar algo?",
-                "¡Me alegra mucho! Yo estoy fantástico, con muchas ganas de que hagamos fotos.",
-                "¡Genial! Si tú estás bien, yo estoy mejor. ¿Empezamos a planear tu sesión?",
-                "¡Qué bueno! Yo sigo aquí, firme como un trípode, listo para servirte.",
-                "¡Eso es lo que quería oír! Yo estoy listo para contarte todo sobre Creatik.",
-                "¡Perfecto! Hagamos que este día sea todavía mejor con un buen proyecto visual.",
-                "¡Súper! Yo estoy fluyendo con mucha inspiración hoy.",
-                "¡Me da mucha alegría! Yo estoy aquí para que tus recuerdos sean inolvidables.",
-                "¡Qué bien! Yo estoy cargado de energía para mostrarte nuestros paquetes."
+                "¡Me alegra mucho! Yo estoy fantástico, con muchas ganas de que hagamos fotos."
             ],
             interjeccion: [
                 "¡Claro que sí! Cuéntame un poco más de tu idea... 🎨",
                 "¡Totalmente! La buena vibra y actitud es parte de Creatik. 😎",
-                "¡Jaja, así es! Siempre trato de mantener la mejor energía. ✨",
-                "¡En serio! Aunque soy digital, me emociona mucho platicar contigo.",
-                "¡Exactamente! Has dado en el clavo.",
-                "¡Qué chivo! Me encanta cómo suena eso.",
-                "¡Entendido! Tomo nota de lo que me dices.",
-                "¡Súper! Sigamos adelante con eso.",
-                "¡Me parece una idea brillante! 💡",
-                "¡Claro! En Creatik todo es posible cuando hay pasión.",
-                "¡Wow! Me dejas sin palabras digitales. ¡Qué buena idea!",
-                "¡Sin duda! Tenemos la misma visión creativa entonces.",
-                "¡Eso es! Captaste la esencia de lo que hacemos.",
-                "¡Por supuesto! Para eso estamos, para hacer locuras visuales.",
-                "¡Genial! Me encanta cuando los clientes se emocionan así."
+                "¡Jaja, así es! Siempre trato de mantener la mejor energía. ✨"
             ],
             bot_identity: [
                 "¡Soy Creatik IA! Un asistente virtual diseñado para hablar de arte visual, foto y video. 🤖✨",
                 "Soy la inteligencia artificial de Creatik. No tomo café, ¡pero tengo mucha energía para ayudarte! ☕📸",
-                "Soy tu guía digital en el mundo Creatik. Mi misión es que encuentres el paquete perfecto para tu historia.",
-                "¡Hola! Soy el asistente virtual de la agencia. Mi creador me enseñó todo sobre fotografía para poder ayudarte.",
-                "Soy un bot programado para capturar tus dudas y darte soluciones visuales rápidas.",
-                "Me llamo Creatik IA y estoy aquí 24/7 para hablar de lo que más nos gusta: la fotografía.",
-                "Soy el cerebro digital detrás de este chat. ¡Un gusto conocerte!",
-                "Ni humano ni cámara, soy una IA apasionada por los pixeles y la buena atención.",
-                "Mi nombre es Creatik IA. Mi propósito es ayudarte a que tu historia sea eterna.",
-                "Soy la parte tecnológica del equipo Creatik, ¡encantado de saludarte!",
-                "¡Soy tu mano derecha digital! Estoy aquí para que no tengas que esperar por info.",
-                "Soy la versión futurista de Creatik, siempre en línea para tus consultas.",
-                "Soy un asistente manual pero muy inteligente, enfocado 100% en fotografía.",
-                "Soy el encargado de darte la bienvenida a esta experiencia visual.",
-                "¡Un algoritmo con alma creativa! Eso es lo que soy. ✨"
+                "Soy tu guía digital en el mundo Creatik. Mi misión es que encuentres el paquete perfecto para tu historia."
             ],
             bad_strange: [
                 "¡Ups! 😅 Mi programación solo me permite hablar de fotografía, video y diseño. ¿Te ayudo con eso?",
                 "Esa palabra no está en mi base de datos creativa. 🤖 ¿Volvemos a nuestros paquetes?",
-                "Mmm, prefiero que hablemos de cómo hacer que tus fotos se vean increíbles. ¿Te parece?",
-                "No entiendo eso, pero seguro que una sesión de fotos te vendría genial. 😉",
-                "¡Vaya! 🤖 Mejor concentrémonos en capturar momentos inolvidables. ¿Qué servicio te interesa?"
+                "Mmm, prefiero que hablemos de cómo hacer que tus fotos se vean increíbles. ¿Te parece?"
             ],
             default: [
                 "¡Qué interesante! 🤔 Cuéntame un poco más... ¿buscas algo enfocado en foto, diseño o video?",
                 "¡Me gusta por dónde vas! Aunque para orientarte mejor, ¿es para ti o para tu marca?",
-                "Entiendo. 📸 Para darte info precisa, ¿quieres saber de paquetes fotográficos o de video?",
-                "Esa es una buena pregunta. ¿Te gustaría que un asesor humano te de más detalles?",
-                "Mmm, no estoy seguro de entenderte al 100%. ¿Podrías decirme si buscas precios o servicios?",
-                "¡Interesante! ¿Eso tiene que ver con alguna sesión de fotos que quieras hacer?",
-                "Cuéntame más, soy todo oídos (digitales). ¿Qué buscas crear hoy?",
-                "Para ayudarte mejor, ¿me podrías dar más detalles sobre tu idea visual?",
-                "Entiendo el punto. ¿Te gustaría ver nuestros paquetes de Eventos para aclarar dudas?",
-                "¡Entendido! Pero dime, ¿en qué categoría de Creatik entraría eso?"
+                "Entiendo. 📸 Para darte info precisa, ¿quieres saber de paquetes fotográficos o de video?"
             ]
         };
 
@@ -1127,53 +973,113 @@
             scrollToBottom();
         }
 
+        // --- SISTEMA DE BOTONES PARA EL CHAT ---
+        function appendBotOptions(options) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'chat-options-container';
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'chat-option-btn';
+                btn.textContent = opt;
+                btn.onclick = () => {
+                    msgDiv.style.pointerEvents = 'none';
+                    msgDiv.style.opacity = '0.5';
+                    appendUserMessage(opt);
+                    chatbotInput.disabled = true;
+                    chatbotSendBtn.disabled = true;
+                    appendBotTyping();
+                    setTimeout(() => {
+                        removeBotTyping();
+                        processState(opt);
+                    }, 800);
+                };
+                msgDiv.appendChild(btn);
+            });
+            chatbotMessages.appendChild(msgDiv);
+            scrollToBottom();
+        }
+
         function scrollToBottom() {
             chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
         }
 
+        // --- MÁQUINA DE ESTADOS (FLUJO DE BIENVENIDA) ---
         function handleSend() {
             const text = chatbotInput.value.trim();
             if (!text) return;
             
             appendUserMessage(text);
-            
-            // NUEVO: Enviamos el mensaje del usuario a Google Sheets
-            enviarABackend('Usuario', text);
-            
             chatbotInput.value = '';
-            
             chatbotInput.disabled = true;
             chatbotSendBtn.disabled = true;
-            userMessageCount++;
             
             appendBotTyping();
             
-            if (userMessageCount >= MAX_MESSAGES) {
-                setTimeout(() => {
-                    removeBotTyping();
-                    const mensajeDespedida = "¡Qué gran plática hemos tenido! 📸<br><br>Parece que tienes un proyecto muy genial en manos. Para darte la mejor atención personalizada, por favor escríbenos directamente a nuestro <b>WhatsApp: +503 7577 8333</b> o en nuestras redes sociales (Facebook, Instagram, TikTok) como <b>@soycreatik</b>.<br><br>¡El equipo humano de Creatik te espera! 🚀";
-                    appendBotMessage(mensajeDespedida);
-                    
-                    // NUEVO: Guardamos el mensaje final del bot
-                    enviarABackend('Creatik IA', mensajeDespedida);
-                    
-                    chatbotInput.placeholder = "Escríbenos al WhatsApp para continuar.";
-                }, 1500);
-                return;
-            }
-
             setTimeout(() => {
                 removeBotTyping();
-                const responseText = getBotResponse(text, userMessageCount);
+                processState(text);
+            }, 1000 + Math.random() * 500); 
+        }
+
+        function processState(userText) {
+            if (chatState === 'ASK_NAME') {
+                userName = userText;
+                enviarABackend('Usuario', userText, 'nombre', userName);
+                
+                let response = `¡Un gusto, ${userName}! Te he asignado el número de gestión: <b>${sessionId}</b>.<br><br>Para darte la mejor asesoría, ¿qué tipo de proyecto tienes en mente?`;
+                appendBotMessage(response);
+                enviarABackend('Creatik IA', response, 'chat', userName);
+                
+                appendBotOptions(['Fotografía Personal', 'Fotografía de Evento', 'Video / Emprendimiento', 'Diseño Gráfico', 'Otro']);
+                chatState = 'WAITING_PROJECT'; 
+
+            } else if (chatState === 'WAITING_PROJECT') {
+                enviarABackend('Usuario', userText, 'proyecto', userName);
+                
+                let response = `¡Excelente elección! Cuéntame más detalles, ¿qué ideas tienes para este proyecto? (Ej: Boda de día, fotos para restaurante, etc.)`;
+                appendBotMessage(response);
+                enviarABackend('Creatik IA', response, 'chat', userName);
+                chatState = 'ASK_DETAILS';
+
+            } else if (chatState === 'ASK_DETAILS') {
+                enviarABackend('Usuario', userText, 'detalles', userName);
+                
+                let response = `¡Suena increíble! ¿En qué ubicación, ciudad o lugar te gustaría realizarlo?`;
+                appendBotMessage(response);
+                enviarABackend('Creatik IA', response, 'chat', userName);
+                chatState = 'ASK_LOCATION';
+
+            } else if (chatState === 'ASK_LOCATION') {
+                enviarABackend('Usuario', userText, 'ubicacion', userName);
+                
+                let response = `¡Perfecto! Ya tengo toda tu información resguardada bajo tu gestión <b>${sessionId}</b>.<br><br>Ahora sí, pregúntame libremente sobre nuestros precios, paquetes o servicios. ¿En qué más te ayudo?`;
+                appendBotMessage(response);
+                enviarABackend('Creatik IA', response, 'chat', userName);
+                chatState = 'NORMAL_CHAT';
+
+            } else if (chatState === 'NORMAL_CHAT') {
+                enviarABackend('Usuario', userText, 'chat', userName);
+                userMessageCount++;
+                
+                if (userMessageCount >= MAX_MESSAGES) {
+                    const mensajeDespedida = `¡Qué gran plática hemos tenido! 📸<br><br>Para darte la atención final con tu número de gestión <b>${sessionId}</b>, por favor escríbenos a nuestro <b>WhatsApp: +503 7577 8333</b> o en redes (<b>@soycreatik</b>).<br>¡El equipo humano te espera! 🚀`;
+                    appendBotMessage(mensajeDespedida);
+                    enviarABackend('Creatik IA', mensajeDespedida, 'chat', userName);
+                    chatbotInput.placeholder = "Escríbenos al WhatsApp para continuar.";
+                    return; 
+                }
+
+                const responseText = getBotResponse(userText, userMessageCount);
                 appendBotMessage(responseText);
-                
-                // NUEVO: Enviamos la respuesta normal del bot a Google Sheets
-                enviarABackend('Creatik IA', responseText);
-                
+                enviarABackend('Creatik IA', responseText, 'chat', userName);
+            }
+
+            // Reactivar input si no es el final
+            if (chatState !== 'WAITING_PROJECT') {
                 chatbotInput.disabled = false;
                 chatbotSendBtn.disabled = false;
                 chatbotInput.focus();
-            }, 1200 + Math.random() * 800); 
+            }
         }
 
         chatbotSendBtn.addEventListener('click', handleSend);
@@ -1246,10 +1152,11 @@
             }
         }
 
+        // --- INTRO LOADER MÁS RÁPIDO ---
         function triggerIntro() {
             loader.classList.remove('hidden'); introText.classList.remove('animate-letters');
             void introText.offsetWidth; introText.classList.add('animate-letters');
-            setTimeout(() => loader.classList.add('hidden'), window.innerWidth <= 900 ? 5000 : 2500);
+            setTimeout(() => loader.classList.add('hidden'), window.innerWidth <= 900 ? 2500 : 1500);
         }
 
         menuBtn.addEventListener('click', () => {
