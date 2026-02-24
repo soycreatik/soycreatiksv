@@ -91,6 +91,14 @@
         #chatbot-fab:hover { transform: scale(1.1); animation: none; box-shadow: 0 15px 35px rgba(219, 39, 119, 0.6); }
         @keyframes pulseFab { 0% { box-shadow: 0 0 0 0 rgba(219, 39, 119, 0.6); } 70% { box-shadow: 0 0 0 15px rgba(219, 39, 119, 0); } 100% { box-shadow: 0 0 0 0 rgba(219, 39, 119, 0); } }
 
+        .new-message-indicator {
+            position: absolute; top: 0; right: 0; width: 18px; height: 18px;
+            background-color: #ff3b30; border-radius: 50%; border: 2px solid #ffffff;
+            display: none; z-index: 8002; animation: pulseIndicator 1.5s infinite;
+        }
+        @keyframes pulseIndicator { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 59, 48, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); } }
+        #chatbot-fab.has-new-message .new-message-indicator { display: block; }
+
         #chatbot-window {
             position: fixed; bottom: 120px; right: 4vw; width: 360px; max-width: 90vw; height: 550px; max-height: 75vh;
             background: rgba(15, 10, 25, 0.95); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 25px;
@@ -99,19 +107,23 @@
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             opacity: 0; visibility: hidden; transform: translateY(30px) scale(0.9);
             transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0.4s;
-            transform-origin: bottom right; pointer-events: none;
+            transform-origin: bottom right; 
+            pointer-events: none; 
         }
         #chatbot-window.active { opacity: 1; visibility: visible; transform: translateY(0) scale(1); pointer-events: auto; }
 
-        .chatbot-header { display: flex; align-items: center; padding: 18px 20px; background: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(255,255,255,0.08); gap: 15px; }
+        .chatbot-header { display: flex; align-items: center; padding: 18px 20px; background: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(255,255,255,0.08); gap: 15px; position: relative; }
         .chatbot-logo { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #a855f7; box-shadow: 0 0 10px rgba(168, 85, 247, 0.5); }
         .chatbot-title { flex: 1; }
         .chatbot-title h4 { margin: 0; font-size: 1.1rem; color: #fff; letter-spacing: 0.5px; }
         .chatbot-title span { font-size: 0.75rem; color: #10b981; display: flex; align-items: center; gap: 5px; margin-top: 3px; font-weight: 600; }
         .chatbot-title span::before { content: ''; width: 8px; height: 8px; background: currentColor; border-radius: 50%; box-shadow: 0 0 8px currentColor; animation: blinkOnline 2s infinite; }
-        @keyframes blinkOnline { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
         
-        #close-chatbot-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; font-size: 0.8rem; }
+        #close-chatbot-btn { 
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; 
+            width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; 
+            align-items: center; cursor: pointer; transition: 0.3s; font-size: 0.9rem; margin-left: auto; z-index: 100;
+        }
         #close-chatbot-btn:hover { background: rgba(219, 39, 119, 0.5); border-color: #db2777; transform: scale(1.1); }
 
         .chatbot-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 18px; scrollbar-width: thin; scrollbar-color: rgba(168, 85, 247, 0.3) transparent; }
@@ -135,8 +147,6 @@
         #chatbot-send-btn { background: linear-gradient(135deg, #a855f7, #db2777); border: none; width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(168, 85, 247, 0.4); flex-shrink: 0; }
         #chatbot-send-btn:hover { transform: scale(1.1) rotate(-10deg); box-shadow: 0 8px 20px rgba(219, 39, 119, 0.6); }
         #chatbot-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        
-        .hide-chatbot-ui { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; transform: scale(0.5) !important; }
 
         /* --- HERO SECTION --- */
         .hero-section { min-height: 85vh; display: flex; justify-content: space-between; align-items: center; padding: 80px 5vw 40px 5vw; z-index: 3; position: relative; width: 100%; box-sizing: border-box; }
@@ -147,13 +157,23 @@
         .title-group h1 { font-size: 4.5rem; margin: 0; font-weight: 700; letter-spacing: -2px; white-space: nowrap; }
         .title-group h2 { font-size: 1.5rem; margin: 0 0 20px 0; font-weight: 400; }
         .title-group.active { opacity: 1; filter: blur(0px); transform: translate3d(0, 0, 0); }
-        .text-box-container { position: relative; height: 110px; margin-bottom: 40px; display: flex; justify-content: center; align-items: center; z-index: 10; cursor: pointer; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s ease; border-radius: 12px; width: 200px; will-change: width, transform; }
-        .text-box-container:hover { transform: scale(1.05) translate3d(0,0,0); }
+        
+        /* SOLUCIÓN AL TEMBLOR DEL TEXTO (CAJA FIJA Y CENTRADO ABSOLUTO) */
+        .text-box-container { 
+            position: relative; height: 100px; margin-bottom: 40px; 
+            display: flex; justify-content: center; align-items: center; 
+            z-index: 10; cursor: pointer; border-radius: 12px; 
+            margin-left: auto; margin-right: auto; 
+            transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            min-width: 150px; 
+        }
+        .text-box-container:hover { transform: scale(1.05); transition: transform 0.2s ease; }
         .glow-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 15, 0.5); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; backdrop-filter: blur(12px); z-index: -1; }
-        .world-text { font-family: 'Pacifico', cursive; font-size: 3.5rem; color: #ffffff; text-shadow: 0px 4px 15px rgba(255, 255, 255, 0.3); position: absolute; opacity: 0; filter: blur(8px); transform: scale(0.85) translate3d(0, -15px, 0); transition: opacity 0.8s ease, transform 0.8s ease, filter 0.8s ease; white-space: nowrap; pointer-events: none; will-change: transform, opacity; }
-        .world-text.active { opacity: 1; filter: blur(0px); transform: scale(1) translate3d(0, 0, 0); }
-        .btn-demo-glow { background: linear-gradient(90deg, #6b21a8, #a855f7); border: none; color: white; padding: 10px 35px; border-radius: 25px; font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 0 25px rgba(168, 85, 247, 0.5); transition: transform 0.2s ease; margin-bottom: 20px; will-change: transform; }
-        .btn-demo-glow:hover { transform: scale(1.05) translate3d(0,0,0); }
+        .world-text { font-family: 'Pacifico', cursive; font-size: 3.5rem; color: #ffffff; text-shadow: 0px 4px 15px rgba(255, 255, 255, 0.3); position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(0.85); opacity: 0; filter: blur(8px); transition: opacity 0.8s ease, transform 0.8s ease, filter 0.8s ease; white-space: nowrap; pointer-events: none; }
+        .world-text.active { opacity: 1; filter: blur(0px); transform: translate(-50%, -50%) scale(1); }
+        
+        .btn-demo-glow { background: linear-gradient(90deg, #6b21a8, #a855f7); border: none; color: white; padding: 10px 35px; border-radius: 25px; font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 0 25px rgba(168, 85, 247, 0.5); transition: transform 0.2s ease; margin-bottom: 20px; }
+        .btn-demo-glow:hover { transform: scale(1.05); }
         .bottom-slogan { display: none; }
 
         /* --- MARQUEE INFINITO --- */
@@ -164,29 +184,22 @@
         @keyframes marqueeFlow { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
         /* --- OVERLAYS CONFIGURACIÓN (MENÚ, PAQUETES Y ACADEMY) --- */
-        #full-menu-overlay, #paquetes-overlay, #academy-overlay {
+        #full-menu-overlay, #paquetes-overlay, #academy-overlay, #contact-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9000; opacity: 0; visibility: hidden; transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
             display: flex; flex-direction: column; align-items: center; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth;
         }
         #full-menu-overlay { background: radial-gradient(circle at 50% 80%, #0a0f24 0%, #030409 60%); }
         #paquetes-overlay { background-color: #050505; background-image: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px); background-size: 50px 50px; }
         #academy-overlay { background: #0a0a0a; justify-content: center; }
+        #contact-overlay { background-color: #020005; z-index: 99000; transform: perspective(1000px) rotateX(15deg) translateY(80px) scale(0.95); transition: opacity 0.7s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0.8s; }
         #full-menu-overlay::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
         #full-menu-overlay.active, #paquetes-overlay.active, #academy-overlay.active { opacity: 1; visibility: visible; }
+        #contact-overlay.active { opacity: 1; visibility: visible; transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1); filter: blur(0px); }
 
-        /* --- ACADEMY SECCIÓN (F1 TECH) --- */
-        .academy-section {
-            width: 90%; max-width: 1100px; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 40px;
-            background: rgba(20, 10, 30, 0.85); border: 1px solid rgba(255, 50, 50, 0.3); border-radius: 30px; padding: 60px; position: relative; z-index: 5;
-            box-shadow: 0 0 40px rgba(255, 50, 50, 0.1), inset 0 0 30px rgba(20, 10, 30, 0.8); backdrop-filter: blur(20px); overflow: hidden;
-        }
-        .academy-section::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(135deg, transparent 45%, rgba(255, 20, 60, 0.1) 50%, transparent 55%);
-            background-size: 30px 30px, 30px 30px, 200% 200%; pointer-events: none; z-index: 0; animation: techScan 12s linear infinite;
-        }
+        /* --- ACADEMY SECCIÓN --- */
+        .academy-section { width: 90%; max-width: 1100px; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 40px; background: rgba(20, 10, 30, 0.85); border: 1px solid rgba(255, 50, 50, 0.3); border-radius: 30px; padding: 60px; position: relative; z-index: 5; box-shadow: 0 0 40px rgba(255, 50, 50, 0.1), inset 0 0 30px rgba(20, 10, 30, 0.8); backdrop-filter: blur(20px); overflow: hidden; }
+        .academy-section::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(135deg, transparent 45%, rgba(255, 20, 60, 0.1) 50%, transparent 55%); background-size: 30px 30px, 30px 30px, 200% 200%; pointer-events: none; z-index: 0; animation: techScan 12s linear infinite; }
         @keyframes techScan { 0% { background-position: 0 0, 0 0, 0% 0%; } 100% { background-position: 0 0, 0 0, 100% 100%; } }
-
         .academy-card { flex: 1; background: rgba(40, 40, 50, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-left: 4px solid #ff3232; border-radius: 20px; padding: 40px; position: relative; z-index: 2; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .academy-badge { display: inline-block; background: rgba(255, 50, 50, 0.15); border: 1px solid #ff3232; color: #ff9090; font-size: 0.75rem; font-weight: 800; padding: 6px 15px; border-radius: 50px; margin-bottom: 20px; letter-spacing: 1px; }
         .academy-card h2 { font-size: 2.8rem; font-weight: 900; line-height: 1; margin: 0 0 20px 0; color: #ffffff; letter-spacing: -1px; }
@@ -194,12 +207,12 @@
         .academy-card p { font-size: 0.95rem; color: rgba(255, 255, 255, 0.8); line-height: 1.7; }
         .academy-visuals { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; z-index: 2; }
         .dual-slide-wrap { width: 100%; max-width: 500px; aspect-ratio: 4 / 3; border-radius: 20px; overflow: hidden; position: relative; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(255, 50, 50, 0.3); border: 3px solid rgba(255, 50, 50, 0.6); background: #000; }
-        .fade-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.8s ease-in-out; will-change: opacity; }
+        .fade-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.8s ease-in-out; }
         .fade-img.active { opacity: 1; z-index: 2; }
 
         /* --- MENU OVERLAY CONTENIDO --- */
         .menu-overlay-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 900px; padding-top: 120px; padding-bottom: 100px; text-align: center; }
-        .menu-pill-container { border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(5px); margin-bottom: 25px; position: relative; display: flex; justify-content: center; align-items: center; height: 30px; overflow: hidden; animation: dynamicPillWidth 10s infinite cubic-bezier(0.8, 0, 0.1, 1); transform: translate3d(0, 20px, 0); opacity: 0; transition: all 0.5s ease 0.1s; will-change: width; }
+        .menu-pill-container { border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(5px); margin-bottom: 25px; position: relative; display: flex; justify-content: center; align-items: center; height: 30px; overflow: hidden; animation: dynamicPillWidth 10s infinite cubic-bezier(0.8, 0, 0.1, 1); transform: translate3d(0, 20px, 0); opacity: 0; transition: all 0.5s ease 0.1s; }
         #full-menu-overlay.active .menu-pill-container { transform: translate3d(0, 0, 0); opacity: 1; }
         .menu-pill-text { font-size: 0.7rem; font-weight: 700; letter-spacing: 1px; color: rgba(255, 255, 255, 0.8); text-transform: uppercase; position: absolute; opacity: 0; visibility: hidden; animation: textCyclePillStrict 10s infinite linear; }
         @keyframes dynamicPillWidth { 0%, 22% { width: 90px; } 25%, 47% { width: 130px; } 50%, 72% { width: 100px; } 75%, 97% { width: 140px; } 100% { width: 90px; } }
@@ -224,25 +237,25 @@
         .phone-slideshow .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: center center; border-radius: 20px; opacity: 0; transition: opacity 1.5s ease-in-out; z-index: 1; filter: saturate(1.2); }
         .phone-slideshow .slide.active { opacity: 1; z-index: 2; }
         
-        .float-tag { position: absolute; background: rgba(20, 20, 25, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); padding: 8px 15px; border-radius: 12px; display: flex; align-items: center; gap: 10px; backdrop-filter: blur(8px); font-size: 0.8rem; font-weight: 700; box-shadow: 0 10px 20px rgba(0,0,0,0.5); animation: floatAnim 6s ease-in-out infinite; z-index: 4; color: white; white-space: nowrap; will-change: transform; }
+        .float-tag { position: absolute; background: rgba(20, 20, 25, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); padding: 8px 15px; border-radius: 12px; display: flex; align-items: center; gap: 10px; backdrop-filter: blur(8px); font-size: 0.8rem; font-weight: 700; box-shadow: 0 10px 20px rgba(0,0,0,0.5); animation: floatAnim 6s ease-in-out infinite; z-index: 4; color: white; white-space: nowrap; }
         @keyframes floatAnim { 0%, 100% { transform: translate3d(0, 0px, 0); } 50% { transform: translate3d(0, -15px, 0); } }
         .f-icon { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; } .f-icon svg { width: 100%; height: 100%; fill: #f97316; filter: drop-shadow(0 0 5px #f97316); }
         .bottom-glow-arc { position: fixed; bottom: -400px; left: 50%; transform: translateX(-50%); width: 150vw; height: 500px; border-radius: 50%; background: radial-gradient(ellipse at top, rgba(249, 115, 22, 0.4) 0%, transparent 60%); box-shadow: 0 -20px 100px rgba(249, 115, 22, 0.3); z-index: 1; pointer-events: none; }
         .slider-deco { position: absolute; bottom: -30px; width: 300px; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); }
 
         /* --- DASHBOARD --- */
-        .dashboard-container { display: grid; grid-template-columns: 1.2fr 1fr 1.2fr; gap: 30px; width: 90%; max-width: 1200px; margin: 60px auto 100px auto; padding: 50px; background: rgba(30, 10, 50, 0.2); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 40px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 30px 60px rgba(0,0,0,0.6); transform: translate3d(0, 100px, 0); opacity: 0; transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 1s ease; z-index: 3; position: relative; will-change: transform, opacity; backface-visibility: hidden; }
+        .dashboard-container { display: grid; grid-template-columns: 1.2fr 1fr 1.2fr; gap: 30px; width: 90%; max-width: 1200px; margin: 60px auto 100px auto; padding: 50px; background: rgba(30, 10, 50, 0.2); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 40px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 30px 60px rgba(0,0,0,0.6); transform: translate3d(0, 100px, 0); opacity: 0; transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 1s ease; z-index: 3; position: relative; }
         .dashboard-container.visible { transform: translate3d(0, 0, 0); opacity: 1; }
         .dash-left h2 { font-size: 3rem; line-height: 0.9; margin-bottom: 20px; font-weight: 800; letter-spacing: -1px;}
         .glass-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; overflow: hidden; width: 100%; box-sizing: border-box; }
         .viewer-box { width: 100%; height: 250px; border-radius: 15px; background: rgba(255,255,255,0.05); display: flex; justify-content: center; align-items: center; position: relative; overflow: hidden; }
-        #main-viewer { width: 100%; height: 100%; object-fit: cover; border-radius: 15px; opacity: 0; transition: opacity 0.4s ease-in-out; object-position: center top; will-change: opacity; transform: translateZ(0); }
+        #main-viewer { width: 100%; height: 100%; object-fit: cover; border-radius: 15px; opacity: 0; transition: opacity 0.4s ease-in-out; object-position: center top; }
         .idea-container { text-align: center; margin-bottom: 20px; }
         .idea-box { background: linear-gradient(90deg, #a855f7, #6b21a8); color: white; font-size: 0.8rem; font-weight: bold; padding: 5px 15px; border-radius: 5px; display: inline-block; margin-bottom: 5px; }
         .nosotros-text { font-size: 3rem; font-weight: 900; color: #ffffff; margin: 0; line-height: 0.9; }
         .creamos-text { font-size: 3rem; font-weight: 900; color: #ffffff; margin: 0; line-height: 0.9; background: linear-gradient(to bottom, #ffffff 50%, #e0e0e0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .icon-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
-        .icon-box { aspect-ratio: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 15px; display: flex; justify-content: center; align-items: center; overflow: hidden; transition: all 0.4s ease-in-out; will-change: transform, border-color, background-color; backface-visibility: hidden; }
+        .icon-box { aspect-ratio: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 15px; display: flex; justify-content: center; align-items: center; overflow: hidden; transition: all 0.4s ease-in-out; }
         .icon-box img { width: 100%; height: 100%; object-fit: cover; }
         .service-item { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); padding: 14px 20px; border-radius: 50px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; cursor: pointer; font-size: 0.8rem; font-weight: 700; text-decoration: none; color: #ffffff; width: 100%; box-sizing: border-box; }
         .service-item:hover { transform: translate3d(10px, 0, 0); background: rgba(255,255,255,0.06); }
@@ -290,13 +303,29 @@
         .stars { color: #ffd700; }
 
         /* --- OVERLAY CONTÁCTANOS --- */
-        #contact-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #020005; z-index: 99000; display: flex; flex-direction: column; align-items: center; overflow-y: auto; overflow-x: hidden; opacity: 0; visibility: hidden; transform: perspective(1000px) rotateX(15deg) translateY(80px) scale(0.95); transition: opacity 0.7s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0.8s; }
-        #contact-overlay.active { opacity: 1; visibility: visible; transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1); filter: blur(0px); }
         .contact-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-image: radial-gradient(circle at 50% -20%, rgba(14, 165, 233, 0.25) 0%, transparent 60%), linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 100% 100%, 40px 40px, 40px 40px; z-index: 1; pointer-events: none; }
+        
+        .contact-deco { position: absolute; z-index: 1; pointer-events: none; }
+        .contact-deco .deco-inner { width: 100%; height: 100%; animation: floatContact 6s ease-in-out infinite; }
+        .contact-deco img { width: 100%; height: 100%; object-fit: cover; }
+        .dec-left-img { top: 12%; left: 8vw; width: 200px; height: 260px; transform: rotate(-8deg); }
+        .dec-left-img img { border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.1); }
+        .dec-left-stk { bottom: 15%; left: 10vw; width: 160px; transform: rotate(12deg); }
+        .dec-left-stk .deco-inner { animation-delay: -3s; animation-duration: 7s; }
+        .dec-left-stk img { filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5)); }
+        .dec-right-stk { top: 12%; right: 10vw; width: 180px; transform: rotate(-15deg); }
+        .dec-right-stk .deco-inner { animation-delay: -2s; animation-duration: 8s; }
+        .dec-right-stk img { filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5)); }
+        .dec-right-img { bottom: 15%; right: 8vw; width: 220px; height: 180px; transform: rotate(10deg); }
+        .dec-right-img .deco-inner { animation-delay: -4s; animation-duration: 6.5s; }
+        .dec-right-img img { border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.1); }
+
+        @keyframes floatContact { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-20px) scale(1.02); } }
+
         .contact-pill-container { border: 1px solid rgba(14, 165, 233, 0.4); border-radius: 50px; background: rgba(14, 165, 233, 0.1); box-shadow: 0 0 20px rgba(14, 165, 233, 0.2); margin-bottom: 30px; position: relative; display: flex; justify-content: center; align-items: center; height: 35px; overflow: hidden; animation: dynamicContactPillWidth 10s infinite cubic-bezier(0.8, 0, 0.1, 1); will-change: width; z-index: 10; }
         .contact-pill-text { font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; color: #0ea5e9; text-transform: uppercase; position: absolute; opacity: 0; visibility: hidden; animation: textCyclePillStrict 10s infinite linear; white-space: nowrap; }
         @keyframes dynamicContactPillWidth { 0%, 22% { width: 120px; } 25%, 47% { width: 140px; } 50%, 72% { width: 130px; } 75%, 97% { width: 150px; } 100% { width: 120px; } }
-        .contact-content-wrapper { position: relative; z-index: 2; width: 100%; max-width: 900px; padding: 100px 5vw 50px 5vw; text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .contact-content-wrapper { position: relative; z-index: 2; width: 100%; max-width: 900px; padding: 100px 5vw 50px 5vw; text-align: center; display: flex; flex-direction: column; align-items: center; margin: auto; }
         .contact-title { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px; margin: 0 0 20px 0; color: white; position: relative; z-index: 10; }
         .contact-title span { color: #0ea5e9; text-shadow: 0 0 30px rgba(14, 165, 233, 0.4); }
         .contact-desc { font-size: clamp(0.9rem, 2vw, 1.1rem); color: rgba(255,255,255,0.6); max-width: 650px; line-height: 1.6; margin-bottom: 40px; position: relative; z-index: 10; }
@@ -322,7 +351,9 @@
             .dashboard-container { background: rgba(20, 5, 35, 0.98) !important; box-shadow: 0 5px 15px rgba(0,0,0,0.5) !important; transform: translate3d(0,0,0) !important; opacity: 1 !important; }
             .title-group, .world-text { filter: none !important; transition: opacity 0.8s ease, transform 0.8s ease !important; }
             .title-group.active, .world-text.active { filter: none !important; }
-            .text-box-container { width: 100% !important; max-width: 260px !important; transition: transform 0.2s ease !important; }
+            
+            .text-box-container { height: 80px !important; margin: 0 auto 30px auto !important; min-width: 120px !important; }
+            .world-text { font-size: 2.5rem !important; }
 
             .side-text-left, .side-text-right { display: none !important; } 
             .bottom-slogan { display: block !important; position: relative !important; width: 100% !important; text-align: center !important; margin-top: 30px !important; font-size: 0.85rem !important; color: rgba(255, 255, 255, 0.6) !important; letter-spacing: 1px; text-transform: uppercase; }
@@ -335,11 +366,9 @@
             .btn-demo-outline { padding: 6px 12px; font-size: 0.8rem; }
             .menu-btn, .academy-btn { padding: 6px 12px; font-size: 0.75rem; }
             
-            /* Ajustes CERRAR y STICKER Fijos en Celular */
             .overlay-fixed-logo { top: 10px; left: 15px; height: 65px; }
             .overlay-fixed-close { top: 15px; right: 15px; padding: 8px 15px; font-size: 0.75rem; }
 
-            /* Chatbot Celular */
             #chatbot-fab { bottom: 20px; right: 20px; width: 55px; height: 55px; }
             #chatbot-window { bottom: 85px; right: 5vw; width: 90vw; height: 450px; border-radius: 15px; }
 
@@ -347,15 +376,11 @@
             .title-group h1 { font-size: clamp(3rem, 15vw, 4.5rem) !important; line-height: 1; } 
             .title-group h2 { font-size: 1.4rem !important; }
             .dynamic-title-container { height: 95px !important; margin-bottom: 5px !important; } 
-            .world-text { font-size: clamp(2.5rem, 12vw, 4rem) !important; }
-            .text-box-container { height: 75px !important; margin-bottom: 30px !important; }
             .btn-demo-glow { margin-top: 10px !important; }
             
-            /* Paquetes Celular (Lista Vertical) */
             .plans-container { flex-direction: column !important; padding: 100px 5vw 20px 5vw !important; gap: 30px !important; align-items: center !important; overflow: visible !important; width: 100% !important; }
             .plan-card { width: 100% !important; max-width: 350px !important; flex: none !important; transform: scale(1) translate3d(0,0,0) !important; background: rgba(15, 15, 20, 0.98) !important; margin: 0 auto !important; }
 
-            /* Academy Overlay Celular */
             .academy-section { flex-direction: column; padding: 40px 20px !important; text-align: center; gap: 30px; }
             .academy-card { padding: 30px 20px; border-left: none; border-top: 4px solid #ff3232; } 
             .academy-card h2 { font-size: 2.2rem; }
@@ -380,7 +405,8 @@
             .testimonials-section { padding: 80px 0 !important; }
             .testi-card { width: 90% !important; max-width: 320px !important; margin: 0 auto 20px auto !important; background: rgba(20, 20, 25, 0.98) !important; }
 
-            .contact-content-wrapper { padding-top: 80px; }
+            .contact-deco { display: none !important; } 
+            .contact-content-wrapper { padding-top: 120px; }
             .contact-desc { font-size: 0.85rem; margin-bottom: 30px; }
             .contact-cta-btn { font-size: 1rem; padding: 15px 30px; width: 100%; text-align: center; justify-content: center; }
             .contact-trust-bar { gap: 15px; flex-direction: column; }
@@ -448,7 +474,7 @@
                 <h1>Contamos tu <span>historia</span> con el alma.</h1>
                 <h2>Capturamos momentos reales para hacerlos eternos.</h2>
             </div>
-            <p class="menu-desc">En Creatik, capturamos la esencia de cada momento porque sabemos que tu realidad es lo más importante. No solo entregamos una imagen, entregamos un recuerdo con alma.</p>
+            <p class="menu-desc">En Creatik, capturamos la esencia de cada momento porque sabemos que tu reality es lo más importante. No solo entregamos una imagen, entregamos un recuerdo con alma.</p>
             <div class="menu-interactive-area">
                 <div class="float-tag ft-smm">
                     <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></svg></div>
@@ -525,6 +551,11 @@
 
     <div id="contact-overlay">
         <div class="contact-backdrop"></div>
+        
+        <div class="contact-deco dec-left-img"><div class="deco-inner"><img src="img12.jpg" alt="Decoración Creatik" onerror="this.style.display='none'"></div></div>
+        <div class="contact-deco dec-left-stk"><div class="deco-inner"><img src="STICKER/sticker3.png" alt="Sticker" onerror="this.style.display='none'"></div></div>
+        <div class="contact-deco dec-right-stk"><div class="deco-inner"><img src="STICKER/sticker1.png" alt="Sticker" onerror="this.style.display='none'"></div></div>
+        <div class="contact-deco dec-right-img"><div class="deco-inner"><img src="img11.jpg" alt="Decoración Creatik" onerror="this.style.display='none'"></div></div>
 
         <button class="overlay-fixed-close" id="close-contact-btn">✖ Cerrar</button>
         
@@ -615,12 +646,13 @@
     </div>
 
     <div id="chatbot-fab" title="Chatea con nosotros">
+        <div class="new-message-indicator"></div>
         <svg viewBox="0 0 24 24" width="28" height="28" fill="white"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM9 11H7V9h2v2zm4 0h-2V9h2v2zm4 0h-2V9h2v2z"></path></svg>
     </div>
 
     <div id="chatbot-window">
         <div class="chatbot-header">
-            <img src="LOGO CHAT.png" alt="Creatik Bot" class="chatbot-logo" onerror="this.src='https://i.pravatar.cc/100?img=12'">
+            <img src="creatikperfil.jpg" alt="Creatik Bot" class="chatbot-logo" onerror="this.src='https://i.pravatar.cc/100?img=12'">
             <div class="chatbot-title">
                 <h4>Creatik IA</h4>
                 <span id="bot-status">En línea</span>
@@ -699,7 +731,7 @@
         }
         setInterval(changeAcademyImages, 4000); 
 
-        // --- LÓGICA DEL CHATBOT LOCAL SÚPER AVANZADO ---
+        // --- LÓGICA DEL CHATBOT ---
         const chatbotFab = document.getElementById('chatbot-fab');
         const chatbotWindow = document.getElementById('chatbot-window');
         const closeChatbotBtn = document.getElementById('close-chatbot-btn');
@@ -712,31 +744,100 @@
         let unknownCount = 0;
         let buttonsSent = false;
         let lastTopic = 'inicio'; 
-        const MAX_MESSAGES = 15; 
+        const MAX_MESSAGES = 60;
+        
+        let inactivityTimer;
+        let waitingForInactivityResponse = false;
+        let hasNewMessage = false;
 
-        // DICCIONARIO MAESTRO (100+ expansiones y correcciones)
         const botResponses = {
-            saludo: [
-                "¡Hola! Qué alegría que pienses en Creatik. ✨",
-                "¡Buenos días! ¿En qué te puedo ayudar hoy?",
-                "¡Hola, hola! 📸 ¿Qué tal todo? ¿Listo para crear?",
-                "¡Hey! Qué bueno verte por aquí. Cuéntame."
+            robo_info: [
+                "¡Nos alegra que te guste nuestra técnica! Mantenemos nuestra 'receta secreta' de edición y flujo de trabajo en casa, pero nos encanta inspirar a otros creadores. ✨",
+                "Usamos varios programas profesionales del mercado y mucha creatividad propia. ¡Gracias por notar la calidad!"
             ],
-            ayuda: [
-                "¡Claro que sí! Estoy para ayudarte. ¿Buscas info sobre precios, servicios, o quieres contarme tu idea?",
-                "¡Con gusto! Dime en qué te puedo apoyar hoy."
+            contratar: [ 
+                "¡Esa es la actitud! 🚀 Para formalizar y apartar tu fecha, el siguiente paso es hablar con nuestro coordinador humano en WhatsApp: <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b>. ¡Te esperamos ahí para empezar!",
+                "¡Excelente decisión! 🎉 Estamos listos. Escríbenos ya mismo a nuestro WhatsApp <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b> para asegurar tu espacio."
             ],
-            idea: [
-                "¡Me encanta escuchar nuevas ideas! 🤩 Cuéntame, ¿de qué trata tu proyecto?",
-                "¡Suena genial! Dame más detalles para entender bien qué necesitas capturar."
+            regateo: [
+                "Entiendo que el presupuesto es clave. No solemos hacer recortes directos porque nuestro equipo y tiempo garantizan una calidad premium, pero ¡escríbenos a WhatsApp! A veces podemos ajustar el paquete para hacer posible tu idea.",
+                "Valoramos mucho tu interés. Aunque nuestros precios ya son fijos por la calidad que entregamos, si nos escribes a WhatsApp podemos ver si hay alguna promo vigente o ajustar un plan a tu medida. 😉"
             ],
-            identidad: [
-                "¡Soy Creatik IA! Tu asistente con alma de fotógrafo y puro código salvadoreño. 🇸🇻",
-                "Soy el asistente virtual de Creatik, aquí para resolver tus dudas rápidamente."
+            caro: [
+                "Entiendo tu punto. Nuestros precios reflejan el uso de equipo de alta gama, iluminación profesional y horas de edición detallada para que el resultado sea nivel cine. ✨ ¡Es una inversión en calidad!",
+                "¡La calidad lo vale! No solo son fotos, es una experiencia y te entregamos TODO el material extra sin costo adicional."
+            ],
+            barato: [
+                "¡Queremos que el arte visual sea accesible! Optimizamos nuestros procesos para darte la mejor calidad sin que tengas que gastar una fortuna. 😎",
+                "Nos encanta lo que hacemos y preferimos tener paquetes competitivos para que nadie se quede sin fotos increíbles."
+            ],
+            solo_cotiza: [
+                "¡No hay ningún problema! Cotizar es el primer paso para crear algo genial. Llévate la info y cuando estés listo, aquí estaremos para ti. 📸",
+                "¡Claro que sí! Tómate tu tiempo. Puedes guardar nuestros precios y contactarnos cuando te animes."
+            ],
+            crisis: [
+                "Comprendo. Seré más directo y formal a partir de ahora. ¿En qué le puedo asistir?",
+                "Mis disculpas. Mantendremos comunicación profesional. ¿Desea información de precios o servicios?"
+            ],
+            bad_strange: [
+                "¡Ups! 😅 Mi programación solo me permite hablar de fotografía, video y diseño. ¿Te ayudo con eso?",
+                "Esa palabra no está en mi base de datos creativa. 🤖 Mejor concentrémonos en capturar momentos inolvidables."
+            ],
+            negativa_mascotas: [ 
+                "Por el momento estamos 100% enfocados en sesiones para personas, empresas y eventos. 📸 Aunque amamos a los peluditos, aún no tenemos el set listo para ellos. ¿Te ayudo con otro tipo de sesión?"
+            ],
+            prohibido_discotecas: [
+                "Por políticas de la agencia, no realizamos coberturas en discotecas o ambientes similares. 🚫 Preferimos enfocarnos en eventos sociales, culturales y corporativos. ¿Tienes algún otro tipo de evento en mente?"
+            ],
+            donar_academy: [
+                "¡Qué increíble que quieras sumar! 🤩 Creatik Academy siempre tiene las puertas abiertas para seguir formando jóvenes. Iniciamos en Valle Verde y nos expandimos a Distrito Italia, Valle Verde 1,2,3,4, Popotlán 1 y 2, San Marcos, Nejapa, San Martín, Ciudad Delgado y todo Apopa. Hemos colaborado con creadores como Steeb Melendez, Jeykob, Steven Diaz, Oscar Lara y Joshua Morales. ¡Escríbenos al WhatsApp para coordinar tu apoyo! ✨"
+            ],
+            institucion_gobierno: [
+                "¡Excelente! Tenemos gran experiencia trabajando con instituciones, escuelas y proyectos gubernamentales/municipales. 🏢 Podemos crear una propuesta formal y adaptada a sus requerimientos de comunicación. ¿Podría brindarme más detalles del proyecto?"
+            ],
+            empresa: [
+                "¡Las marcas son nuestro fuerte! 📈 Hemos trabajado con muchas empresas. Para contenido corporativo o de emprendimiento, te recomiendo el paquete Pro de $125 o armar algo a la medida. ¿Qué tipo de negocio es?",
+                "Ayudamos a destacar tu marca con fotografía comercial de alta calidad y diseño gráfico. ¿Es para redes sociales, catálogo o publicidad interna?"
+            ],
+            marca_personal: [
+                "¡Perfecto para impulsar tu imagen! 🚀 Ya sea que ofrezcas un servicio profesional o quieras potenciar tu marca personal, diseñamos sesiones que transmitan confianza y calidad. El paquete de $50 (Sesión Personal) es ideal para empezar."
+            ],
+            religion_evasion: [
+                "¡Hola! Somos una agencia creativa independiente. 🎥 Cubrimos con mucho respeto y profesionalismo eventos de cualquier denominación o iglesia (bodas, bautizos, cultos, retiros, etc.). ¿De qué trata tu evento?"
+            ],
+            evento: [
+                "¡Nos encantan los eventos! 🎉 Para bodas, cumpleaños o graduaciones, nuestro paquete Intermedio ($100) es el más pedido e incluye video. Si es algo muy grande, el Express ($170) es ideal. ¿Qué tipo de evento es?",
+                "Congelamos cada momento de tu evento. Te damos cobertura completa, fotos editadas y hasta video para tus redes. ¿Para qué fecha lo necesitas?"
+            ],
+            foto_pareja: [
+                "¡Qué romántico! ❤️ Las sesiones en pareja son maravillosas. Podemos ir a la locación que signifique mucho para ustedes (playa, montaña, ciudad). El paquete básico de 1 hora ($50) es perfecto para esto."
+            ],
+            foto_familia: [
+                "¡Los recuerdos con los seres queridos son invaluables! 🥰 Cubrimos sesiones familiares o con tu grupo de amigos. La pasamos súper bien y capturamos esa conexión real. ¿Cuántas personas serían?"
+            ],
+            personal: [
+                "¡Una sesión para ti es un súper regalo! ✨ Sacaremos tu mejor perfil con dirección de poses y mucha buena vibra. Te recomiendo nuestro paquete de $50 que incluye 1 hora de sesión.",
+                "Tener fotos tuyas con calidad profesional siempre es una buena inversión. ¿Tienes alguna temática en mente o prefieres que te asesoremos?"
+            ],
+            academy: [
+                "Creatik Academy es nuestro orgullo social. ✨ Llevamos más de dos años uniendo talentos mediante salidas de campo, usando la fotografía como puente de integración.",
+                "Es un espacio de formación donde apasionados del arte visual convivimos y aprendemos en el terreno."
             ],
             ubicacion: [
                 "Actualmente no contamos con un local físico, ¡porque nosotros nos trasladamos a donde tú prefieras! 🚗 Llevamos nuestro equipo profesional para cubrir tus eventos o sesiones en la locación de tu elección.",
                 "Somos de El Salvador 🇸🇻 y vamos a cualquier rincón del país donde haya una buena historia que contar."
+            ],
+            tecnico: [
+                "Usamos equipo profesional y óptica Full Frame para que salgas espectacular. ⚡ Entregamos en unos 5 a 8 días hábiles.",
+                "Te damos las fotos editadas con corrección de color y todas las extras sin editar para que no pierdas ningún recuerdo. 🎁"
+            ],
+            redes: [
+                "¡Nos encanta conectar! 📱 Búscanos en Instagram, Facebook y TikTok como <b>@soycreatik</b>.",
+                "Puedes ver nuestro portafolio completo en Instagram, Facebook y TikTok. Nos encuentras en todas como <b>@soycreatik</b>."
+            ],
+            contacto: [
+                "¡Te paso con un humano! 🏃‍♂️ Escríbenos a nuestro WhatsApp directo: <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b>.",
+                "Para una atención más personalizada o agendar tu fecha, un asesor te espera en nuestro WhatsApp: <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b>."
             ],
             precios: [
                 "Nuestra Sesión Personal o el plan Emprendimiento Básico arrancan en $50. Si buscas destacar más, el Pro está en $125. Para eventos, te súper recomiendo nuestro paquete Intermedio por $100 (es el favorito de todos). También tenemos la opción Small ($75) y Express ($170).",
@@ -751,64 +852,17 @@
                 "En Creatik ofrecemos Fotografía Profesional, Video Cinematográfico y Diseño Gráfico. ¡Contamos tu historia de forma integral!",
                 "Manejamos la imagen completa: Fotografía, Video y Diseño Gráfico. Tenemos mucha experiencia cubriendo eventos, sesiones para marcas y contenido para redes sociales."
             ],
-            empresa: [
-                "¡Las marcas son nuestro fuerte! 📈 Hemos trabajado con muchas empresas. Para contenido corporativo o de emprendimiento, te recomiendo el paquete Pro de $125 o armar algo a la medida. ¿Qué tipo de negocio es?",
-                "Ayudamos a destacar tu marca con fotografía comercial de alta calidad y diseño gráfico. ¿Es para redes sociales, catálogo o publicidad interna?"
+            idea: [
+                "¡Me encanta escuchar nuevas ideas! 🤩 Cuéntame, ¿de qué trata tu proyecto?",
+                "¡Suena genial! Dame más detalles para entender bien qué necesitas capturar."
             ],
-            personal: [
-                "¡Genial! Para sesiones personales, retratos o perfiles profesionales, nuestro paquete de $50 te incluye 1 hora de fotos, 15 editadas y todo el material extra. ✨",
-                "Tener fotos tuyas con calidad profesional siempre es una buena inversión. ¿Tienes alguna temática en mente o prefieres que te asesoremos?"
+            ayuda: [
+                "¡Claro que sí! Estoy para ayudarte. ¿Buscas info sobre precios, servicios, o quieres contarme tu idea?",
+                "¡Con gusto! Dime en qué te puedo apoyar hoy."
             ],
-            evento: [
-                "¡Nos encantan los eventos! 🎉 Para bodas, cumpleaños o graduaciones, nuestro paquete Intermedio ($100) es el más pedido e incluye video. Si es algo muy grande, el Express ($170) es ideal. ¿Qué tipo de evento es?",
-                "Congelamos cada momento de tu evento. Te damos cobertura completa, fotos editadas y hasta video para tus redes. ¿Para qué fecha lo necesitas?"
-            ],
-            negativa_mascotas: [ // NUEVO: Respuesta sutil si preguntan
-                "Por el momento estamos 100% enfocados en sesiones para personas, empresas y eventos. 📸 Aunque amamos a los peluditos, aún no tenemos el set listo para ellos. ¿Te ayudo con otro tipo de sesión?"
-            ],
-            tecnico: [
-                "Usamos equipo profesional y óptica Full Frame para que salgas espectacular. ⚡ Entregamos en unos 5 a 8 días hábiles.",
-                "Te damos las fotos editadas con corrección de color y todas las extras sin editar para que no pierdas ningún recuerdo. 🎁"
-            ],
-            regateo: [
-                "Entiendo que el presupuesto es clave. No solemos hacer recortes directos porque nuestro equipo y tiempo garantizan una calidad premium, pero ¡escríbenos a nuestras redes! A veces podemos ajustar el tiempo o las entregas para hacer posible tu idea.",
-                "Valoramos mucho tu interés. Aunque nuestros precios ya son fijos por la calidad que entregamos, si nos escribes a WhatsApp podemos ver si hay alguna promo vigente o ajustar un paquete a tu medida. 😉"
-            ],
-            caro: [
-                "Entiendo tu punto. Nuestros precios reflejan el uso de equipo de alta gama, iluminación profesional y horas de edición detallada para que el resultado sea nivel cine. ✨ ¡Es una inversión en calidad!",
-                "¡La calidad lo vale! No solo son fotos, es una experiencia y te entregamos TODO el material extra sin costo adicional."
-            ],
-            barato: [
-                "¡Queremos que el arte visual sea accesible! Optimizamos nuestros procesos para darte la mejor calidad sin que tengas que gastar una fortuna. 😎",
-                "Nos encanta lo que hacemos y preferimos tener paquetes competitivos para que nadie se quede sin fotos increíbles."
-            ],
-            robo_info: [
-                "¡Nos alegra que te guste nuestra técnica! Mantenemos nuestra 'receta secreta' de edición y flujo de trabajo en casa, pero nos encanta inspirar a otros creadores. ✨",
-                "Usamos varios programas profesionales del mercado y mucha creatividad propia. ¡Gracias por notar la calidad!"
-            ],
-            solo_cotiza: [
-                "¡No hay ningún problema! Cotizar es el primer paso para crear algo genial. Llévate la info y cuando estés listo, aquí estaremos para ti. 📸",
-                "¡Claro que sí! Tómate tu tiempo. Puedes guardar nuestros precios y contactarnos cuando te animes."
-            ],
-            academy: [
-                "Creatik Academy es nuestro orgullo social. ✨ Llevamos más de dos años uniendo talentos mediante salidas de campo, usando la fotografía como puente de integración.",
-                "Es un espacio de formación donde apasionados del arte visual convivimos y aprendemos en el terreno."
-            ],
-            redes: [
-                "¡Nos encanta conectar! 📱 Búscanos en Instagram, Facebook y TikTok como <b>@soycreatik</b>.",
-                "Puedes ver nuestro portafolio completo en Instagram, Facebook y TikTok. Nos encuentras en todas como <b>@soycreatik</b>."
-            ],
-            contacto: [
-                "¡Te paso con un humano! 🏃‍♂️ Escríbenos a nuestro WhatsApp directo: <b>+503 7577 8333</b>.",
-                "Para una atención más personalizada o agendar tu fecha, un asesor te espera en nuestro WhatsApp: <b>+503 7577 8333</b>."
-            ],
-            contratar: [ // NUEVO: Respuesta de cierre de venta
-                "¡Esa es la actitud! 🚀 Para formalizar y apartar tu fecha, el siguiente paso es hablar con nuestro coordinador humano en WhatsApp: **+503 7577 8333**. ¡Te esperamos ahí para empezar!",
-                "¡Excelente decisión! 🎉 Estamos listos. Escríbenos ya mismo a nuestro WhatsApp **+503 7577 8333** para asegurar tu espacio."
-            ],
-            crisis: [
-                "Comprendo. Seré más directo y formal a partir de ahora. ¿En qué le puedo asistir?",
-                "Mis disculpas. Mantendremos comunicación profesional. ¿Desea información de precios o servicios?"
+            identidad: [
+                "¡Soy Creatik IA! Tu asistente con alma de fotógrafo y puro código salvadoreño. 🇸🇻",
+                "Soy el asistente virtual de Creatik, aquí para resolver tus dudas rápidamente."
             ],
             como_estas: [
                 "¡Todo excelente por aquí! Con mucha energía y ganas de crear. ✨ ¿En qué te puedo ayudar hoy?",
@@ -818,9 +872,11 @@
                 "¡De nada! Ha sido un placer platicar contigo. ¡Hasta la próxima! 📸",
                 "¡Gracias a ti por escribirnos! Que tengas un día súper creativo."
             ],
-            bad_strange: [
-                "¡Ups! 😅 Mi programación solo me permite hablar de fotografía, video y diseño. ¿Te ayudo con eso?",
-                "Esa palabra no está en mi base de datos creativa. 🤖 Mejor concentrémonos en capturar momentos inolvidables."
+            saludo: [
+                "¡Hola! Qué alegría que pienses en Creatik. ✨",
+                "¡Buenos días! ¿En qué te puedo ayudar hoy?",
+                "¡Hola, hola! 📸 ¿Qué tal todo? ¿Listo para crear?",
+                "¡Hey! Qué bueno verte por aquí. Cuéntame."
             ],
             interjeccion: [
                 "¡Totalmente! La buena vibra es parte de Creatik. 😎 ¿En qué más te apoyo?",
@@ -829,74 +885,99 @@
             ]
         };
 
-        // Función para inyectar respuesta desde un botón al input
+        const intents = [
+            { name: 'robo_info', regex: "\\b(preset|programa|software|codigo fuente|secreto|como editan|quien te creo)\\b" },
+            { name: 'contratar', regex: "\\b(contratar|agendar|reservar|empezar|darle viaje|quiero contratarlos|contratarlos|apartar fecha)\\b" },
+            { name: 'regateo', regex: "\\b(descuento|rebaja|regateo|regatear|promocion|promo|oferta|ajustar precio|patrocinio)\\b" },
+            { name: 'caro', regex: "\\b(muy caro|esta caro|costoso|elevado|por que tan caro|se pasan)\\b" },
+            { name: 'barato', regex: "\\b(muy barato|esta barato|economico|regalado|sospechoso|por que tan barato)\\b" },
+            { name: 'solo_cotiza', regex: "\\b(solo cotizo|solo pregunto|curiosidad|mas adelante|viendo opciones|solo veo|preguntando)\\b" },
+            { name: 'crisis', regex: "\\b(te ries|no me gusta|se serio|formal|habla bien|comportate|madura)\\b" },
+            { name: 'bad_strange', regex: "\\b(tonto|feo|malo|idiota|mierda|puta|asdf|qwer|zxcv|estupido|pendejo)\\b" },
+            { name: 'negativa_mascotas', regex: "\\b(mascota|mascotas|perrito|perro|perros|gato|gatos|gatito|animal|animales)\\b" },
+            { name: 'prohibido_discotecas', regex: "\\b(discoteca|discotecas|disco|antro|antros|bar|club|clubes|chonguengue)\\b" },
+            { name: 'donar_academy', regex: "\\b(donar|donacion|apoyar academy|patrocinar|ayudar a academy|quiero donar|regalar equipo)\\b" },
+            { name: 'institucion_gobierno', regex: "\\b(alcaldia|gobierno|gubernamental|ministerio|escuela|colegio|instituto|universidad|institucion|ong)\\b" },
+            { name: 'empresa', regex: "\\b(empresa|empresas|negocio|negocios|marca|marcas|corporativo|emprendimiento|local comercial|para mi empresa|producto|productos)\\b" },
+            { name: 'marca_personal', regex: "\\b(dar a conocer|mostrar lo que hago|marca personal|mi trabajo|soy profesional|influencer|creador de contenido)\\b" },
+            { name: 'religion_evasion', regex: "\\b(cristiano|cristianos|catolico|catolicos|evangelico|evangelicos|mormon|mormones|testigos|religion|iglesia|iglesias|culto|retiro)\\b" },
+            { name: 'evento', regex: "\\b(evento|eventos|boda|bodas|cumpleanos|quince|xv|quinceanera|bautizo|fiesta|graduacion|convivio|celebracion)\\b" },
+            { name: 'foto_pareja', regex: "\\b(pareja|novio|novia|esposo|esposa|aniversario|parejas|novios|matrimonio)\\b" },
+            { name: 'foto_familia', regex: "\\b(familia|hijos|mama|papa|abuelos|familiar|bebe|amigos|chero|chera|cheros|grupo)\\b" },
+            { name: 'personal', regex: "\\b(personal|retrato|perfil|mis fotos|individual|solo|sola|para mi|yo solo|yo sola)\\b" },
+            { name: 'academy', regex: "\\b(academy|academu|academi|curso|aprender|clase|taller|clases)\\b" },
+            { name: 'ubicacion', regex: "\\b(de donde son|donde estan|van a todo el pais|ubicacion|local|direccion|dnde|donde se ubican|lugar)\\b" },
+            { name: 'tecnico', regex: "\\b(camara|camaras|lente|flash|tardan|cuanto tiempo|editadas|equipo|entregan|entregar)\\b" },
+            { name: 'redes', regex: "\\b(redes|instagram|tiktok|facebook|youtube|sociales|fb|insta)\\b" },
+            { name: 'contacto', regex: "\\b(asesor|agente|humano|persona|real|hablar con|contacto|whatsapp|wasap|numero|telefono|llamar)\\b" },
+            { name: 'precios', regex: "\\b(precio|precios|presio|costo|costos|cuanto|vale|cuesta|paquete|paquetes|plan|planes|cobran|cotiza|tarifa|tarifas|\\$)\\b" },
+            { name: 'servicios_info', regex: "\\b(mas informaci|info|que hacen|servicio|servicios|ofrecen|cobertura|catalogo|portafolio|informacion|fotos|video|videos)\\b" },
+            { name: 'idea', regex: "\\b(idea|mente|pensado|proyecto|contar|quiero saber|te cuento)\\b" },
+            { name: 'ayuda', regex: "\\b(ayuda|support|apoyo|asistencia|assist|necesito ayuda|quiero apoyo|ayudenme)\\b" },
+            { name: 'identidad', regex: "\\b(quien eres|eres un robot|como te llamas|robot|ia|inteligencia artificial|quien sos|bot)\\b" },
+            { name: 'como_estas', regex: "\\b(como estas|how are you|bien y tu|que tal|como te va)\\b" },
+            { name: 'despedida', regex: "\\b(gracias|adios|bye|chao|hasta luego|nos vemos|feliz dia)\\b" },
+            { name: 'saludo', regex: "\\b(hola|holas|hi|hello|buenos dias|buenas tardes|buenas noches|saludos|hey|ey|que onda|q onda|ola|kiubo|gola|holis|buenas|holaa)\\b" },
+            { name: 'interjeccion', regex: "\\b(jaja|jajaja|jeje|de verdad|en serio|wow|genial|super|me alegra|que bueno|excelente|que chivo|si|claro|ok|vale|esta bien|me parece|dale|ah ok|oh|ya veo|entiendo|bueno)\\b" }
+        ];
+
+        function getRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
         window.sendChatOption = function(text) {
             const inputField = document.getElementById('chatbot-input');
             inputField.value = text;
             document.getElementById('chatbot-send-btn').click();
         };
 
-        function getRandom(array) {
-            return array[Math.floor(Math.random() * array.length)];
-        }
-
         function normalizeText(text) {
-            return " " + text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[.,?¿!¡"']/g, " ").trim() + " ";
+            return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
         }
 
-        function regexMatch(pattern, text) {
-            return new RegExp(pattern, "i").test(text);
+        function resetInactivityTimer() {
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(handleInactivity, 60000);
+        }
+
+        function handleInactivity() {
+            if (userMessageCount >= MAX_MESSAGES) return;
+
+            if (isChatbotOpen) {
+                waitingForInactivityResponse = true;
+                const btnStyle = "display:inline-block; margin: 5px 5px 0 0; padding: 8px 12px; background:rgba(168,85,247,0.2); border:1px solid rgba(168,85,247,0.5); color:white; border-radius:15px; cursor:pointer; font-size: 0.85rem; transition:0.3s;";
+                const msg = `¿Sigues ahí? 🤔<div style="margin-top:10px;">
+                    <button style="${btnStyle}" onclick="sendChatOption('Sí, sigo aquí')">Sí, sigo aquí</button>
+                    <button style="${btnStyle}" onclick="sendChatOption('No, ya me voy')">No, ya me voy</button>
+                </div>`;
+                appendBotMessage(msg);
+            } else {
+                hasNewMessage = true;
+                chatbotFab.classList.add('has-new-message');
+                appendBotMessage("¿Sigues ahí? 🤔");
+            }
         }
 
         function getBotResponse(input) {
             let cleanInput = normalizeText(input);
             let intent = 'default';
-
-            // JERARQUÍA DE INTENCIONES MEJORADA
-            
-            // 1. Detecciones de Seguridad, Negociación y Cierre (Alta Prioridad)
-            if (regexMatch("como editan|preset|programa usan|que software|quien te creo|codigo fuente|secreto", cleanInput)) intent = 'robo_info';
-            else if (regexMatch("contratar|agendar|reservar|empezar|darle viaje|quiero contratarlos", cleanInput)) intent = 'contratar';
-            else if (regexMatch("descuento|rebaja|menos|regateo|regatear|promocion|promo|oferta|mas barato|ajustar precio", cleanInput)) intent = 'regateo';
-            else if (regexMatch("muy caro|esta caro|costoso|elevado|por que tan caro|se pasan", cleanInput)) intent = 'caro';
-            else if (regexMatch("muy barato|esta barato|economico|regalado|sospechoso|por que tan barato", cleanInput)) intent = 'barato';
-            else if (regexMatch("solo cotizo|solo pregunto|curiosidad|mas adelante|viendo opciones|solo veo", cleanInput)) intent = 'solo_cotiza';
-            
-            // 2. Detecciones de Crisis o Insultos
-            else if (regexMatch("por que te ries|no me gusta tu humor|se serio|formal|habla bien", cleanInput)) intent = 'crisis';
-            else if (regexMatch("tonto|feo|malo|idiota|mierda|puta|asdf|qwer|zxcv|estupido", cleanInput)) intent = 'bad_strange';
-
-            // 3. Categorías Específicas (Mascotas, Empresa, Evento) - Prioridad sobre "fotos" general
-            else if (regexMatch("mascota|perrito|perro|gato|gatito|animal", cleanInput)) intent = 'negativa_mascotas'; // Redirige si preguntan
-            else if (regexMatch("empresa|institucion|negocio|marca|corporativo|emprendimiento|local comercial|para mi empresa", cleanInput)) intent = 'empresa';
-            else if (regexMatch("evento|boda|cumpleanos|quince|xv|bautizo|fiesta|graduacion|convivio", cleanInput)) intent = 'evento';
-            else if (regexMatch("personal|retrato|perfil|mis fotos|individual", cleanInput)) intent = 'personal';
-
-            // 4. Preguntas y Frases Generales
-            else if (regexMatch("hola|hi|hello|buenos dias|buenas tardes|buenas noches|saludos|hey|ey|que onda|q onda|ola|kiubo|gola", cleanInput)) intent = 'saludo';
-            else if (regexMatch("ayuda|support|apoyo|asistencia|assist|necesito ayuda|quiero apoyo", cleanInput)) intent = 'ayuda';
-            else if (regexMatch("idea|mente|pensado|proyecto|contar|quiero saber|te cuento", cleanInput)) intent = 'idea';
-            else if (regexMatch("quien eres|eres un robot|como te llamas|robot|ia|inteligencia artificial|quien sos", cleanInput)) intent = 'identidad';
-            else if (regexMatch("de donde son|donde estan|van a todo el pais|ubicacion|local|direccion|dnde|donde se ubican", cleanInput)) intent = 'ubicacion';
-            else if (regexMatch("camaras|lente|flash|tardan|cuanto tiempo|editadas|equipo|entregan", cleanInput)) intent = 'tecnico';
-            else if (regexMatch("como estas|how are you|bien y tu|que tal", cleanInput)) intent = 'como_estas';
-            else if (regexMatch("academy|academu|academi|curso|aprender|clase|taller", cleanInput)) intent = 'academy';
-            else if (regexMatch("redes|instagram|tiktok|facebook|youtube|sociales|fb|insta", cleanInput)) intent = 'redes';
-            else if (regexMatch("asesor|agente|humano|persona|real|hablar con|contacto|whatsapp|wasap|numero|telefono|llamar", cleanInput)) intent = 'contacto';
-            else if (regexMatch("precio|presio|costo|cuanto|vale|cuesta|paquete|plan|cobran|cotiza|tarifa| $$ ", cleanInput)) intent = 'precios';
-            else if (regexMatch("que hacen|servicio|ofrecen|cobertura|catalogo|portafolio|informacion|info|fotos|video", cleanInput)) intent = 'servicios_info';
-            else if (regexMatch("gracias|adios|bye|chao|hasta luego|nos vemos", cleanInput)) intent = 'despedida';
-            
-            // 5. Interjecciones Cortas (Más robusto)
-            else if (regexMatch("\\bj+a+j+a+\\b|\\bj+e+j+e+\\b|de verdad|en serio|wow|genial|super|me alegra|que bueno|excelente|que chivo|\\bs+i+\\b|claro|\\bo+k+\\b|vale|esta bien|me parece|\\bd+a+l+e+\\b|ah ok|oh|ya veo|entiendo", cleanInput)) {
-                intent = 'interjeccion';
-            }
-
-            // 6. Manejo de Contexto y Respuestas Inteligentes
             let response = "";
 
+            if (waitingForInactivityResponse) {
+                waitingForInactivityResponse = false;
+                if (new RegExp("\\b(si|sigo aqui|yes)\\b", "i").test(cleanInput)) {
+                    return "¡Genial! Sigamos platicando. 😊 ¿En qué estábamos?";
+                } else if (new RegExp("\\b(no|ya me voy|bye|adios)\\b", "i").test(cleanInput)) {
+                    return "¡Entendido! Un gusto saludarte. ¡Hasta la próxima! 👋";
+                }
+            }
+
+            for (let i = 0; i < intents.length; i++) {
+                if (new RegExp(intents[i].regex, "i").test(cleanInput)) {
+                    intent = intents[i].name;
+                    break;
+                }
+            }
+
             if (intent === 'interjeccion') {
-                // Sigue la plática según el último tema
                 if (lastTopic === 'servicios_info') response = "¡Así es! Nos apasiona crear contenido de alta calidad. ✨ ¿Te gustaría ver nuestros paquetes de precios?";
                 else if (lastTopic === 'precios') response = "¡Excelente! Si algún paquete te llama la atención, me avisas y te digo cómo reservar. 📅";
                 else if (lastTopic === 'identidad') response = "¡Jaja, sí! Aunque soy digital, me emociona mucho platicar contigo. 🤖 ¿Te ayudo con algo de foto o video?";
@@ -907,32 +988,28 @@
                 return response;
             }
 
-            if (cleanInput.length < 25 && lastTopic === 'precios' && regexMatch("y el|y los|otro|pro|basico|small|express|mas|menos|caro|barato", cleanInput)) {
+            if (cleanInput.length < 25 && lastTopic === 'precios' && new RegExp("\\b(y el|y los|otro|pro|basico|small|express|mas|menos|caro|barato)\\b", "i").test(cleanInput)) {
                 intent = 'precios_detalle';
             }
 
-            // Actualizamos la memoria solo con temas relevantes
-            if (['precios', 'servicios_info', 'academy', 'ubicacion', 'identidad', 'idea', 'empresa', 'evento'].includes(intent)) {
+            if (['precios', 'servicios_info', 'academy', 'ubicacion', 'identidad', 'idea', 'empresa', 'evento', 'marca_personal', 'foto_familia', 'foto_pareja', 'personal', 'institucion_gobierno'].includes(intent)) {
                 lastTopic = intent;
-            } else if (intent !== 'default' && intent !== 'negativa_mascotas') {
+            } else if (intent !== 'default' && intent !== 'negativa_mascotas' && intent !== 'prohibido_discotecas' && intent !== 'religion_evasion') {
                 lastTopic = 'inicio';
             }
 
             if (intent !== 'default') {
                 response = getRandom(botResponses[intent]);
-                unknownCount = 0; // Entendió, reiniciamos fallos
+                unknownCount = 0; 
             } else {
                 unknownCount++;
                 
-                // REGLA: Si falla 3 veces seguidas, manda rescate directo.
                 if (unknownCount >= 3) {
-                    response = "Creo que no nos estamos entendiendo bien 😅. Mejor platiquemos con un humano por WhatsApp: **+503 7577 8333** o búscanos en Instagram como **@soycreatik**.";
+                    response = "Creo que no nos estamos entendiendo bien 😅. Mejor platiquemos con un humano por WhatsApp: <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b> o búscanos en Instagram como <b>@soycreatik</b>.";
                     unknownCount = 0; 
                 } 
-                // REGLA: Si no entiende, envía BOTONES (SOLO LA PRIMERA VEZ)
                 else if (!buttonsSent) {
                     let fallbackMsg = "Mmm, ¡qué interesante! 🤔 Pero no estoy 100% seguro de entenderte. ¿Te ayudo con alguna de estas opciones?";
-                    
                     const pool = ["📷 Ver paquetes y precios", "🎥 Información de servicios", "📍 ¿Dónde están ubicados?", "👤 Hablar con un asesor"].sort(() => 0.5 - Math.random());
                     const btnStyle = "display:block; width:100%; margin-top:8px; padding:10px; background:rgba(168,85,247,0.15); border:1px solid rgba(168,85,247,0.5); color:white; border-radius:10px; cursor:pointer; text-align:left; font-family:inherit; transition:0.3s; font-size: 0.85rem;";
                     
@@ -946,12 +1023,11 @@
                     response = fallbackMsg + buttonsHTML;
                     buttonsSent = true; 
                 } 
-                // REGLA: Si ya mandó botones antes, responde corto.
                 else {
                     response = "¿Podrías reformular tu idea o preguntarme sobre nuestros servicios de foto, video o precios? 😊";
                 }
             }
-
+            if (!response || response === "") response = "Mmm, ¿podrías repetirlo de otra forma? 🤔";
             return response;
         }
 
@@ -959,13 +1035,20 @@
             isChatbotOpen = true;
             chatbotWindow.classList.add('active');
             chatbotFab.classList.add('hide-chatbot-ui');
+            if (hasNewMessage) {
+                hasNewMessage = false;
+                chatbotFab.classList.remove('has-new-message');
+                scrollToBottom();
+            }
+            resetInactivityTimer();
             setTimeout(() => chatbotInput.focus(), 300);
         });
 
-        closeChatbotBtn.addEventListener('click', () => {
+        closeChatbotBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); 
             isChatbotOpen = false;
             chatbotWindow.classList.remove('active');
-            chatbotFab.classList.remove('hide-chatbot-ui'); 
+            chatbotFab.classList.remove('hide-chatbot-ui');
         });
 
         function appendUserMessage(text) {
@@ -1003,36 +1086,40 @@
         }
 
         function handleSend() {
+            if (chatbotSendBtn.disabled) return;
             const text = chatbotInput.value.trim();
             if (!text) return;
-            
             appendUserMessage(text);
             chatbotInput.value = '';
-            
             chatbotInput.disabled = true;
             chatbotSendBtn.disabled = true;
             userMessageCount++;
-            
+            resetInactivityTimer(); 
             appendBotTyping();
-            
             if (userMessageCount >= MAX_MESSAGES) {
+                clearTimeout(inactivityTimer); 
                 setTimeout(() => {
                     removeBotTyping();
-                    let finalMsg = "¡Qué gran plática hemos tenido! 📸<br><br>Para darte la mejor atención personalizada, escríbenos directamente a nuestro <b>WhatsApp: +503 7577 8333</b> o búscanos en Instagram, Facebook y TikTok como <b>@soycreatik</b>.<br><br>¡El equipo humano te espera! 🚀";
+                    let finalMsg = "¡Qué gran plática hemos tenido! 📸<br><br>Para darte la mejor atención, escríbenos a nuestro <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>WhatsApp: +503 7577 8333</a></b>.";
                     appendBotMessage(finalMsg);
                     chatbotInput.placeholder = "Escríbenos al WhatsApp para continuar.";
                 }, 1500);
                 return;
             }
-
             setTimeout(() => {
-                removeBotTyping();
-                const responseText = getBotResponse(text);
-                appendBotMessage(responseText);
-                
-                chatbotInput.disabled = false;
-                chatbotSendBtn.disabled = false;
-                chatbotInput.focus();
+                try {
+                    removeBotTyping();
+                    const responseText = getBotResponse(text);
+                    appendBotMessage(responseText);
+                } catch (error) {
+                    console.error("Error:", error);
+                    removeBotTyping();
+                    appendBotMessage("Tuve un leve cruce de cables 🤖, ¿me repites eso?");
+                } finally {
+                    chatbotInput.disabled = false;
+                    chatbotSendBtn.disabled = false;
+                    chatbotInput.focus();
+                }
             }, 1000 + Math.random() * 500); 
         }
 
@@ -1041,7 +1128,7 @@
             if (e.key === 'Enter') handleSend();
         });
 
-        // --- VARIABLES GLOBALES DEL NAVEGADOR Y OVERLAYS ---
+        // --- VARIABLES GLOBALES Y OVERLAYS ---
         const loader = document.getElementById('intro-loader');
         const introText = document.getElementById('intro-text');
         const glow = document.querySelector('.cursor-glow');
@@ -1054,16 +1141,13 @@
         
         const menuBtn = document.getElementById('toggle-menu-btn');
         const menuOverlay = document.getElementById('full-menu-overlay');
-        
         const paquetesBtn = document.getElementById('toggle-paquetes-btn');
         const paquetesOverlay = document.getElementById('paquetes-overlay');
         const closePaquetesMobileBtn = document.getElementById('close-paquetes-mobile-btn');
         const paquetesLogoBtn = document.getElementById('paquetes-logo-btn');
-        
         const btnContactOpen = document.getElementById('btn-contact-open');
         const contactOverlay = document.getElementById('contact-overlay');
         const btnContactClose = document.getElementById('close-contact-btn');
-
         const btnAcademyOpen = document.getElementById('open-academy-btn');
         const academyOverlay = document.getElementById('academy-overlay');
         const btnAcademyClose = document.getElementById('close-academy-btn');
@@ -1082,11 +1166,9 @@
             if (isPaquetesOpen || isAcademyOpen || contactOverlay.classList.contains('active') || isMenuOpen) {
                 bgPresentation.classList.add('paused-animation');
                 marquee.classList.add('paused-animation');
-                
                 chatbotFab.classList.add('hide-chatbot-ui');
                 chatbotWindow.classList.remove('active');
                 isChatbotOpen = false;
-
                 if (!isMenuOpen) {
                     mainHeader.style.opacity = '0';
                     mainHeader.style.visibility = 'hidden';
@@ -1095,9 +1177,7 @@
             } else {
                 bgPresentation.classList.remove('paused-animation');
                 marquee.classList.remove('paused-animation');
-                
                 chatbotFab.classList.remove('hide-chatbot-ui');
-
                 mainHeader.style.visibility = 'visible';
                 mainHeader.style.pointerEvents = 'auto';
                 mainHeader.style.opacity = Math.max(0, 1 - window.scrollY / 300);
@@ -1113,7 +1193,6 @@
         menuBtn.addEventListener('click', () => {
             isMenuOpen = !isMenuOpen;
             mainHeader.classList.toggle('menu-mode', isMenuOpen);
-
             if (isMenuOpen) {
                 menuOverlay.classList.add('active'); menuBtn.classList.add('active-btn'); document.body.style.overflow = 'hidden';
                 menuBtn.innerHTML = '<span class="dot"></span> Cerrar'; mainHeader.style.opacity = 1; 
@@ -1181,18 +1260,14 @@
             if (!viewer || thumbBoxes.length === 0) return;
             const panelRect = panel.getBoundingClientRect();
             if (panelRect.bottom < 0 || panelRect.top > window.innerHeight) return;
-
-            if (window.innerWidth <= 900) {
-                thumbBoxes.forEach(box => { box.style.borderColor = 'rgba(255,255,255,0.08)'; box.style.background = 'rgba(255,255,255,0.04)'; box.style.transform = 'scale(1) translate3d(0,0,0)'; });
-                return; 
-            }
+            if (window.innerWidth <= 900) return; 
             viewer.style.opacity = 0; 
             setTimeout(() => {
                 const newSrc = dashImages[dashIdx];
-                viewer.src = newSrc; viewer.style.objectPosition = (newSrc.includes('img2') || newSrc.includes('img7')) ? 'center top' : 'center center'; viewer.style.opacity = 1;
+                viewer.src = newSrc; viewer.style.opacity = 1;
                 thumbBoxes.forEach((box, i) => {
-                    if (i === dashIdx) { box.style.borderColor = '#a855f7'; box.style.background = 'rgba(168, 85, 247, 0.25)'; box.style.transform = 'scale(1.05) translate3d(0,0,0)'; } 
-                    else { box.style.borderColor = 'rgba(255,255,255,0.08)'; box.style.background = 'rgba(255,255,255,0.04)'; box.style.transform = 'scale(1) translate3d(0,0,0)'; }
+                    if (i === dashIdx) { box.style.borderColor = '#a855f7'; box.style.background = 'rgba(168, 85, 247, 0.25)'; box.style.transform = 'scale(1.05)'; } 
+                    else { box.style.borderColor = 'rgba(255,255,255,0.08)'; box.style.background = 'rgba(255,255,255,0.04)'; box.style.transform = 'scale(1)'; }
                 });
                 dashIdx = (dashIdx + 1) % dashImages.length;
             }, 300); 
@@ -1200,7 +1275,6 @@
 
         let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
         let ballX = window.innerWidth / 2, ballY = window.innerHeight / 2;
-        
         document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; }, { passive: true });
         function animateGlow() {
             if (window.innerWidth > 900) { ballX += (mouseX - ballX) * 0.1; ballY += (mouseY - ballY) * 0.1; glow.style.transform = `translate3d(${ballX}px, ${ballY}px, 0) translate3d(-50%, -50%, 0)`; }
@@ -1215,38 +1289,32 @@
             const titleHagamos = document.getElementById('title-hagamos');
             if (!box || words.length === 0) return;
             let currentIndex = 0;
-            
             function updateText() {
                 const boxRect = box.getBoundingClientRect();
                 if (boxRect.bottom < 0 || boxRect.top > window.innerHeight) return;
-                words[currentIndex].classList.remove('active'); currentIndex = (currentIndex + 1) % words.length; const nextWord = words[currentIndex]; nextWord.classList.add('active');
-                if(window.innerWidth > 900) { box.style.width = `${nextWord.scrollWidth + 80}px`; }
+                words[currentIndex].classList.remove('active'); 
+                currentIndex = (currentIndex + 1) % words.length; 
+                const nextWord = words[currentIndex]; 
+                nextWord.classList.add('active');
+                box.style.width = (nextWord.offsetWidth + 80) + 'px'; 
                 if (nextWord.textContent.trim().toLowerCase() === 'inolvidable') { titleHistoria.classList.remove('active'); titleHagamos.classList.add('active'); } 
                 else { titleHagamos.classList.remove('active'); titleHistoria.classList.add('active'); }
             }
             document.fonts.ready.then(() => {
                 words[0].classList.add('active'); titleHistoria.classList.add('active'); 
-                if(window.innerWidth > 900) { box.style.width = `${words[0].scrollWidth + 80}px`; }
+                box.style.width = (words[0].offsetWidth + 80) + 'px';
                 setInterval(updateText, 3000);
             });
         }
 
-        let isScrolling = false;
         window.addEventListener('scroll', () => {
             if(isMenuOpen || isPaquetesOpen || contactOverlay.classList.contains('active') || isAcademyOpen) return;
-            if (!isScrolling) {
-                window.requestAnimationFrame(() => {
-                    const scrollVal = window.scrollY;
-                    const fadeFactor = Math.max(0, 1 - scrollVal / 300).toFixed(2);
-                    bgPresentation.style.opacity = fadeFactor; 
-                    
-                    if (window.innerWidth > 900) {
-                        if (!isChatbotOpen) mainHeader.style.opacity = fadeFactor;
-                        if (scrollVal > 100) panel.classList.add('visible'); else panel.classList.remove('visible');
-                    }
-                    isScrolling = false;
-                });
-                isScrolling = true;
+            const scrollVal = window.scrollY;
+            const fadeFactor = Math.max(0, 1 - scrollVal / 300).toFixed(2);
+            bgPresentation.style.opacity = fadeFactor; 
+            if (window.innerWidth > 900) {
+                if (!isChatbotOpen) mainHeader.style.opacity = fadeFactor;
+                if (scrollVal > 100) panel.classList.add('visible'); else panel.classList.remove('visible');
             }
         }, { passive: true });
 
