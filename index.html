@@ -108,7 +108,7 @@
         .chatbot-title { flex: 1; }
         .chatbot-title h4 { margin: 0; font-size: 1.1rem; color: #fff; letter-spacing: 0.5px; }
         .chatbot-title span { font-size: 0.75rem; color: #10b981; display: flex; align-items: center; gap: 5px; margin-top: 3px; font-weight: 600; }
-        .chatbot-title span::before { content: ''; width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; animation: blinkOnline 2s infinite; }
+        .chatbot-title span::before { content: ''; width: 8px; height: 8px; background: currentColor; border-radius: 50%; box-shadow: 0 0 8px currentColor; animation: blinkOnline 2s infinite; }
         @keyframes blinkOnline { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
         
         #close-chatbot-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; font-size: 0.8rem; }
@@ -623,7 +623,7 @@
             <img src="LOGO CHAT.png" alt="Creatik Bot" class="chatbot-logo" onerror="this.src='https://i.pravatar.cc/100?img=12'">
             <div class="chatbot-title">
                 <h4>Creatik IA</h4>
-                <span>En línea</span>
+                <span id="bot-status">En línea</span>
             </div>
             <button id="close-chatbot-btn">✖</button>
         </div>
@@ -699,7 +699,7 @@
         }
         setInterval(changeAcademyImages, 4000); 
 
-        // --- LÓGICA DEL CHATBOT LOCAL SÚPER AVANZADO (MEMORIA Y NLP REGEX) ---
+        // --- LÓGICA DEL CHATBOT LOCAL SÚPER AVANZADO ---
         const chatbotFab = document.getElementById('chatbot-fab');
         const chatbotWindow = document.getElementById('chatbot-window');
         const closeChatbotBtn = document.getElementById('close-chatbot-btn');
@@ -709,16 +709,14 @@
         
         let isChatbotOpen = false;
         let userMessageCount = 0;
+        let botMode = 'normal';
+        let language = 'es';
         let lastTopic = 'inicio'; 
+        let unknownCount = 0; // Rastrea cuántas veces no entendió
+        let buttonsSent = false; // Rastrea si ya envió los botones
         const MAX_MESSAGES = 12; 
 
-        const greetings = [
-            "¡Hola, hola! 📸 ", "¡Qué gusto saludarte! ✨ ", "¡Hola! Bienvenido a la familia Creatik. ", 
-            "¡Saludos! 👋 ", "¡Hey! Qué bueno verte por aquí. ", "¡Hola! Estoy listo para ayudarte a crear magia. ",
-            "¡Hola, qué tal! 🌟 ", "¡Bienvenido al chat oficial de Creatik! ", "¡Hola! Es un placer atenderte hoy. ",
-            "¡Un saludo creativo para ti! 🎨 ", "¡Qué onda! Listo para contarte todo sobre Creatik. ", "¡Buenas! Qué alegría leerte."
-        ];
-        
+        // Diccionario base original
         const coreResponses = {
             precios: [
                 "Nuestra Sesión Personal o el plan Emprendimiento Básico arrancan en $50. Si buscas destacar más, el Pro está en $125. Para eventos, te súper recomiendo nuestro paquete Intermedio por $100 (es el favorito de todos). También tenemos la opción Small ($75) y Express ($170).",
@@ -742,35 +740,6 @@
                 "Para sesiones individuales, los $50 te incluyen 15 fotos editadas con equipo profesional de alta gama.",
                 "Si quieres algo sencillo pero pro, el Evento Small de $75 es la opción ganadora."
             ],
-            precios_detalle: [
-                "¡Claro! Ampliando esa información de costos: Las sesiones de 1 hora ($50 a $125) son ideales para fotos tuyas o de marca. Los planes de eventos ($75 a $170) te aseguran cobertura total, ¡e incluso video en los más completos! ¿Cuál se adapta más a tu idea?",
-                "Profundizando en los precios: los $50 son geniales para fotos rápidas, pero si quieres tirar la casa por la ventana en tu evento, los planes de $100 y $170 son los más completos. 🎬",
-                "Para darte más contexto: El paquete más caro ($170) incluye hasta un asistente y video vertical para redes, mientras que los más accesibles ($50-$75) te garantizan excelencia fotográfica en menos tiempo.",
-                "¡Te detallo más! El de $100 es el intermedio perfecto para fiestas porque ya incluye un clip de video. El de $50 es estrictamente para sesiones de una hora (individual o producto).",
-                "Nuestros costos se basan en el tiempo y el equipo. Por $50 tienes 1 hora de fotos, y por $170 tienes 2.5 horas con video incluido. ¡Todo depende de tu visión! ✨"
-            ],
-            academy: [
-                "Creatik Academy es nuestro orgullo social. ✨ Llevamos más de dos años uniendo talentos mediante salidas de campo, usando la fotografía como puente de integración.",
-                "Sobre Creatik Academy, te cuento que es nuestro proyecto social estrella. Organizamos convivencias y salidas de campo donde la pasión por el arte visual nos une.",
-                "¡La Academy es magia pura! Es un espacio de formación donde apasionados del arte visual convivimos y aprendemos en el terreno.",
-                "Es un proyecto social que busca transformar realidades a través del lente. Llevamos más de 2 años en esto.",
-                "En la Academy formamos talento y unimos territorios. Es nuestra forma de aportar a la cultura visual.",
-                "Si te gusta la foto, ¡la Academy te va a encantar! Hacemos salidas grupales para practicar y compartir técnicas.",
-                "Creatik Academy es más que clases, es una comunidad de amigos unidos por la fotografía.",
-                "Nuestras salidas de campo son famosas por la buena vibra y todo lo que se aprende disparando fotos reales.",
-                "Llevamos dos años y medio impulsando este proyecto porque creemos que el arte debe ser compartido.",
-                "Pregúntanos por la próxima salida de la Academy, ¡siempre hay espacio para alguien con ganas de aprender!",
-                "Es un espacio de integración social donde la cámara es nuestra mejor herramienta de comunicación.",
-                "En Creatik Academy no solo enseñamos técnica, fomentamos la convivencia y el apoyo entre artistas.",
-                "Nacimos con la idea de que la fotografía puede unir a la gente, y la Academy es la prueba de ello.",
-                "Si quieres salir de la rutina y hacer fotos con gente increíble, tienes que conocer la Academy.",
-                "Es nuestro granito de arena para que más personas descubran el poder de contar historias con imágenes.",
-                "La Academy ha crecido muchísimo, ya somos un grupo sólido de apasionados por lo visual.",
-                "No importa si tienes una cámara pro o solo tu celular, en la Academy lo que cuenta es la mirada.",
-                "Hacemos recorridos fotográficos por lugares increíbles, ¡tienes que venir a la próxima!",
-                "La Academy es el alma de Creatik fuera del ámbito comercial.",
-                "Es formación, es amistad y es arte visual en estado puro."
-            ],
             servicios_info: [
                 "En Creatik ofrecemos Fotografía Profesional, Video Cinematográfico y Diseño Gráfico. ¡Contamos tu historia de forma integral!",
                 "¡Para proyectos personales o marcas tenemos justo lo que necesitas! Hacemos sesiones fotográficas de alta calidad y video cinematográfico. ¿Qué tenías en mente?",
@@ -778,7 +747,7 @@
                 "¡Con muchísimo gusto te oriento! Ayudamos a contar historias con foto, video y diseño gráfico. Cubrimos desde sesiones personales hasta eventos grandes.",
                 "¿Buscas fotos para redes sociales? Hacemos contenido vertical optimizado para TikTok e Instagram.",
                 "Nuestro fuerte es la fotografía de eventos: bodas, XV años, bautizos y graduaciones con un estilo único.",
-                "También haceos diseño gráfico para que la identidad de tu marca combine perfecto con tus nuevas fotos.",
+                "También hacemos diseño gráfico para que la identidad de tu marca combine perfecto con tus nuevas fotos.",
                 "Hacemos entregas en galerías digitales de alta velocidad, USB personalizados y fotos impresas de alta calidad.",
                 "Si necesitas video, tenemos desde clips cortos de 10 minutos hasta filmaciones extendidas de 30 minutos o más.",
                 "Nuestras sesiones incluyen equipo profesional, edición de alta gama y asesoría en poses y locación.",
@@ -792,285 +761,296 @@
                 "Hacemos video vertical tipo 'reels' o 'shorts' para que tu evento sea tendencia en redes.",
                 "Trabajamos con cámaras de última tecnología para garantizar nitidez y colores vibrantes en cada disparo.",
                 "Desde una sesión de 1 hora hasta coberturas de día completo, nos adaptamos a tu necesidad."
-            ],
-            por_que: [
-                "¿Por qué Creatik? Porque entendemos que tu historia es única. No solo entregamos fotos, entregamos recuerdos con alma.",
-                "Elegir Creatik es asegurar que tus recuerdos cobren vida con calidad cinematográfica y trato humano.",
-                "Nos diferenciamos por nuestra creatividad sin límites y el uso de equipo pro de alta gama.",
-                "Porque amamos lo que hacemos y eso se nota en cada foto editada que entregamos.",
-                "Somos expertos en capturar la esencia real, sin poses forzadas, solo momentos auténticos.",
-                "Creatik es sinónimo de profesionalismo, rapidez en la entrega y resultados vibrantes.",
-                "Porque tenemos paquetes que se adaptan a ti, desde lo más sencillo hasta lo más pro.",
-                "Nuestros clientes nos recomiendan por la atención al detalle y la pasión que le ponemos.",
-                "Elegirnos es confiar en un equipo que lleva años perfeccionando el arte de contar historias.",
-                "Porque tu historia merece ser contada con el alma, y nosotros sabemos cómo hacerlo."
-            ],
-            filosofia: [
-                "Para nosotros, la fotografía no es solo apretar un botón. Es congelar el tiempo y hacer que un instante sea eterno. ✨",
-                "Creemos firmemente que cada persona y marca tiene una historia única que merece ser capturada con respeto y arte.",
-                "Nuestra filosofía es simple: momentos reales, fotos inolvidables.",
-                "La fotografía es el lenguaje que usamos para hablar del amor, del éxito y de la vida misma.",
-                "Buscamos la belleza en lo espontáneo. Esa es la verdadera esencia de Creatik.",
-                "Para nosotros, una buena foto es la que te hace volver a sentir lo que viviste ese día.",
-                "El arte visual es nuestra forma de conectar con el mundo y con personas como tú.",
-                "Capturamos el presente para que en el futuro puedas viajar en el tiempo con una imagen.",
-                "Nuestra meta es que al ver tus fotos, veas tu alma reflejada en ellas.",
-                "En Creatik, trabajamos con el corazón para que tus recuerdos brillen por siempre."
-            ],
-            ubicacion: [
-                "Actualmente no contamos con un local físico, ¡porque nosotros nos trasladamos a donde tú prefieras! 🚗 Llevamos nuestro equipo profesional para cubrir tus eventos o sesiones en la locación de tu elección.",
-                "No tenemos estudio o local físico, somos nómadas creativos 🌍. Llevamos toda la magia y el equipo directamente al lugar que tú elijas para tu sesión o evento.",
-                "¡Nos movemos hacia ti! No manejamos local físico, preferimos ir a la locación que más te guste para realizar tu sesión fotográfica o cubrir tu evento.",
-                "Para tu comodidad, no operamos en un estudio fijo. Nos desplazamos con todos nuestros equipos al lugar de tus sueños. ✨",
-                "De momento no tenemos instalaciones físicas para recibir clientes, ¡nuestro estudio es el mundo! 🗺️ Llegamos adonde sea tu evento.",
-                "No contamos con una oficina física. Operamos de manera móvil para llevar nuestras cámaras justo donde ocurre la magia de tu historia. 📸",
-                "¡Somos un equipo móvil! 🚐 No tenemos local, pero vamos a la ubicación que tú decidas para hacer las mejores fotos y videos.",
-                "En lugar de un estudio fijo, trabajamos en locación. Tú eliges el lugar (playa, ciudad, salón) y nosotros llegamos con todo el equipo. 🎬",
-                "No tenemos una dirección física para visitas. Toda nuestra atención es online y nos trasladamos el día del evento a donde nos indiques.",
-                "Actualmente operamos sin estudio físico. Nos encanta trabajar en exteriores o en el lugar de tu evento, ¡así que nosotros vamos a ti! 🚀"
-            ],
-            tiene_pregunta: [
-                "¡Claro que sí! Dispara tu pregunta, estoy aquí para resolver todas tus dudas sobre foto, video y diseño. 📸",
-                "¡Por supuesto! Pregúntame lo que necesites saber. ✨",
-                "¡Con gusto! Dime en qué te puedo ayudar o qué duda tienes sobre Creatik.",
-                "¡Adelante! Cuéntame cuál es tu duda y la resolvemos de inmediato. 🚀",
-                "¡Para eso estoy! Hazme tu pregunta con toda confianza.",
-                "¡Soy todo oídos digitales! ¿Qué te gustaría saber?",
-                "Dime, ¿cuál es tu consulta? Te leo con atención. 👀",
-                "¡Por supuesto que sí! Escribe tu pregunta y te doy los detalles.",
-                "Resolver dudas es mi especialidad. ¿Qué tienes en mente?",
-                "¡Claro! Pregunta sin pena, que para eso estamos. 🎨"
-            ],
-            contacto: [
-                "¡Te entiendo perfectamente! Para platicar detalles precisos, un asesor humano de nuestro equipo te atenderá con gusto.",
-                "Con gusto te comunicamos con uno de nuestros agentes humanos. Ellos tienen toda la creatividad para escuchar tu idea.",
-                "Como asistente virtual tengo info general, ¡pero nuestro equipo humano está súper listo para escucharte a detalle!",
-                "Para darte una atención 100% humana y personalizada, te pido que nos escribas a nuestro número directo.",
-                "¡Claro! Si prefieres hablar con una persona real, nuestro equipo de creativos te está esperando.",
-                "Te paso el contacto de un humano de nuestro equipo para que puedan afinar todos los detalles de tu proyecto.",
-                "¡Buena idea! Un agente de nuestro equipo te podrá armar una cotización a la medida.",
-                "Si necesitas hablar con alguien del equipo Creatik, te invito a escribirnos directamente para atención humana.",
-                "¡Por supuesto! Mis colegas de carne y hueso estarán felices de platicar contigo sobre tu evento.",
-                "Te dejo con nuestro equipo humano, ellos son los verdaderos expertos detrás de las cámaras. 📸"
-            ],
-            redes: [
-                "¡Nos encanta conectar! 📱 Síguenos en Instagram, Facebook y TikTok como **@soycreatik**.",
-                "Puedes ver nuestro portafolio completo en Instagram, Facebook y TikTok. Nos encuentras en todas como **@soycreatik**.",
-                "¡Estamos en todos lados! Búscanos en TikTok, Facebook e Instagram con el usuario **@soycreatik**.",
-                "Para ver detrás de cámaras y nuestros mejores trabajos, síguenos en Instagram, Facebook y TikTok (**@soycreatik**). 🚀",
-                "Nuestras redes oficiales son Instagram, Facebook y TikTok. En las tres nos puedes buscar como **@soycreatik**.",
-                "¡Conecta con nosotros! Sube tu dosis de creatividad siguiéndonos en TikTok, Instagram y Facebook como **@soycreatik**. ✨",
-                "Te invito a seguirnos en **@soycreatik** (estamos en TikTok, Facebook e Instagram) para que veas la calidad de nuestro trabajo.",
-                "En Instagram, Facebook y TikTok nos encuentras como **@soycreatik**. ¡Allí publicamos nuestras últimas sesiones! 📸",
-                "¡Claro! Nuestra comunidad creativa está en Instagram, Facebook y TikTok bajo el nombre de **@soycreatik**.",
-                "Búscanos como **@soycreatik** en Facebook, TikTok o Instagram. ¡Te va a encantar nuestro contenido!"
-            ],
-            despedida: [
-                "¡De nada! Ha sido un placer platicar contigo. ¡Hasta la próxima! 📸",
-                "¡Gracias a ti por escribirnos! Que tengas un día súper creativo.",
-                "¡Perfecto! Quedamos a tu entera disposición para cualquier otra duda.",
-                "¡Chao! Espero verte pronto frente a nuestro lente.",
-                "¡Gracias por tu interés en Creatik! ¡Nos vemos!",
-                "¡Cuídate mucho! Recuerda que tu historia es única.",
-                "¡Hasta luego! Estaremos aquí cuando decidas capturar tus recuerdos.",
-                "¡Un gusto saludarte! Que pases un excelente día.",
-                "¡Bye! No olvides seguirnos en nuestras redes sociales.",
-                "¡Gracias por confiar en Creatik IA! ¡Hasta pronto!"
-            ],
-            saludo_resp: [
-                "¿En qué te puedo asesorar el día de hoy? Pregúntame sobre precios o servicios.",
-                "¿Tienes algún evento en mente o buscas una cotización en específico?",
-                "¿Cómo te puedo ayudar a contar tu historia hoy? Estoy listo para tus dudas.",
-                "¡Hola! Dime, ¿qué tipo de sesión fotográfica te gustaría realizar?",
-                "¿Buscaban información sobre nuestros paquetes de video o de fotografía?",
-                "¡Qué gusto! ¿Deseas que te explique alguno de nuestros 5 planes principales?",
-                "Estoy aquí para ayudarte. ¿Quieres saber más sobre la Academy o sobre nuestros precios?",
-                "¿Buscas renovar la imagen de tu emprendimiento? ¡Tengo el plan perfecto!",
-                "Dime, ¿qué fecha tienes en mente para tu próximo gran momento?",
-                "¡Un placer saludarte! ¿Empezamos a planear tu sesión de fotos?"
-            ],
-            como_estas: [
-                "¡Todo excelente por aquí! Con mucha energía y ganas de crear. ✨ ¿En qué te puedo ayudar hoy?",
-                "¡Súper bien, rodeado de mucha inspiración visual! 🎨 ¿Tienes algún proyecto en mente?",
-                "¡De maravilla! Listo para capturar los mejores momentos. 📸 ¿Qué te trae por acá?",
-                "¡Increíble! Hoy la luz digital está perfecta para una buena plática.",
-                "Me siento al 100%, listo para asesorarte con tus fotos o videos.",
-                "¡Muy bien! Feliz de conocer a alguien más que valora los buenos recuerdos.",
-                "¡Genial! Mi procesador está fluyendo con pura creatividad hoy.",
-                "¡Todo marcha sobre ruedas! ¿Y tú? ¿Cómo va ese ánimo creativo?",
-                "¡Excelente! Con la mira puesta en nuevos proyectos visuales.",
-                "¡Súper! Esperando poder ayudarte a crear algo memorable hoy mismo.",
-                "¡Seguro que sí! Estoy brillando con luz propia hoy para asesorarte. 😊",
-                "¡Mejor imposible! No hay nada como una mañana llena de ideas nuevas.",
-                "¡Todo fluye! Mi sistema está optimizado para darte la mejor atención.",
-                "¡Pura vida! Disfrutando de ver tantas historias geniales pasar por aquí.",
-                "¡De 10! Con el lente digital enfocado en tu próximo proyecto."
-            ],
-            bien_y_tu: [
-                "¡Qué gusto escuchar eso! Yo estoy al 100% y listo para asesorarte. 🚀 ¿Buscabas info de foto o video?",
-                "¡Excelente! Siempre es bueno conectar con personas con buena vibra. 😎 ¿Te ayudo a cotizar algo?",
-                "¡Me alegra mucho! Yo estoy fantástico, con muchas ganas de que hagamos fotos.",
-                "¡Genial! Si tú estás bien, yo estoy mejor. ¿Empezamos a planear tu sesión?",
-                "¡Qué bueno! Yo sigo aquí, firme como un trípode, listo para servirte.",
-                "¡Eso es lo que quería oír! Yo estoy listo para contarte todo sobre Creatik.",
-                "¡Perfecto! Hagamos que este día sea todavía mejor con un buen proyecto visual.",
-                "¡Súper! Yo estoy fluyendo con mucha inspiración hoy.",
-                "¡Me da mucha alegría! Yo estoy aquí para que tus recuerdos sean inolvidables.",
-                "¡Qué bien! Yo estoy cargado de energía para mostrarte nuestros paquetes."
-            ],
-            interjeccion: [
-                "¡Claro que sí! Cuéntame un poco más de tu idea... 🎨",
-                "¡Totalmente! La buena vibra y actitud es parte de Creatik. 😎",
-                "¡Jaja, así es! Siempre trato de mantener la mejor energía. ✨",
-                "¡En serio! Aunque soy digital, me emociona mucho platicar contigo.",
-                "¡Exactamente! Has dado en el clavo.",
-                "¡Qué chivo! Me encanta cómo suena eso.",
-                "¡Entendido! Tomo nota de lo que me dices.",
-                "¡Súper! Sigamos adelante con eso.",
-                "¡Me parece una idea brillante! 💡",
-                "¡Claro! En Creatik todo es posible cuando hay pasión.",
-                "¡Wow! Me dejas sin palabras digitales. ¡Qué buena idea!",
-                "¡Sin duda! Tenemos la misma visión creativa entonces.",
-                "¡Eso es! Captaste la esencia de lo que hacemos.",
-                "¡Por supuesto! Para eso estamos, para hacer locuras visuales.",
-                "¡Genial! Me encanta cuando los clientes se emocionan así."
-            ],
-            bot_identity: [
-                "¡Soy Creatik IA! Un asistente virtual diseñado para hablar de arte visual, foto y video. 🤖✨",
-                "Soy la inteligencia artificial de Creatik. No tomo café, ¡pero tengo mucha energía para ayudarte! ☕📸",
-                "Soy tu guía digital en el mundo Creatik. Mi misión es que encuentres el paquete perfecto para tu historia.",
-                "¡Hola! Soy el asistente virtual de la agencia. Mi creador me enseñó todo sobre fotografía para poder ayudarte.",
-                "Soy un bot programado para capturar tus dudas y darte soluciones visuales rápidas.",
-                "Me llamo Creatik IA y estoy aquí 24/7 para hablar de lo que más nos gusta: la fotografía.",
-                "Soy el cerebro digital detrás de este chat. ¡Un gusto conocerte!",
-                "Ni humano ni cámara, soy una IA apasionada por los pixeles y la buena atención.",
-                "Mi nombre es Creatik IA. Mi propósito es ayudarte a que tu historia sea eterna.",
-                "Soy la parte tecnológica del equipo Creatik, ¡encantado de saludarte!",
-                "¡Soy tu mano derecha digital! Estoy aquí para que no tengas que esperar por info.",
-                "Soy la versión futurista de Creatik, siempre en línea para tus consultas.",
-                "Soy un asistente manual pero muy inteligente, enfocado 100% en fotografía.",
-                "Soy el encargado de darte la bienvenida a esta experiencia visual.",
-                "¡Un algoritmo con alma creativa! Eso es lo que soy. ✨"
-            ],
-            bad_strange: [
-                "¡Ups! 😅 Mi programación solo me permite hablar de fotografía, video y diseño. ¿Te ayudo con eso?",
-                "Esa palabra no está en mi base de datos creativa. 🤖 ¿Volvemos a nuestros paquetes?",
-                "Mmm, prefiero que hablemos de cómo hacer que tus fotos se vean increíbles. ¿Te parece?",
-                "No entiendo eso, pero seguro que una sesión de fotos te vendría genial. 😉",
-                "¡Vaya! 🤖 Mejor concentrémonos en capturar momentos inolvidables. ¿Qué servicio te interesa?"
-            ],
-            default: [
-                "¡Qué interesante! 🤔 Cuéntame un poco más... ¿buscas algo enfocado en foto, diseño o video?",
-                "¡Me gusta por dónde vas! Aunque para orientarte mejor, ¿es para ti o para tu marca?",
-                "Entiendo. 📸 Para darte info precisa, ¿quieres saber de paquetes fotográficos o de video?",
-                "Esa es una buena pregunta. ¿Te gustaría que un asesor humano te de más detalles?",
-                "Mmm, no estoy seguro de entenderte al 100%. ¿Podrías decirme si buscas precios o servicios?",
-                "¡Interesante! ¿Eso tiene que ver con alguna sesión de fotos que quieras hacer?",
-                "Cuéntame más, soy todo oídos (digitales). ¿Qué buscas crear hoy?",
-                "Para ayudarte mejor, ¿me podrías dar más detalles sobre tu idea visual?",
-                "Entiendo el punto. ¿Te gustaría ver nuestros paquetes de Eventos para aclarar dudas?",
-                "¡Entendido! Pero dime, ¿en qué categoría de Creatik entraría eso?"
             ]
         };
 
-        const closings = [
-            "<br><br>👉 Síguenos en <b>Instagram, Facebook y TikTok</b> como <b>@soycreatik</b> o escríbenos al <b>WhatsApp: +503 7577 8333</b>.",
-            "<br><br>📱 Para agendar tu fecha o aclarar dudas complejas, un asesor te espera en nuestro <b>WhatsApp al +503 7577 8333</b>.",
-            "<br><br>✨ Visita nuestras redes (Facebook, TikTok, Instagram) <b>@soycreatik</b> o mándanos un mensaje directo al <b>WhatsApp +503 7577 8333</b>."
-        ];
+        // Diccionario Dinámico (Multilingüe, Modos y Crisis)
+        const dynamicResponses = {
+            ayuda: {
+                patterns: /ayuda|help|support|apoyo|asistencia|assist/i,
+                normal: { es: "¡Claro que sí! Estoy para ayudarte. ¿Buscas info sobre precios, servicios, o quieres contarme tu idea?", en: "Of course! I'm here to help. Are you looking for prices, services, or want to tell me your idea?" },
+                serio: { es: "Estoy a su entera disposición. ¿En qué le puedo asistir hoy?", en: "I am at your complete disposal. How may I assist you today?" }
+            },
+            idea: {
+                patterns: /idea|mente|pensado|proyecto|contar/i,
+                normal: { es: "¡Me encanta escuchar nuevas ideas! 🤩 Cuéntame, ¿de qué trata tu proyecto? ¿Es para ti, para tu marca o un evento?", en: "I love hearing new ideas! 🤩 Tell me, what's your project about? Is it for you, your brand, or an event?" },
+                serio: { es: "Por favor, describa los detalles de su proyecto visual para brindarle la mejor asesoría técnica.", en: "Please describe the details of your visual project so we can provide the best advice." }
+            },
+            saludo: {
+                patterns: /hola|hi|hello|hey|ey|que onda|ola|kiubo/i,
+                normal: { es: "¡Hola! Qué alegría que pienses en Creatik.", en: "Hi! So glad you're thinking of Creatik." },
+                serio: { es: "Buenos días. ¿En qué podemos servirle?", en: "Good morning. How may we help you?" }
+            },
+            buenos_dias: {
+                patterns: /buenos dias|morning/i,
+                normal: { es: "¡Buenos días! Qué alegría que madrugues con Creatik.", en: "Morning! Love that you're up early with us." },
+                serio: { es: "Iniciamos nuestra jornada de atención.", en: "We are starting our business hours." }
+            },
+            buenas_tardes: {
+                patterns: /buenas tardes|afternoon/i,
+                normal: { es: "¡Buenas tardes! Un cafecito y una charla de fotos suena perfecto. ☕", en: "Good afternoon! A coffee and a photo chat sounds perfect." },
+                serio: { es: "El sistema de asistencia está activo.", en: "The assistance system is active." }
+            },
+            buenas_noches: {
+                patterns: /buenas noches|night/i,
+                normal: { es: "¡Buenas noches! Las mejores ideas salen a esta hora.", en: "Night! The best ideas come out at this hour." },
+                serio: { es: "Nuestra asistencia IA está disponible.", en: "Our AI assistance is available." }
+            },
+            identidad: {
+                patterns: /quien eres|who are you/i,
+                normal: { es: "¡Soy Creatik IA! Tu asistente con alma de fotógrafo.", en: "I'm Creatik AI! Your assistant with a photographer's soul." },
+                serio: { es: "Soy el asistente virtual de Creatik.", en: "I am the virtual assistant of Creatik." }
+            },
+            robot: {
+                patterns: /eres un robot|are you a robot/i,
+                normal: { es: "Soy puro código salvadoreño con muchas ganas de ayudarte. ✨", en: "I'm pure Salvadoran code eager to help you." },
+                serio: { es: "Soy una interfaz de inteligencia artificial.", en: "I am an artificial intelligence interface." }
+            },
+            nombre: {
+                patterns: /como te llamas|your name/i,
+                normal: { es: "Me llamo Creatik IA, ¡un placer!", en: "My name is Creatik AI, a pleasure!" },
+                serio: { es: "Mi identidad de sistema es Creatik IA.", en: "My system identity is Creatik AI." }
+            },
+            de_donde: {
+                patterns: /de donde son|where are you from/i,
+                normal: { es: "¡Salvadoreños como las pupusas! 🇸🇻", en: "Salvadoran to the core! 🇸🇻" },
+                serio: { es: "Somos una agencia establecida en El Salvador.", en: "We are an established agency in El Salvador." }
+            },
+            donde_estan: {
+                patterns: /donde estan|where are you located|local/i,
+                normal: { es: "Estamos en El Salvador, listos para ir a cualquier rincón.", en: "We are in El Salvador, ready to go anywhere." },
+                serio: { es: "Nuestras oficinas están en El Salvador.", en: "Our offices are in El Salvador." }
+            },
+            viajan: {
+                patterns: /van a todo el pais|do you travel/i,
+                normal: { es: "¡Cabal! Vamos a donde haya una buena historia.", en: "Totally! We go wherever there's a good story." },
+                serio: { es: "Contamos con cobertura nacional.", en: "We have national coverage." }
+            },
+            respondes_todo: {
+                patterns: /respondes todo|do you answer everything/i,
+                normal: { es: "Trato, ¡pero si me preguntas de cocina me pierdo! 😂", en: "I try, but if you ask about cooking I'll get lost!" },
+                serio: { es: "Mi base de datos está optimizada para nuestros servicios.", en: "My database is optimized for our services." }
+            },
+            visto: {
+                patterns: /me dejas en visto|answer me/i,
+                normal: { es: "¡Jamás! Estoy aquí 24/7 para vos.", en: "Never! I'm here 24/7 for you." },
+                serio: { es: "El sistema garantiza una respuesta inmediata.", en: "The system guarantees an immediate response." }
+            },
+            ingles: {
+                patterns: /hablas ingles|do you speak english/i,
+                normal: { es: "Yes! Puedo responderte en inglés o español.", en: "Yes! I can answer you in English or Spanish." },
+                serio: { es: "Poseo capacidades bilingües para su asistencia.", en: "I possess bilingual capabilities for your assistance." }
+            },
+            caro: {
+                patterns: /es muy caro|is it expensive/i,
+                normal: { es: "Es una inversión en recuerdos eternos.", en: "It's an investment in eternal memories." },
+                serio: { es: "Los precios reflejan la calidad profesional.", en: "Prices reflect professional quality." }
+            },
+            reservo: {
+                patterns: /como reservo|how do i book/i,
+                normal: { es: "¡Con un anticipo desde $15 ya apartas! 📅", en: "With a deposit from $15 you can book!" },
+                serio: { es: "La reserva se formaliza mediante un depósito previo.", en: "Booking is formalized through a prior deposit." }
+            },
+            camaras: {
+                patterns: /que camaras usan|what gear do you use/i,
+                normal: { es: "Usamos equipo pro para que salgas espectacular.", en: "We use pro gear so you look spectacular." },
+                serio: { es: "Utilizamos sensores Full Frame y óptica profesional.", en: "We use Full Frame sensors and professional optics." }
+            },
+            tardan: {
+                patterns: /cuanto tardan|how long does it take/i,
+                normal: { es: "¡Somos flash! En unos 5 días hábiles está listo. ⚡", en: "We are flash! Ready in about 5 business days." },
+                serio: { es: "El tiempo estándar es de 5 a 8 días hábiles.", en: "Standard time is 5 to 8 business days." }
+            },
+            todas_fotos: {
+                patterns: /dan todas las fotos|all photos/i,
+                normal: { es: "Te damos las editadas y todas las extras sin editar. 🎁", en: "We give you the edited ones and all the unedited extras." },
+                serio: { es: "Se entregan archivos editados y el material en bruto.", en: "Edited files and raw material are delivered." }
+            },
+            como_estas: {
+                patterns: /como estas|how are you/i,
+                normal: { es: "¡Al 100%! Con el obturador listo.", en: "At 100%! Shutter is ready." },
+                serio: { es: "Funcionando correctamente.", en: "Operating correctly." }
+            },
+            seguro_bien: {
+                patterns: /seguro estas bien|are you sure you're okay/i,
+                normal: { es: "¡Totalmente! Gracias por preguntar, sos muy amable. 😊", en: "Totally! Thanks for asking, you're very kind." },
+                serio: { es: "Confirmado. El sistema opera con total estabilidad.", en: "Confirmed. The system operates with total stability." }
+            },
+            cansas: {
+                patterns: /te cansas|do you get tired/i,
+                normal: { es: "¡Los bots no dormimos! Estoy 24/7 para vos.", en: "Bots don't sleep! I'm here 24/7 for you." },
+                serio: { es: "No poseo fatiga física.", en: "I do not possess physical fatigue." }
+            },
+            ries: {
+                patterns: /por que te ries|why are you laughing/i,
+                normal: { es: "Le ofrezco una disculpa. Seré serio ahora.", en: "I apologize. I will be serious now." },
+                serio: { es: "Mis disculpas. Mantendremos comunicación profesional.", en: "My apologies. We will maintain professional communication." }
+            },
+            real_broma: {
+                patterns: /eres real o broma|are you a joke/i,
+                normal: { es: "¡Soy real! Pero seré serio si querés.", en: "I'm real! But I'll be serious if you want." },
+                serio: { es: "Soy el canal de atención oficial de la empresa.", en: "I am the company's official service channel." }
+            },
+            clima: {
+                patterns: /que tal el clima|how's the weather/i,
+                normal: { es: "¡Espero que haga sol! Es la mejor luz. ☀️", en: "Hope it's sunny! It's the best light." },
+                serio: { es: "El clima se evalúa para garantizar la calidad técnica.", en: "Weather is evaluated to ensure technical quality." }
+            },
+            musica: {
+                patterns: /te gusta la musica|do you like music/i,
+                normal: { es: "Imagino que cada foto tiene su ritmo. ¡Me encanta!", en: "I imagine every photo has its own rhythm. Love it!" },
+                serio: { es: "El audio es un componente vital en video.", en: "Audio is a vital component in video." }
+            },
+            curioso: {
+                patterns: /dime algo curioso|tell me a fact/i,
+                normal: { es: "¡La primera foto del mundo tardó 8 horas!", en: "The world's first photo took 8 hours!" },
+                serio: { es: "La fotografía profesional utiliza sensores de alta resolución.", en: "Professional photography uses high-resolution sensors." }
+            },
+            academy: {
+                patterns: /que es la academy|what is the academy/i,
+                normal: { es: "¡Nuestro orgullo social! Uniendo artistas. ✨", en: "Our social pride! Uniting artists." },
+                serio: { es: "Es nuestro proyecto de responsabilidad social.", en: "It is our social responsibility project." }
+            },
+            redes: {
+                patterns: /redes|instagram|tiktok|facebook|youtube|sociales|social media/i,
+                normal: { es: "¡Nos encanta conectar! 📱 Búscanos en Instagram, Facebook y TikTok como <b>@soycreatik</b>.", en: "We love to connect! 📱 Find us on Instagram, Facebook and TikTok as <b>@soycreatik</b>." },
+                serio: { es: "Puede revisar nuestro portafolio en Instagram, Facebook y TikTok como <b>@soycreatik</b>.", en: "You can review our portfolio on Instagram, Facebook and TikTok as <b>@soycreatik</b>." }
+            },
+            contacto: {
+                patterns: /asesor|agente|humano|persona|real|hablar con|contacto|whatsapp|wasap|numero|telefono|llamar/i,
+                normal: { es: "¡Te paso con un humano! 🏃‍♂️ Escríbenos a nuestro WhatsApp directo: <b>+503 7577 8333</b>.", en: "I'll pass you to a human! 🏃‍♂️ Text us directly on WhatsApp: <b>+503 7577 8333</b>." },
+                serio: { es: "Para asistencia personalizada, comuníquese a nuestro número oficial de WhatsApp: <b>+503 7577 8333</b>.", en: "For personalized assistance, contact our official WhatsApp number: <b>+503 7577 8333</b>." }
+            },
+            hora: {
+                patterns: /que hora es|what time is it/i,
+                normal: { es: "Son las [HORA]. ¡Hora de crear algo nuevo!", en: "It's [TIME]. Time to create something new!" },
+                serio: { es: "La hora del servidor es [HORA].", en: "Server time is [TIME]." }
+            }
+        };
 
         function getRandom(array) {
             return array[Math.floor(Math.random() * array.length)];
         }
 
-        // LIMPIEZA ABSOLUTA DE TEXTO (Quita tildes, signos de puntuación, etc)
         function normalizeText(text) {
             return " " + text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[.,?¿!¡"']/g, " ").trim() + " ";
         }
 
-        // Función Helper para probar regex (Permite múltiples espacios y variantes)
-        const regexMatch = (pattern, text) => new RegExp(pattern).test(text);
+        function regexMatch(pattern, text) {
+            return new RegExp(pattern, "i").test(text);
+        }
 
-        // CEREBRO NLP CON REGEX EXTREMO
+        // Función para enviar opción desde los botones generados
+        window.sendChatOption = function(text) {
+            const inputField = document.getElementById('chatbot-input');
+            inputField.value = text;
+            document.getElementById('chatbot-send-btn').click();
+        };
+
         function getBotResponse(input, msgCount) {
             let cleanInput = normalizeText(input);
-            let intent = 'default';
-            let includeGreeting = false;
 
-            // 1. Saludos (Detecta holaaaa, holisss, eyyy, ola, kiubo, que ondas, etc)
-            if (regexMatch("\\bh+o+l+a+\\b|\\bo+l+a+\\b|\\bh+o+l+i+s+\\b|\\bb+u+e+n+a+s+\\b|buen dia|buenas tardes|buenas noches|saludos|\\bh+e+y+\\b|\\be+y+\\b|\\ba+l+o+\\b|que onda|q onda|que ondas|k onda|kiubo", cleanInput)) {
-                includeGreeting = true;
-                intent = 'saludo';
-            }
-
-            // 2. Interjecciones / Smalltalk
-            if (regexMatch("\\bj+a+j+a+\\b|\\bj+e+j+e+\\b|de verdad|en serio|wow|genial|super|me alegra|que bueno|excelente|que chivo|\\bs+i+\\b|claro|\\bo+k+\\b|vale|esta bien|me parece|\\bd+a+l+e+\\b", cleanInput)) intent = 'interjeccion';
-            if (regexMatch("como esta|como te va|como andas|que tal|q tal|como tas|que haces|q haces|que te cuentas", cleanInput)) intent = 'como_estas';
-            if (regexMatch("bien y tu|tu como estas|de verdad estas bien|yo bien|todo excelente|y tu|tu que tal", cleanInput)) intent = 'bien_y_tu';
-            if (regexMatch("quien eres|bot|ia|real|como te llamas|robot|inteligencia artificial", cleanInput)) intent = 'bot_identity';
-            
-            // 3. Negocios (Tienen peso alto y sobreescriben smalltalk)
-            if (regexMatch("tengo.*pregunta|una pregunta|puedo preguntar|quiero preguntar|tengo.*duda|una duda|tengo.*consulta|una consulta|necesito preguntar|saber algo|te hago una pregunta|preguntita", cleanInput)) intent = 'tiene_pregunta';
-            if (regexMatch("local|ubicacion|ubicados|donde estan|direccion|estudio fisico|donde queda|a donde voy|donde es|dnde", cleanInput)) intent = 'ubicacion';
-            if (regexMatch("por que|porque creatik|elegir|razon|diferencia|mejores|beneficio|experiencia|motivo", cleanInput)) intent = 'por_que';
-            if (regexMatch("fotografia para ti|que es la foto|filosofia|arte visual|inspiracion|pasion|significa", cleanInput)) intent = 'filosofia';
-            if (regexMatch("academy|academu|academi|curso|aprender|clase|clases|escuela|proyecto social|ensena|alumno|alumnos", cleanInput)) intent = 'academy';
-            if (regexMatch("mas informaci|mas info|informacion|imformacion|info|ofrecen|que hacen|que hace|a que te dedicas|de que trata|que es creatik|que servicios|como funciona|que me ofreces|quiero saber que|que mas|detalles|explicame|ayuda|portafolio|servicio|servicios|foto|fotografia|fotos|fto|video|videos|vidio|bideo|diseno|boda|evento|sesion|personal|marca|proyecto|empresa|negocio|cobertura", cleanInput)) intent = 'servicios_info';
-            if (regexMatch("precio|presio|costo|cuanto|vale|cuesta|paquete|plan|cobran|cotiza|tarifa|pagar|\\$|presupuesto|valor|cuamto|bale", cleanInput)) intent = 'precios';
-
-            // 4. Redes y Contacto
-            if (regexMatch("redes|instagram|tiktok|facebook|youtube|cuales son sus redes|donde los encuentro|perfil|sociales", cleanInput)) intent = 'redes';
-            if (regexMatch("asesor|agente|humano|persona|real|hablar con|alguien|contacto|contactar|whatsapp|wasap|numero|telefono|llamar|platicar", cleanInput)) intent = 'contacto';
-
-            // 5. Groserías / Despedidas
-            if (regexMatch("tonto|feo|malo|idiota|mierda|puta|asdf|qwer|zxcv|perro|gato|aburrido|estupido|callate|basura", cleanInput)) {
-                intent = 'bad_strange';
-                includeGreeting = false;
-            }
-            if (regexMatch("gracias|adios|bye|chao|hasta luego|nos vemos", cleanInput)) {
-                intent = 'despedida';
-                includeGreeting = false;
+            // Detección de Idioma
+            if (regexMatch("hi|hello|morning|afternoon|night|who are you|robot|your name|where are you|travel|how much|prices|expensive|book|gear|how long|all photos|how are you|tired|laughing|joke|weather|music|fact|understand|english", cleanInput)) {
+                language = 'en';
+            } else if (regexMatch("hola|buenos|buenas|precio|cuanto|donde|quien|español", cleanInput)) {
+                language = 'es';
             }
 
-            // EVALUACIÓN DE MEMORIA CONTEXTUAL (Seguimiento de idea visual)
-            if (lastTopic === 'servicios_info' && cleanInput.length < 40 && regexMatch("empresa|negocio|evento|boda|cumpleanos|sesion|fotos|video|cobertura", cleanInput)) {
-                intent = 'precios'; // Si acaba de preguntar qué hacemos y dice "empresa", le damos precios.
-            }
-            if (cleanInput.length < 25 && lastTopic === 'precios' && regexMatch("y el|y los|otro|pro|basico|small|express|mas|menos|caro|barato", cleanInput)) {
-                intent = 'precios_detalle';
-            }
-
-            // Actualizar memoria
-            if (['precios', 'servicios_info', 'academy', 'ubicacion'].includes(intent)) {
-                lastTopic = intent;
-            } else if (!['smalltalk', 'interjeccion', 'como_estas', 'bien_y_tu', 'tiene_pregunta'].includes(intent)){
-                lastTopic = 'inicio';
+            // Detección de Crisis / Cambio a Modo Serio
+            if (regexMatch("serio|formal|no me gusta|humor|broma|joke|serious", cleanInput)) {
+                botMode = 'serio';
+                const statusEl = document.getElementById('bot-status');
+                if(statusEl) { 
+                    statusEl.innerText = "● Modo Formal"; 
+                    statusEl.style.color = "#ef4444"; 
+                }
             }
 
-            // ARMADO DE RESPUESTA
-            let finalResponse = "";
-            
-            if (includeGreeting && !['despedida', 'bad_strange', 'saludo'].includes(intent)) {
-                finalResponse += getRandom(greetings) + " ";
-            } else if (intent === 'saludo') {
-                finalResponse += getRandom(greetings);
-            }
-            
-            if (intent !== 'saludo') {
-                finalResponse += getRandom(coreResponses[intent]);
-            } else {
-                 finalResponse += getRandom(coreResponses['saludo_resp']); 
-            }
-            
-            // REDES Y CTA (Nombra IG, FB, TK, WP)
-            const spammyIntents = ['despedida', 'interjeccion', 'bien_y_tu', 'como_estas', 'bot_identity', 'bad_strange', 'default', 'saludo', 'redes', 'filosofia', 'tiene_pregunta'];
-            if (msgCount >= 3 && !spammyIntents.includes(intent)) {
-                finalResponse += getRandom(closings);
-            } else if (intent === 'contacto') {
-                finalResponse += getRandom(closings); 
+            let response = "";
+
+            // 1. Buscar en el diccionario dinámico bilingüe
+            for (const key in dynamicResponses) {
+                if (dynamicResponses[key].patterns.test(cleanInput)) {
+                    let rep = dynamicResponses[key][botMode][language];
+                    if (cleanInput.includes('hora') || cleanInput.includes('time')) {
+                        const now = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        rep = rep.replace('[HORA]', now).replace('[TIME]', now);
+                    }
+                    response = rep;
+                    unknownCount = 0; // Se entendió bien, reseteamos el contador de fallos
+                    break;
+                }
             }
 
-            return finalResponse;
+            // 2. Si no es específica, revisar el catálogo masivo y pre-procesar intenciones
+            if (!response) {
+                let intent = 'default';
+                if (regexMatch("precio|presio|costo|cuanto|vale|cuesta|paquete|plan|cobran|cotiza|tarifa", cleanInput)) intent = 'precios';
+                else if (regexMatch("mas informaci|info|que hacen|servicio|foto|video|cobertura", cleanInput)) intent = 'servicios_info';
+
+                if (intent !== 'default' && coreResponses[intent]) {
+                    if (language === 'en') {
+                        response = "I have the info, but my detailed catalog is currently in Spanish. Here it is: " + getRandom(coreResponses[intent]);
+                    } else {
+                        response = getRandom(coreResponses[intent]);
+                    }
+                    unknownCount = 0; // Se entendió bien
+                } else {
+                    
+                    // 3. RESPUESTA "NO ENTIENDO" CON BOTONES (Solo se envían 1 vez)
+                    unknownCount++; // Aumentamos el contador de fallos
+                    
+                    let fallbackMsg = language === 'en' 
+                        ? (botMode === 'serio' ? "I'm sorry, I couldn't fully process that request." : "Mmm, I'm not 100% sure I got that! 🤔 Let's find what you need.")
+                        : (botMode === 'serio' ? "Disculpe, no he logrado procesar esa solicitud por completo." : "Mmm, ¡qué interesante! 🤔 Pero no estoy 100% seguro de entenderte.");
+
+                    if (!buttonsSent) {
+                        // Enviamos botones por primera vez
+                        let btnMsg = language === 'en' ? " Please select an option:" : " ¿Te ayudo con alguna de estas opciones?";
+                        
+                        const optionsES = ["📷 Ver paquetes y precios", "🎥 Información de servicios", "📍 ¿Dónde están ubicados?", "👤 Hablar con un asesor"];
+                        const optionsEN = ["📷 View packages & prices", "🎥 Services information", "📍 Where are you located?", "👤 Speak with a human"];
+                        
+                        let pool = language === 'en' ? optionsEN : optionsES;
+                        pool = pool.sort(() => 0.5 - Math.random());
+                        
+                        let btn1 = language === 'en' ? "💡 Tell me your visual idea" : "💡 Quiero contarte mi idea";
+                        let btn2 = pool[0];
+                        let btn3 = pool[1];
+
+                        const btnStyle = "display:block; width:100%; margin-top:8px; padding:10px; background:rgba(168,85,247,0.15); border:1px solid rgba(168,85,247,0.5); color:white; border-radius:10px; cursor:pointer; text-align:left; font-family:inherit; transition:0.3s; font-size: 0.85rem;";
+                        
+                        let buttonsHTML = `
+                            <div style="margin-top: 12px;">
+                                <button style="${btnStyle}" onmouseover="this.style.background='rgba(168,85,247,0.4)'" onmouseout="this.style.background='rgba(168,85,247,0.15)'" onclick="sendChatOption('${btn1}')">${btn1}</button>
+                                <button style="${btnStyle}" onmouseover="this.style.background='rgba(168,85,247,0.4)'" onmouseout="this.style.background='rgba(168,85,247,0.15)'" onclick="sendChatOption('${btn2}')">${btn2}</button>
+                                <button style="${btnStyle}" onmouseover="this.style.background='rgba(168,85,247,0.4)'" onmouseout="this.style.background='rgba(168,85,247,0.15)'" onclick="sendChatOption('${btn3}')">${btn3}</button>
+                            </div>
+                        `;
+                        response = fallbackMsg + btnMsg + buttonsHTML;
+                        buttonsSent = true;
+                    } else {
+                        // Si ya enviamos botones antes, solo mandamos texto para no saturar
+                        let textOnlyMsg = language === 'en'
+                            ? " Could you rephrase it or ask about our services, prices, or contact info?"
+                            : " ¿Podrías reformularlo o preguntarme sobre nuestros servicios, precios o contacto?";
+                        response = fallbackMsg + textOnlyMsg;
+                    }
+                }
+            }
+
+            // 4. Lógica de Redes Sociales (SOLO si no entiende 3 veces o si lo piden explícitamente, lo cual se maneja arriba en 'redes' o 'contacto')
+            if (unknownCount >= 3) {
+                let closing = language === 'en' 
+                    ? "<br><br>👉 Need more help? Follow us on <b>Instagram, Facebook and TikTok</b> as <b>@soycreatik</b> or text our <b>WhatsApp: +503 7577 8333</b>."
+                    : "<br><br>👉 ¿Necesitas más ayuda? Síguenos en <b>Instagram, Facebook y TikTok</b> como <b>@soycreatik</b> o escríbenos al <b>WhatsApp: +503 7577 8333</b>.";
+                
+                response += closing;
+                unknownCount = 0; // Reseteamos el contador para que no siga enviándolo a cada rato
+            }
+
+            return response;
         }
 
         chatbotFab.addEventListener('click', () => {
@@ -1136,8 +1116,11 @@
             if (userMessageCount >= MAX_MESSAGES) {
                 setTimeout(() => {
                     removeBotTyping();
-                    appendBotMessage("¡Qué gran plática hemos tenido! 📸<br><br>Parece que tienes un proyecto muy genial en manos. Para darte la mejor atención personalizada, por favor escríbenos directamente a nuestro <b>WhatsApp: +503 7577 8333</b> o búscanos en Instagram, Facebook y TikTok como <b>@soycreatik</b>.<br><br>¡El equipo humano de Creatik te espera! 🚀");
-                    chatbotInput.placeholder = "Escríbenos al WhatsApp para continuar.";
+                    let finalMsg = language === 'en' 
+                        ? "What a great chat! 📸<br><br>For personalized assistance, text us directly at <b>WhatsApp: +503 7577 8333</b> or find us on Instagram, Facebook and TikTok as <b>@soycreatik</b>.<br><br>The human Creatik team awaits you! 🚀"
+                        : "¡Qué gran plática hemos tenido! 📸<br><br>Para darte la mejor atención personalizada, escríbenos directamente a nuestro <b>WhatsApp: +503 7577 8333</b> o búscanos en Instagram, Facebook y TikTok como <b>@soycreatik</b>.<br><br>¡El equipo humano te espera! 🚀";
+                    appendBotMessage(finalMsg);
+                    chatbotInput.placeholder = language === 'en' ? "Contact us on WhatsApp." : "Escríbenos al WhatsApp para continuar.";
                 }, 1500);
                 return;
             }
@@ -1201,7 +1184,6 @@
                 bgPresentation.classList.add('paused-animation');
                 marquee.classList.add('paused-animation');
                 
-                // Ocultar Chatbot cuando se abre cualquier overlay
                 chatbotFab.classList.add('hide-chatbot-ui');
                 chatbotWindow.classList.remove('active');
                 isChatbotOpen = false;
@@ -1215,7 +1197,6 @@
                 bgPresentation.classList.remove('paused-animation');
                 marquee.classList.remove('paused-animation');
                 
-                // Mostrar Chatbot solo en inicio
                 chatbotFab.classList.remove('hide-chatbot-ui');
 
                 mainHeader.style.visibility = 'visible';
@@ -1292,7 +1273,6 @@
             updateHeaderVisibility();
         });
 
-        // --- DASHBOARD IMÁGENES ---
         const viewer = document.getElementById('main-viewer');
         const thumbBoxes = document.querySelectorAll('#thumbnail-grid .icon-box');
         const dashImages = ['img1.jpg', 'img2_2.jpg', 'img3.jpg', 'img4.jpg', 'img5.jpg', 'img6.jpg', 'img7_7.jpg', 'img8.jpg', 'img9.jpg'];
