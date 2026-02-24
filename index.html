@@ -75,15 +75,14 @@
         .overlay-fixed-logo:hover { transform: scale(1.05) rotate(-5deg); }
         .overlay-fixed-close {
             position: fixed; top: 25px; right: 3vw; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            color: white; padding: 10px 25px; border-radius: 30px; cursor: pointer; backdrop-filter: blur(10px); z-index: 99999; font-weight: bold; font-size: 0.85rem; transition: 0.3s;
-        }
+            color: white; padding: 10px 25px; border-radius: 30px; cursor: pointer; backdrop-filter: blur(10px); z-index: 99999; font-weight: bold; font-size: 0.85rem; transition: 0.3s; }
         .overlay-fixed-close:hover { background: rgba(255,255,255,0.1); border-color: #db2777; color: #db2777; }
 
-        /* --- CHATBOT UI --- */
+        /* --- CHATBOT UI (Z-INDEX CORREGIDO) --- */
         #chatbot-fab {
             position: fixed; bottom: 40px; right: 4vw; width: 65px; height: 65px;
             background: linear-gradient(135deg, #a855f7, #db2777); border-radius: 50%;
-            display: flex; justify-content: center; align-items: center; z-index: 8000;
+            display: flex; justify-content: center; align-items: center; z-index: 100001;
             box-shadow: 0 10px 25px rgba(219, 39, 119, 0.4); cursor: pointer;
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s, visibility 0.4s;
             animation: pulseFab 2.5s infinite;
@@ -94,7 +93,7 @@
         .new-message-indicator {
             position: absolute; top: 0; right: 0; width: 18px; height: 18px;
             background-color: #ff3b30; border-radius: 50%; border: 2px solid #ffffff;
-            display: none; z-index: 8002; animation: pulseIndicator 1.5s infinite;
+            display: none; z-index: 100003; animation: pulseIndicator 1.5s infinite;
         }
         @keyframes pulseIndicator { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 59, 48, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); } }
         #chatbot-fab.has-new-message .new-message-indicator { display: block; }
@@ -103,12 +102,11 @@
             position: fixed; bottom: 120px; right: 4vw; width: 360px; max-width: 90vw; height: 550px; max-height: 75vh;
             background: rgba(15, 10, 25, 0.95); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 25px;
             box-shadow: 0 25px 60px rgba(0,0,0,0.9), 0 0 30px rgba(168, 85, 247, 0.2);
-            display: flex; flex-direction: column; z-index: 8001; overflow: hidden;
+            display: flex; flex-direction: column; z-index: 100002; overflow: hidden;
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             opacity: 0; visibility: hidden; transform: translateY(30px) scale(0.9);
             transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0.4s;
-            transform-origin: bottom right; 
-            pointer-events: none; 
+            transform-origin: bottom right; pointer-events: none; 
         }
         #chatbot-window.active { opacity: 1; visibility: visible; transform: translateY(0) scale(1); pointer-events: auto; }
 
@@ -158,15 +156,7 @@
         .title-group h2 { font-size: 1.5rem; margin: 0 0 20px 0; font-weight: 400; }
         .title-group.active { opacity: 1; filter: blur(0px); transform: translate3d(0, 0, 0); }
         
-        /* SOLUCIÓN AL TEMBLOR DEL TEXTO (CAJA FIJA Y CENTRADO ABSOLUTO) */
-        .text-box-container { 
-            position: relative; height: 100px; margin-bottom: 40px; 
-            display: flex; justify-content: center; align-items: center; 
-            z-index: 10; cursor: pointer; border-radius: 12px; 
-            margin-left: auto; margin-right: auto; 
-            transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-            min-width: 150px; 
-        }
+        .text-box-container { position: relative; height: 100px; margin-bottom: 40px; display: flex; justify-content: center; align-items: center; z-index: 10; cursor: pointer; border-radius: 12px; margin-left: auto; margin-right: auto; transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); min-width: 150px; }
         .text-box-container:hover { transform: scale(1.05); transition: transform 0.2s ease; }
         .glow-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 15, 0.5); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; backdrop-filter: blur(12px); z-index: -1; }
         .world-text { font-family: 'Pacifico', cursive; font-size: 3.5rem; color: #ffffff; text-shadow: 0px 4px 15px rgba(255, 255, 255, 0.3); position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(0.85); opacity: 0; filter: blur(8px); transition: opacity 0.8s ease, transform 0.8s ease, filter 0.8s ease; white-space: nowrap; pointer-events: none; }
@@ -183,7 +173,7 @@
         .overlay-marquee { width: 100%; overflow: hidden; padding: 50px 0; position: relative; z-index: 5; background: rgba(0, 0, 0, 0.2); border-top: 1px solid rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.03); display: flex; flex-wrap: nowrap; pointer-events: none; transform: translateZ(0); }
         @keyframes marqueeFlow { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
-        /* --- OVERLAYS CONFIGURACIÓN (MENÚ, PAQUETES Y ACADEMY) --- */
+        /* --- OVERLAYS CONFIGURACIÓN --- */
         #full-menu-overlay, #paquetes-overlay, #academy-overlay, #contact-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9000; opacity: 0; visibility: hidden; transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
             display: flex; flex-direction: column; align-items: center; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth;
@@ -209,39 +199,6 @@
         .dual-slide-wrap { width: 100%; max-width: 500px; aspect-ratio: 4 / 3; border-radius: 20px; overflow: hidden; position: relative; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(255, 50, 50, 0.3); border: 3px solid rgba(255, 50, 50, 0.6); background: #000; }
         .fade-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.8s ease-in-out; }
         .fade-img.active { opacity: 1; z-index: 2; }
-
-        /* --- MENU OVERLAY CONTENIDO --- */
-        .menu-overlay-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 900px; padding-top: 120px; padding-bottom: 100px; text-align: center; }
-        .menu-pill-container { border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(5px); margin-bottom: 25px; position: relative; display: flex; justify-content: center; align-items: center; height: 30px; overflow: hidden; animation: dynamicPillWidth 10s infinite cubic-bezier(0.8, 0, 0.1, 1); transform: translate3d(0, 20px, 0); opacity: 0; transition: all 0.5s ease 0.1s; }
-        #full-menu-overlay.active .menu-pill-container { transform: translate3d(0, 0, 0); opacity: 1; }
-        .menu-pill-text { font-size: 0.7rem; font-weight: 700; letter-spacing: 1px; color: rgba(255, 255, 255, 0.8); text-transform: uppercase; position: absolute; opacity: 0; visibility: hidden; animation: textCyclePillStrict 10s infinite linear; }
-        @keyframes dynamicPillWidth { 0%, 22% { width: 90px; } 25%, 47% { width: 130px; } 50%, 72% { width: 100px; } 75%, 97% { width: 140px; } 100% { width: 90px; } }
-        @keyframes textCyclePillStrict { 0%, 20% { opacity: 1; visibility: visible; } 21%, 100% { opacity: 0; visibility: hidden; } }
-
-        .menu-overlay-title { margin: 0; position: relative; transform: translate3d(0, 20px, 0); opacity: 0; transition: all 0.5s ease 0.2s; }
-        .menu-overlay-title h1 { font-size: 3.2rem; font-weight: 900; letter-spacing: -2px; margin: 0; line-height: 1.1; }
-        .menu-overlay-title h1 span { font-style: italic; font-weight: 300; font-family: 'Pacifico', cursive; font-size: 3.8rem; padding: 0 10px; }
-        .menu-overlay-title h2 { font-size: 3.5rem; font-weight: 900; letter-spacing: -2px; margin: -15px 0 0 0; color: rgba(255,255,255,0.15); line-height: 1.1; }
-        #full-menu-overlay.active .menu-overlay-title { transform: translate3d(0, 0, 0); opacity: 1; }
-        .menu-desc { font-size: 0.9rem; color: rgba(255,255,255,0.5); max-width: 550px; margin: 25px auto 10px auto; line-height: 1.6; transform: translate3d(0, 20px, 0); opacity: 0; transition: all 0.5s ease 0.3s; }
-        #full-menu-overlay.active .menu-desc { transform: translate3d(0, 0, 0); opacity: 1; }
-        .overlay-text-bg { position: fixed; top: 45%; left: 50%; transform: translate3d(-50%, -50%, 0); font-size: 10rem; font-weight: 900; color: rgba(255,255,255,0.02); white-space: nowrap; pointer-events: none; z-index: 1; text-transform: uppercase; letter-spacing: -5px; }
-
-        .menu-interactive-area { position: relative; width: 100%; height: 450px; display: flex; justify-content: center; align-items: center; transform: translate3d(0, 30px, 0) scale(0.95); opacity: 0; transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.4s; margin-top: 20px; }
-        #full-menu-overlay.active .menu-interactive-area { transform: translate3d(0, 0, 0) scale(1); opacity: 1; }
-        
-        .ft-smm { top: 20%; left: calc(50% - 240px); } .ft-sms { bottom: 20%; left: calc(50% - 240px); } .ft-user { top: 20%; right: calc(50% - 240px); } .ft-txt { bottom: 20%; right: calc(50% - 240px); }
-        .phone-center { width: 300px; height: 180px; background: rgba(30, 27, 75, 0.2); backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 20px 50px rgba(0,0,0,0.4); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; z-index: 5; }
-        .phone-center::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 60%; background: radial-gradient(circle at top right, #f97316 0%, transparent 60%); opacity: 0.3; z-index: 3; pointer-events: none; }
-        .phone-center::after { content: ''; position: absolute; top: 30%; left: -20%; width: 80%; height: 60%; background: radial-gradient(circle at center, #ea580c 0%, transparent 70%); opacity: 0.2; z-index: 3; pointer-events: none; }
-        .phone-slideshow .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: center center; border-radius: 20px; opacity: 0; transition: opacity 1.5s ease-in-out; z-index: 1; filter: saturate(1.2); }
-        .phone-slideshow .slide.active { opacity: 1; z-index: 2; }
-        
-        .float-tag { position: absolute; background: rgba(20, 20, 25, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); padding: 8px 15px; border-radius: 12px; display: flex; align-items: center; gap: 10px; backdrop-filter: blur(8px); font-size: 0.8rem; font-weight: 700; box-shadow: 0 10px 20px rgba(0,0,0,0.5); animation: floatAnim 6s ease-in-out infinite; z-index: 4; color: white; white-space: nowrap; }
-        @keyframes floatAnim { 0%, 100% { transform: translate3d(0, 0px, 0); } 50% { transform: translate3d(0, -15px, 0); } }
-        .f-icon { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; } .f-icon svg { width: 100%; height: 100%; fill: #f97316; filter: drop-shadow(0 0 5px #f97316); }
-        .bottom-glow-arc { position: fixed; bottom: -400px; left: 50%; transform: translateX(-50%); width: 150vw; height: 500px; border-radius: 50%; background: radial-gradient(ellipse at top, rgba(249, 115, 22, 0.4) 0%, transparent 60%); box-shadow: 0 -20px 100px rgba(249, 115, 22, 0.3); z-index: 1; pointer-events: none; }
-        .slider-deco { position: absolute; bottom: -30px; width: 300px; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); }
 
         /* --- DASHBOARD --- */
         .dashboard-container { display: grid; grid-template-columns: 1.2fr 1fr 1.2fr; gap: 30px; width: 90%; max-width: 1200px; margin: 60px auto 100px auto; padding: 50px; background: rgba(30, 10, 50, 0.2); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 40px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 30px 60px rgba(0,0,0,0.6); transform: translate3d(0, 100px, 0); opacity: 0; transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 1s ease; z-index: 3; position: relative; }
@@ -283,133 +240,10 @@
         .popular .btn-plan { background: #ffd700; color: #000; border: none; }
         .btn-plan:hover { background: #fff; color: #000; }
 
-        .sticker-wall-section { position: relative; min-height: 100vh; width: 100%; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-        .sticker-center-text { text-align: center; z-index: 50; pointer-events: none; transform: translate3d(0, 30px, 0); opacity: 0; transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s; position: relative; }
-        #paquetes-overlay.active .sticker-center-text { transform: translate3d(0, 0, 0); opacity: 1; }
-        .sticker-line1 { display: flex; align-items: center; justify-content: center; gap: 20px; margin: 0; line-height: 1; }
-        .sticker-logo-img { height: 70px; width: auto; }
-        .sticker-line1 span { font-family: 'Inter', sans-serif; font-size: 1.2rem; color: #ffffff; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; opacity: 0.6; margin-top: 15px; }
-        .sticker-line2 { font-family: 'Pacifico', cursive; font-size: 6rem; color: #db2777; margin: -15px 0 0 0; text-shadow: 0 10px 30px rgba(219, 39, 119, 0.3); transform: rotate(-3deg); }
-
-        .testimonials-section { position: relative; background: #0a0a0a; padding: 150px 0; color: #fff; text-align: center; z-index: 10; }
-        .torn-paper-top, .torn-paper-bottom { position: absolute; left: 0; width: 100%; height: 60px; background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 1200 120" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M0 0 L1200 0 L1200 40 L1150 60 L1100 45 L1050 70 L1000 50 L950 80 L900 60 L850 90 L800 70 L750 100 L700 80 L650 110 L600 90 L550 115 L500 95 L450 110 L400 85 L350 100 L300 75 L250 90 L200 65 L150 80 L100 55 L50 70 L0 40 Z" fill="%23050505"/%3E%3C/svg%3E'); background-size: cover; z-index: 20; }
-        .torn-paper-top { top: -30px; }
-        .torn-paper-bottom { bottom: -30px; transform: rotate(180deg); }
-        .testimonial-cards-container { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; position: relative; max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .connector-line { position: absolute; top: 50%; left: 0; width: 100%; height: 100px; transform: translateY(-50%); z-index: 0; pointer-events: none; opacity: 0.6; }
-        .testi-card { background: rgba(20, 20, 25, 0.9); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 30px; width: 300px; text-align: left; position: relative; z-index: 2; backdrop-filter: blur(10px); transition: 0.3s; }
-        .testi-card:hover { transform: translate3d(0, -10px, 0); border-color: rgba(255, 215, 0, 0.3); }
-        .user-avatar { width: 60px; height: 60px; border-radius: 50%; border: 2px solid #ffd700; }
-        .stars { color: #ffd700; }
-
-        /* --- OVERLAY CONTÁCTANOS --- */
-        .contact-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-image: radial-gradient(circle at 50% -20%, rgba(14, 165, 233, 0.25) 0%, transparent 60%), linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 100% 100%, 40px 40px, 40px 40px; z-index: 1; pointer-events: none; }
-        
-        .contact-deco { position: absolute; z-index: 1; pointer-events: none; }
-        .contact-deco .deco-inner { width: 100%; height: 100%; animation: floatContact 6s ease-in-out infinite; }
-        .contact-deco img { width: 100%; height: 100%; object-fit: cover; }
-        .dec-left-img { top: 12%; left: 8vw; width: 200px; height: 260px; transform: rotate(-8deg); }
-        .dec-left-img img { border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.1); }
-        .dec-left-stk { bottom: 15%; left: 10vw; width: 160px; transform: rotate(12deg); }
-        .dec-left-stk .deco-inner { animation-delay: -3s; animation-duration: 7s; }
-        .dec-left-stk img { filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5)); }
-        .dec-right-stk { top: 12%; right: 10vw; width: 180px; transform: rotate(-15deg); }
-        .dec-right-stk .deco-inner { animation-delay: -2s; animation-duration: 8s; }
-        .dec-right-stk img { filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5)); }
-        .dec-right-img { bottom: 15%; right: 8vw; width: 220px; height: 180px; transform: rotate(10deg); }
-        .dec-right-img .deco-inner { animation-delay: -4s; animation-duration: 6.5s; }
-        .dec-right-img img { border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.1); }
-
-        @keyframes floatContact { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-20px) scale(1.02); } }
-
-        .contact-pill-container { border: 1px solid rgba(14, 165, 233, 0.4); border-radius: 50px; background: rgba(14, 165, 233, 0.1); box-shadow: 0 0 20px rgba(14, 165, 233, 0.2); margin-bottom: 30px; position: relative; display: flex; justify-content: center; align-items: center; height: 35px; overflow: hidden; animation: dynamicContactPillWidth 10s infinite cubic-bezier(0.8, 0, 0.1, 1); will-change: width; z-index: 10; }
-        .contact-pill-text { font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; color: #0ea5e9; text-transform: uppercase; position: absolute; opacity: 0; visibility: hidden; animation: textCyclePillStrict 10s infinite linear; white-space: nowrap; }
-        @keyframes dynamicContactPillWidth { 0%, 22% { width: 120px; } 25%, 47% { width: 140px; } 50%, 72% { width: 130px; } 75%, 97% { width: 150px; } 100% { width: 120px; } }
-        .contact-content-wrapper { position: relative; z-index: 2; width: 100%; max-width: 900px; padding: 100px 5vw 50px 5vw; text-align: center; display: flex; flex-direction: column; align-items: center; margin: auto; }
-        .contact-title { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px; margin: 0 0 20px 0; color: white; position: relative; z-index: 10; }
-        .contact-title span { color: #0ea5e9; text-shadow: 0 0 30px rgba(14, 165, 233, 0.4); }
-        .contact-desc { font-size: clamp(0.9rem, 2vw, 1.1rem); color: rgba(255,255,255,0.6); max-width: 650px; line-height: 1.6; margin-bottom: 40px; position: relative; z-index: 10; }
-        .contact-cta-btn { background: linear-gradient(90deg, #0284c7, #0ea5e9); color: white; text-decoration: none; font-size: 1.2rem; font-weight: 900; padding: 18px 50px; border-radius: 15px; display: inline-block; box-shadow: 0 15px 35px rgba(14, 165, 233, 0.3); transition: transform 0.3s, box-shadow 0.3s; border: 1px solid #38bdf8; cursor: pointer; position: relative; z-index: 10; }
-        .contact-cta-btn:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 20px 50px rgba(14, 165, 233, 0.5); }
-        .contact-trust-bar { display: flex; align-items: center; justify-content: center; gap: 30px; margin-top: 40px; flex-wrap: wrap; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.05); width: 100%; max-width: 600px; position: relative; z-index: 10; }
-        .trust-item { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; font-weight: 600; color: #fff; }
-        .trust-avatars { display: flex; } .trust-avatars img { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #020617; margin-left: -10px; } .trust-avatars img:first-child { margin-left: 0; }
-        .trust-stars { color: #0ea5e9; font-size: 1.1rem; letter-spacing: 2px; }
-
-        /* =========================================
-           ADAPTACIÓN RESPONSIVA CELULARES
-           ========================================= */
         @media (max-width: 900px) {
-            body::before { display: none !important; }
-            .smoke-overlay { display: none !important; }
-            .cursor-glow { display: none !important; }
-            .bg-slide { filter: brightness(0.3) !important; } 
-
-            .glow-background, .dashboard-container, .phone-center, .menu-pill-container, .testi-card, .plan-card { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
-            .glow-background { background: rgba(20, 10, 30, 0.9) !important; }
-            
-            .dashboard-container { background: rgba(20, 5, 35, 0.98) !important; box-shadow: 0 5px 15px rgba(0,0,0,0.5) !important; transform: translate3d(0,0,0) !important; opacity: 1 !important; }
-            .title-group, .world-text { filter: none !important; transition: opacity 0.8s ease, transform 0.8s ease !important; }
-            .title-group.active, .world-text.active { filter: none !important; }
-            
             .text-box-container { height: 80px !important; margin: 0 auto 30px auto !important; min-width: 120px !important; }
-            .world-text { font-size: 2.5rem !important; }
-
-            .side-text-left, .side-text-right { display: none !important; } 
-            .bottom-slogan { display: block !important; position: relative !important; width: 100% !important; text-align: center !important; margin-top: 30px !important; font-size: 0.85rem !important; color: rgba(255, 255, 255, 0.6) !important; letter-spacing: 1px; text-transform: uppercase; }
-            
-            header { padding: 15px 5vw; display: flex; justify-content: space-between; position: relative; width: 100%; }
-            .nav-center { position: relative; left: 0; transform: none; flex: 1; justify-content: center; margin: 0 10px; }
-            .logo-img { height: 35px; margin-left: 0; }
-            header.paquetes-mode .logo-img { height: 50px; }
-            .nav-right a { display: none !important; } 
-            .btn-demo-outline { padding: 6px 12px; font-size: 0.8rem; }
-            .menu-btn, .academy-btn { padding: 6px 12px; font-size: 0.75rem; }
-            
-            .overlay-fixed-logo { top: 10px; left: 15px; height: 65px; }
-            .overlay-fixed-close { top: 15px; right: 15px; padding: 8px 15px; font-size: 0.75rem; }
-
             #chatbot-fab { bottom: 20px; right: 20px; width: 55px; height: 55px; }
             #chatbot-window { bottom: 85px; right: 5vw; width: 90vw; height: 450px; border-radius: 15px; }
-
-            .hero-section { flex-direction: column; justify-content: flex-start; text-align: center; padding: 150px 5vw 30px 5vw !important; min-height: auto !important; gap: 0 !important; }
-            .title-group h1 { font-size: clamp(3rem, 15vw, 4.5rem) !important; line-height: 1; } 
-            .title-group h2 { font-size: 1.4rem !important; }
-            .dynamic-title-container { height: 95px !important; margin-bottom: 5px !important; } 
-            .btn-demo-glow { margin-top: 10px !important; }
-            
-            .plans-container { flex-direction: column !important; padding: 100px 5vw 20px 5vw !important; gap: 30px !important; align-items: center !important; overflow: visible !important; width: 100% !important; }
-            .plan-card { width: 100% !important; max-width: 350px !important; flex: none !important; transform: scale(1) translate3d(0,0,0) !important; background: rgba(15, 15, 20, 0.98) !important; margin: 0 auto !important; }
-
-            .academy-section { flex-direction: column; padding: 40px 20px !important; text-align: center; gap: 30px; }
-            .academy-card { padding: 30px 20px; border-left: none; border-top: 4px solid #ff3232; } 
-            .academy-card h2 { font-size: 2.2rem; }
-            .academy-card h2 span { font-size: 2.6rem; }
-            .dual-slide-wrap { max-width: 100%; border-width: 5px; }
-
-            .dashboard-container { grid-template-columns: 1fr; padding: 30px 15px !important; margin: 20px auto 50px auto !important; max-width: 450px; }
-            .dash-left { display: none !important; } 
-            .glass-box { padding: 20px !important; }
-            .nosotros-text, .creamos-text { font-size: clamp(1.8rem, 8vw, 2.5rem) !important; }
-            .icon-grid { gap: 8px !important; }
-            .service-item { padding: 12px 15px !important; font-size: 0.75rem !important; }
-
-            .menu-interactive-area { height: 350px !important; }
-            .ft-smm { top: 10%; left: 5%; } .ft-sms { bottom: 10%; left: 5%; } .ft-user { top: 10%; right: 5%; } .ft-txt { bottom: 10%; right: 5%; }
-            .phone-center { width: 240px !important; height: 160px !important; }
-            .menu-overlay-title h1 { font-size: 2.2rem; } .menu-overlay-title h2 { font-size: 1.5rem; }
-            .sticker-center-text { width: 90vw !important; padding: 0 !important; }
-            .sticker-line1 { flex-direction: column !important; gap: 5px !important; } .sticker-logo-img { height: auto !important; width: 90% !important; max-width: 250px !important; }
-            .sticker-line1 span { font-size: 1rem !important; margin-top: 5px !important; } .sticker-line2 { font-size: clamp(3rem, 15vw, 4rem) !important; margin-top: 0 !important; }
-
-            .testimonials-section { padding: 80px 0 !important; }
-            .testi-card { width: 90% !important; max-width: 320px !important; margin: 0 auto 20px auto !important; background: rgba(20, 20, 25, 0.98) !important; }
-
-            .contact-deco { display: none !important; } 
-            .contact-content-wrapper { padding-top: 120px; }
-            .contact-desc { font-size: 0.85rem; margin-bottom: 30px; }
-            .contact-cta-btn { font-size: 1rem; padding: 15px 30px; width: 100%; text-align: center; justify-content: center; }
-            .contact-trust-bar { gap: 15px; flex-direction: column; }
         }
     </style>
 </head>
@@ -441,210 +275,6 @@
         </div>
     </header>
 
-    <div id="academy-overlay">
-        <button class="overlay-fixed-close" id="close-academy-btn">✖ Cerrar</button>
-        <section class="academy-section">
-            <div class="academy-card">
-                <div class="academy-badge">✨ PROYECTO SOCIAL</div>
-                <h2>Creatik <span>Academy</span></h2>
-                <p style="margin-bottom: 15px; font-weight: 700; color: #ff3232; letter-spacing: 1px;">MÁS ALLÁ DE LA PANTALLA</p>
-                <p>En Creatik, nuestra visión no termina en el lente. Llevamos más de dos años y medio impulsando nuestro proyecto social <strong>Creatik Academy</strong>.</p>
-                <p style="margin-top: 10px;">Es un espacio de formación y convivencia donde unimos a apasionados del arte visual. A través de nuestras salidas de campo, transformamos la fotografía en una herramienta de integración. Formamos talento, unimos territorios y demostramos que el arte puede cambiar realidades.</p>
-            </div>
-            
-            <div class="academy-visuals">
-                <div class="dual-slide-wrap">
-                    <img id="academy-A" class="fade-img active" loading="lazy" src="Creatik Academy/academy1.jpg" alt="Creatik Academy">
-                    <img id="academy-B" class="fade-img" loading="lazy" src="" alt="Creatik Academy">
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <div id="full-menu-overlay">
-        <div class="overlay-text-bg">HISTORIA INOLVIDABLE</div>
-        <div class="menu-overlay-content">
-            <div class="menu-pill-container" data-animate="true">
-                <span class="menu-pill-text t1" style="animation-delay: 0s;">única</span>
-                <span class="menu-pill-text t2" style="animation-delay: 2.5s;">memorable</span>
-                <span class="menu-pill-text t3" style="animation-delay: 5s;">eterna</span>
-                <span class="menu-pill-text t4" style="animation-delay: 7.5s;">inolvidable</span>
-            </div>
-            <div class="menu-overlay-title">
-                <h1>Contamos tu <span>historia</span> con el alma.</h1>
-                <h2>Capturamos momentos reales para hacerlos eternos.</h2>
-            </div>
-            <p class="menu-desc">En Creatik, capturamos la esencia de cada momento porque sabemos que tu reality es lo más importante. No solo entregamos una imagen, entregamos un recuerdo con alma.</p>
-            <div class="menu-interactive-area">
-                <div class="float-tag ft-smm">
-                    <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></svg></div>
-                    <span>Fotografía</span>
-                </div>
-                <div class="float-tag ft-sms">
-                    <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V4h-4z"/></svg></div>
-                    <span>Video</span>
-                </div>
-                <div class="float-tag ft-user">
-                    <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.97 4.43c-.16.09-.33.14-.5.14s-.34-.05-.5-.14l-7.97-4.43c-.32-.17-.53-.5-.53-.88V7.5c0-.38.21-.71.53-.88l7.97-4.43c.16-.09.33-.14.5-.14s.34.05.5.14l7.97-4.43c.32.17.53.5.53.88v9zM12 4.15L6.04 7.5 12 10.85l5.96-3.35L12 4.15z"/></svg></div>
-                    <span>Diseño Gráfico</span>
-                </div>
-                <div class="float-tag ft-txt">
-                    <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
-                    <span>Pasión</span>
-                </div>
-                
-                <div class="phone-center phone-slideshow">
-                    <img loading="lazy" decoding="async" src="FOTOS HORIZONTALES/img1H.jpg" class="slide active" alt="Galería">
-                    <img loading="lazy" decoding="async" src="FOTOS HORIZONTALES/img2H.jpg" class="slide" alt="Galería">
-                    <img loading="lazy" decoding="async" src="FOTOS HORIZONTALES/img3H.jpg" class="slide" alt="Galería">
-                    <img loading="lazy" decoding="async" src="FOTOS HORIZONTALES/img5H.jpg" class="slide" alt="Galería">
-                    <img loading="lazy" decoding="async" src="FOTOS HORIZONTALES/img8H.jpg" class="slide" alt="Galería">
-                </div>
-                <div class="slider-deco"></div>
-            </div>
-        </div>
-        <div class="bottom-glow-arc"></div>
-    </div>
-
-    <div id="paquetes-overlay">
-        <img src="STICKER/sticker1.png" class="overlay-fixed-logo" id="paquetes-logo-btn" alt="Creatik">
-        <button class="overlay-fixed-close" id="close-paquetes-mobile-btn">✖ Cerrar</button>
-
-        <section class="sticker-wall-section">
-            <div class="sticker-center-text">
-                <h2 class="sticker-line1"><img loading="lazy" src="Copia de creatik letter.png" alt="Creatik" class="sticker-logo-img"><span>— Paquetes</span></h2>
-                <h1 class="sticker-line2">Tu historia</h1>
-            </div>
-        </section>
-
-        <section class="testimonials-section">
-            <div class="torn-paper-top"></div>
-            <div class="testimonials-content">
-                <h2>Lo que dicen nuestros clientes</h2>
-                <div class="testimonial-cards-container">
-                    <svg class="connector-line" viewBox="0 0 1200 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M50 50 C 200 10, 400 90, 600 50 C 800 10, 1000 90, 1150 50" stroke="#FFD700" stroke-width="2"/></svg>
-                    <div class="testi-card"><div class="card-header"><img loading="lazy" src="https://i.pravatar.cc/100?img=32" class="user-avatar" alt="Ana"><div class="user-info"><h3>Ana García</h3><div class="stars">★★★★★</div></div></div><p class="card-text">"¡Increíble trabajo! Capturaron la esencia de nuestra boda a la perfección."</p></div>
-                    <div class="testi-card"><div class="card-header"><img loading="lazy" src="https://i.pravatar.cc/100?img=11" class="user-avatar" alt="Carlos"><div class="user-info"><h3>Carlos Ruiz</h3><div class="stars">★★★★★</div></div></div><p class="card-text">"La calidad visual y la creatividad que aportaron le dieron un impulso enorme a nuestra marca."</p></div>
-                    <div class="testi-card"><div class="card-header"><img loading="lazy" src="https://i.pravatar.cc/100?img=47" class="user-avatar" alt="Laura"><div class="user-info"><h3>Laura Torres</h3><div class="stars">★★★★★</div></div></div><p class="card-text">"Tienen un ojo increíble para los detalles y la iluminación. ¡Me encantan!"</p></div>
-                </div>
-            </div>
-            <div class="torn-paper-bottom"></div>
-        </section>
-
-        <div class="overlay-marquee">
-            <div class="marquee-content"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"></div>
-            <div class="marquee-content"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"></div>
-        </div>
-
-        <section class="pricing-section">
-            <div class="pricing-header"><h2>ELIGE</h2><p>TU PLAN</p></div>
-            <div class="plans-container">
-                <div class="plan-card"><div class="plan-name">SESIÓN PERSONAL</div><div class="plan-time">Tiempo: 1 Hora</div><div class="plan-price">$50</div><div class="plan-deposit">Anticipo: $15</div><ul class="plan-features"><li>Equipo Profesional</li><li>15 fotos editadas</li><li>Fotos extras sin editar</li><li>Álbum Digital</li><li>Sticker y carta de cortesía</li></ul><button class="btn-plan">RESERVAR</button></div>
-                <div class="plan-card"><div class="plan-name">EMPRENDIMIENTO (BÁSICO)</div><div class="plan-time">Tiempo: 1 Hora</div><div class="plan-price">$50</div><div class="plan-deposit">Anticipo: $15</div><ul class="plan-features"><li>Equipo Profesional</li><li>15 fotos editadas</li><li>Ambientación básica</li><li>Entrega Digital</li><li>Sticker y carta de cortesía</li></ul><button class="btn-plan">RESERVAR</button></div>
-                <div class="plan-card"><div class="plan-name">EMPRENDIMIENTO (PRO)</div><div class="plan-time">Tiempo: 1 Hora</div><div class="plan-price">$125</div><div class="plan-deposit">Anticipo: $45</div><ul class="plan-features"><li>Equipo Profesional</li><li>25 fotos editadas</li><li>Ambientación avanzada</li><li>Entrega Digital</li><li>Sticker y carta de cortesía</li></ul><button class="btn-plan">RESERVAR</button></div>
-                <div class="plan-card"><div class="plan-name">EVENTO SMALL</div><div class="plan-time">Tiempo: 1 Hora</div><div class="plan-price">$75</div><div class="plan-deposit">Anticipo: $25</div><ul class="plan-features"><li>Equipo Profesional</li><li>50 fotos editadas</li><li>Fotos extras sin editar</li><li>Entrega USB</li><li>5 fotos impresas</li><li>Stickers de cortesía</li></ul><button class="btn-plan">RESERVAR</button></div>
-                <div class="plan-card popular"><div class="popular-sticker">El más popular</div><div class="plan-name">EVENTO INTERMEDIO</div><div class="plan-time">Tiempo: 2 Horas</div><div class="plan-price">$100</div><div class="plan-deposit">Anticipo: $35</div><ul class="plan-features"><li>Equipo Profesional</li><li>100 fotos editadas</li><li>Fotos extras sin editar</li><li>Video (10 min)</li><li>Entrega USB completa</li><li>10 fotos impresas</li></ul><button class="btn-plan">RESERVAR</button></div>
-                <div class="plan-card"><div class="plan-name">EVENTO EXPRESS</div><div class="plan-time">Tiempo: 2.5 Horas</div><div class="plan-price">$170</div><div class="plan-deposit">Anticipo: $60</div><ul class="plan-features"><li>Equipo + Asistente Pro</li><li>150 fotos editadas</li><li>Filmación (30 min)</li><li>Video vertical redes</li><li>Entrega USB completa</li><li>16 fotos impresas</li></ul><button class="btn-plan">RESERVAR</button></div>
-            </div>
-        </section>
-    </div>
-
-    <div id="contact-overlay">
-        <div class="contact-backdrop"></div>
-        
-        <div class="contact-deco dec-left-img"><div class="deco-inner"><img src="img12.jpg" alt="Decoración Creatik" onerror="this.style.display='none'"></div></div>
-        <div class="contact-deco dec-left-stk"><div class="deco-inner"><img src="STICKER/sticker3.png" alt="Sticker" onerror="this.style.display='none'"></div></div>
-        <div class="contact-deco dec-right-stk"><div class="deco-inner"><img src="STICKER/sticker1.png" alt="Sticker" onerror="this.style.display='none'"></div></div>
-        <div class="contact-deco dec-right-img"><div class="deco-inner"><img src="img11.jpg" alt="Decoración Creatik" onerror="this.style.display='none'"></div></div>
-
-        <button class="overlay-fixed-close" id="close-contact-btn">✖ Cerrar</button>
-        
-        <div class="contact-content-wrapper">
-            <div class="contact-pill-container" data-animate="true">
-                <span class="contact-pill-text" style="animation-delay: 0s;">HABLEMOS</span>
-                <span class="contact-pill-text" style="animation-delay: 2.5s;">COTIZA HOY</span>
-                <span class="contact-pill-text" style="animation-delay: 5s;">FOTOGRAFÍA</span>
-                <span class="contact-pill-text" style="animation-delay: 7.5s;">CREATIVIDAD</span>
-            </div>
-            
-            <h1 class="contact-title">¿Necesitas una <span>mano</span> para tu próxima sesión de fotos?</h1>
-            <p class="contact-desc">En Creatik, capturamos la esencia de cada momento porque sabemos que tu realidad es lo más importante. No solo entregamos una imagen, entregamos un recuerdo con alma.</p>
-            
-            <a href="https://wa.me/50375778333" target="_blank" class="contact-cta-btn">
-                Iniciar Chat Ahora ➔
-            </a>
-
-            <div class="contact-trust">
-                <div class="contact-trust-bar">
-                    <div class="trust-item">
-                        <div class="trust-avatars">
-                            <img src="https://i.pravatar.cc/100?img=32" alt="Avatar">
-                            <img src="https://i.pravatar.cc/100?img=11" alt="Avatar">
-                            <img src="https://i.pravatar.cc/100?img=47" alt="Avatar">
-                        </div>
-                        <span>+10 Proyectos Exitosos</span>
-                    </div>
-                    <div class="trust-item">
-                        <span class="trust-stars">★★★★★</span>
-                        <span>5/5 Reseñas de clientes</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <main class="hero-section" id="main-content-area">
-        <div class="side-text side-text-left">Bienvenido a creatik.<br>La era de la IA.</div>
-        <div class="center-hero">
-            <div class="dynamic-title-container">
-                <div class="title-group" id="title-historia"><h1>Tu historia</h1><h2>es</h2></div>
-                <div class="title-group" id="title-hagamos"><h1>Hagamos</h1><h2>que sea</h2></div>
-            </div>
-            <div class="text-box-container" id="dynamic-box">
-                <div class="glow-background"></div>
-                <span class="world-text">única</span>
-                <span class="world-text">memorable</span>
-                <span class="world-text">eterna</span>
-                <span class="world-text">inolvidable</span>
-            </div>
-            <button class="btn-demo-glow" id="btn-contact-open">Contáctanos</button>
-            <div class="bottom-slogan">Tu historia es única, hagamos que sea inolvidable</div>
-        </div>
-        <div class="side-text side-text-right" style="text-align: right;">Tu historia es unica, hagamos que sea inolvidable</div>
-    </main>
-
-    <div class="marquee-wrapper" id="marquee-transition">
-        <div class="marquee-content"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"></div>
-        <div class="marquee-content"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"></div>
-    </div>
-
-    <div class="dashboard-container" id="scroll-panel">
-        <div class="dash-left"><h2>Nuestros<br>Trabajos<span style="color: #a855f7;">.</span></h2><div class="glass-box"><div class="viewer-box"><img id="main-viewer" src="" alt=""></div></div></div>
-        <div class="dash-center">
-            <div class="glass-box">
-                <div class="idea-container">
-                    <div class="idea-box">¿TIENES UNA IDEA?</div>
-                    <h2 class="nosotros-text">NOSOTROS</h2>
-                    <div class="nosotros-text" style="font-size: 1rem; background: #a855f7; display: inline-block; padding: 2px 8px; border-radius: 4px; margin: 5px 0;">LA</div>
-                    <h2 class="creamos-text">CREAMOS</h2>
-                    <p style="font-size: 0.7rem; color: white; opacity: 0.7; margin-top: 5px;">(PREGUNTA POR FECHAS DISPONIBLES)</p>
-                </div>
-                <div class="icon-grid" id="thumbnail-grid">
-                    <div class="icon-box"><img loading="lazy" decoding="async" src="img1.jpg"></div>
-                    <div class="icon-box"><img loading="lazy" decoding="async" src="img2_2.jpg"></div>
-                    <div class="icon-box"><img loading="lazy" decoding="async" src="img3.jpg"></div>
-                    <div class="icon-box"><img loading="lazy" decoding="async" src="img4.jpg"></div>
-                    <div class="icon-box"><img loading="lazy" decoding="async" src="img5.jpg"></div>
-                    <div class="icon-box"><img loading="lazy" decoding="async" src="img6.jpg"></div>
-                    <div class="icon-box"><img loading="lazy" decoding="async" src="img7_7.jpg"></div>
-                    <div class="icon-box"><img loading="lazy" decoding="async" src="img8.jpg"></div>
-                    <div class="icon-box"><img loading="lazy" decoding="async" src="img9.jpg"></div>
-                </div>
-            </div>
-        </div>
-        <div class="dash-right"><a href="https://www.facebook.com/profile.php?id=61587372815271" target="_blank" class="service-item"><span>FACEBOOK</span><div class="dot-icon" style="background: #1877f2;"><img loading="lazy" src="communication.png" alt="Facebook"></div></a><a href="https://www.instagram.com/soycreatik" target="_blank" class="service-item"><span>INSTAGRAM</span><div class="dot-icon" style="background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);"><img loading="lazy" src="instagram (1).png" alt="Instagram"></div></a><a href="https://www.tiktok.com/@soy.creatik?is_from_webapp=1&sender_device=pc" target="_blank" class="service-item"><span>TIKTOK</span><div class="dot-icon" style="background: #000000;"><img loading="lazy" src="tik-tok.png" alt="TikTok"></div></a></div>
-    </div>
-
     <div id="chatbot-fab" title="Chatea con nosotros">
         <div class="new-message-indicator"></div>
         <svg viewBox="0 0 24 24" width="28" height="28" fill="white"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM9 11H7V9h2v2zm4 0h-2V9h2v2zm4 0h-2V9h2v2z"></path></svg>
@@ -660,9 +290,7 @@
             <button id="close-chatbot-btn">✖</button>
         </div>
         <div class="chatbot-messages" id="chatbot-messages">
-            <div class="message bot-message">
-                ¡Hola! 👋 Soy la IA asistente de Creatik. ¿En qué puedo ayudarte a contar tu historia hoy?
-            </div>
+            <div class="message bot-message">¡Hola! 👋 Soy la IA de Creatik. ¿En qué te ayudo a contar tu historia hoy?</div>
         </div>
         <div class="chatbot-input-area">
             <input type="text" id="chatbot-input" placeholder="Escribe tu mensaje..." autocomplete="off">
@@ -672,64 +300,27 @@
         </div>
     </div>
 
+    <main class="hero-section" id="main-content-area">
+        <div class="center-hero">
+            <div class="dynamic-title-container">
+                <div class="title-group" id="title-historia"><h1>Tu historia</h1><h2>es</h2></div>
+                <div class="title-group" id="title-hagamos"><h1>Hagamos</h1><h2>que sea</h2></div>
+            </div>
+            <div class="text-box-container" id="dynamic-box">
+                <div class="glow-background"></div>
+                <span class="world-text">única</span>
+                <span class="world-text">memorable</span>
+                <span class="world-text">eterna</span>
+                <span class="world-text">inolvidable</span>
+            </div>
+            <button class="btn-demo-glow" id="btn-contact-open">Contáctanos</button>
+        </div>
+    </main>
+
     <script>
         // --- BLOQUEO ANTICOPIA ---
         document.addEventListener('contextmenu', event => event.preventDefault());
         document.addEventListener('dragstart', event => event.preventDefault());
-
-        console.log("%c==========================================", "color: #0ea5e9; font-weight: bold; font-size: 14px;");
-        console.log("%cCREADO POR ROGER MÉNDEZ", "color: #0ea5e9; font-weight: bold; font-size: 16px;");
-        console.log("%cTodos los derechos reservados. Uso no autorizado prohibido.", "color: white; font-size: 12px;");
-        console.log("%c==========================================", "color: #0ea5e9; font-weight: bold; font-size: 14px;");
-
-        // --- SISTEMA DISOLUCIÓN CRUZADA ACADEMY ---
-        const academyImagesList = [
-            'academy1.jpg', '_DSC7744.jpg', 'academy2.jpg', 'academy3.jpg', 'academy4.jpg', 
-            'academy5.jpg', 'academy6.jpg', 'academy7.jpg', 'academy8.jpg', 
-            'academy9.jpg', 'academy10.jpg', 'academy11.jpg', 'academy12.jpg', 
-            'academy13.jpg', 'academy14.jpg'
-        ];
-        let currentPairIndex = 0;
-        let activeLayer = 'A'; 
-
-        function shuffleArray(arr) {
-            let array = arr.slice();
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        let shuffledAcademy = shuffleArray(academyImagesList);
-
-        function changeAcademyImages() {
-            if (!document.getElementById('academy-A')) return;
-
-            if (currentPairIndex >= shuffledAcademy.length) {
-                let lastImage = shuffledAcademy[shuffledAcademy.length - 1];
-                let newShuffle;
-                do { newShuffle = shuffleArray(academyImagesList); } while (newShuffle[0] === lastImage);
-                shuffledAcademy = newShuffle;
-                currentPairIndex = 0;
-            }
-
-            let nextImage = shuffledAcademy[currentPairIndex];
-            currentPairIndex++;
-
-            const layerOut = document.getElementById(`academy-${activeLayer}`);
-            activeLayer = activeLayer === 'A' ? 'B' : 'A';
-            const layerIn = document.getElementById(`academy-${activeLayer}`);
-
-            const tempImg = new Image();
-            tempImg.onload = function() {
-                layerIn.src = this.src;
-                layerIn.classList.add('active');
-                layerOut.classList.remove('active');
-            };
-            tempImg.src = `Creatik Academy/${nextImage}`;
-        }
-        setInterval(changeAcademyImages, 4000); 
 
         // --- LÓGICA DEL CHATBOT ---
         const chatbotFab = document.getElementById('chatbot-fab');
@@ -741,587 +332,103 @@
         
         let isChatbotOpen = false;
         let userMessageCount = 0;
-        let unknownCount = 0;
-        let buttonsSent = false;
         let lastTopic = 'inicio'; 
         const MAX_MESSAGES = 60;
         
-        let inactivityTimer;
-        let waitingForInactivityResponse = false;
-        let hasNewMessage = false;
-
         const botResponses = {
-            robo_info: [
-                "¡Nos alegra que te guste nuestra técnica! Mantenemos nuestra 'receta secreta' de edición y flujo de trabajo en casa, pero nos encanta inspirar a otros creadores. ✨",
-                "Usamos varios programas profesionales del mercado y mucha creatividad propia. ¡Gracias por notar la calidad!"
+            asesoria: [
+                "¡Con gusto! Para darte la mejor recomendación, ¿cuál es tu rango de presupuesto aproximado? ✨<div style='margin-top:10px;'><button class='chat-option-btn' style='display:block; width:100%; margin-bottom:5px; padding:10px; background:rgba(168,85,247,0.2); border:1px solid #a855f7; color:white; border-radius:10px; cursor:pointer;' onclick='sendChatOption(\"Bajo ($50-$75)\")'>Bajo ($50-$75)</button><button class='chat-option-btn' style='display:block; width:100%; margin-bottom:5px; padding:10px; background:rgba(168,85,247,0.2); border:1px solid #a855f7; color:white; border-radius:10px; cursor:pointer;' onclick='sendChatOption(\"Medio ($100-$125)\")'>Medio ($100-$125)</button><button class='chat-option-btn' style='display:block; width:100%; padding:10px; background:rgba(168,85,247,0.2); border:1px solid #a855f7; color:white; border-radius:10px; cursor:pointer;' onclick='sendChatOption(\"Pro ($170+)\")'>Pro ($170+)</button></div>"
             ],
-            contratar: [ 
-                "¡Esa es la actitud! 🚀 Para formalizar y apartar tu fecha, el siguiente paso es hablar con nuestro coordinador humano en WhatsApp: <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b>. ¡Te esperamos ahí para empezar!",
-                "¡Excelente decisión! 🎉 Estamos listos. Escríbenos ya mismo a nuestro WhatsApp <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b> para asegurar tu espacio."
+            rango_basico: [
+                "Para un presupuesto de $50 a $75, te recomiendo la **Sesión Personal** ($50) o el **Evento Small** ($75). ¡Son ideales para recuerdos rápidos y de alta calidad! 📸<br><br>Si quieres agendar, escríbenos aquí: <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>WhatsApp Creatik</a></b>"
             ],
-            regateo: [
-                "Entiendo que el presupuesto es clave. No solemos hacer recortes directos porque nuestro equipo y tiempo garantizan una calidad premium, pero ¡escríbenos a WhatsApp! A veces podemos ajustar el paquete para hacer posible tu idea.",
-                "Valoramos mucho tu interés. Aunque nuestros precios ya son fijos por la calidad que entregamos, si nos escribes a WhatsApp podemos ver si hay alguna promo vigente o ajustar un plan a tu medida. 😉"
+            rango_medio: [
+                "Con ese presupuesto, el **Paquete Intermedio ($100)** es tu mejor aliado, ¡es el favorito porque ya incluye video! También tienes el **Emprendimiento Pro ($125)** para marcas. 🚀<br><br>¿Te gustaría reservar? Escríbenos: <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>WhatsApp Creatik</a></b>"
             ],
-            caro: [
-                "Entiendo tu punto. Nuestros precios reflejan el uso de equipo de alta gama, iluminación profesional y horas de edición detallada para que el resultado sea nivel cine. ✨ ¡Es una inversión en calidad!",
-                "¡La calidad lo vale! No solo son fotos, es una experiencia y te entregamos TODO el material extra sin costo adicional."
+            rango_pro: [
+                "¡Vas por el resultado nivel cine! El **Paquete Express ($170)** es el más completo, incluye asistente y video para tus redes. 💎<br><br>Hablemos por WhatsApp para asegurar tu fecha: <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>WhatsApp Creatik</a></b>"
             ],
-            barato: [
-                "¡Queremos que el arte visual sea accesible! Optimizamos nuestros procesos para darte la mejor calidad sin que tengas que gastar una fortuna. 😎",
-                "Nos encanta lo que hacemos y preferimos tener paquetes competitivos para que nadie se quede sin fotos increíbles."
-            ],
-            solo_cotiza: [
-                "¡No hay ningún problema! Cotizar es el primer paso para crear algo genial. Llévate la info y cuando estés listo, aquí estaremos para ti. 📸",
-                "¡Claro que sí! Tómate tu tiempo. Puedes guardar nuestros precios y contactarnos cuando te animes."
-            ],
-            crisis: [
-                "Comprendo. Seré más directo y formal a partir de ahora. ¿En qué le puedo asistir?",
-                "Mis disculpas. Mantendremos comunicación profesional. ¿Desea información de precios o servicios?"
-            ],
-            bad_strange: [
-                "¡Ups! 😅 Mi programación solo me permite hablar de fotografía, video y diseño. ¿Te ayudo con eso?",
-                "Esa palabra no está en mi base de datos creativa. 🤖 Mejor concentrémonos en capturar momentos inolvidables."
-            ],
-            negativa_mascotas: [ 
-                "Por el momento estamos 100% enfocados en sesiones para personas, empresas y eventos. 📸 Aunque amamos a los peluditos, aún no tenemos el set listo para ellos. ¿Te ayudo con otro tipo de sesión?"
-            ],
-            prohibido_discotecas: [
-                "Por políticas de la agencia, no realizamos coberturas en discotecas o ambientes similares. 🚫 Preferimos enfocarnos en eventos sociales, culturales y corporativos. ¿Tienes algún otro tipo de evento en mente?"
-            ],
-            donar_academy: [
-                "¡Qué increíble que quieras sumar! 🤩 Creatik Academy siempre tiene las puertas abiertas para seguir formando jóvenes. Iniciamos en Valle Verde y nos expandimos a Distrito Italia, Valle Verde 1,2,3,4, Popotlán 1 y 2, San Marcos, Nejapa, San Martín, Ciudad Delgado y todo Apopa. Hemos colaborado con creadores como Steeb Melendez, Jeykob, Steven Diaz, Oscar Lara y Joshua Morales. ¡Escríbenos al WhatsApp para coordinar tu apoyo! ✨"
-            ],
-            institucion_gobierno: [
-                "¡Excelente! Tenemos gran experiencia trabajando con instituciones, escuelas y proyectos gubernamentales/municipales. 🏢 Podemos crear una propuesta formal y adaptada a sus requerimientos de comunicación. ¿Podría brindarme más detalles del proyecto?"
-            ],
-            empresa: [
-                "¡Las marcas son nuestro fuerte! 📈 Hemos trabajado con muchas empresas. Para contenido corporativo o de emprendimiento, te recomiendo el paquete Pro de $125 o armar algo a la medida. ¿Qué tipo de negocio es?",
-                "Ayudamos a destacar tu marca con fotografía comercial de alta calidad y diseño gráfico. ¿Es para redes sociales, catálogo o publicidad interna?"
-            ],
-            marca_personal: [
-                "¡Perfecto para impulsar tu imagen! 🚀 Ya sea que ofrezcas un servicio profesional o quieras potenciar tu marca personal, diseñamos sesiones que transmitan confianza y calidad. El paquete de $50 (Sesión Personal) es ideal para empezar."
-            ],
-            religion_evasion: [
-                "¡Hola! Somos una agencia creativa independiente. 🎥 Cubrimos con mucho respeto y profesionalismo eventos de cualquier denominación o iglesia (bodas, bautizos, cultos, retiros, etc.). ¿De qué trata tu evento?"
-            ],
-            evento: [
-                "¡Nos encantan los eventos! 🎉 Para bodas, cumpleaños o graduaciones, nuestro paquete Intermedio ($100) es el más pedido e incluye video. Si es algo muy grande, el Express ($170) es ideal. ¿Qué tipo de evento es?",
-                "Congelamos cada momento de tu evento. Te damos cobertura completa, fotos editadas y hasta video para tus redes. ¿Para qué fecha lo necesitas?"
-            ],
-            foto_pareja: [
-                "¡Qué romántico! ❤️ Las sesiones en pareja son maravillosas. Podemos ir a la locación que signifique mucho para ustedes (playa, montaña, ciudad). El paquete básico de 1 hora ($50) es perfecto para esto."
-            ],
-            foto_familia: [
-                "¡Los recuerdos con los seres queridos son invaluables! 🥰 Cubrimos sesiones familiares o con tu grupo de amigos. La pasamos súper bien y capturamos esa conexión real. ¿Cuántas personas serían?"
-            ],
-            personal: [
-                "¡Una sesión para ti es un súper regalo! ✨ Sacaremos tu mejor perfil con dirección de poses y mucha buena vibra. Te recomiendo nuestro paquete de $50 que incluye 1 hora de sesión.",
-                "Tener fotos tuyas con calidad profesional siempre es una buena inversión. ¿Tienes alguna temática en mente o prefieres que te asesoremos?"
-            ],
-            academy: [
-                "Creatik Academy es nuestro orgullo social. ✨ Llevamos más de dos años uniendo talentos mediante salidas de campo, usando la fotografía como puente de integración.",
-                "Es un espacio de formación donde apasionados del arte visual convivimos y aprendemos en el terreno."
-            ],
-            ubicacion: [
-                "Actualmente no contamos con un local físico, ¡porque nosotros nos trasladamos a donde tú prefieras! 🚗 Llevamos nuestro equipo profesional para cubrir tus eventos o sesiones en la locación de tu elección.",
-                "Somos de El Salvador 🇸🇻 y vamos a cualquier rincón del país donde haya una buena historia que contar."
-            ],
-            tecnico: [
-                "Usamos equipo profesional y óptica Full Frame para que salgas espectacular. ⚡ Entregamos en unos 5 a 8 días hábiles.",
-                "Te damos las fotos editadas con corrección de color y todas las extras sin editar para que no pierdas ningún recuerdo. 🎁"
-            ],
-            redes: [
-                "¡Nos encanta conectar! 📱 Búscanos en Instagram, Facebook y TikTok como <b>@soycreatik</b>.",
-                "Puedes ver nuestro portafolio completo en Instagram, Facebook y TikTok. Nos encuentras en todas como <b>@soycreatik</b>."
-            ],
-            contacto: [
-                "¡Te paso con un humano! 🏃‍♂️ Escríbenos a nuestro WhatsApp directo: <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b>.",
-                "Para una atención más personalizada o agendar tu fecha, un asesor te espera en nuestro WhatsApp: <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b>."
-            ],
-            precios: [
-                "Nuestra Sesión Personal o el plan Emprendimiento Básico arrancan en $50. Si buscas destacar más, el Pro está en $125. Para eventos, te súper recomiendo nuestro paquete Intermedio por $100 (es el favorito de todos). También tenemos la opción Small ($75) y Express ($170).",
-                "¡Claro! Manejamos varias opciones. Para algo rápido: Sesión Personal o Básico ($50). En eventos, nuestro paquete estrella es el Intermedio de $100. También ofrecemos el súper completo Express por $170.",
-                "Nuestros precios están diseñados para que nadie se quede sin una historia inolvidable. Sesiones desde $50 y eventos desde $75 hasta $170."
-            ],
-            precios_detalle: [
-                "Las sesiones de 1 hora ($50 a $125) son ideales para fotos tuyas o de marca. Los planes de eventos ($75 a $170) te aseguran cobertura total, ¡e incluso video en los más completos!",
-                "El de $100 es el intermedio perfecto para fiestas porque ya incluye un clip de video. El de $50 es estrictamente para sesiones de una hora (individual o producto)."
-            ],
-            servicios_info: [
-                "En Creatik ofrecemos Fotografía Profesional, Video Cinematográfico y Diseño Gráfico. ¡Contamos tu historia de forma integral!",
-                "Manejamos la imagen completa: Fotografía, Video y Diseño Gráfico. Tenemos mucha experiencia cubriendo eventos, sesiones para marcas y contenido para redes sociales."
-            ],
-            idea: [
-                "¡Me encanta escuchar nuevas ideas! 🤩 Cuéntame, ¿de qué trata tu proyecto?",
-                "¡Suena genial! Dame más detalles para entender bien qué necesitas capturar."
-            ],
-            ayuda: [
-                "¡Claro que sí! Estoy para ayudarte. ¿Buscas info sobre precios, servicios, o quieres contarme tu idea?",
-                "¡Con gusto! Dime en qué te puedo apoyar hoy."
-            ],
-            identidad: [
-                "¡Soy Creatik IA! Tu asistente con alma de fotógrafo y puro código salvadoreño. 🇸🇻",
-                "Soy el asistente virtual de Creatik, aquí para resolver tus dudas rápidamente."
-            ],
-            como_estas: [
-                "¡Todo excelente por aquí! Con mucha energía y ganas de crear. ✨ ¿En qué te puedo ayudar hoy?",
-                "¡Al 100%! Con el obturador listo. 📸 ¿Qué te trae por acá?"
-            ],
-            despedida: [
-                "¡De nada! Ha sido un placer platicar contigo. ¡Hasta la próxima! 📸",
-                "¡Gracias a ti por escribirnos! Que tengas un día súper creativo."
-            ],
-            saludo: [
-                "¡Hola! Qué alegría que pienses en Creatik. ✨",
-                "¡Buenos días! ¿En qué te puedo ayudar hoy?",
-                "¡Hola, hola! 📸 ¿Qué tal todo? ¿Listo para crear?",
-                "¡Hey! Qué bueno verte por aquí. Cuéntame."
-            ],
-            interjeccion: [
-                "¡Totalmente! La buena vibra es parte de Creatik. 😎 ¿En qué más te apoyo?",
-                "¡Genial! Me encanta esa actitud. ✨ ¿Seguimos hablando de fotos?",
-                "¡Súper! Sigamos adelante con eso. ¿Te muestro nuestros servicios?"
-            ]
+            saludo: ["¡Hola! Qué alegría verte por acá. ¿En qué te ayudo hoy? 😊", "¡Hola, hola! 📸 ¿Listo para crear algo inolvidable?"],
+            contacto: ["¡Claro! Un asesor humano te espera en nuestro WhatsApp: <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b>."],
+            default: ["Mmm, no estoy seguro de entenderte, pero si buscas info de precios escribe **Asesoría** o mándanos un **WhatsApp** para contratar. 📱"]
         };
 
         const intents = [
-            { name: 'robo_info', regex: "\\b(preset|programa|software|codigo fuente|secreto|como editan|quien te creo)\\b" },
-            { name: 'contratar', regex: "\\b(contratar|agendar|reservar|empezar|darle viaje|quiero contratarlos|contratarlos|apartar fecha)\\b" },
-            { name: 'regateo', regex: "\\b(descuento|rebaja|regateo|regatear|promocion|promo|oferta|ajustar precio|patrocinio)\\b" },
-            { name: 'caro', regex: "\\b(muy caro|esta caro|costoso|elevado|por que tan caro|se pasan)\\b" },
-            { name: 'barato', regex: "\\b(muy barato|esta barato|economico|regalado|sospechoso|por que tan barato)\\b" },
-            { name: 'solo_cotiza', regex: "\\b(solo cotizo|solo pregunto|curiosidad|mas adelante|viendo opciones|solo veo|preguntando)\\b" },
-            { name: 'crisis', regex: "\\b(te ries|no me gusta|se serio|formal|habla bien|comportate|madura)\\b" },
-            { name: 'bad_strange', regex: "\\b(tonto|feo|malo|idiota|mierda|puta|asdf|qwer|zxcv|estupido|pendejo)\\b" },
-            { name: 'negativa_mascotas', regex: "\\b(mascota|mascotas|perrito|perro|perros|gato|gatos|gatito|animal|animales)\\b" },
-            { name: 'prohibido_discotecas', regex: "\\b(discoteca|discotecas|disco|antro|antros|bar|club|clubes|chonguengue)\\b" },
-            { name: 'donar_academy', regex: "\\b(donar|donacion|apoyar academy|patrocinar|ayudar a academy|quiero donar|regalar equipo)\\b" },
-            { name: 'institucion_gobierno', regex: "\\b(alcaldia|gobierno|gubernamental|ministerio|escuela|colegio|instituto|universidad|institucion|ong)\\b" },
-            { name: 'empresa', regex: "\\b(empresa|empresas|negocio|negocios|marca|marcas|corporativo|emprendimiento|local comercial|para mi empresa|producto|productos)\\b" },
-            { name: 'marca_personal', regex: "\\b(dar a conocer|mostrar lo que hago|marca personal|mi trabajo|soy profesional|influencer|creador de contenido)\\b" },
-            { name: 'religion_evasion', regex: "\\b(cristiano|cristianos|catolico|catolicos|evangelico|evangelicos|mormon|mormones|testigos|religion|iglesia|iglesias|culto|retiro)\\b" },
-            { name: 'evento', regex: "\\b(evento|eventos|boda|bodas|cumpleanos|quince|xv|quinceanera|bautizo|fiesta|graduacion|convivio|celebracion)\\b" },
-            { name: 'foto_pareja', regex: "\\b(pareja|novio|novia|esposo|esposa|aniversario|parejas|novios|matrimonio)\\b" },
-            { name: 'foto_familia', regex: "\\b(familia|hijos|mama|papa|abuelos|familiar|bebe|amigos|chero|chera|cheros|grupo)\\b" },
-            { name: 'personal', regex: "\\b(personal|retrato|perfil|mis fotos|individual|solo|sola|para mi|yo solo|yo sola)\\b" },
-            { name: 'academy', regex: "\\b(academy|academu|academi|curso|aprender|clase|taller|clases)\\b" },
-            { name: 'ubicacion', regex: "\\b(de donde son|donde estan|van a todo el pais|ubicacion|local|direccion|dnde|donde se ubican|lugar)\\b" },
-            { name: 'tecnico', regex: "\\b(camara|camaras|lente|flash|tardan|cuanto tiempo|editadas|equipo|entregan|entregar)\\b" },
-            { name: 'redes', regex: "\\b(redes|instagram|tiktok|facebook|youtube|sociales|fb|insta)\\b" },
-            { name: 'contacto', regex: "\\b(asesor|agente|humano|persona|real|hablar con|contacto|whatsapp|wasap|numero|telefono|llamar)\\b" },
-            { name: 'precios', regex: "\\b(precio|precios|presio|costo|costos|cuanto|vale|cuesta|paquete|paquetes|plan|planes|cobran|cotiza|tarifa|tarifas|\\$)\\b" },
-            { name: 'servicios_info', regex: "\\b(mas informaci|info|que hacen|servicio|servicios|ofrecen|cobertura|catalogo|portafolio|informacion|fotos|video|videos)\\b" },
-            { name: 'idea', regex: "\\b(idea|mente|pensado|proyecto|contar|quiero saber|te cuento)\\b" },
-            { name: 'ayuda', regex: "\\b(ayuda|support|apoyo|asistencia|assist|necesito ayuda|quiero apoyo|ayudenme)\\b" },
-            { name: 'identidad', regex: "\\b(quien eres|eres un robot|como te llamas|robot|ia|inteligencia artificial|quien sos|bot)\\b" },
-            { name: 'como_estas', regex: "\\b(como estas|how are you|bien y tu|que tal|como te va)\\b" },
-            { name: 'despedida', regex: "\\b(gracias|adios|bye|chao|hasta luego|nos vemos|feliz dia)\\b" },
-            { name: 'saludo', regex: "\\b(hola|holas|hi|hello|buenos dias|buenas tardes|buenas noches|saludos|hey|ey|que onda|q onda|ola|kiubo|gola|holis|buenas|holaa)\\b" },
-            { name: 'interjeccion', regex: "\\b(jaja|jajaja|jeje|de verdad|en serio|wow|genial|super|me alegra|que bueno|excelente|que chivo|si|claro|ok|vale|esta bien|me parece|dale|ah ok|oh|ya veo|entiendo|bueno)\\b" }
+            { name: 'asesoria', regex: "\\b(asesoria|asesorame|ayudame a elegir|recomiendame|ayuda)\\b" },
+            { name: 'rango_basico', regex: "\\b(bajo|economico|50|75)\\b" },
+            { name: 'rango_medio', regex: "\\b(medio|intermedio|100|125)\\b" },
+            { name: 'rango_pro', regex: "\\b(pro|alto|express|170)\\b" },
+            { name: 'saludo', regex: "\\b(hola|holas|buenos dias|buenas tardes|hey)\\b" },
+            { name: 'contacto', regex: "\\b(whatsapp|contratar|agendar|numero|hablar con alguien)\\b" }
         ];
 
-        function getRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-
         window.sendChatOption = function(text) {
-            const inputField = document.getElementById('chatbot-input');
-            inputField.value = text;
-            document.getElementById('chatbot-send-btn').click();
+            chatbotInput.value = text;
+            handleSend();
         };
 
-        function normalizeText(text) {
-            return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
-        }
-
-        function resetInactivityTimer() {
-            clearTimeout(inactivityTimer);
-            inactivityTimer = setTimeout(handleInactivity, 60000);
-        }
-
-        function handleInactivity() {
-            if (userMessageCount >= MAX_MESSAGES) return;
-
-            if (isChatbotOpen) {
-                waitingForInactivityResponse = true;
-                const btnStyle = "display:inline-block; margin: 5px 5px 0 0; padding: 8px 12px; background:rgba(168,85,247,0.2); border:1px solid rgba(168,85,247,0.5); color:white; border-radius:15px; cursor:pointer; font-size: 0.85rem; transition:0.3s;";
-                const msg = `¿Sigues ahí? 🤔<div style="margin-top:10px;">
-                    <button style="${btnStyle}" onclick="sendChatOption('Sí, sigo aquí')">Sí, sigo aquí</button>
-                    <button style="${btnStyle}" onclick="sendChatOption('No, ya me voy')">No, ya me voy</button>
-                </div>`;
-                appendBotMessage(msg);
-            } else {
-                hasNewMessage = true;
-                chatbotFab.classList.add('has-new-message');
-                appendBotMessage("¿Sigues ahí? 🤔");
-            }
-        }
-
         function getBotResponse(input) {
-            let cleanInput = normalizeText(input);
-            let intent = 'default';
-            let response = "";
-
-            if (waitingForInactivityResponse) {
-                waitingForInactivityResponse = false;
-                if (new RegExp("\\b(si|sigo aqui|yes)\\b", "i").test(cleanInput)) {
-                    return "¡Genial! Sigamos platicando. 😊 ¿En qué estábamos?";
-                } else if (new RegExp("\\b(no|ya me voy|bye|adios)\\b", "i").test(cleanInput)) {
-                    return "¡Entendido! Un gusto saludarte. ¡Hasta la próxima! 👋";
-                }
-            }
-
+            let cleanInput = input.toLowerCase().trim();
             for (let i = 0; i < intents.length; i++) {
-                if (new RegExp(intents[i].regex, "i").test(cleanInput)) {
-                    intent = intents[i].name;
-                    break;
-                }
+                if (new RegExp(intents[i].regex, "i").test(cleanInput)) return botResponses[intents[i].name][0];
             }
-
-            if (intent === 'interjeccion') {
-                if (lastTopic === 'servicios_info') response = "¡Así es! Nos apasiona crear contenido de alta calidad. ✨ ¿Te gustaría ver nuestros paquetes de precios?";
-                else if (lastTopic === 'precios') response = "¡Excelente! Si algún paquete te llama la atención, me avisas y te digo cómo reservar. 📅";
-                else if (lastTopic === 'identidad') response = "¡Jaja, sí! Aunque soy digital, me emociona mucho platicar contigo. 🤖 ¿Te ayudo con algo de foto o video?";
-                else if (lastTopic === 'idea' || lastTopic === 'empresa' || lastTopic === 'evento') response = "¡Totalmente! Tenemos la misma visión creativa entonces. 🚀 ¿Vemos paquetes o prefieres hablar con un humano en WhatsApp?";
-                else response = getRandom(botResponses['interjeccion']);
-                
-                unknownCount = 0;
-                return response;
-            }
-
-            if (cleanInput.length < 25 && lastTopic === 'precios' && new RegExp("\\b(y el|y los|otro|pro|basico|small|express|mas|menos|caro|barato)\\b", "i").test(cleanInput)) {
-                intent = 'precios_detalle';
-            }
-
-            if (['precios', 'servicios_info', 'academy', 'ubicacion', 'identidad', 'idea', 'empresa', 'evento', 'marca_personal', 'foto_familia', 'foto_pareja', 'personal', 'institucion_gobierno'].includes(intent)) {
-                lastTopic = intent;
-            } else if (intent !== 'default' && intent !== 'negativa_mascotas' && intent !== 'prohibido_discotecas' && intent !== 'religion_evasion') {
-                lastTopic = 'inicio';
-            }
-
-            if (intent !== 'default') {
-                response = getRandom(botResponses[intent]);
-                unknownCount = 0; 
-            } else {
-                unknownCount++;
-                
-                if (unknownCount >= 3) {
-                    response = "Creo que no nos estamos entendiendo bien 😅. Mejor platiquemos con un humano por WhatsApp: <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b> o búscanos en Instagram como <b>@soycreatik</b>.";
-                    unknownCount = 0; 
-                } 
-                else if (!buttonsSent) {
-                    let fallbackMsg = "Mmm, ¡qué interesante! 🤔 Pero no estoy 100% seguro de entenderte. ¿Te ayudo con alguna de estas opciones?";
-                    const pool = ["📷 Ver paquetes y precios", "🎥 Información de servicios", "📍 ¿Dónde están ubicados?", "👤 Hablar con un asesor"].sort(() => 0.5 - Math.random());
-                    const btnStyle = "display:block; width:100%; margin-top:8px; padding:10px; background:rgba(168,85,247,0.15); border:1px solid rgba(168,85,247,0.5); color:white; border-radius:10px; cursor:pointer; text-align:left; font-family:inherit; transition:0.3s; font-size: 0.85rem;";
-                    
-                    let buttonsHTML = `
-                        <div style="margin-top: 12px;">
-                            <button style="${btnStyle}" onmouseover="this.style.background='rgba(168,85,247,0.4)'" onmouseout="this.style.background='rgba(168,85,247,0.15)'" onclick="sendChatOption('💡 Quiero contarte mi idea')">💡 Quiero contarte mi idea</button>
-                            <button style="${btnStyle}" onmouseover="this.style.background='rgba(168,85,247,0.4)'" onmouseout="this.style.background='rgba(168,85,247,0.15)'" onclick="sendChatOption('${pool[0]}')">${pool[0]}</button>
-                            <button style="${btnStyle}" onmouseover="this.style.background='rgba(168,85,247,0.4)'" onmouseout="this.style.background='rgba(168,85,247,0.15)'" onclick="sendChatOption('${pool[1]}')">${pool[1]}</button>
-                        </div>
-                    `;
-                    response = fallbackMsg + buttonsHTML;
-                    buttonsSent = true; 
-                } 
-                else {
-                    response = "¿Podrías reformular tu idea o preguntarme sobre nuestros servicios de foto, video o precios? 😊";
-                }
-            }
-            if (!response || response === "") response = "Mmm, ¿podrías repetirlo de otra forma? 🤔";
-            return response;
-        }
-
-        chatbotFab.addEventListener('click', () => {
-            isChatbotOpen = true;
-            chatbotWindow.classList.add('active');
-            chatbotFab.classList.add('hide-chatbot-ui');
-            if (hasNewMessage) {
-                hasNewMessage = false;
-                chatbotFab.classList.remove('has-new-message');
-                scrollToBottom();
-            }
-            resetInactivityTimer();
-            setTimeout(() => chatbotInput.focus(), 300);
-        });
-
-        closeChatbotBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); 
-            isChatbotOpen = false;
-            chatbotWindow.classList.remove('active');
-            chatbotFab.classList.remove('hide-chatbot-ui');
-        });
-
-        function appendUserMessage(text) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'message user-message';
-            msgDiv.textContent = text;
-            chatbotMessages.appendChild(msgDiv);
-            scrollToBottom();
-        }
-
-        function appendBotTyping() {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'message bot-message typing-container';
-            msgDiv.id = 'bot-typing';
-            msgDiv.innerHTML = '<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
-            chatbotMessages.appendChild(msgDiv);
-            scrollToBottom();
-        }
-
-        function removeBotTyping() {
-            const typingDiv = document.getElementById('bot-typing');
-            if (typingDiv) typingDiv.remove();
-        }
-
-        function appendBotMessage(text) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'message bot-message';
-            msgDiv.innerHTML = text; 
-            chatbotMessages.appendChild(msgDiv);
-            scrollToBottom();
-        }
-
-        function scrollToBottom() {
-            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+            return botResponses.default[0];
         }
 
         function handleSend() {
             if (chatbotSendBtn.disabled) return;
             const text = chatbotInput.value.trim();
             if (!text) return;
-            appendUserMessage(text);
+            appendMessage('user', text);
             chatbotInput.value = '';
-            chatbotInput.disabled = true;
-            chatbotSendBtn.disabled = true;
+            chatbotInput.disabled = true; chatbotSendBtn.disabled = true;
             userMessageCount++;
-            resetInactivityTimer(); 
-            appendBotTyping();
-            if (userMessageCount >= MAX_MESSAGES) {
-                clearTimeout(inactivityTimer); 
-                setTimeout(() => {
-                    removeBotTyping();
-                    let finalMsg = "¡Qué gran plática hemos tenido! 📸<br><br>Para darte la mejor atención, escríbenos a nuestro <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>WhatsApp: +503 7577 8333</a></b>.";
-                    appendBotMessage(finalMsg);
-                    chatbotInput.placeholder = "Escríbenos al WhatsApp para continuar.";
-                }, 1500);
-                return;
-            }
+            
             setTimeout(() => {
-                try {
-                    removeBotTyping();
-                    const responseText = getBotResponse(text);
-                    appendBotMessage(responseText);
-                } catch (error) {
-                    console.error("Error:", error);
-                    removeBotTyping();
-                    appendBotMessage("Tuve un leve cruce de cables 🤖, ¿me repites eso?");
-                } finally {
-                    chatbotInput.disabled = false;
-                    chatbotSendBtn.disabled = false;
-                    chatbotInput.focus();
-                }
-            }, 1000 + Math.random() * 500); 
+                const response = getBotResponse(text);
+                appendMessage('bot', response);
+                chatbotInput.disabled = false; chatbotSendBtn.disabled = false;
+                chatbotInput.focus();
+            }, 1000);
         }
 
+        function appendMessage(role, text) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${role}-message`;
+            msgDiv.innerHTML = text;
+            chatbotMessages.appendChild(msgDiv);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }
+
+        chatbotFab.addEventListener('click', () => { chatbotWindow.classList.add('active'); chatbotFab.style.display = 'none'; });
+        closeChatbotBtn.addEventListener('click', () => { chatbotWindow.classList.remove('active'); chatbotFab.style.display = 'flex'; });
         chatbotSendBtn.addEventListener('click', handleSend);
-        chatbotInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleSend();
-        });
+        chatbotInput.addEventListener('keypress', (e) => e.key === 'Enter' && handleSend());
 
-        // --- VARIABLES GLOBALES Y OVERLAYS ---
-        const loader = document.getElementById('intro-loader');
-        const introText = document.getElementById('intro-text');
-        const glow = document.querySelector('.cursor-glow');
-        const panel = document.getElementById('scroll-panel');
-        const bgPresentation = document.getElementById('bg-presentation');
-        const marquee = document.getElementById('marquee-transition');
-        const mainHeader = document.getElementById('main-header');
-        
-        let isMenuOpen = false, isPaquetesOpen = false, isAcademyOpen = false;
-        
-        const menuBtn = document.getElementById('toggle-menu-btn');
-        const menuOverlay = document.getElementById('full-menu-overlay');
-        const paquetesBtn = document.getElementById('toggle-paquetes-btn');
-        const paquetesOverlay = document.getElementById('paquetes-overlay');
-        const closePaquetesMobileBtn = document.getElementById('close-paquetes-mobile-btn');
-        const paquetesLogoBtn = document.getElementById('paquetes-logo-btn');
-        const btnContactOpen = document.getElementById('btn-contact-open');
-        const contactOverlay = document.getElementById('contact-overlay');
-        const btnContactClose = document.getElementById('close-contact-btn');
-        const btnAcademyOpen = document.getElementById('open-academy-btn');
-        const academyOverlay = document.getElementById('academy-overlay');
-        const btnAcademyClose = document.getElementById('close-academy-btn');
-
-        let slideshowInterval;
-        const slides = document.querySelectorAll('.phone-slideshow .slide');
-        let currentSlideIdx = 0;
-
-        function nextSlide() {
-            slides[currentSlideIdx].classList.remove('active');
-            currentSlideIdx = (currentSlideIdx + 1) % slides.length;
-            slides[currentSlideIdx].classList.add('active');
-        }
-
-        function updateHeaderVisibility() {
-            if (isPaquetesOpen || isAcademyOpen || contactOverlay.classList.contains('active') || isMenuOpen) {
-                bgPresentation.classList.add('paused-animation');
-                marquee.classList.add('paused-animation');
-                chatbotFab.classList.add('hide-chatbot-ui');
-                chatbotWindow.classList.remove('active');
-                isChatbotOpen = false;
-                if (!isMenuOpen) {
-                    mainHeader.style.opacity = '0';
-                    mainHeader.style.visibility = 'hidden';
-                    mainHeader.style.pointerEvents = 'none';
-                }
-            } else {
-                bgPresentation.classList.remove('paused-animation');
-                marquee.classList.remove('paused-animation');
-                chatbotFab.classList.remove('hide-chatbot-ui');
-                mainHeader.style.visibility = 'visible';
-                mainHeader.style.pointerEvents = 'auto';
-                mainHeader.style.opacity = Math.max(0, 1 - window.scrollY / 300);
-            }
-        }
-
-        function triggerIntro() {
-            loader.classList.remove('hidden'); introText.classList.remove('animate-letters');
-            void introText.offsetWidth; introText.classList.add('animate-letters');
-            setTimeout(() => loader.classList.add('hidden'), window.innerWidth <= 900 ? 5000 : 2500);
-        }
-
-        menuBtn.addEventListener('click', () => {
-            isMenuOpen = !isMenuOpen;
-            mainHeader.classList.toggle('menu-mode', isMenuOpen);
-            if (isMenuOpen) {
-                menuOverlay.classList.add('active'); menuBtn.classList.add('active-btn'); document.body.style.overflow = 'hidden';
-                menuBtn.innerHTML = '<span class="dot"></span> Cerrar'; mainHeader.style.opacity = 1; 
-                if (!slideshowInterval && slides.length > 0) slideshowInterval = setInterval(nextSlide, 3000);
-            } else {
-                menuOverlay.classList.remove('active'); menuBtn.classList.remove('active-btn'); document.body.style.overflow = 'auto';
-                menuBtn.innerHTML = '<span class="dot"></span> Menú';
-                if (slideshowInterval) { clearInterval(slideshowInterval); slideshowInterval = null; }
-            }
-            updateHeaderVisibility();
-        });
-
-        paquetesBtn.addEventListener('click', () => {
-            isPaquetesOpen = true;
-            paquetesOverlay.scrollTop = 0; paquetesOverlay.classList.add('active'); document.body.style.overflow = 'hidden';
-            updateHeaderVisibility();
-        });
-
-        closePaquetesMobileBtn.addEventListener('click', () => {
-            isPaquetesOpen = false;
-            paquetesOverlay.classList.remove('active');
-            document.body.style.overflow = 'auto';
-            updateHeaderVisibility();
-        });
-
-        paquetesLogoBtn.addEventListener('click', () => {
-            isPaquetesOpen = false;
-            paquetesOverlay.classList.remove('active');
-            document.body.style.overflow = 'auto';
-            updateHeaderVisibility();
-            triggerIntro(); 
-        });
-
-        btnContactOpen.addEventListener('click', () => {
-            contactOverlay.scrollTop = 0; contactOverlay.classList.add('active'); document.body.style.overflow = 'hidden';
-            updateHeaderVisibility();
-        });
-
-        btnContactClose.addEventListener('click', () => {
-            contactOverlay.classList.remove('active'); document.body.style.overflow = 'auto';
-            updateHeaderVisibility();
-        });
-
-        btnAcademyOpen.addEventListener('click', () => {
-            isAcademyOpen = true;
-            academyOverlay.scrollTop = 0;
-            academyOverlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            updateHeaderVisibility();
-        });
-
-        btnAcademyClose.addEventListener('click', () => {
-            isAcademyOpen = false;
-            academyOverlay.classList.remove('active');
-            document.body.style.overflow = 'auto';
-            updateHeaderVisibility();
-        });
-
-        const viewer = document.getElementById('main-viewer');
-        const thumbBoxes = document.querySelectorAll('#thumbnail-grid .icon-box');
-        const dashImages = ['img1.jpg', 'img2_2.jpg', 'img3.jpg', 'img4.jpg', 'img5.jpg', 'img6.jpg', 'img7_7.jpg', 'img8.jpg', 'img9.jpg'];
-        let dashIdx = 0;
-
-        function autoShowImage() {
-            if (!viewer || thumbBoxes.length === 0) return;
-            const panelRect = panel.getBoundingClientRect();
-            if (panelRect.bottom < 0 || panelRect.top > window.innerHeight) return;
-            if (window.innerWidth <= 900) return; 
-            viewer.style.opacity = 0; 
-            setTimeout(() => {
-                const newSrc = dashImages[dashIdx];
-                viewer.src = newSrc; viewer.style.opacity = 1;
-                thumbBoxes.forEach((box, i) => {
-                    if (i === dashIdx) { box.style.borderColor = '#a855f7'; box.style.background = 'rgba(168, 85, 247, 0.25)'; box.style.transform = 'scale(1.05)'; } 
-                    else { box.style.borderColor = 'rgba(255,255,255,0.08)'; box.style.background = 'rgba(255,255,255,0.04)'; box.style.transform = 'scale(1)'; }
-                });
-                dashIdx = (dashIdx + 1) % dashImages.length;
-            }, 300); 
-        }
-
-        let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
-        let ballX = window.innerWidth / 2, ballY = window.innerHeight / 2;
-        document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; }, { passive: true });
-        function animateGlow() {
-            if (window.innerWidth > 900) { ballX += (mouseX - ballX) * 0.1; ballY += (mouseY - ballY) * 0.1; glow.style.transform = `translate3d(${ballX}px, ${ballY}px, 0) translate3d(-50%, -50%, 0)`; }
-            requestAnimationFrame(animateGlow);
-        }
-        animateGlow();
-
+        // --- CAJA DINÁMICA ---
         function initDynamicBox() {
             const words = document.querySelectorAll('#dynamic-box .world-text');
             const box = document.getElementById('dynamic-box');
-            const titleHistoria = document.getElementById('title-historia');
-            const titleHagamos = document.getElementById('title-hagamos');
-            if (!box || words.length === 0) return;
             let currentIndex = 0;
             function updateText() {
-                const boxRect = box.getBoundingClientRect();
-                if (boxRect.bottom < 0 || boxRect.top > window.innerHeight) return;
                 words[currentIndex].classList.remove('active'); 
                 currentIndex = (currentIndex + 1) % words.length; 
-                const nextWord = words[currentIndex]; 
-                nextWord.classList.add('active');
-                box.style.width = (nextWord.offsetWidth + 80) + 'px'; 
-                if (nextWord.textContent.trim().toLowerCase() === 'inolvidable') { titleHistoria.classList.remove('active'); titleHagamos.classList.add('active'); } 
-                else { titleHagamos.classList.remove('active'); titleHistoria.classList.add('active'); }
+                words[currentIndex].classList.add('active');
+                box.style.width = (words[currentIndex].offsetWidth + 80) + 'px'; 
             }
             document.fonts.ready.then(() => {
-                words[0].classList.add('active'); titleHistoria.classList.add('active'); 
+                words[0].classList.add('active'); 
                 box.style.width = (words[0].offsetWidth + 80) + 'px';
                 setInterval(updateText, 3000);
             });
         }
 
-        window.addEventListener('scroll', () => {
-            if(isMenuOpen || isPaquetesOpen || contactOverlay.classList.contains('active') || isAcademyOpen) return;
-            const scrollVal = window.scrollY;
-            const fadeFactor = Math.max(0, 1 - scrollVal / 300).toFixed(2);
-            bgPresentation.style.opacity = fadeFactor; 
-            if (window.innerWidth > 900) {
-                if (!isChatbotOpen) mainHeader.style.opacity = fadeFactor;
-                if (scrollVal > 100) panel.classList.add('visible'); else panel.classList.remove('visible');
-            }
-        }, { passive: true });
+        function triggerIntro() {
+            document.getElementById('intro-loader').classList.remove('hidden');
+            setTimeout(() => document.getElementById('intro-loader').classList.add('hidden'), 2500);
+        }
 
-        window.addEventListener('load', () => { 
-            triggerIntro(); initDynamicBox(); 
-            if (viewer) { autoShowImage(); setInterval(autoShowImage, 3500); }
-        });
+        window.onload = () => { initDynamicBox(); document.getElementById('intro-loader').classList.add('hidden'); };
     </script>
 </body>
 </html>
