@@ -1,15 +1,3 @@
-¡Ah, entiendo la confusión! Creo que piensas que el generador de códigos debe ir dentro del mismo archivo de tu página web principal para que funcione, pero **es todo lo contrario**.
-
-Para mantener tu negocio seguro, debes tener **DOS archivos separados**:
-
-1. `index.html`: Tu sitio web público (el que ven tus clientes, con el chatbot, los paquetes, etc.).
-2. `gestion.html`: Tu herramienta **privada** (el código cortito que te envié en el mensaje anterior). Este solo lo abres tú en tu computadora para generar los códigos. Si lo pones en el sitio público, ¡cualquier persona podría entrar y llenarte la base de datos de basura!
-
-De todas formas, para que no tengas que buscar entre los mensajes anteriores y tengas la última versión con **todas las mejoras del chatbot y el arrastre de ventana**, aquí te dejo el **código completo de tu página web principal (`index.html`)**.
-
-Copia esto y guárdalo en tu archivo `index.html`:
-
-```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -125,10 +113,7 @@ Copia esto y guárdalo en tu archivo `index.html`:
             pointer-events: none; 
         }
         #chatbot-window.active { opacity: 1; visibility: visible; pointer-events: auto; }
-        
-        #chatbot-window.active:not(.dragged) {
-            transform: translateY(0) scale(1);
-        }
+        #chatbot-window.active:not(.dragged) { transform: translateY(0) scale(1); }
 
         .chat-option-btn {
             display: block; width: 100%; margin-top: 8px; padding: 10px; 
@@ -691,7 +676,7 @@ Copia esto y guárdalo en tu archivo `index.html`:
         </div>
         <div class="chatbot-messages" id="chatbot-messages">
             <div class="message bot-message">
-                ¡Hola! 👋 Soy la IA asistente de Creatik. ¿En qué puedo ayudarte a contar tu historia hoy?
+                ¡Hola! 👋 Soy la IA de Creatik. Para darte un servicio súper personalizado y generar tu código de gestión, <b>¿me dices tu nombre?</b>
             </div>
         </div>
         <div class="chatbot-input-area">
@@ -706,11 +691,6 @@ Copia esto y guárdalo en tu archivo `index.html`:
         // --- BLOQUEO ANTICOPIA ---
         document.addEventListener('contextmenu', event => event.preventDefault());
         document.addEventListener('dragstart', event => event.preventDefault());
-
-        console.log("%c==========================================", "color: #0ea5e9; font-weight: bold; font-size: 14px;");
-        console.log("%cCREADO POR ROGER MÉNDEZ", "color: #0ea5e9; font-weight: bold; font-size: 16px;");
-        console.log("%cTodos los derechos reservados. Uso no autorizado prohibido.", "color: white; font-size: 12px;");
-        console.log("%c==========================================", "color: #0ea5e9; font-weight: bold; font-size: 14px;");
 
         // --- SISTEMA DISOLUCIÓN CRUZADA ACADEMY ---
         const academyImagesList = [
@@ -730,12 +710,10 @@ Copia esto y guárdalo en tu archivo `index.html`:
             }
             return array;
         }
-
         let shuffledAcademy = shuffleArray(academyImagesList);
 
         function changeAcademyImages() {
             if (!document.getElementById('academy-A')) return;
-
             if (currentPairIndex >= shuffledAcademy.length) {
                 let lastImage = shuffledAcademy[shuffledAcademy.length - 1];
                 let newShuffle;
@@ -743,14 +721,11 @@ Copia esto y guárdalo en tu archivo `index.html`:
                 shuffledAcademy = newShuffle;
                 currentPairIndex = 0;
             }
-
             let nextImage = shuffledAcademy[currentPairIndex];
             currentPairIndex++;
-
             const layerOut = document.getElementById(`academy-${activeLayer}`);
             activeLayer = activeLayer === 'A' ? 'B' : 'A';
             const layerIn = document.getElementById(`academy-${activeLayer}`);
-
             const tempImg = new Image();
             tempImg.onload = function() {
                 layerIn.src = this.src;
@@ -761,7 +736,7 @@ Copia esto y guárdalo en tu archivo `index.html`:
         }
         setInterval(changeAcademyImages, 4000); 
 
-        // --- LÓGICA DEL CHATBOT ---
+        // --- LÓGICA DEL CHATBOT Y GOOGLE SHEETS ---
         const chatbotFab = document.getElementById('chatbot-fab');
         const chatbotWindow = document.getElementById('chatbot-window');
         const closeChatbotBtn = document.getElementById('close-chatbot-btn');
@@ -774,50 +749,65 @@ Copia esto y guárdalo en tu archivo `index.html`:
         let userMessageCount = 0;
         let lastTopic = 'inicio'; 
         const MAX_MESSAGES = 60;
-        
         let inactivityTimer;
         let waitingForInactivityResponse = false;
         let hasNewMessage = false;
 
+        // NUEVAS VARIABLES PARA EL NOMBRE Y CÓDIGO
+        let chatState = 'ASKING_NAME'; 
+        let userName = '';
+        let sessionCode = '';
+        const GOOGLE_APP_URL = "https://script.google.com/macros/s/AKfycbya4Eq0jSOrY1NZCF6JUgfSu_xM0vm31tB8rZcrBceYn3lOpTRdJ_Cfx3DgHQP1Nj_P/exec";
+
+        function generarCodigoUnico() {
+            const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let codigo = 'CRTK-';
+            for (let i = 0; i < 6; i++) {
+                codigo += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+            }
+            return codigo;
+        }
+
+        function guardarChatEnGoogle(emisor, mensaje) {
+            let mensajeLimpio = mensaje.replace(/<[^>]*>?/gm, ''); 
+            fetch(GOOGLE_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    emisor: emisor,
+                    mensaje: mensajeLimpio,
+                    codigo: sessionCode || "Sin Código"
+                })
+            }).catch(e => console.log(e));
+        }
+
         const botResponses = {
-            pregunta: [
-                "¡Claro que sí! Estoy para ayudarte a resolver cualquier duda. Elige una de estas opciones o escríbeme lo que necesitas: 👇<div style='margin-top:10px;'><button class='chat-option-btn' onclick='sendChatOption(\"Ver paquetes y precios\")'>📷 Paquetes y Precios</button><button class='chat-option-btn' onclick='sendChatOption(\"Servicios de video\")'>🎥 Servicios de Video</button><button class='chat-option-btn' onclick='sendChatOption(\"Hablar con un asesor\")'>👤 Hablar con un humano</button></div>"
-            ],
+            pregunta: ["¡Claro que sí! Estoy para ayudarte a resolver cualquier duda. Elige una de estas opciones o escríbeme lo que necesitas: 👇<div style='margin-top:10px;'><button class='chat-option-btn' onclick='sendChatOption(\"Ver paquetes y precios\")'>📷 Paquetes y Precios</button><button class='chat-option-btn' onclick='sendChatOption(\"Servicios de video\")'>🎥 Servicios de Video</button><button class='chat-option-btn' onclick='sendChatOption(\"Hablar con un asesor\")'>👤 Hablar con un humano</button></div>"],
             quiero_fotos: ["¡Claro que sí! Nos encantaría capturar tu historia. 📸 ¿Qué tipo de sesión tienes en mente? (Ej. Personal, pareja, familiar, evento, producto...)"],
             no_estudio: ["Actualmente somos nómadas y trabajamos 100% en exteriores y locaciones. 🌳 Por lo tanto, <b>no realizamos fotos de estudio, carnet, cédula o pasaporte</b>. ¡Pero si buscas fotos artísticas al aire libre, somos tu mejor opción!"],
             no_bebes: ["Por el momento no realizamos sesiones especializadas para recién nacidos (newborn) o únicamente para bebés. 🍼 Nuestro enfoque actual es en jóvenes, adultos, parejas, familias y marcas. ¡Esperamos poder ayudarte con otro tipo de sesión!"],
             viaticos: ["¡Llegamos a donde esté tu historia! 🚗 Toma en cuenta que nuestros paquetes tienen precio base para la zona de <b>San Salvador</b>. Para otros departamentos o zonas alejadas, aplicamos un cargo extra por viáticos. Escríbenos a WhatsApp para cotizar tu ubicación exacta."],
-            
-            // RESPUESTAS CONTACTO HUMANO
             no_chatea_aqui: ["¡Por aquí soy solo tu asistente virtual (IA)! 🤖 Para platicar con un humano de nuestro equipo y darte la mejor atención, preferimos comunicarnos por nuestras redes sociales o WhatsApp. ¡Escríbenos, te esperamos con gusto!"],
             pidiendo_contacto: ["¡Nos encantaría, pero nuestra IA no puede enviar mensajes salientes! 😅 Por favor, escríbenos tú directamente a nuestro WhatsApp o redes sociales. ¡Estaremos listos y felices de responderte de inmediato! 👉 <a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7;'><b>WhatsApp: +503 7577 8333</b></a>"],
-
-            // LÓGICA DE VIDEO
             solo_video: ["¡Nos encanta el formato video! 🎥 Cuéntame, ¿para qué tipo de proyecto lo necesitas?<div style='margin-top:10px;'><button class='chat-option-btn' onclick='sendChatOption(\"Video Emprendimiento\")'>Emprendimiento / Marcas</button><button class='chat-option-btn' onclick='sendChatOption(\"Video Sesion\")'>Sesión Personal / Retrato</button><button class='chat-option-btn' onclick='sendChatOption(\"Video Evento\")'>Cobertura de Evento</button></div>"],
             video_emprendimiento: ["Para marcas y negocios, contamos con estos paquetes ideales: <br><br><div style='background:rgba(255,255,255,0.05); border:1px solid rgba(168,85,247,0.3); padding:10px; border-radius:10px; margin-bottom:8px;'><b>Emprendimiento Básico ($50)</b><br><span style='font-size:0.8rem; color:#ccc;'>1 Hora • Ambientación básica • 15 Fotos editadas</span></div><div style='background:rgba(255,255,255,0.05); border:1px solid rgba(168,85,247,0.3); padding:10px; border-radius:10px;'><b>Emprendimiento Pro ($125)</b><br><span style='font-size:0.8rem; color:#ccc;'>1 Hora • Ambientación avanzada • 25 Fotos editadas</span></div><br>¿Te interesa agendar? Escríbenos a <a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>WhatsApp</a>."],
             video_sesion: ["Si buscas destacar tu imagen, este es el paquete para ti:<br><br><div style='background:rgba(255,255,255,0.05); border:1px solid rgba(168,85,247,0.3); padding:10px; border-radius:10px;'><b>Sesión Personal ($50)</b><br><span style='font-size:0.8rem; color:#ccc;'>1 Hora • 15 fotos editadas • Fotos extras sin editar • Ideal para clips cortos/reels</span></div><br>¿Lo reservamos? 👉 <a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>Escríbenos</a>"],
             video_evento: ["¡Para eventos tenemos las mejores opciones con video incluido!<br><br><div style='background:rgba(255,255,255,0.05); border:1px solid #ffd700; padding:10px; border-radius:10px; margin-bottom:8px;'><b>⭐ Evento Intermedio ($100)</b><br><span style='font-size:0.8rem; color:#ccc;'>2 Horas • 100 fotos editadas • <b>Video de 10 min</b> • 10 fotos impresas</span></div><div style='background:rgba(255,255,255,0.05); border:1px solid rgba(168,85,247,0.3); padding:10px; border-radius:10px;'><b>Evento Express ($170)</b><br><span style='font-size:0.8rem; color:#ccc;'>2.5 Horas • 150 fotos • <b>Filmación 30 min + Video vertical</b> • 16 fotos impresas</span></div><br>¿Qué te parecen? Reserva aquí: <a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>WhatsApp</a>"],
-
-            // ASESORÍA Y CONTINUIDAD
             asesoria: ["¡Con gusto! Para darte la mejor asesoría, cuéntame: ¿Cuál es tu presupuesto aproximado? 💸<div style='margin-top:10px;'><button class='chat-option-btn' onclick='sendChatOption(\"Presupuesto Bajo ($50-$75)\")'>Bajo ($50-$75)</button><button class='chat-option-btn' onclick='sendChatOption(\"Presupuesto Medio ($100-$125)\")'>Medio ($100-$125)</button><button class='chat-option-btn' onclick='sendChatOption(\"Presupuesto Pro ($170+)\")'>Pro ($170+)</button></div>"],
             mas_opciones: ["¡Claro! Manejamos varias opciones adaptadas a lo que buscas. Si me cuentas el tipo de sesión o evento que planeas, te puedo recomendar el mejor paquete. 📸👇"],
             rango_bajo: ["Para ese rango te recomiendo la <b>Sesión Personal ($50)</b> o el <b>Evento Small ($75)</b>. ¡Son ideales para empezar! ¿Quieres agendar por WhatsApp?<br><br>👉 <a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'><b>WhatsApp: +503 7577 8333</b></a>"],
             rango_medio: ["La mejor opción es nuestro <b>Evento Intermedio ($100)</b>, ¡es el favorito! Incluye video de 10 min. ¿Te gustaría apartar tu fecha?<br><br>👉 <a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'><b>WhatsApp: +503 7577 8333</b></a>"],
             rango_alto: ["¡Vas por todo! El <b>Evento Express ($170)</b> es el más completo: incluye asistente, video para redes y 16 fotos impresas. Escríbenos para confirmar disponibilidad:<br><br>👉 <a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'><b>WhatsApp: +503 7577 8333</b></a>"],
-            
-            // EMOCIONES Y ACTITUD (ESTILO CREATIK)
             emocion_triste: ["¡Ánimo! A veces los días grises son el mejor fondo para una foto espectacular. Cuenta con nosotros para alegrarte el día. ✨ ¿En qué te ayudamos?"],
             emocion_feliz: ["¡Esa es la actitud Creatik! 🚀 Aprovechemos esa energía para planear una sesión increíble. ¿Qué historia quieres contar hoy?"],
             emocion_enojado: ["¡Respira profundo! Aquí estamos para que todo fluya sin estrés. 🧘‍♂️ Relájate y cuéntame en qué podemos apoyarte."],
             emocion_dudoso: ["¡Es normal tener dudas antes de crear algo grande! Para eso estoy aquí. ¿Te oriento con nuestros paquetes o me cuentas tu idea? 💡"],
-            
-            // HATERS / TROLLS
             hater_celular: ["Respetamos todas las herramientas, ¡los celulares de hoy son geniales! 📱 Pero en Creatik ofrecemos iluminación profesional, óptica Full Frame, edición detallada y una visión artística que hace toda la diferencia. ✨"],
-            hater_barato: ["Entendemos que hay opciones para todo presupuesto. Nuestro valor refleja la pasión, el equipo de alta gama, los materiales entregados (como las fotos impresas) y las horas de dedicación para que tu historia sea nivel cine. ¡Siempre damos el 100%! 🚀"],
-
+            hater_barato: ["Entendemos que hay opciones para todo presupuesto. Nuestro valor refleja la pasión, el equipo de alta gama, los materiales entregados y las horas de dedicación para que tu historia sea nivel cine. ¡Siempre damos el 100%! 🚀"],
             robo_info: ["¡Nos alegra que te guste nuestra técnica! Mantenemos nuestra 'receta secreta' de edición y flujo de trabajo en casa, pero nos encanta inspirar a otros creadores. ✨"],
             contratar: ["¡Esa es la actitud! 🚀 Para formalizar y apartar tu fecha, el siguiente paso es hablar con nuestro coordinador humano en WhatsApp: <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b>. ¡Te esperamos ahí para empezar!"],
-            regateo: ["Entiendo que el presupuesto es clave. No solemos hacer recortes directos porque nuestro equipo y tiempo garantizan una calidad premium, pero ¡escríbenos a WhatsApp! A veces podemos ajustar el paquete para hacer posible tu idea."],
+            regateo: ["Entiendo que el presupuesto es clave. No solemos hacer recortes directos porque garantizamos calidad premium, pero ¡escríbenos a WhatsApp! A veces podemos ajustar el paquete para hacer posible tu idea."],
             caro: ["Entiendo tu punto. Nuestros precios reflejan el uso de equipo de alta gama, iluminación profesional y horas de edición detallada para que el resultado sea nivel cine. ✨ ¡Es una inversión en calidad!"],
             barato: ["¡Queremos que el arte visual sea accesible! Optimizamos nuestros procesos para darte la mejor calidad sin que tengas que gastar una fortuna. 😎"],
             solo_cotiza: ["¡No hay ningún problema! Cotizar es el primer paso para crear algo genial. Llévate la info y cuando estés listo, aquí estaremos para ti. 📸"],
@@ -825,7 +815,7 @@ Copia esto y guárdalo en tu archivo `index.html`:
             bad_strange: ["¡Ups! 😅 Mi programación solo me permite hablar de fotografía, video y diseño. ¿Te ayudo con eso?"],
             negativa_mascotas: ["Por el momento estamos 100% enfocados en sesiones para personas, empresas y eventos. 📸 Aunque amamos a los peluditos, aún no tenemos el set listo para ellos."],
             prohibido_discotecas: ["Por políticas de la agencia, no realizamos coberturas en discotecas o ambientes similares. 🚫 Preferimos enfocarnos en eventos sociales, culturales y corporativos."],
-            donar_academy: ["¡Qué increíble que quieras sumar! 🤩 Creatik Academy siempre tiene las puertas abiertas para seguir formando jóvenes. Iniciamos en Valle Verde y nos expandimos a todo Apopa y más municipios. ¡Escríbenos al WhatsApp para coordinar tu apoyo! ✨"],
+            donar_academy: ["¡Qué increíble que quieras sumar! 🤩 Creatik Academy siempre tiene las puertas abiertas para seguir formando jóvenes. ¡Escríbenos al WhatsApp para coordinar tu apoyo! ✨"],
             institucion_gobierno: ["¡Excelente! Tenemos gran experiencia trabajando con instituciones, escuelas y proyectos. 🏢 Podemos crear una propuesta formal. Escríbenos al WhatsApp para más detalles."],
             empresa: ["¡Las marcas son nuestro fuerte! 📈 Para contenido corporativo o de emprendimiento, te recomiendo el paquete Pro de $125 o armar algo a la medida."],
             marca_personal: ["¡Perfecto para impulsar tu imagen! 🚀 El paquete de $50 (Sesión Personal) es ideal para empezar."],
@@ -852,38 +842,25 @@ Copia esto y guárdalo en tu archivo `index.html`:
         };
 
         const intents = [
-            // 1. PREGUNTAS Y FLUJOS DIRECTOS
             { name: 'pregunta', regex: "\\b(pregunta|quiero hacer una pregunta|una duda|tengo una duda|consultar)\\b" },
             { name: 'quiero_fotos', regex: "\\b(quiero una sesion|quiero fotos|sesion de fotos|hacerme fotos|necesito fotos|quisiera una sesion|quisiera fotos|cotizar una sesion)\\b" },
             { name: 'solo_video', regex: "\\b(solo video|quiero un video|hacen video|graban video|videografia|hacer un video|servicios de video)\\b" },
             { name: 'video_emprendimiento', regex: "\\b(video emprendimiento)\\b" },
             { name: 'video_sesion', regex: "\\b(video sesion)\\b" },
             { name: 'video_evento', regex: "\\b(video evento)\\b" },
-            
-            // 2. CONTACTO HUMANO E INTENTOS DE DEJAR NÚMERO
             { name: 'no_chatea_aqui', regex: "\\b(por aca no|no responden aqui|chatear por aqui|hablar por aqui|solo por whatsapp|por que whatsapp|no me responden|hablar con un humano|puedo hablar aqui|no responden por aca|responder por aca)\\b" },
             { name: 'pidiendo_contacto', regex: "\\b(escribanme|escribenos|llamenme|llamame|mi numero|marquenme|contactenme|te dejo mi numero|mi celular es|comuniquense|escribeme)\\b|\\d{8}" },
-
-            // 3. EMOCIONES
             { name: 'emocion_triste', regex: "\\b(triste|deprimido|mal|bajoneado|tristesa)\\b" },
             { name: 'emocion_feliz', regex: "\\b(feliz|contento|alegre|emocionado|excelente|super bien|genial)\\b" },
             { name: 'emocion_enojado', regex: "\\b(enojado|molesto|furioso|cabreado|enojada|harto)\\b" },
             { name: 'emocion_dudoso', regex: "\\b(dudoso|indeciso|no se|confundido|dudosa)\\b" },
-            
-            // 4. HATERS / OBJECIONES
             { name: 'hater_celular', regex: "\\b(celular|iphone|mi telefono|telefono toma mejores|cel hace lo mismo|no sirve|basura|asco|feos|malos)\\b" },
             { name: 'hater_barato', regex: "\\b(otros cobran menos|muy caro|gratis|me cobran menos|se la pican|creidos|vanidosos|superiores|se creen mucho|creidas|pican)\\b" },
-            
-            // 5. TIEMPO
             { name: 'tiempo_hora', regex: "\\b(hora es|que hora son|dime la hora|la hora)\\b" },
             { name: 'tiempo_dia', regex: "\\b(que dia es|fecha de hoy|dia de hoy|que fecha)\\b" },
-            
-            // 6. NEGATIVAS / LIMITACIONES
             { name: 'no_estudio', regex: "\\b(estudio|cedula|pasaporte|titulo|carnet|foto carnet|fotografia de estudio|estudio fotografico)\\b" },
             { name: 'no_bebes', regex: "\\b(bebe|bebes|recien nacido|newborn|nino recien|nina recien)\\b" },
             { name: 'viaticos', regex: "\\b(fuera de san salvador|fuera de ss|otro departamento|interior del pais|viaticos|transporte|cobran extra|costo adicional|lejos|santa ana|san miguel|chalatenango|sonsonate|usulutan|la libertad|la paz|cabanas|cuscatlan|morazan|san vicente|la union|ahuachapan|viajan)\\b" },
-            
-            // 7. ASESORÍA Y PAQUETES
             { name: 'mas_opciones', regex: "\\b(otro mas|otros mas|tienen otro|tienes otro|mas paquetes|otras opciones|mas opciones|algun otro|otro paquete)\\b" },
             { name: 'asesoria', regex: "\\b(asesoria|asesorar|asesorame|ayudame a elegir|no se que elegir|recomiendame|ayuda|orientacion|que me recomiendas)\\b" },
             { name: 'rango_bajo', regex: "\\b(bajo|economico|barato|50|75|menos de 100|presupuesto bajo)\\b" },
@@ -924,12 +901,9 @@ Copia esto y guárdalo en tu archivo `index.html`:
             { name: 'interjeccion', regex: "\\b(jaja|jajaja|jeje|de verdad|en serio|wow|genial|super|me alegra|que bueno|excelente|que chivo|si|claro|ok|vale|esta bien|me parece|dale|ah ok|oh|ya veo|entiendo|bueno)\\b" }
         ];
 
-        function getRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-
         window.sendChatOption = function(text) {
-            const inputField = document.getElementById('chatbot-input');
-            inputField.value = text;
-            document.getElementById('chatbot-send-btn').click();
+            chatbotInput.value = text;
+            chatbotSendBtn.click();
         };
 
         function normalizeText(text) {
@@ -943,14 +917,10 @@ Copia esto y guárdalo en tu archivo `index.html`:
 
         function handleInactivity() {
             if (userMessageCount >= MAX_MESSAGES) return;
-
             if (isChatbotOpen) {
                 waitingForInactivityResponse = true;
                 const btnStyle = "display:inline-block; margin: 5px 5px 0 0; padding: 8px 12px; background:rgba(168,85,247,0.2); border:1px solid rgba(168,85,247,0.5); color:white; border-radius:15px; cursor:pointer; font-size: 0.85rem; transition:0.3s;";
-                const msg = `¿Sigues ahí? 🤔<div style="margin-top:10px;">
-                    <button style="${btnStyle}" onclick="sendChatOption('Sí, sigo aquí')">Sí, sigo aquí</button>
-                    <button style="${btnStyle}" onclick="sendChatOption('No, ya me voy')">No, ya me voy</button>
-                </div>`;
+                const msg = `¿Sigues ahí, ${userName || 'amigo(a)'}? 🤔<div style="margin-top:10px;"><button style="${btnStyle}" onclick="sendChatOption('Sí, sigo aquí')">Sí, sigo aquí</button><button style="${btnStyle}" onclick="sendChatOption('No, ya me voy')">No, ya me voy</button></div>`;
                 appendBotMessage(msg);
             } else {
                 hasNewMessage = true;
@@ -966,11 +936,8 @@ Copia esto y guárdalo en tu archivo `index.html`:
 
             if (waitingForInactivityResponse) {
                 waitingForInactivityResponse = false;
-                if (new RegExp("\\b(si|sigo aqui|yes)\\b", "i").test(cleanInput)) {
-                    return "¡Genial! Sigamos platicando. 😊 ¿En qué estábamos?";
-                } else if (new RegExp("\\b(no|ya me voy|bye|adios)\\b", "i").test(cleanInput)) {
-                    return "¡Entendido! Un gusto saludarte. ¡Hasta la próxima! 👋";
-                }
+                if (new RegExp("\\b(si|sigo aqui|yes)\\b", "i").test(cleanInput)) return "¡Genial! Sigamos platicando. 😊 ¿En qué estábamos?";
+                else if (new RegExp("\\b(no|ya me voy|bye|adios)\\b", "i").test(cleanInput)) return "¡Entendido! Un gusto saludarte. ¡Hasta la próxima! 👋";
             }
 
             for (let i = 0; i < intents.length; i++) {
@@ -980,29 +947,14 @@ Copia esto y guárdalo en tu archivo `index.html`:
                 }
             }
 
-            // INTERCEPTAMOS HORA Y FECHA DINÁMICA
-            if (intent === 'tiempo_hora') {
-                const hora = new Date().toLocaleTimeString('es-SV', { hour: '2-digit', minute: '2-digit' });
-                return `¡Aquí Creatik IA reportándose! 🤖 Son las <b>${hora}</b>. ¿En qué te ayudo?`;
-            }
-            if (intent === 'tiempo_dia') {
-                const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-                const fecha = new Date().toLocaleDateString('es-SV', opcionesFecha);
-                return `Hoy es <b>${fecha}</b>, un día perfecto para planear tu próxima sesión. ✨`;
-            }
+            if (intent === 'tiempo_hora') return `¡Aquí Creatik IA reportándose! 🤖 Son las <b>${new Date().toLocaleTimeString('es-SV', { hour: '2-digit', minute: '2-digit' })}</b>. ¿En qué te ayudo?`;
+            if (intent === 'tiempo_dia') return `Hoy es <b>${new Date().toLocaleDateString('es-SV', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</b>, un día perfecto para planear tu próxima sesión. ✨`;
             
-            // CONTEXTO INTELIGENTE: Si preguntan qué hacen, pero acaban de hablar de Academy
-            if (intent === 'servicios_info' && lastTopic === 'academy') {
-                return "En Creatik Academy realizamos salidas de campo, talleres y actividades prácticas para enseñar fotografía, integrar jóvenes y crear comunidad. ¡Usamos el arte para cambiar realidades! ✨";
-            }
+            if (intent === 'servicios_info' && lastTopic === 'academy') return "En Creatik Academy realizamos salidas de campo, talleres y actividades prácticas para enseñar fotografía, integrar jóvenes y crear comunidad. ¡Usamos el arte para cambiar realidades! ✨";
             
-            // CONTEXTO: Si piden "otro más"
             if (intent === 'mas_opciones') {
-                if (lastTopic === 'evento') {
-                    return "Además del Intermedio y el Express, tenemos el <b>Evento Small ($75)</b> que cubre 1 hora con 50 fotos editadas. ¡Perfecto para algo íntimo! ¿Te suena bien?";
-                } else if (lastTopic === 'empresa') {
-                    return "Para empresas tenemos el <b>Básico ($50)</b> y el <b>Pro ($125)</b> con ambientación avanzada. ¡Ambos incluyen fotos editadas y crudas!";
-                }
+                if (lastTopic === 'evento') return "Además del Intermedio y el Express, tenemos el <b>Evento Small ($75)</b> que cubre 1 hora con 50 fotos editadas. ¡Perfecto para algo íntimo! ¿Te suena bien?";
+                else if (lastTopic === 'empresa') return "Para empresas tenemos el <b>Básico ($50)</b> y el <b>Pro ($125)</b> con ambientación avanzada. ¡Ambos incluyen fotos editadas y crudas!";
                 return botResponses.mas_opciones[0];
             }
 
@@ -1012,39 +964,18 @@ Copia esto y guárdalo en tu archivo `index.html`:
                 else if (lastTopic === 'identidad') response = "¡Jaja, sí! Aunque soy digital, me emociona mucho platicar contigo. 🤖 ¿Te ayudo con algo de foto o video?";
                 else if (lastTopic === 'idea' || lastTopic === 'empresa' || lastTopic === 'evento') response = "¡Totalmente! Tenemos la misma visión creativa entonces. 🚀 ¿Vemos paquetes o prefieres hablar con un humano en WhatsApp?";
                 else response = getRandom(botResponses['interjeccion']);
-                
                 return response;
             }
 
-            // Rastrear el tema actual
-            if (['precios', 'servicios_info', 'academy', 'ubicacion', 'identidad', 'idea', 'empresa', 'evento', 'marca_personal', 'foto_familia', 'foto_pareja', 'personal', 'institucion_gobierno'].includes(intent)) {
-                lastTopic = intent;
-            } else if (intent !== 'default') {
-                lastTopic = 'inicio';
-            }
+            if (['precios', 'servicios_info', 'academy', 'ubicacion', 'identidad', 'idea', 'empresa', 'evento', 'marca_personal', 'foto_familia', 'foto_pareja', 'personal', 'institucion_gobierno'].includes(intent)) lastTopic = intent;
+            else if (intent !== 'default') lastTopic = 'inicio';
 
-            // Entregar respuesta
             if (intent !== 'default') {
                 response = getRandom(botResponses[intent]);
             } else {
-                // CUANDO NO ENTIENDE Y NO ES EL PRIMER MENSAJE, NO SALUDA DE NUEVO.
-                let fallbackMsg = "";
-                if (userMessageCount <= 1) {
-                    fallbackMsg = "¡Hola! Estoy listo para ayudarte a resolver cualquier duda. ¿De qué tema te gustaría hablar? 👇";
-                } else {
-                    fallbackMsg = "¿Te ayudo con algo más específico? Elige una opción rápida: 👇";
-                }
-                
+                let fallbackMsg = "¿Te ayudo con algo más específico? Elige una opción rápida: 👇";
                 const btnStyle = "display:block; width:100%; margin-top:8px; padding:10px; background:rgba(168,85,247,0.15); border:1px solid rgba(168,85,247,0.5); color:white; border-radius:10px; cursor:pointer; text-align:left; font-family:inherit; transition:0.3s; font-size: 0.85rem;";
-                
-                let buttonsHTML = `
-                    <div style="margin-top: 12px;">
-                        <button style="${btnStyle}" onclick="sendChatOption('Ver paquetes y precios')">📷 Ver paquetes y precios</button>
-                        <button style="${btnStyle}" onclick="sendChatOption('Servicios de video')">🎥 Servicios de Video</button>
-                        <button style="${btnStyle}" onclick="sendChatOption('Hablar con un asesor')">👤 Hablar con un humano</button>
-                    </div>
-                `;
-                response = fallbackMsg + buttonsHTML;
+                response = fallbackMsg + `<div style="margin-top: 12px;"><button style="${btnStyle}" onclick="sendChatOption('Ver paquetes y precios')">📷 Ver paquetes y precios</button><button style="${btnStyle}" onclick="sendChatOption('Servicios de video')">🎥 Servicios de Video</button><button style="${btnStyle}" onclick="sendChatOption('Hablar con un asesor')">👤 Hablar con un humano</button></div>`;
             }
             return response;
         }
@@ -1054,7 +985,7 @@ Copia esto y guárdalo en tu archivo `index.html`:
             isChatbotOpen = true;
             chatbotWindow.classList.add('active');
             chatbotFab.classList.add('hide-chatbot-ui');
-            document.body.classList.add('chat-active'); // Oculta botones "PAQUETES" y "Login"
+            document.body.classList.add('chat-active');
             if (hasNewMessage) {
                 hasNewMessage = false;
                 chatbotFab.classList.remove('has-new-message');
@@ -1069,9 +1000,7 @@ Copia esto y guárdalo en tu archivo `index.html`:
             isChatbotOpen = false;
             chatbotWindow.classList.remove('active');
             chatbotFab.classList.remove('hide-chatbot-ui');
-            document.body.classList.remove('chat-active'); // Muestra botones de nuevo
-            
-            // Restablece la posición de la ventana por si fue arrastrada
+            document.body.classList.remove('chat-active');
             setTimeout(() => {
                 currentTransX = 0; currentTransY = 0;
                 chatbotWindow.style.transform = ''; 
@@ -1079,14 +1008,13 @@ Copia esto y guárdalo en tu archivo `index.html`:
             }, 400); 
         });
 
-        // --- SISTEMA DE ARRASTRE DE VENTANA (DRAG & DROP) ---
+        // --- SISTEMA DE ARRASTRE DE VENTANA ---
         let isDraggingChat = false, dragStartX, dragStartY, currentTransX = 0, currentTransY = 0;
 
         function onDragStart(e) {
-            if (e.target.closest('#close-chatbot-btn')) return; // No arrastrar si tocan cerrar
+            if (e.target.closest('#close-chatbot-btn')) return;
             isDraggingChat = true;
-            chatbotWindow.style.transition = 'none'; // Quitar transición suave al arrastrar
-            
+            chatbotWindow.style.transition = 'none';
             if (e.type === 'touchstart') {
                 dragStartX = e.touches[0].clientX - currentTransX;
                 dragStartY = e.touches[0].clientY - currentTransY;
@@ -1095,11 +1023,9 @@ Copia esto y guárdalo en tu archivo `index.html`:
                 dragStartY = e.clientY - currentTransY;
             }
         }
-
         function onDragMove(e) {
             if (!isDraggingChat) return;
-            e.preventDefault(); // Evitar scroll de fondo
-            
+            e.preventDefault();
             if (e.type === 'touchmove') {
                 currentTransX = e.touches[0].clientX - dragStartX;
                 currentTransY = e.touches[0].clientY - dragStartY;
@@ -1107,17 +1033,13 @@ Copia esto y guárdalo en tu archivo `index.html`:
                 currentTransX = e.clientX - dragStartX;
                 currentTransY = e.clientY - dragStartY;
             }
-            
             chatbotWindow.style.transform = `translate(${currentTransX}px, ${currentTransY}px) scale(1)`;
         }
-
         function onDragEnd() {
             if (!isDraggingChat) return;
             isDraggingChat = false;
-            // Restaurar transiciones de visibilidad pero mantener el transform en su lugar
             chatbotWindow.style.transition = 'opacity 0.4s ease, visibility 0.4s';
         }
-
         chatHeader.addEventListener('mousedown', onDragStart);
         document.addEventListener('mousemove', onDragMove);
         document.addEventListener('mouseup', onDragEnd);
@@ -1125,7 +1047,7 @@ Copia esto y guárdalo en tu archivo `index.html`:
         document.addEventListener('touchmove', onDragMove, {passive: false});
         document.addEventListener('touchend', onDragEnd);
 
-        // --- INSERCIÓN DE MENSAJES ---
+        // --- FUNCIONES DEL CHAT Y EXCEL ---
         function appendUserMessage(text) {
             const msgDiv = document.createElement('div');
             msgDiv.className = 'message user-message';
@@ -1164,12 +1086,38 @@ Copia esto y guárdalo en tu archivo `index.html`:
             if (chatbotSendBtn.disabled) return;
             const text = chatbotInput.value.trim();
             if (!text) return;
+            
             appendUserMessage(text);
             chatbotInput.value = '';
             chatbotInput.disabled = true;
             chatbotSendBtn.disabled = true;
+
+            // FASE 1: OBTENER NOMBRE Y GENERAR CÓDIGO
+            if (chatState === 'ASKING_NAME') {
+                userName = text;
+                sessionCode = generarCodigoUnico();
+                chatState = 'READY';
+                
+                guardarChatEnGoogle(userName, text);
+                
+                appendBotTyping();
+                setTimeout(() => {
+                    removeBotTyping();
+                    const btnStyle = "display:block; width:100%; margin-top:8px; padding:10px; background:rgba(168,85,247,0.15); border:1px solid rgba(168,85,247,0.5); color:white; border-radius:10px; cursor:pointer; text-align:left; font-family:inherit; transition:0.3s; font-size: 0.85rem;";
+                    let welcomeMsg = `¡Mucho gusto, <b>${userName}</b>! ✨ He creado tu número de gestión único: <b style="color:#ffd700;">${sessionCode}</b>. (Guárdalo para futuras referencias).<br><br>¿En qué te puedo ayudar hoy? 👇<div style="margin-top: 12px;"><button style="${btnStyle}" onclick="sendChatOption('Ver paquetes y precios')">📷 Ver paquetes y precios</button><button style="${btnStyle}" onclick="sendChatOption('Servicios de video')">🎥 Servicios de Video</button><button style="${btnStyle}" onclick="sendChatOption('Hablar con un asesor')">👤 Hablar con un humano</button></div>`;
+                    
+                    appendBotMessage(welcomeMsg);
+                    guardarChatEnGoogle("Creatik IA", `[Código Creado: ${sessionCode}] Bienvenida y botones enviados.`);
+                    
+                    chatbotInput.disabled = false; chatbotSendBtn.disabled = false; chatbotInput.focus();
+                }, 1000);
+                return;
+            }
+
+            // FASE 2: CHAT NORMAL
             userMessageCount++;
             resetInactivityTimer(); 
+            guardarChatEnGoogle(userName || "Usuario", text);
             appendBotTyping();
             
             if (userMessageCount >= MAX_MESSAGES) {
@@ -1178,6 +1126,7 @@ Copia esto y guárdalo en tu archivo `index.html`:
                     removeBotTyping();
                     let finalMsg = "¡Qué gran plática hemos tenido! 📸<br><br>Para darte la mejor atención, escríbenos a nuestro <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>WhatsApp: +503 7577 8333</a></b>.";
                     appendBotMessage(finalMsg);
+                    guardarChatEnGoogle("Creatik IA", "Chat cerrado por límite de mensajes. Derivado a WA.");
                     chatbotInput.placeholder = "Escríbenos al WhatsApp para continuar.";
                 }, 1500);
                 return;
@@ -1188,6 +1137,7 @@ Copia esto y guárdalo en tu archivo `index.html`:
                     removeBotTyping();
                     const responseText = getBotResponse(text);
                     appendBotMessage(responseText);
+                    guardarChatEnGoogle("Creatik IA", responseText);
                 } catch (error) {
                     console.error("Error:", error);
                     removeBotTyping();
@@ -1403,5 +1353,3 @@ Copia esto y guárdalo en tu archivo `index.html`:
     </script>
 </body>
 </html>
-
-```
