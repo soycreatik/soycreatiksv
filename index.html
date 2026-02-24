@@ -56,7 +56,6 @@
         .logo-img:hover { transform: scale(1.1); filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.6)); }
         .nav-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; }
         
-        /* MAGIA CSS: Transición para ocultar los botones al abrir el chat */
         .nav-right { display: flex; align-items: center; gap: 20px; transition: opacity 0.3s ease, visibility 0.3s ease; }
         body.chat-active .nav-right { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
         
@@ -111,12 +110,15 @@
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             opacity: 0; visibility: hidden; transform: translateY(30px) scale(0.9);
             transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0.4s;
-            transform-origin: bottom right; 
             pointer-events: none; 
         }
-        #chatbot-window.active { opacity: 1; visibility: visible; transform: translateY(0) scale(1); pointer-events: auto; }
+        /* Cambio importante: removí 'transform: translateY(0)' de active para que el drag funcione fluido */
+        #chatbot-window.active { opacity: 1; visibility: visible; pointer-events: auto; }
+        
+        #chatbot-window.active:not(.dragged) {
+            transform: translateY(0) scale(1);
+        }
 
-        /* Botones del Chatbot */
         .chat-option-btn {
             display: block; width: 100%; margin-top: 8px; padding: 10px; 
             background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.5); 
@@ -125,9 +127,10 @@
         }
         .chat-option-btn:hover { background: rgba(168, 85, 247, 0.4); }
 
-        .chatbot-header { display: flex; align-items: center; padding: 18px 20px; background: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(255,255,255,0.08); gap: 15px; position: relative; }
-        .chatbot-logo { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #a855f7; box-shadow: 0 0 10px rgba(168, 85, 247, 0.5); }
-        .chatbot-title { flex: 1; }
+        .chatbot-header { display: flex; align-items: center; padding: 18px 20px; background: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(255,255,255,0.08); gap: 15px; position: relative; cursor: grab; }
+        .chatbot-header:active { cursor: grabbing; }
+        .chatbot-logo { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #a855f7; box-shadow: 0 0 10px rgba(168, 85, 247, 0.5); pointer-events: none; }
+        .chatbot-title { flex: 1; pointer-events: none; }
         .chatbot-title h4 { margin: 0; font-size: 1.1rem; color: #fff; letter-spacing: 0.5px; }
         .chatbot-title span { font-size: 0.75rem; color: #10b981; display: flex; align-items: center; gap: 5px; margin-top: 3px; font-weight: 600; }
         .chatbot-title span::before { content: ''; width: 8px; height: 8px; background: currentColor; border-radius: 50%; box-shadow: 0 0 8px currentColor; animation: blinkOnline 2s infinite; }
@@ -195,7 +198,7 @@
         .overlay-marquee { width: 100%; overflow: hidden; padding: 50px 0; position: relative; z-index: 5; background: rgba(0, 0, 0, 0.2); border-top: 1px solid rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.03); display: flex; flex-wrap: nowrap; pointer-events: none; transform: translateZ(0); }
         @keyframes marqueeFlow { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
-        /* --- OVERLAYS CONFIGURACIÓN (MENÚ, PAQUETES Y ACADEMY) --- */
+        /* --- OVERLAYS CONFIGURACIÓN --- */
         #full-menu-overlay, #paquetes-overlay, #academy-overlay, #contact-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9000; opacity: 0; visibility: hidden; transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
             display: flex; flex-direction: column; align-items: center; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth;
@@ -321,18 +324,19 @@
         
         .contact-deco { position: absolute; z-index: 1; pointer-events: none; }
         .contact-deco .deco-inner { width: 100%; height: 100%; animation: floatContact 6s ease-in-out infinite; }
-        .contact-deco img { width: 100%; height: 100%; object-fit: cover; }
+        .contact-deco img { width: 100%; height: 100%; object-fit: cover; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.1); }
+        
         .dec-left-img { top: 12%; left: 8vw; width: 200px; height: 260px; transform: rotate(-8deg); }
-        .dec-left-img img { border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.1); }
         .dec-left-stk { bottom: 15%; left: 10vw; width: 160px; transform: rotate(12deg); }
         .dec-left-stk .deco-inner { animation-delay: -3s; animation-duration: 7s; }
-        .dec-left-stk img { filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5)); }
+        .dec-left-stk img { border: none; box-shadow: none; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5)); }
+        
         .dec-right-stk { top: 12%; right: 10vw; width: 180px; transform: rotate(-15deg); }
         .dec-right-stk .deco-inner { animation-delay: -2s; animation-duration: 8s; }
-        .dec-right-stk img { filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5)); }
+        .dec-right-stk img { border: none; box-shadow: none; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5)); }
+        
         .dec-right-img { bottom: 15%; right: 8vw; width: 220px; height: 180px; transform: rotate(10deg); }
         .dec-right-img .deco-inner { animation-delay: -4s; animation-duration: 6.5s; }
-        .dec-right-img img { border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.1); }
 
         @keyframes floatContact { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-20px) scale(1.02); } }
 
@@ -447,7 +451,7 @@
         <img fetchpriority="high" src="LOGO MULTIMEDIA ISOTIPO MORA CREATIK.png" alt="creatik" class="logo-img" id="header-logo" onclick="triggerIntro()">
         <div class="nav-center">
             <div class="menu-btn" id="toggle-menu-btn"><span class="dot"></span> Menú</div>
-            <div class="academy-btn" id="open-academy-btn">Academy</div>
+            <div class="academy-btn" id="open-academy-btn">Creatik Academy</div>
         </div>
         <div class="nav-right">
             <a href="#">Login</a>
@@ -753,6 +757,7 @@
         const chatbotInput = document.getElementById('chatbot-input');
         const chatbotSendBtn = document.getElementById('chatbot-send-btn');
         const chatbotMessages = document.getElementById('chatbot-messages');
+        const chatHeader = document.querySelector('.chatbot-header');
         
         let isChatbotOpen = false;
         let userMessageCount = 0;
@@ -772,6 +777,10 @@
             no_bebes: ["Por el momento no realizamos sesiones especializadas para recién nacidos (newborn) o únicamente para bebés. 🍼 Nuestro enfoque actual es en jóvenes, adultos, parejas, familias y marcas. ¡Esperamos poder ayudarte con otro tipo de sesión!"],
             viaticos: ["¡Llegamos a donde esté tu historia! 🚗 Toma en cuenta que nuestros paquetes tienen precio base para la zona de <b>San Salvador</b>. Para otros departamentos o zonas alejadas, aplicamos un cargo extra por viáticos. Escríbenos a WhatsApp para cotizar tu ubicación exacta."],
             
+            // RESPUESTAS CONTACTO HUMANO
+            no_chatea_aqui: ["¡Por aquí soy solo tu asistente virtual (IA)! 🤖 Para platicar con un humano de nuestro equipo y darte la mejor atención, preferimos comunicarnos por nuestras redes sociales o WhatsApp. ¡Escríbenos, te esperamos con gusto!"],
+            pidiendo_contacto: ["¡Nos encantaría, pero nuestra IA no puede enviar mensajes salientes! 😅 Por favor, escríbenos tú directamente a nuestro WhatsApp o redes sociales. ¡Estaremos listos y felices de responderte de inmediato! 👉 <a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7;'><b>WhatsApp: +503 7577 8333</b></a>"],
+
             // LÓGICA DE VIDEO
             solo_video: ["¡Nos encanta el formato video! 🎥 Cuéntame, ¿para qué tipo de proyecto lo necesitas?<div style='margin-top:10px;'><button class='chat-option-btn' onclick='sendChatOption(\"Video Emprendimiento\")'>Emprendimiento / Marcas</button><button class='chat-option-btn' onclick='sendChatOption(\"Video Sesion\")'>Sesión Personal / Retrato</button><button class='chat-option-btn' onclick='sendChatOption(\"Video Evento\")'>Cobertura de Evento</button></div>"],
             video_emprendimiento: ["Para marcas y negocios, contamos con estos paquetes ideales: <br><br><div style='background:rgba(255,255,255,0.05); border:1px solid rgba(168,85,247,0.3); padding:10px; border-radius:10px; margin-bottom:8px;'><b>Emprendimiento Básico ($50)</b><br><span style='font-size:0.8rem; color:#ccc;'>1 Hora • Ambientación básica • 15 Fotos editadas</span></div><div style='background:rgba(255,255,255,0.05); border:1px solid rgba(168,85,247,0.3); padding:10px; border-radius:10px;'><b>Emprendimiento Pro ($125)</b><br><span style='font-size:0.8rem; color:#ccc;'>1 Hora • Ambientación avanzada • 25 Fotos editadas</span></div><br>¿Te interesa agendar? Escríbenos a <a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>WhatsApp</a>."],
@@ -804,7 +813,7 @@
             bad_strange: ["¡Ups! 😅 Mi programación solo me permite hablar de fotografía, video y diseño. ¿Te ayudo con eso?"],
             negativa_mascotas: ["Por el momento estamos 100% enfocados en sesiones para personas, empresas y eventos. 📸 Aunque amamos a los peluditos, aún no tenemos el set listo para ellos."],
             prohibido_discotecas: ["Por políticas de la agencia, no realizamos coberturas en discotecas o ambientes similares. 🚫 Preferimos enfocarnos en eventos sociales, culturales y corporativos."],
-            donar_academy: ["¡Qué increíble que quieras sumar! 🤩 Creatik Academy siempre tiene las puertas abiertas para seguir formando jóvenes. ¡Escríbenos al WhatsApp para coordinar tu apoyo! ✨"],
+            donar_academy: ["¡Qué increíble que quieras sumar! 🤩 Creatik Academy siempre tiene las puertas abiertas para seguir formando jóvenes. Iniciamos en Valle Verde y nos expandimos a todo Apopa y más municipios. ¡Escríbenos al WhatsApp para coordinar tu apoyo! ✨"],
             institucion_gobierno: ["¡Excelente! Tenemos gran experiencia trabajando con instituciones, escuelas y proyectos. 🏢 Podemos crear una propuesta formal. Escríbenos al WhatsApp para más detalles."],
             empresa: ["¡Las marcas son nuestro fuerte! 📈 Para contenido corporativo o de emprendimiento, te recomiendo el paquete Pro de $125 o armar algo a la medida."],
             marca_personal: ["¡Perfecto para impulsar tu imagen! 🚀 El paquete de $50 (Sesión Personal) es ideal para empezar."],
@@ -839,26 +848,30 @@
             { name: 'video_sesion', regex: "\\b(video sesion)\\b" },
             { name: 'video_evento', regex: "\\b(video evento)\\b" },
             
-            // 2. EMOCIONES
+            // 2. CONTACTO HUMANO E INTENTOS DE DEJAR NÚMERO
+            { name: 'no_chatea_aqui', regex: "\\b(por aca no|no responden aqui|chatear por aqui|hablar por aqui|solo por whatsapp|por que whatsapp|no me responden|hablar con un humano|puedo hablar aqui|no responden por aca|responder por aca)\\b" },
+            { name: 'pidiendo_contacto', regex: "\\b(escribanme|escribenos|llamenme|llamame|mi numero|marquenme|contactenme|te dejo mi numero|mi celular es|comuniquense|escribeme)\\b|\\d{8}" },
+
+            // 3. EMOCIONES
             { name: 'emocion_triste', regex: "\\b(triste|deprimido|mal|bajoneado|tristesa)\\b" },
             { name: 'emocion_feliz', regex: "\\b(feliz|contento|alegre|emocionado|excelente|super bien|genial)\\b" },
             { name: 'emocion_enojado', regex: "\\b(enojado|molesto|furioso|cabreado|enojada|harto)\\b" },
             { name: 'emocion_dudoso', regex: "\\b(dudoso|indeciso|no se|confundido|dudosa)\\b" },
             
-            // 3. HATERS / OBJECIONES
+            // 4. HATERS / OBJECIONES
             { name: 'hater_celular', regex: "\\b(celular|iphone|mi telefono|telefono toma mejores|cel hace lo mismo|no sirve|basura|asco|feos|malos)\\b" },
             { name: 'hater_barato', regex: "\\b(otros cobran menos|muy caro|gratis|me cobran menos|se la pican|creidos|vanidosos|superiores|se creen mucho|creidas|pican)\\b" },
             
-            // 4. TIEMPO
+            // 5. TIEMPO
             { name: 'tiempo_hora', regex: "\\b(hora es|que hora son|dime la hora|la hora)\\b" },
             { name: 'tiempo_dia', regex: "\\b(que dia es|fecha de hoy|dia de hoy|que fecha)\\b" },
             
-            // 5. NEGATIVAS / LIMITACIONES
+            // 6. NEGATIVAS / LIMITACIONES
             { name: 'no_estudio', regex: "\\b(estudio|cedula|pasaporte|titulo|carnet|foto carnet|fotografia de estudio|estudio fotografico)\\b" },
             { name: 'no_bebes', regex: "\\b(bebe|bebes|recien nacido|newborn|nino recien|nina recien)\\b" },
             { name: 'viaticos', regex: "\\b(fuera de san salvador|fuera de ss|otro departamento|interior del pais|viaticos|transporte|cobran extra|costo adicional|lejos|santa ana|san miguel|chalatenango|sonsonate|usulutan|la libertad|la paz|cabanas|cuscatlan|morazan|san vicente|la union|ahuachapan|viajan)\\b" },
             
-            // 6. ASESORÍA Y PAQUETES
+            // 7. ASESORÍA Y PAQUETES
             { name: 'asesoria', regex: "\\b(asesoria|asesorar|asesorame|ayudame a elegir|no se que elegir|recomiendame|ayuda|orientacion|que me recomiendas)\\b" },
             { name: 'rango_bajo', regex: "\\b(bajo|economico|barato|50|75|menos de 100|presupuesto bajo)\\b" },
             { name: 'rango_medio', regex: "\\b(medio|intermedio|100|125|equilibrado|presupuesto medio)\\b" },
@@ -964,6 +977,11 @@
                 const fecha = new Date().toLocaleDateString('es-SV', opcionesFecha);
                 return `Hoy es <b>${fecha}</b>, un día perfecto para planear tu próxima sesión. ✨`;
             }
+            
+            // CONTEXTO INTELIGENTE: Si preguntan qué hacen, pero acaban de hablar de Academy
+            if (intent === 'servicios_info' && lastTopic === 'academy') {
+                return "En Creatik Academy realizamos salidas de campo, talleres y actividades prácticas para enseñar fotografía, integrar jóvenes y crear comunidad. ¡Usamos el arte para cambiar realidades! ✨";
+            }
 
             if (intent === 'interjeccion') {
                 if (lastTopic === 'servicios_info') response = "¡Así es! Nos apasiona crear contenido de alta calidad. ✨ ¿Te gustaría ver nuestros paquetes de precios?";
@@ -975,16 +993,18 @@
                 return response;
             }
 
+            // Rastrear el tema actual
             if (['precios', 'servicios_info', 'academy', 'ubicacion', 'identidad', 'idea', 'empresa', 'evento', 'marca_personal', 'foto_familia', 'foto_pareja', 'personal', 'institucion_gobierno'].includes(intent)) {
                 lastTopic = intent;
             } else if (intent !== 'default') {
                 lastTopic = 'inicio';
             }
 
+            // Entregar respuesta
             if (intent !== 'default') {
                 response = getRandom(botResponses[intent]);
             } else {
-                // CUANDO NO ENTIENDE, PASA ESTO EN VEZ DE "MMM NO ESTOY SEGURO":
+                // CUANDO NO ENTIENDE, RESPONDE PROACTIVAMENTE CON BOTONES
                 let fallbackMsg = "¡Hola! Estoy listo para ayudarte a resolver cualquier duda. ¿De qué tema te gustaría hablar? 👇";
                 const btnStyle = "display:block; width:100%; margin-top:8px; padding:10px; background:rgba(168,85,247,0.15); border:1px solid rgba(168,85,247,0.5); color:white; border-radius:10px; cursor:pointer; text-align:left; font-family:inherit; transition:0.3s; font-size: 0.85rem;";
                 
@@ -992,7 +1012,7 @@
                     <div style="margin-top: 12px;">
                         <button style="${btnStyle}" onclick="sendChatOption('Ver paquetes y precios')">📷 Ver paquetes y precios</button>
                         <button style="${btnStyle}" onclick="sendChatOption('Servicios de video')">🎥 Servicios de Video</button>
-                        <button style="${btnStyle}" onclick="sendChatOption('Hablar con un asesor')">👤 Hablar con un asesor</button>
+                        <button style="${btnStyle}" onclick="sendChatOption('Hablar con un asesor')">👤 Hablar con un humano</button>
                     </div>
                 `;
                 response = fallbackMsg + buttonsHTML;
@@ -1000,11 +1020,12 @@
             return response;
         }
 
+        // --- APERTURA Y CIERRE DEL CHAT ---
         chatbotFab.addEventListener('click', () => {
             isChatbotOpen = true;
             chatbotWindow.classList.add('active');
             chatbotFab.classList.add('hide-chatbot-ui');
-            document.body.classList.add('chat-active'); // Activa la magia CSS para ocultar botones del header
+            document.body.classList.add('chat-active'); // Oculta botones "PAQUETES" y "Login"
             if (hasNewMessage) {
                 hasNewMessage = false;
                 chatbotFab.classList.remove('has-new-message');
@@ -1019,9 +1040,63 @@
             isChatbotOpen = false;
             chatbotWindow.classList.remove('active');
             chatbotFab.classList.remove('hide-chatbot-ui');
-            document.body.classList.remove('chat-active'); // Devuelve los botones a su lugar
+            document.body.classList.remove('chat-active'); // Muestra botones de nuevo
+            
+            // Restablece la posición de la ventana por si fue arrastrada
+            setTimeout(() => {
+                currentTransX = 0; currentTransY = 0;
+                chatbotWindow.style.transform = ''; 
+                chatbotWindow.style.transition = ''; 
+            }, 400); 
         });
 
+        // --- SISTEMA DE ARRASTRE DE VENTANA (DRAG & DROP) ---
+        let isDraggingChat = false, dragStartX, dragStartY, currentTransX = 0, currentTransY = 0;
+
+        function onDragStart(e) {
+            if (e.target.closest('#close-chatbot-btn')) return; // No arrastrar si tocan cerrar
+            isDraggingChat = true;
+            chatbotWindow.style.transition = 'none'; // Quitar transición suave al arrastrar
+            
+            if (e.type === 'touchstart') {
+                dragStartX = e.touches[0].clientX - currentTransX;
+                dragStartY = e.touches[0].clientY - currentTransY;
+            } else {
+                dragStartX = e.clientX - currentTransX;
+                dragStartY = e.clientY - currentTransY;
+            }
+        }
+
+        function onDragMove(e) {
+            if (!isDraggingChat) return;
+            e.preventDefault(); // Evitar scroll de fondo
+            
+            if (e.type === 'touchmove') {
+                currentTransX = e.touches[0].clientX - dragStartX;
+                currentTransY = e.touches[0].clientY - dragStartY;
+            } else {
+                currentTransX = e.clientX - dragStartX;
+                currentTransY = e.clientY - dragStartY;
+            }
+            
+            chatbotWindow.style.transform = `translate(${currentTransX}px, ${currentTransY}px) scale(1)`;
+        }
+
+        function onDragEnd() {
+            if (!isDraggingChat) return;
+            isDraggingChat = false;
+            // Restaurar transiciones de visibilidad pero mantener el transform en su lugar
+            chatbotWindow.style.transition = 'opacity 0.4s ease, visibility 0.4s';
+        }
+
+        chatHeader.addEventListener('mousedown', onDragStart);
+        document.addEventListener('mousemove', onDragMove);
+        document.addEventListener('mouseup', onDragEnd);
+        chatHeader.addEventListener('touchstart', onDragStart, {passive: false});
+        document.addEventListener('touchmove', onDragMove, {passive: false});
+        document.addEventListener('touchend', onDragEnd);
+
+        // --- INSERCIÓN DE MENSAJES ---
         function appendUserMessage(text) {
             const msgDiv = document.createElement('div');
             msgDiv.className = 'message user-message';
@@ -1067,6 +1142,7 @@
             userMessageCount++;
             resetInactivityTimer(); 
             appendBotTyping();
+            
             if (userMessageCount >= MAX_MESSAGES) {
                 clearTimeout(inactivityTimer); 
                 setTimeout(() => {
@@ -1077,6 +1153,7 @@
                 }, 1500);
                 return;
             }
+            
             setTimeout(() => {
                 try {
                     removeBotTyping();
