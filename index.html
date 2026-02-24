@@ -294,6 +294,8 @@
         .btn-plan { background: transparent; border: 1px solid rgba(255, 255, 255, 0.2); color: #fff; padding: 10px 0; width: 100%; border-radius: 30px; font-weight: 700; font-size: 0.65rem; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
         .popular .btn-plan { background: #ffd700; color: #000; border: none; }
         .btn-plan:hover { background: #fff; color: #000; }
+        
+        .pricing-note { text-align: center; color: rgba(255,255,255,0.6); font-size: 0.8rem; margin-top: 10px; position: relative; z-index: 5; padding: 0 20px; }
 
         .sticker-wall-section { position: relative; min-height: 100vh; width: 100%; display: flex; justify-content: center; align-items: center; overflow: hidden; }
         .sticker-center-text { text-align: center; z-index: 50; pointer-events: none; transform: translate3d(0, 30px, 0); opacity: 0; transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s; position: relative; }
@@ -551,13 +553,14 @@
         <section class="pricing-section">
             <div class="pricing-header"><h2>ELIGE</h2><p>TU PLAN</p></div>
             <div class="plans-container">
-                <div class="plan-card"><div class="plan-name">SESIÓN PERSONAL</div><div class="plan-time">Tiempo: 1 Hora</div><div class="plan-price">$50</div><div class="plan-deposit">Anticipo: $15</div><ul class="plan-features"><li>Equipo Profesional</li><li>15 fotos editadas</li><li>Fotos extras sin editar</li><li>Álbum Digital</li><li>Sticker y carta de cortesía</li></ul><button class="btn-plan">RESERVAR</button></div>
-                <div class="plan-card"><div class="plan-name">EMPRENDIMIENTO (BÁSICO)</div><div class="plan-time">Tiempo: 1 Hora</div><div class="plan-price">$50</div><div class="plan-deposit">Anticipo: $15</div><ul class="plan-features"><li>Equipo Profesional</li><li>15 fotos editadas</li><li>Ambientación básica</li><li>Entrega Digital</li><li>Sticker y carta de cortesía</li></ul><button class="btn-plan">RESERVAR</button></div>
-                <div class="plan-card"><div class="plan-name">EMPRENDIMIENTO (PRO)</div><div class="plan-time">Tiempo: 1 Hora</div><div class="plan-price">$125</div><div class="plan-deposit">Anticipo: $45</div><ul class="plan-features"><li>Equipo Profesional</li><li>25 fotos editadas</li><li>Ambientación avanzada</li><li>Entrega Digital</li><li>Sticker y carta de cortesía</li></ul><button class="btn-plan">RESERVAR</button></div>
-                <div class="plan-card"><div class="plan-name">EVENTO SMALL</div><div class="plan-time">Tiempo: 1 Hora</div><div class="plan-price">$75</div><div class="plan-deposit">Anticipo: $25</div><ul class="plan-features"><li>Equipo Profesional</li><li>50 fotos editadas</li><li>Fotos extras sin editar</li><li>Entrega USB</li><li>5 fotos impresas</li><li>Stickers de cortesía</li></ul><button class="btn-plan">RESERVAR</button></div>
-                <div class="plan-card popular"><div class="popular-sticker">El más popular</div><div class="plan-name">EVENTO INTERMEDIO</div><div class="plan-time">Tiempo: 2 Horas</div><div class="plan-price">$100</div><div class="plan-deposit">Anticipo: $35</div><ul class="plan-features"><li>Equipo Profesional</li><li>100 fotos editadas</li><li>Fotos extras sin editar</li><li>Video (10 min)</li><li>Entrega USB completa</li><li>10 fotos impresas</li></ul><button class="btn-plan">RESERVAR</button></div>
-                <div class="plan-card"><div class="plan-name">EVENTO EXPRESS</div><div class="plan-time">Tiempo: 2.5 Horas</div><div class="plan-price">$170</div><div class="plan-deposit">Anticipo: $60</div><ul class="plan-features"><li>Equipo + Asistente Pro</li><li>150 fotos editadas</li><li>Filmación (30 min)</li><li>Video vertical redes</li><li>Entrega USB completa</li><li>16 fotos impresas</li></ul><button class="btn-plan">RESERVAR</button></div>
+                <div class="plan-card"><div class="plan-name">SESIÓN PERSONAL</div><div class="plan-time">Tiempo: 1 Hora</div><div class="plan-price">$50</div><div class="plan-deposit">Anticipo: $15</div><ul class="plan-features"><li>Equipo Profesional</li><li>15 fotos editadas</li><li>Fotos extras sin editar</li><li>Álbum Digital</li><li>Sticker y carta de cortesía</li><li>✓ Aplica en San Salvador</li></ul><button class="btn-plan">RESERVAR</button></div>
+                <div class="plan-card"><div class="plan-name">EMPRENDIMIENTO (BÁSICO)</div><div class="plan-time">Tiempo: 1 Hora</div><div class="plan-price">$50</div><div class="plan-deposit">Anticipo: $15</div><ul class="plan-features"><li>Equipo Profesional</li><li>15 fotos editadas</li><li>Ambientación básica</li><li>Entrega Digital</li><li>Sticker y carta de cortesía</li><li>✓ Aplica en San Salvador</li></ul><button class="btn-plan">RESERVAR</button></div>
+                <div class="plan-card"><div class="plan-name">EMPRENDIMIENTO (PRO)</div><div class="plan-time">Tiempo: 1 Hora</div><div class="plan-price">$125</div><div class="plan-deposit">Anticipo: $45</div><ul class="plan-features"><li>Equipo Profesional</li><li>25 fotos editadas</li><li>Ambientación avanzada</li><li>Entrega Digital</li><li>Sticker y carta de cortesía</li><li>✓ Aplica en San Salvador</li></ul><button class="btn-plan">RESERVAR</button></div>
+                <div class="plan-card"><div class="plan-name">EVENTO SMALL</div><div class="plan-time">Tiempo: 1 Hora</div><div class="plan-price">$75</div><div class="plan-deposit">Anticipo: $25</div><ul class="plan-features"><li>Equipo Profesional</li><li>50 fotos editadas</li><li>Fotos extras sin editar</li><li>Entrega USB</li><li>5 fotos impresas</li><li>Stickers de cortesía</li><li>✓ Aplica en San Salvador</li></ul><button class="btn-plan">RESERVAR</button></div>
+                <div class="plan-card popular"><div class="popular-sticker">El más popular</div><div class="plan-name">EVENTO INTERMEDIO</div><div class="plan-time">Tiempo: 2 Horas</div><div class="plan-price">$100</div><div class="plan-deposit">Anticipo: $35</div><ul class="plan-features"><li>Equipo Profesional</li><li>100 fotos editadas</li><li>Fotos extras sin editar</li><li>Video (10 min)</li><li>Entrega USB completa</li><li>10 fotos impresas</li><li>✓ Aplica en San Salvador</li></ul><button class="btn-plan">RESERVAR</button></div>
+                <div class="plan-card"><div class="plan-name">EVENTO EXPRESS</div><div class="plan-time">Tiempo: 2.5 Horas</div><div class="plan-price">$170</div><div class="plan-deposit">Anticipo: $60</div><ul class="plan-features"><li>Equipo + Asistente Pro</li><li>150 fotos editadas</li><li>Filmación (30 min)</li><li>Video vertical redes</li><li>Entrega USB completa</li><li>16 fotos impresas</li><li>✓ Aplica en San Salvador</li></ul><button class="btn-plan">RESERVAR</button></div>
             </div>
+            <p class="pricing-note">* Todos los precios son válidos para la zona de San Salvador. Para eventos o sesiones en otras locaciones aplica un costo adicional por viáticos.</p>
         </section>
     </div>
 
@@ -763,6 +766,11 @@
         let hasNewMessage = false;
 
         const botResponses = {
+            quiero_fotos: ["¡Claro que sí! Nos encantaría capturar tu historia. 📸 ¿Qué tipo de sesión tienes en mente? (Ej. Personal, pareja, familiar, evento, producto...)"],
+            no_estudio: ["Actualmente somos nómadas y trabajamos 100% en exteriores y locaciones. 🌳 Por lo tanto, <b>no realizamos fotos de estudio, carnet, cédula o pasaporte</b>. ¡Pero si buscas fotos artísticas al aire libre, somos tu mejor opción!"],
+            no_bebes: ["Por el momento no realizamos sesiones especializadas para recién nacidos (newborn) o únicamente para bebés. 🍼 Nuestro enfoque actual es en jóvenes, adultos, parejas, familias y marcas. ¡Esperamos poder ayudarte con otro tipo de sesión!"],
+            viaticos: ["¡Llegamos a donde esté tu historia! 🚗 Toma en cuenta que nuestros paquetes tienen precio base para la zona de <b>San Salvador</b>. Para otros departamentos o zonas alejadas, aplicamos un cargo extra por viáticos. Escríbenos a WhatsApp para cotizar tu ubicación exacta."],
+            
             asesoria: [
                 "¡Con gusto! Para darte la mejor asesoría, cuéntame: ¿Cuál es tu presupuesto aproximado? 💸<div style='margin-top:10px;'><button class='chat-option-btn' onclick='sendChatOption(\"Presupuesto Bajo ($50-$75)\")'>Bajo ($50-$75)</button><button class='chat-option-btn' onclick='sendChatOption(\"Presupuesto Medio ($100-$125)\")'>Medio ($100-$125)</button><button class='chat-option-btn' onclick='sendChatOption(\"Presupuesto Pro ($170+)\")'>Pro ($170+)</button></div>"
             ],
@@ -778,28 +786,22 @@
                 "¡Excelente decisión! 🎉 Estamos listos. Escríbenos ya mismo a nuestro WhatsApp <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b> para asegurar tu espacio."
             ],
             regateo: [
-                "Entiendo que el presupuesto es clave. No solemos hacer recortes directos porque nuestro equipo y tiempo garantizan una calidad premium, pero ¡escríbenos a WhatsApp! A veces podemos ajustar el paquete para hacer posible tu idea.",
-                "Valoramos mucho tu interés. Aunque nuestros precios ya son fijos por la calidad que entregamos, si nos escribes a WhatsApp podemos ver si hay alguna promo vigente o ajustar un plan a tu medida. 😉"
+                "Entiendo que el presupuesto es clave. No solemos hacer recortes directos porque nuestro equipo y tiempo garantizan una calidad premium, pero ¡escríbenos a WhatsApp! A veces podemos ajustar el paquete para hacer posible tu idea."
             ],
             caro: [
-                "Entiendo tu punto. Nuestros precios reflejan el uso de equipo de alta gama, iluminación profesional y horas de edición detallada para que el resultado sea nivel cine. ✨ ¡Es una inversión en calidad!",
-                "¡La calidad lo vale! No solo son fotos, es una experiencia y te entregamos TODO el material extra sin costo adicional."
+                "Entiendo tu punto. Nuestros precios reflejan el uso de equipo de alta gama, iluminación profesional y horas de edición detallada para que el resultado sea nivel cine. ✨ ¡Es una inversión en calidad!"
             ],
             barato: [
-                "¡Queremos que el arte visual sea accesible! Optimizamos nuestros procesos para darte la mejor calidad sin que tengas que gastar una fortuna. 😎",
-                "Nos encanta lo que hacemos y preferimos tener paquetes competitivos para que nadie se quede sin fotos increíbles."
+                "¡Queremos que el arte visual sea accesible! Optimizamos nuestros procesos para darte la mejor calidad sin que tengas que gastar una fortuna. 😎"
             ],
             solo_cotiza: [
-                "¡No hay ningún problema! Cotizar es el primer paso para crear algo genial. Llévate la info y cuando estés listo, aquí estaremos para ti. 📸",
-                "¡Claro que sí! Tómate tu tiempo. Puedes guardar nuestros precios y contactarnos cuando te animes."
+                "¡No hay ningún problema! Cotizar es el primer paso para crear algo genial. Llévate la info y cuando estés listo, aquí estaremos para ti. 📸"
             ],
             crisis: [
-                "Comprendo. Seré más directo y formal a partir de ahora. ¿En qué le puedo asistir?",
-                "Mis disculpas. Mantendremos comunicación profesional. ¿Desea información de precios o servicios?"
+                "Comprendo. Seré más directo y formal a partir de ahora. ¿En qué le puedo asistir?"
             ],
             bad_strange: [
-                "¡Ups! 😅 Mi programación solo me permite hablar de fotografía, video y diseño. ¿Te ayudo con eso?",
-                "Esa palabra no está en mi base de datos creativa. 🤖 Mejor concentrémonos en capturar momentos inolvidables."
+                "¡Ups! 😅 Mi programación solo me permite hablar de fotografía, video y diseño. ¿Te ayudo con eso?"
             ],
             negativa_mascotas: [ 
                 "Por el momento estamos 100% enfocados en sesiones para personas, empresas y eventos. 📸 Aunque amamos a los peluditos, aún no tenemos el set listo para ellos. ¿Te ayudo con otro tipo de sesión?"
@@ -808,14 +810,13 @@
                 "Por políticas de la agencia, no realizamos coberturas en discotecas o ambientes similares. 🚫 Preferimos enfocarnos en eventos sociales, culturales y corporativos. ¿Tienes algún otro tipo de evento en mente?"
             ],
             donar_academy: [
-                "¡Qué increíble que quieras sumar! 🤩 Creatik Academy siempre tiene las puertas abiertas para seguir formando jóvenes. Iniciamos en Valle Verde y nos expandimos a Distrito Italia, Valle Verde 1,2,3,4, Popotlán 1 y 2, San Marcos, Nejapa, San Martín, Ciudad Delgado y todo Apopa. Hemos colaborado con creadores como Steeb Melendez, Jeykob, Steven Diaz, Oscar Lara y Joshua Morales. ¡Escríbenos al WhatsApp para coordinar tu apoyo! ✨"
+                "¡Qué increíble que quieras sumar! 🤩 Creatik Academy siempre tiene las puertas abiertas para seguir formando jóvenes. Iniciamos en Valle Verde y nos expandimos a Distrito Italia, Valle Verde 1,2,3,4, Popotlán 1 y 2, San Marcos, Nejapa, San Martín, Ciudad Delgado y todo Apopa. ¡Escríbenos al WhatsApp para coordinar tu apoyo! ✨"
             ],
             institucion_gobierno: [
                 "¡Excelente! Tenemos gran experiencia trabajando con instituciones, escuelas y proyectos gubernamentales/municipales. 🏢 Podemos crear una propuesta formal y adaptada a sus requerimientos de comunicación. ¿Podría brindarme más detalles del proyecto?"
             ],
             empresa: [
-                "¡Las marcas son nuestro fuerte! 📈 Hemos trabajado con muchas empresas. Para contenido corporativo o de emprendimiento, te recomiendo el paquete Pro de $125 o armar algo a la medida. ¿Qué tipo de negocio es?",
-                "Ayudamos a destacar tu marca con fotografía comercial de alta calidad y diseño gráfico. ¿Es para redes sociales, catálogo o publicidad interna?"
+                "¡Las marcas son nuestro fuerte! 📈 Hemos trabajado con muchas empresas. Para contenido corporativo o de emprendimiento, te recomiendo el paquete Pro de $125 o armar algo a la medida. ¿Qué tipo de negocio es?"
             ],
             marca_personal: [
                 "¡Perfecto para impulsar tu imagen! 🚀 Ya sea que ofrezcas un servicio profesional o quieras potenciar tu marca personal, diseñamos sesiones que transmitan confianza y calidad. El paquete de $50 (Sesión Personal) es ideal para empezar."
@@ -824,8 +825,7 @@
                 "¡Hola! Somos una agencia creativa independiente. 🎥 Cubrimos con mucho respeto y profesionalismo eventos de cualquier denominación o iglesia (bodas, bautizos, cultos, retiros, etc.). ¿De qué trata tu evento?"
             ],
             evento: [
-                "¡Nos encantan los eventos! 🎉 Para bodas, cumpleaños o graduaciones, nuestro paquete Intermedio ($100) es el más pedido e incluye video. Si es algo muy grande, el Express ($170) es ideal. ¿Qué tipo de evento es?",
-                "Congelamos cada momento de tu evento. Te damos cobertura completa, fotos editadas y hasta video para tus redes. ¿Para qué fecha lo necesitas?"
+                "¡Nos encantan los eventos! 🎉 Para bodas, cumpleaños o graduaciones, nuestro paquete Intermedio ($100) es el más pedido e incluye video. Si es algo muy grande, el Express ($170) es ideal. ¿Qué tipo de evento es?"
             ],
             foto_pareja: [
                 "¡Qué romántico! ❤️ Las sesiones en pareja son maravillosas. Podemos ir a la locación que signifique mucho para ustedes (playa, montaña, ciudad). El paquete básico de 1 hora ($50) es perfecto para esto."
@@ -834,61 +834,46 @@
                 "¡Los recuerdos con los seres queridos son invaluables! 🥰 Cubrimos sesiones familiares o con tu grupo de amigos. La pasamos súper bien y capturamos esa conexión real. ¿Cuántas personas serían?"
             ],
             personal: [
-                "¡Una sesión para ti es un súper regalo! ✨ Sacaremos tu mejor perfil con dirección de poses y mucha buena vibra. Te recomiendo nuestro paquete de $50 que incluye 1 hora de sesión.",
-                "Tener fotos tuyas con calidad profesional siempre es una buena inversión. ¿Tienes alguna temática en mente o prefieres que te asesoremos?"
+                "¡Una sesión para ti es un súper regalo! ✨ Sacaremos tu mejor perfil con dirección de poses y mucha buena vibra. Te recomiendo nuestro paquete de $50 que incluye 1 hora de sesión."
             ],
             academy: [
-                "Creatik Academy es nuestro orgullo social. ✨ Llevamos más de dos años uniendo talentos mediante salidas de campo, usando la fotografía como puente de integración.",
-                "Es un espacio de formación donde apasionados del arte visual convivimos y aprendemos en el terreno."
+                "Creatik Academy es nuestro orgullo social. ✨ Llevamos más de dos años uniendo talentos mediante salidas de campo, usando la fotografía como puente de integración."
             ],
             ubicacion: [
-                "Actualmente no contamos con un local físico, ¡porque nosotros nos trasladamos a donde tú prefieras! 🚗 Llevamos nuestro equipo profesional para cubrir tus eventos o sesiones en la locación de tu elección.",
-                "Somos de El Salvador 🇸🇻 y vamos a cualquier rincón del país donde haya una buena historia que contar."
+                "Actualmente no contamos con un local físico, ¡porque nosotros nos trasladamos a donde tú prefieras! 🚗 Llevamos nuestro equipo profesional para cubrir tus eventos o sesiones en la locación de tu elección."
             ],
             tecnico: [
-                "Usamos equipo profesional y óptica Full Frame para que salgas espectacular. ⚡ Entregamos en unos 5 a 8 días hábiles.",
-                "Te damos las fotos editadas con corrección de color y todas las extras sin editar para que no pierdas ningún recuerdo. 🎁"
+                "Usamos equipo profesional y óptica Full Frame para que salgas espectacular. ⚡ Entregamos en unos 5 a 8 días hábiles."
             ],
             redes: [
-                "¡Nos encanta conectar! 📱 Búscanos en Instagram, Facebook y TikTok como <b>@soycreatik</b>.",
-                "Puedes ver nuestro portafolio completo en Instagram, Facebook y TikTok. Nos encuentras en todas como <b>@soycreatik</b>."
+                "¡Nos encanta conectar! 📱 Búscanos en Instagram, Facebook y TikTok como <b>@soycreatik</b>."
             ],
             contacto: [
-                "¡Te paso con un humano! 🏃‍♂️ Escríbenos a nuestro WhatsApp directo: <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b>.",
-                "Para una atención más personalizada o agendar tu fecha, un asesor te espera en nuestro WhatsApp: <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b>."
+                "¡Te paso con un humano! 🏃‍♂️ Escríbenos a nuestro WhatsApp directo: <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b>."
             ],
             precios: [
-                "Nuestra Sesión Personal o el plan Emprendimiento Básico arrancan en $50. Si buscas destacar más, el Pro está en $125. Para eventos, te súper recomiendo nuestro paquete Intermedio por $100 (es el favorito de todos). También tenemos la opción Small ($75) y Express ($170).",
-                "¡Claro! Manejamos varias opciones. Para algo rápido: Sesión Personal o Básico ($50). En eventos, nuestro paquete estrella es el Intermedio de $100. También ofrecemos el súper completo Express por $170.",
-                "Nuestros precios están diseñados para que nadie se quede sin una historia inolvidable. Sesiones desde $50 y eventos desde $75 hasta $170."
+                "Nuestra Sesión Personal o el plan Emprendimiento Básico arrancan en $50. Si buscas destacar más, el Pro está en $125. Para eventos, te súper recomiendo nuestro paquete Intermedio por $100 (es el favorito de todos). También tenemos la opción Small ($75) y Express ($170)."
             ],
             precios_detalle: [
-                "Las sesiones de 1 hora ($50 a $125) son ideales para fotos tuyas o de marca. Los planes de eventos ($75 a $170) te aseguran cobertura total, ¡e incluso video en los más completos!",
-                "El de $100 es el intermedio perfecto para fiestas porque ya incluye un clip de video. El de $50 es estrictamente para sesiones de una hora (individual o producto)."
+                "Las sesiones de 1 hora ($50 a $125) son ideales para fotos tuyas o de marca. Los planes de eventos ($75 a $170) te aseguran cobertura total, ¡e incluso video en los más completos!"
             ],
             servicios_info: [
-                "En Creatik ofrecemos Fotografía Profesional, Video Cinematográfico y Diseño Gráfico. ¡Contamos tu historia de forma integral!",
-                "Manejamos la imagen completa: Fotografía, Video y Diseño Gráfico. Tenemos mucha experiencia cubriendo eventos, sesiones para marcas y contenido para redes sociales."
+                "En Creatik ofrecemos Fotografía Profesional, Video Cinematográfico y Diseño Gráfico. ¡Contamos tu historia de forma integral!"
             ],
             idea: [
-                "¡Me encanta escuchar nuevas ideas! 🤩 Cuéntame, ¿de qué trata tu proyecto?",
-                "¡Suena genial! Dame más detalles para entender bien qué necesitas capturar."
+                "¡Me encanta escuchar nuevas ideas! 🤩 Cuéntame, ¿de qué trata tu proyecto?"
             ],
             ayuda: [
-                "¡Claro que sí! Estoy para ayudarte. ¿Buscas info sobre precios, servicios, o quieres contarme tu idea?",
-                "¡Con gusto! Dime en qué te puedo apoyar hoy."
+                "¡Claro que sí! Estoy para ayudarte. ¿Buscas info sobre precios, servicios, o quieres contarme tu idea?"
             ],
             identidad: [
-                "¡Soy Creatik IA! Tu asistente con alma de fotógrafo y puro código salvadoreño. 🇸🇻",
-                "Soy el asistente virtual de Creatik, aquí para resolver tus dudas rápidamente."
+                "¡Soy Creatik IA! Tu asistente con alma de fotógrafo y puro código salvadoreño. 🇸🇻"
             ],
             como_estas: [
-                "¡Todo excelente por aquí! Con mucha energía y ganas de crear. ✨ ¿En qué te puedo ayudar hoy?",
-                "¡Al 100%! Con el obturador listo. 📸 ¿Qué te trae por acá?"
+                "¡Todo excelente por aquí! Con mucha energía y ganas de crear. ✨ ¿En qué te puedo ayudar hoy?"
             ],
             despedida: [
-                "¡De nada! Ha sido un placer platicar contigo. ¡Hasta la próxima! 📸",
-                "¡Gracias a ti por escribirnos! Que tengas un día súper creativo."
+                "¡De nada! Ha sido un placer platicar contigo. ¡Hasta la próxima! 📸"
             ],
             saludo: [
                 "¡Hola! Qué alegría que pienses en Creatik. ✨",
@@ -897,14 +882,16 @@
                 "¡Hey! Qué bueno verte por aquí. Cuéntame."
             ],
             interjeccion: [
-                "¡Totalmente! La buena vibra es parte de Creatik. 😎 ¿En qué más te apoyo?",
-                "¡Genial! Me encanta esa actitud. ✨ ¿Seguimos hablando de fotos?",
-                "¡Súper! Sigamos adelante con eso. ¿Te muestro nuestros servicios?"
+                "¡Totalmente! La buena vibra es parte de Creatik. 😎 ¿En qué más te apoyo?"
             ]
         };
 
         const intents = [
-            // 1. Opciones interactivas y frases compuestas de alto contexto
+            // Intenciones Compuestas o Específicas primero (tienen prioridad)
+            { name: 'quiero_fotos', regex: "\\b(quiero una sesion|quiero fotos|sesion de fotos|hacerme fotos|necesito fotos|quisiera una sesion|quisiera fotos|cotizar una sesion)\\b" },
+            { name: 'no_estudio', regex: "\\b(estudio|cedula|pasaporte|titulo|carnet|foto carnet|fotografia de estudio|estudio fotografico)\\b" },
+            { name: 'no_bebes', regex: "\\b(bebe|bebes|recien nacido|newborn|nino recien|nina recien)\\b" },
+            { name: 'viaticos', regex: "\\b(fuera de san salvador|fuera de ss|otro departamento|interior del pais|viaticos|transporte|cobran extra|costo adicional|lejos|santa ana|san miguel|chalatenango|sonsonate|usulutan|la libertad|la paz|cabanas|cuscatlan|morazan|san vicente|la union|ahuachapan|viajan)\\b" },
             { name: 'asesoria', regex: "\\b(asesoria|asesorar|asesorame|ayudame a elegir|no se que elegir|recomiendame|ayuda|orientacion|que me recomiendas)\\b" },
             { name: 'rango_bajo', regex: "\\b(bajo|economico|barato|50|75|menos de 100|presupuesto bajo)\\b" },
             { name: 'rango_medio', regex: "\\b(medio|intermedio|100|125|equilibrado|presupuesto medio)\\b" },
@@ -913,8 +900,6 @@
             { name: 'precios', regex: "\\b(precio|precios|presio|costo|costos|cuanto|vale|cuesta|paquete|paquetes|plan|planes|cobran|cotiza|tarifa|tarifas|\\$)\\b" },
             { name: 'contratar', regex: "\\b(contratar|agendar|reservar|empezar|darle viaje|quiero contratarlos|contratarlos|apartar fecha)\\b" },
             { name: 'personal', regex: "\\b(personal|retrato|perfil|mis fotos|individual|solo|sola|para mi|yo solo|yo sola)\\b" },
-            
-            // 2. Intents específicos
             { name: 'robo_info', regex: "\\b(preset|programa|software|codigo fuente|secreto|como editan|quien te creo)\\b" },
             { name: 'regateo', regex: "\\b(descuento|rebaja|regateo|regatear|promocion|promo|oferta|ajustar precio|patrocinio)\\b" },
             { name: 'caro', regex: "\\b(muy caro|esta caro|costoso|elevado|por que tan caro|se pasan)\\b" },
@@ -931,11 +916,9 @@
             { name: 'religion_evasion', regex: "\\b(cristiano|cristianos|catolico|catolicos|evangelico|evangelicos|mormon|mormones|testigos|religion|iglesia|iglesias|culto|retiro)\\b" },
             { name: 'evento', regex: "\\b(evento|eventos|boda|bodas|cumpleanos|quince|xv|quinceanera|bautizo|fiesta|graduacion|convivio|celebracion)\\b" },
             { name: 'foto_pareja', regex: "\\b(pareja|novio|novia|esposo|esposa|aniversario|parejas|novios|matrimonio)\\b" },
-            { name: 'foto_familia', regex: "\\b(familia|hijos|mama|papa|abuelos|familiar|bebe|amigos|chero|chera|cheros|grupo)\\b" },
+            { name: 'foto_familia', regex: "\\b(familia|hijos|mama|papa|abuelos|familiar|amigos|chero|chera|cheros|grupo)\\b" },
             { name: 'academy', regex: "\\b(academy|academu|academi|curso|aprender|clase|taller|clases)\\b" },
-            { name: 'ubicacion', regex: "\\b(de donde son|donde estan|van a todo el pais|ubicacion|local|direccion|dnde|donde se ubican|lugar)\\b" },
-            
-            // 3. Intents técnicos y genéricos
+            { name: 'ubicacion', regex: "\\b(de donde son|donde estan|ubicacion|local|direccion|dnde|donde se ubican|lugar)\\b" },
             { name: 'tecnico', regex: "\\b(camara|camaras|lente|flash|tardan|cuanto tiempo|editadas|equipo|entregan|entregar)\\b" },
             { name: 'redes', regex: "\\b(redes|instagram|tiktok|facebook|youtube|sociales|fb|insta)\\b" },
             { name: 'contacto', regex: "\\b(asesor|agente|humano|persona|real|hablar con|contacto|whatsapp|wasap|numero|telefono|llamar)\\b" },
@@ -1062,7 +1045,7 @@
             isChatbotOpen = true;
             chatbotWindow.classList.add('active');
             chatbotFab.classList.add('hide-chatbot-ui');
-            document.body.classList.add('chat-active'); // Activa la magia CSS para ocultar botones
+            document.body.classList.add('chat-active'); 
             if (hasNewMessage) {
                 hasNewMessage = false;
                 chatbotFab.classList.remove('has-new-message');
@@ -1077,7 +1060,7 @@
             isChatbotOpen = false;
             chatbotWindow.classList.remove('active');
             chatbotFab.classList.remove('hide-chatbot-ui');
-            document.body.classList.remove('chat-active'); // Devuelve los botones a su lugar
+            document.body.classList.remove('chat-active'); 
         });
 
         function appendUserMessage(text) {
