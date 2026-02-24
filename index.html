@@ -699,7 +699,7 @@
         }
         setInterval(changeAcademyImages, 4000); 
 
-        // --- LÓGICA DEL CHATBOT LOCAL SÚPER AVANZADO ---
+        // --- LÓGICA DEL CHATBOT LOCAL SÚPER AVANZADO (MEMORIA Y NLP REGEX) ---
         const chatbotFab = document.getElementById('chatbot-fab');
         const chatbotWindow = document.getElementById('chatbot-window');
         const closeChatbotBtn = document.getElementById('close-chatbot-btn');
@@ -778,7 +778,7 @@
                 "¡Con muchísimo gusto te oriento! Ayudamos a contar historias con foto, video y diseño gráfico. Cubrimos desde sesiones personales hasta eventos grandes.",
                 "¿Buscas fotos para redes sociales? Hacemos contenido vertical optimizado para TikTok e Instagram.",
                 "Nuestro fuerte es la fotografía de eventos: bodas, XV años, bautizos y graduaciones con un estilo único.",
-                "También hacemos diseño gráfico para que la identidad de tu marca combine perfecto con tus nuevas fotos.",
+                "También haceos diseño gráfico para que la identidad de tu marca combine perfecto con tus nuevas fotos.",
                 "Hacemos entregas en galerías digitales de alta velocidad, USB personalizados y fotos impresas de alta calidad.",
                 "Si necesitas video, tenemos desde clips cortos de 10 minutos hasta filmaciones extendidas de 30 minutos o más.",
                 "Nuestras sesiones incluyen equipo profesional, edición de alta gama y asesoría en poses y locación.",
@@ -794,7 +794,7 @@
                 "Desde una sesión de 1 hora hasta coberturas de día completo, nos adaptamos a tu necesidad."
             ],
             por_que: [
-                "¿Por qué Creatik? Porque entendemos que tu historia es única. No solo entregamos fotos, entregamos recuerdos con alma. Usamos equipo de alta gama y nos apasiona cada detalle.",
+                "¿Por qué Creatik? Porque entendemos que tu historia es única. No solo entregamos fotos, entregamos recuerdos con alma.",
                 "Elegir Creatik es asegurar que tus recuerdos cobren vida con calidad cinematográfica y trato humano.",
                 "Nos diferenciamos por nuestra creatividad sin límites y el uso de equipo pro de alta gama.",
                 "Porque amamos lo que hacemos y eso se nota en cada foto editada que entregamos.",
@@ -997,8 +997,8 @@
             let intent = 'default';
             let includeGreeting = false;
 
-            // 1. Saludos (Detecta holaaaa, holisss, eyyy, etc)
-            if (regexMatch("\\bh+o+l+a+\\b|\\bh+o+l+i+s+\\b|\\bb+u+e+n+a+s+\\b|buen dia|buenas tardes|buenas noches|saludos|\\bh+e+y+\\b|\\be+y+\\b|\\ba+l+o+\\b|que onda|q onda", cleanInput)) {
+            // 1. Saludos (Detecta holaaaa, holisss, eyyy, ola, kiubo, que ondas, etc)
+            if (regexMatch("\\bh+o+l+a+\\b|\\bo+l+a+\\b|\\bh+o+l+i+s+\\b|\\bb+u+e+n+a+s+\\b|buen dia|buenas tardes|buenas noches|saludos|\\bh+e+y+\\b|\\be+y+\\b|\\ba+l+o+\\b|que onda|q onda|que ondas|k onda|kiubo", cleanInput)) {
                 includeGreeting = true;
                 intent = 'saludo';
             }
@@ -1007,23 +1007,23 @@
             if (regexMatch("\\bj+a+j+a+\\b|\\bj+e+j+e+\\b|de verdad|en serio|wow|genial|super|me alegra|que bueno|excelente|que chivo|\\bs+i+\\b|claro|\\bo+k+\\b|vale|esta bien|me parece|\\bd+a+l+e+\\b", cleanInput)) intent = 'interjeccion';
             if (regexMatch("como esta|como te va|como andas|que tal|q tal|como tas|que haces|q haces|que te cuentas", cleanInput)) intent = 'como_estas';
             if (regexMatch("bien y tu|tu como estas|de verdad estas bien|yo bien|todo excelente|y tu|tu que tal", cleanInput)) intent = 'bien_y_tu';
-            if (regexMatch("quien eres|eres bot|eres real|como te llamas|robot|inteligencia artificial|ia", cleanInput)) intent = 'bot_identity';
+            if (regexMatch("quien eres|bot|ia|real|como te llamas|robot|inteligencia artificial", cleanInput)) intent = 'bot_identity';
             
             // 3. Negocios (Tienen peso alto y sobreescriben smalltalk)
-            if (regexMatch("tengo.*pregunta|una pregunta|puedo preguntar|quiero preguntar|tengo.*duda|una duda|tengo.*consulta|una consulta|necesito preguntar|saber algo|te hago una pregunta", cleanInput)) intent = 'tiene_pregunta';
-            if (regexMatch("local|ubicacion|ubicados|direccion|estudio fisico|donde estan|donde queda|a donde voy|donde es", cleanInput)) intent = 'ubicacion';
+            if (regexMatch("tengo.*pregunta|una pregunta|puedo preguntar|quiero preguntar|tengo.*duda|una duda|tengo.*consulta|una consulta|necesito preguntar|saber algo|te hago una pregunta|preguntita", cleanInput)) intent = 'tiene_pregunta';
+            if (regexMatch("local|ubicacion|ubicados|donde estan|direccion|estudio fisico|donde queda|a donde voy|donde es|dnde", cleanInput)) intent = 'ubicacion';
             if (regexMatch("por que|porque creatik|elegir|razon|diferencia|mejores|beneficio|experiencia|motivo", cleanInput)) intent = 'por_que';
             if (regexMatch("fotografia para ti|que es la foto|filosofia|arte visual|inspiracion|pasion|significa", cleanInput)) intent = 'filosofia';
-            if (regexMatch("academy|curso|aprender|clase|escuela|proyecto social|ensena|alumno|aprender foto", cleanInput)) intent = 'academy';
-            if (regexMatch("mas informaci|mas info|informacion|info|que ofrecen|que hacen|que hace|a que te dedicas|de que trata|que es creatik|que servicios|como funciona|que me ofreces|quiero saber que|que mas|detalles|explicame|ayuda|portafolio|servicio|foto|fotografia|fotos|video|videos|diseno|boda|evento|sesion|personal|marca|proyecto", cleanInput)) intent = 'servicios_info';
-            if (regexMatch("precio|costo|cuanto|vale|cuesta|paquete|plan|cobran|cotiza|tarifa|pagar|\\$|presupuesto|valor", cleanInput)) intent = 'precios';
+            if (regexMatch("academy|academu|academi|curso|aprender|clase|clases|escuela|proyecto social|ensena|alumno|alumnos", cleanInput)) intent = 'academy';
+            if (regexMatch("mas informaci|mas info|informacion|imformacion|info|ofrecen|que hacen|que hace|a que te dedicas|de que trata|que es creatik|que servicios|como funciona|que me ofreces|quiero saber que|que mas|detalles|explicame|ayuda|portafolio|servicio|servicios|foto|fotografia|fotos|fto|video|videos|vidio|bideo|diseno|boda|evento|sesion|personal|marca|proyecto|empresa|negocio|cobertura", cleanInput)) intent = 'servicios_info';
+            if (regexMatch("precio|presio|costo|cuanto|vale|cuesta|paquete|plan|cobran|cotiza|tarifa|pagar|\\$|presupuesto|valor|cuamto|bale", cleanInput)) intent = 'precios';
 
             // 4. Redes y Contacto
             if (regexMatch("redes|instagram|tiktok|facebook|youtube|cuales son sus redes|donde los encuentro|perfil|sociales", cleanInput)) intent = 'redes';
-            if (regexMatch("asesor|agente|humano|persona|real|hablar con|alguien|contacto|contactar|whatsapp|numero|telefono|llamar|platicar", cleanInput)) intent = 'contacto';
+            if (regexMatch("asesor|agente|humano|persona|real|hablar con|alguien|contacto|contactar|whatsapp|wasap|numero|telefono|llamar|platicar", cleanInput)) intent = 'contacto';
 
             // 5. Groserías / Despedidas
-            if (regexMatch("tonto|feo|malo|idiota|mierda|puta|asdf|qwer|zxcv|perro|gato|aburrido|estupido|callate|basura|nada", cleanInput)) {
+            if (regexMatch("tonto|feo|malo|idiota|mierda|puta|asdf|qwer|zxcv|perro|gato|aburrido|estupido|callate|basura", cleanInput)) {
                 intent = 'bad_strange';
                 includeGreeting = false;
             }
@@ -1032,7 +1032,10 @@
                 includeGreeting = false;
             }
 
-            // EVALUACIÓN DE MEMORIA CONTEXTUAL
+            // EVALUACIÓN DE MEMORIA CONTEXTUAL (Seguimiento de idea visual)
+            if (lastTopic === 'servicios_info' && cleanInput.length < 40 && regexMatch("empresa|negocio|evento|boda|cumpleanos|sesion|fotos|video|cobertura", cleanInput)) {
+                intent = 'precios'; // Si acaba de preguntar qué hacemos y dice "empresa", le damos precios.
+            }
             if (cleanInput.length < 25 && lastTopic === 'precios' && regexMatch("y el|y los|otro|pro|basico|small|express|mas|menos|caro|barato", cleanInput)) {
                 intent = 'precios_detalle';
             }
@@ -1047,21 +1050,19 @@
             // ARMADO DE RESPUESTA
             let finalResponse = "";
             
-            // Agrega saludo si toca y NO es una despedida/insulto
             if (includeGreeting && !['despedida', 'bad_strange', 'saludo'].includes(intent)) {
                 finalResponse += getRandom(greetings) + " ";
             } else if (intent === 'saludo') {
                 finalResponse += getRandom(greetings);
             }
             
-            // Agrega la respuesta principal
             if (intent !== 'saludo') {
                 finalResponse += getRandom(coreResponses[intent]);
             } else {
                  finalResponse += getRandom(coreResponses['saludo_resp']); 
             }
             
-            // LÓGICA PACIENTE PARA REDES SOCIALES
+            // REDES Y CTA (Nombra IG, FB, TK, WP)
             const spammyIntents = ['despedida', 'interjeccion', 'bien_y_tu', 'como_estas', 'bot_identity', 'bad_strange', 'default', 'saludo', 'redes', 'filosofia', 'tiene_pregunta'];
             if (msgCount >= 3 && !spammyIntents.includes(intent)) {
                 finalResponse += getRandom(closings);
@@ -1135,7 +1136,7 @@
             if (userMessageCount >= MAX_MESSAGES) {
                 setTimeout(() => {
                     removeBotTyping();
-                    appendBotMessage("¡Qué gran plática hemos tenido! 📸<br><br>Parece que tienes un proyecto muy genial en manos. Para darte la mejor atención personalizada, por favor escríbenos directamente a nuestro <b>WhatsApp: +503 7577 8333</b> o en nuestras redes sociales (Facebook, Instagram, TikTok) como <b>@soycreatik</b>.<br><br>¡El equipo humano de Creatik te espera! 🚀");
+                    appendBotMessage("¡Qué gran plática hemos tenido! 📸<br><br>Parece que tienes un proyecto muy genial en manos. Para darte la mejor atención personalizada, por favor escríbenos directamente a nuestro <b>WhatsApp: +503 7577 8333</b> o búscanos en Instagram, Facebook y TikTok como <b>@soycreatik</b>.<br><br>¡El equipo humano de Creatik te espera! 🚀");
                     chatbotInput.placeholder = "Escríbenos al WhatsApp para continuar.";
                 }, 1500);
                 return;
@@ -1156,6 +1157,7 @@
         chatbotInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') handleSend();
         });
+
 
         // --- VARIABLES GLOBALES DEL NAVEGADOR Y OVERLAYS ---
         const loader = document.getElementById('intro-loader');
