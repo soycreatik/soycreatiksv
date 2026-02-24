@@ -131,7 +131,6 @@
         .chatbot-title span { font-size: 0.75rem; color: #10b981; display: flex; align-items: center; gap: 5px; margin-top: 3px; font-weight: 600; }
         .chatbot-title span::before { content: ''; width: 8px; height: 8px; background: currentColor; border-radius: 50%; box-shadow: 0 0 8px currentColor; animation: blinkOnline 2s infinite; }
         
-        /* Gafete visual del código */
         #chat-session-badge {
             background: rgba(255, 215, 0, 0.15); border: 1px solid #ffd700; color: #ffd700; 
             font-size: 0.6rem; padding: 3px 8px; border-radius: 20px; font-weight: bold;
@@ -667,34 +666,6 @@
         <div class="dash-right"><a href="https://www.facebook.com/profile.php?id=61587372815271" target="_blank" class="service-item"><span>FACEBOOK</span><div class="dot-icon" style="background: #1877f2;"><img loading="lazy" src="communication.png" alt="Facebook"></div></a><a href="https://www.instagram.com/soycreatik" target="_blank" class="service-item"><span>INSTAGRAM</span><div class="dot-icon" style="background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);"><img loading="lazy" src="instagram (1).png" alt="Instagram"></div></a><a href="https://www.tiktok.com/@soy.creatik?is_from_webapp=1&sender_device=pc" target="_blank" class="service-item"><span>TIKTOK</span><div class="dot-icon" style="background: #000000;"><img loading="lazy" src="tik-tok.png" alt="TikTok"></div></a></div>
     </div>
 
-    <div id="chatbot-fab" title="Chatea con nosotros">
-        <div class="new-message-indicator"></div>
-        <svg viewBox="0 0 24 24" width="28" height="28" fill="white"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM9 11H7V9h2v2zm4 0h-2V9h2v2zm4 0h-2V9h2v2z"></path></svg>
-    </div>
-
-    <div id="chatbot-window">
-        <div class="chatbot-header">
-            <img src="creatikperfil.jpg" alt="Creatik Bot" class="chatbot-logo" onerror="this.src='https://i.pravatar.cc/100?img=12'">
-            <div class="chatbot-title">
-                <h4>Creatik IA</h4>
-                <span>En línea</span>
-                <div id="chat-session-badge"></div>
-            </div>
-            <button id="close-chatbot-btn">✖</button>
-        </div>
-        <div class="chatbot-messages" id="chatbot-messages">
-            <div class="message bot-message">
-                ¡Hola! 👋 Soy la IA de Creatik. Para darte un servicio súper personalizado y generar tu código de gestión, <b>¿me dices tu nombre y apellido?</b>
-            </div>
-        </div>
-        <div class="chatbot-input-area">
-            <input type="text" id="chatbot-input" placeholder="Escribe tu mensaje..." autocomplete="off">
-            <button id="chatbot-send-btn">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
-            </button>
-        </div>
-    </div>
-
     <script>
         // --- BLOQUEO ANTICOPIA ---
         document.addEventListener('contextmenu', event => event.preventDefault());
@@ -786,7 +757,7 @@
             return codigo;
         }
 
-        function guardarChatEnGoogle(emisor, mensaje) {
+        function guardarChatEnGoogle(emisor, mensaje, tipo = "chat") {
             let mensajeLimpio = mensaje.replace(/<[^>]*>?/gm, ''); 
             fetch(GOOGLE_APP_URL, {
                 method: 'POST',
@@ -795,7 +766,9 @@
                 body: JSON.stringify({
                     emisor: emisor,
                     mensaje: mensajeLimpio,
-                    codigo: sessionCode || "En proceso"
+                    codigo: sessionCode || "Sin código",
+                    nombre: userName,
+                    tipo: tipo
                 })
             }).catch(e => console.log(e));
         }
@@ -1120,7 +1093,7 @@
                 sessionCode = generarCodigoUnico();
                 chatState = 'ASKING_PROJECT';
                 
-                guardarChatEnGoogle(userName, text); 
+                guardarChatEnGoogle(userName, text, "nombre"); 
                 
                 appendBotTyping();
                 setTimeout(() => {
@@ -1131,7 +1104,7 @@
                     let msg = `¡Mucho gusto, <b>${userName}</b>! ✨ He creado tu número de gestión único: <b style="color:#ffd700;">${sessionCode}</b>.<br><br>Para que nuestro equipo pueda darte el mejor servicio, <b>¿podrías describirnos detalladamente qué tipo de fotos o video necesitas?</b> (Ej: Boda, graduación, productos para Instagram...)`;
                     
                     appendBotMessage(msg);
-                    guardarChatEnGoogle("Creatik IA", `[Código Creado: ${sessionCode}] Pide descripción de proyecto.`);
+                    guardarChatEnGoogle("Creatik IA", `[Código Creado: ${sessionCode}] Pide descripción de proyecto.`, "chat");
                     
                     chatbotInput.disabled = false; chatbotSendBtn.disabled = false; chatbotInput.focus();
                 }, 1000);
@@ -1140,7 +1113,7 @@
 
             // FASE 2: OBTENER PROYECTO Y PREGUNTAR UBICACIÓN
             if (chatState === 'ASKING_PROJECT') {
-                guardarChatEnGoogle(userName, text);
+                guardarChatEnGoogle(userName, text, "proyecto");
                 chatState = 'ASKING_LOCATION';
                 
                 appendBotTyping();
@@ -1148,7 +1121,7 @@
                     removeBotTyping();
                     let msg = `¡Excelente! 📝 El equipo ya puede ver tu idea. Ahora, para saber si aplican viáticos, <b>¿en qué municipio o departamento se realizará la sesión?</b>`;
                     appendBotMessage(msg);
-                    guardarChatEnGoogle("Creatik IA", "Pide ubicación del cliente.");
+                    guardarChatEnGoogle("Creatik IA", "Pide ubicación del cliente.", "chat");
                     chatbotInput.disabled = false; chatbotSendBtn.disabled = false; chatbotInput.focus();
                 }, 1000);
                 return;
@@ -1156,7 +1129,7 @@
 
             // FASE 3: OBTENER UBICACIÓN Y MOSTRAR MENÚ NORMAL
             if (chatState === 'ASKING_LOCATION') {
-                guardarChatEnGoogle(userName, text);
+                guardarChatEnGoogle(userName, text, "ubicacion");
                 chatState = 'READY';
                 
                 appendBotTyping();
@@ -1165,7 +1138,7 @@
                     const btnStyle = "display:block; width:100%; margin-top:8px; padding:10px; background:rgba(168,85,247,0.15); border:1px solid rgba(168,85,247,0.5); color:white; border-radius:10px; cursor:pointer; text-align:left; font-family:inherit; transition:0.3s; font-size: 0.85rem;";
                     let msg = `¡Perfecto! 📍 Todo tu perfil ha sido guardado con éxito. A partir de aquí, ¿en qué más te puedo ayudar? 👇<div style="margin-top: 12px;"><button style="${btnStyle}" onclick="sendChatOption('Ver paquetes y precios')">📷 Ver paquetes y precios</button><button style="${btnStyle}" onclick="sendChatOption('Servicios de video')">🎥 Servicios de Video</button><button style="${btnStyle}" onclick="sendChatOption('Hablar con un asesor')">👤 Hablar con un humano</button></div>`;
                     appendBotMessage(msg);
-                    guardarChatEnGoogle("Creatik IA", "Registro completado. Envía opciones principales.");
+                    guardarChatEnGoogle("Creatik IA", "Registro completado. Envía opciones principales.", "chat");
                     chatbotInput.disabled = false; chatbotSendBtn.disabled = false; chatbotInput.focus();
                 }, 1000);
                 return;
@@ -1174,7 +1147,7 @@
             // FASE 4: CHAT NORMAL
             userMessageCount++;
             resetInactivityTimer(); 
-            guardarChatEnGoogle(userName || "Usuario", text);
+            guardarChatEnGoogle(userName || "Usuario", text, "chat");
             appendBotTyping();
             
             if (userMessageCount >= MAX_MESSAGES) {
@@ -1183,7 +1156,7 @@
                     removeBotTyping();
                     let finalMsg = "¡Qué gran plática hemos tenido! 📸<br><br>Para darte la mejor atención, escríbenos a nuestro <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>WhatsApp: +503 7577 8333</a></b>.";
                     appendBotMessage(finalMsg);
-                    guardarChatEnGoogle("Creatik IA", "Chat cerrado por límite de mensajes. Derivado a WA.");
+                    guardarChatEnGoogle("Creatik IA", "Chat cerrado por límite de mensajes. Derivado a WA.", "chat");
                     chatbotInput.placeholder = "Escríbenos al WhatsApp para continuar.";
                 }, 1500);
                 return;
@@ -1194,7 +1167,7 @@
                     removeBotTyping();
                     const responseText = getBotResponse(text);
                     appendBotMessage(responseText);
-                    guardarChatEnGoogle("Creatik IA", responseText);
+                    guardarChatEnGoogle("Creatik IA", responseText, "chat");
                 } catch (error) {
                     console.error("Error:", error);
                     removeBotTyping();
