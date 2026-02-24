@@ -756,8 +756,6 @@
         
         let isChatbotOpen = false;
         let userMessageCount = 0;
-        let unknownCount = 0;
-        let buttonsSent = false;
         let lastTopic = 'inicio'; 
         const MAX_MESSAGES = 60;
         
@@ -766,132 +764,101 @@
         let hasNewMessage = false;
 
         const botResponses = {
+            pregunta: [
+                "¡Claro que sí! Estoy para ayudarte a resolver cualquier duda. Elige una de estas opciones o escríbeme lo que necesitas: 👇<div style='margin-top:10px;'><button class='chat-option-btn' onclick='sendChatOption(\"Ver paquetes y precios\")'>📷 Paquetes y Precios</button><button class='chat-option-btn' onclick='sendChatOption(\"Servicios de video\")'>🎥 Servicios de Video</button><button class='chat-option-btn' onclick='sendChatOption(\"Hablar con un asesor\")'>👤 Hablar con un humano</button></div>"
+            ],
             quiero_fotos: ["¡Claro que sí! Nos encantaría capturar tu historia. 📸 ¿Qué tipo de sesión tienes en mente? (Ej. Personal, pareja, familiar, evento, producto...)"],
             no_estudio: ["Actualmente somos nómadas y trabajamos 100% en exteriores y locaciones. 🌳 Por lo tanto, <b>no realizamos fotos de estudio, carnet, cédula o pasaporte</b>. ¡Pero si buscas fotos artísticas al aire libre, somos tu mejor opción!"],
             no_bebes: ["Por el momento no realizamos sesiones especializadas para recién nacidos (newborn) o únicamente para bebés. 🍼 Nuestro enfoque actual es en jóvenes, adultos, parejas, familias y marcas. ¡Esperamos poder ayudarte con otro tipo de sesión!"],
             viaticos: ["¡Llegamos a donde esté tu historia! 🚗 Toma en cuenta que nuestros paquetes tienen precio base para la zona de <b>San Salvador</b>. Para otros departamentos o zonas alejadas, aplicamos un cargo extra por viáticos. Escríbenos a WhatsApp para cotizar tu ubicación exacta."],
             
-            asesoria: [
-                "¡Con gusto! Para darte la mejor asesoría, cuéntame: ¿Cuál es tu presupuesto aproximado? 💸<div style='margin-top:10px;'><button class='chat-option-btn' onclick='sendChatOption(\"Presupuesto Bajo ($50-$75)\")'>Bajo ($50-$75)</button><button class='chat-option-btn' onclick='sendChatOption(\"Presupuesto Medio ($100-$125)\")'>Medio ($100-$125)</button><button class='chat-option-btn' onclick='sendChatOption(\"Presupuesto Pro ($170+)\")'>Pro ($170+)</button></div>"
-            ],
+            // LÓGICA DE VIDEO
+            solo_video: ["¡Nos encanta el formato video! 🎥 Cuéntame, ¿para qué tipo de proyecto lo necesitas?<div style='margin-top:10px;'><button class='chat-option-btn' onclick='sendChatOption(\"Video Emprendimiento\")'>Emprendimiento / Marcas</button><button class='chat-option-btn' onclick='sendChatOption(\"Video Sesion\")'>Sesión Personal / Retrato</button><button class='chat-option-btn' onclick='sendChatOption(\"Video Evento\")'>Cobertura de Evento</button></div>"],
+            video_emprendimiento: ["Para marcas y negocios, contamos con estos paquetes ideales: <br><br><div style='background:rgba(255,255,255,0.05); border:1px solid rgba(168,85,247,0.3); padding:10px; border-radius:10px; margin-bottom:8px;'><b>Emprendimiento Básico ($50)</b><br><span style='font-size:0.8rem; color:#ccc;'>1 Hora • Ambientación básica • 15 Fotos editadas</span></div><div style='background:rgba(255,255,255,0.05); border:1px solid rgba(168,85,247,0.3); padding:10px; border-radius:10px;'><b>Emprendimiento Pro ($125)</b><br><span style='font-size:0.8rem; color:#ccc;'>1 Hora • Ambientación avanzada • 25 Fotos editadas</span></div><br>¿Te interesa agendar? Escríbenos a <a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>WhatsApp</a>."],
+            video_sesion: ["Si buscas destacar tu imagen, este es el paquete para ti:<br><br><div style='background:rgba(255,255,255,0.05); border:1px solid rgba(168,85,247,0.3); padding:10px; border-radius:10px;'><b>Sesión Personal ($50)</b><br><span style='font-size:0.8rem; color:#ccc;'>1 Hora • 15 fotos editadas • Fotos extras sin editar • Ideal para clips cortos/reels</span></div><br>¿Lo reservamos? 👉 <a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>Escríbenos</a>"],
+            video_evento: ["¡Para eventos tenemos las mejores opciones con video incluido!<br><br><div style='background:rgba(255,255,255,0.05); border:1px solid #ffd700; padding:10px; border-radius:10px; margin-bottom:8px;'><b>⭐ Evento Intermedio ($100)</b><br><span style='font-size:0.8rem; color:#ccc;'>2 Horas • 100 fotos editadas • <b>Video de 10 min</b> • 10 fotos impresas</span></div><div style='background:rgba(255,255,255,0.05); border:1px solid rgba(168,85,247,0.3); padding:10px; border-radius:10px;'><b>Evento Express ($170)</b><br><span style='font-size:0.8rem; color:#ccc;'>2.5 Horas • 150 fotos • <b>Filmación 30 min + Video vertical</b> • 16 fotos impresas</span></div><br>¿Qué te parecen? Reserva aquí: <a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>WhatsApp</a>"],
+
+            // ASESORÍA
+            asesoria: ["¡Con gusto! Para darte la mejor asesoría, cuéntame: ¿Cuál es tu presupuesto aproximado? 💸<div style='margin-top:10px;'><button class='chat-option-btn' onclick='sendChatOption(\"Presupuesto Bajo ($50-$75)\")'>Bajo ($50-$75)</button><button class='chat-option-btn' onclick='sendChatOption(\"Presupuesto Medio ($100-$125)\")'>Medio ($100-$125)</button><button class='chat-option-btn' onclick='sendChatOption(\"Presupuesto Pro ($170+)\")'>Pro ($170+)</button></div>"],
             rango_bajo: ["Para ese rango te recomiendo la <b>Sesión Personal ($50)</b> o el <b>Evento Small ($75)</b>. ¡Son ideales para empezar! ¿Quieres agendar por WhatsApp?<br><br>👉 <a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'><b>WhatsApp: +503 7577 8333</b></a>"],
             rango_medio: ["La mejor opción es nuestro <b>Evento Intermedio ($100)</b>, ¡es el favorito! Incluye video de 10 min. ¿Te gustaría apartar tu fecha?<br><br>👉 <a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'><b>WhatsApp: +503 7577 8333</b></a>"],
             rango_alto: ["¡Vas por todo! El <b>Evento Express ($170)</b> es el más completo: incluye asistente, video para redes y 16 fotos impresas. Escríbenos para confirmar disponibilidad:<br><br>👉 <a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'><b>WhatsApp: +503 7577 8333</b></a>"],
-            robo_info: [
-                "¡Nos alegra que te guste nuestra técnica! Mantenemos nuestra 'receta secreta' de edición y flujo de trabajo en casa, pero nos encanta inspirar a otros creadores. ✨",
-                "Usamos varios programas profesionales del mercado y mucha creatividad propia. ¡Gracias por notar la calidad!"
-            ],
-            contratar: [ 
-                "¡Esa es la actitud! 🚀 Para formalizar y apartar tu fecha, el siguiente paso es hablar con nuestro coordinador humano en WhatsApp: <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b>. ¡Te esperamos ahí para empezar!",
-                "¡Excelente decisión! 🎉 Estamos listos. Escríbenos ya mismo a nuestro WhatsApp <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b> para asegurar tu espacio."
-            ],
-            regateo: [
-                "Entiendo que el presupuesto es clave. No solemos hacer recortes directos porque nuestro equipo y tiempo garantizan una calidad premium, pero ¡escríbenos a WhatsApp! A veces podemos ajustar el paquete para hacer posible tu idea."
-            ],
-            caro: [
-                "Entiendo tu punto. Nuestros precios reflejan el uso de equipo de alta gama, iluminación profesional y horas de edición detallada para que el resultado sea nivel cine. ✨ ¡Es una inversión en calidad!"
-            ],
-            barato: [
-                "¡Queremos que el arte visual sea accesible! Optimizamos nuestros procesos para darte la mejor calidad sin que tengas que gastar una fortuna. 😎"
-            ],
-            solo_cotiza: [
-                "¡No hay ningún problema! Cotizar es el primer paso para crear algo genial. Llévate la info y cuando estés listo, aquí estaremos para ti. 📸"
-            ],
-            crisis: [
-                "Comprendo. Seré más directo y formal a partir de ahora. ¿En qué le puedo asistir?"
-            ],
-            bad_strange: [
-                "¡Ups! 😅 Mi programación solo me permite hablar de fotografía, video y diseño. ¿Te ayudo con eso?"
-            ],
-            negativa_mascotas: [ 
-                "Por el momento estamos 100% enfocados en sesiones para personas, empresas y eventos. 📸 Aunque amamos a los peluditos, aún no tenemos el set listo para ellos. ¿Te ayudo con otro tipo de sesión?"
-            ],
-            prohibido_discotecas: [
-                "Por políticas de la agencia, no realizamos coberturas en discotecas o ambientes similares. 🚫 Preferimos enfocarnos en eventos sociales, culturales y corporativos. ¿Tienes algún otro tipo de evento en mente?"
-            ],
-            donar_academy: [
-                "¡Qué increíble que quieras sumar! 🤩 Creatik Academy siempre tiene las puertas abiertas para seguir formando jóvenes. Iniciamos en Valle Verde y nos expandimos a Distrito Italia, Valle Verde 1,2,3,4, Popotlán 1 y 2, San Marcos, Nejapa, San Martín, Ciudad Delgado y todo Apopa. ¡Escríbenos al WhatsApp para coordinar tu apoyo! ✨"
-            ],
-            institucion_gobierno: [
-                "¡Excelente! Tenemos gran experiencia trabajando con instituciones, escuelas y proyectos gubernamentales/municipales. 🏢 Podemos crear una propuesta formal y adaptada a sus requerimientos de comunicación. ¿Podría brindarme más detalles del proyecto?"
-            ],
-            empresa: [
-                "¡Las marcas son nuestro fuerte! 📈 Hemos trabajado con muchas empresas. Para contenido corporativo o de emprendimiento, te recomiendo el paquete Pro de $125 o armar algo a la medida. ¿Qué tipo de negocio es?"
-            ],
-            marca_personal: [
-                "¡Perfecto para impulsar tu imagen! 🚀 Ya sea que ofrezcas un servicio profesional o quieras potenciar tu marca personal, diseñamos sesiones que transmitan confianza y calidad. El paquete de $50 (Sesión Personal) es ideal para empezar."
-            ],
-            religion_evasion: [
-                "¡Hola! Somos una agencia creativa independiente. 🎥 Cubrimos con mucho respeto y profesionalismo eventos de cualquier denominación o iglesia (bodas, bautizos, cultos, retiros, etc.). ¿De qué trata tu evento?"
-            ],
-            evento: [
-                "¡Nos encantan los eventos! 🎉 Para bodas, cumpleaños o graduaciones, nuestro paquete Intermedio ($100) es el más pedido e incluye video. Si es algo muy grande, el Express ($170) es ideal. ¿Qué tipo de evento es?"
-            ],
-            foto_pareja: [
-                "¡Qué romántico! ❤️ Las sesiones en pareja son maravillosas. Podemos ir a la locación que signifique mucho para ustedes (playa, montaña, ciudad). El paquete básico de 1 hora ($50) es perfecto para esto."
-            ],
-            foto_familia: [
-                "¡Los recuerdos con los seres queridos son invaluables! 🥰 Cubrimos sesiones familiares o con tu grupo de amigos. La pasamos súper bien y capturamos esa conexión real. ¿Cuántas personas serían?"
-            ],
-            personal: [
-                "¡Una sesión para ti es un súper regalo! ✨ Sacaremos tu mejor perfil con dirección de poses y mucha buena vibra. Te recomiendo nuestro paquete de $50 que incluye 1 hora de sesión."
-            ],
-            academy: [
-                "Creatik Academy es nuestro orgullo social. ✨ Llevamos más de dos años uniendo talentos mediante salidas de campo, usando la fotografía como puente de integración."
-            ],
-            ubicacion: [
-                "Actualmente no contamos con un local físico, ¡porque nosotros nos trasladamos a donde tú prefieras! 🚗 Llevamos nuestro equipo profesional para cubrir tus eventos o sesiones en la locación de tu elección."
-            ],
-            tecnico: [
-                "Usamos equipo profesional y óptica Full Frame para que salgas espectacular. ⚡ Entregamos en unos 5 a 8 días hábiles."
-            ],
-            redes: [
-                "¡Nos encanta conectar! 📱 Búscanos en Instagram, Facebook y TikTok como <b>@soycreatik</b>."
-            ],
-            contacto: [
-                "¡Te paso con un humano! 🏃‍♂️ Escríbenos a nuestro WhatsApp directo: <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b>."
-            ],
-            precios: [
-                "Nuestra Sesión Personal o el plan Emprendimiento Básico arrancan en $50. Si buscas destacar más, el Pro está en $125. Para eventos, te súper recomiendo nuestro paquete Intermedio por $100 (es el favorito de todos). También tenemos la opción Small ($75) y Express ($170)."
-            ],
-            precios_detalle: [
-                "Las sesiones de 1 hora ($50 a $125) son ideales para fotos tuyas o de marca. Los planes de eventos ($75 a $170) te aseguran cobertura total, ¡e incluso video en los más completos!"
-            ],
-            servicios_info: [
-                "En Creatik ofrecemos Fotografía Profesional, Video Cinematográfico y Diseño Gráfico. ¡Contamos tu historia de forma integral!"
-            ],
-            idea: [
-                "¡Me encanta escuchar nuevas ideas! 🤩 Cuéntame, ¿de qué trata tu proyecto?"
-            ],
-            ayuda: [
-                "¡Claro que sí! Estoy para ayudarte. ¿Buscas info sobre precios, servicios, o quieres contarme tu idea?"
-            ],
-            identidad: [
-                "¡Soy Creatik IA! Tu asistente con alma de fotógrafo y puro código salvadoreño. 🇸🇻"
-            ],
-            como_estas: [
-                "¡Todo excelente por aquí! Con mucha energía y ganas de crear. ✨ ¿En qué te puedo ayudar hoy?"
-            ],
-            despedida: [
-                "¡De nada! Ha sido un placer platicar contigo. ¡Hasta la próxima! 📸"
-            ],
-            saludo: [
-                "¡Hola! Qué alegría que pienses en Creatik. ✨",
-                "¡Buenos días! ¿En qué te puedo ayudar hoy?",
-                "¡Hola, hola! 📸 ¿Qué tal todo? ¿Listo para crear?",
-                "¡Hey! Qué bueno verte por aquí. Cuéntame."
-            ],
-            interjeccion: [
-                "¡Totalmente! La buena vibra es parte de Creatik. 😎 ¿En qué más te apoyo?"
-            ]
+            
+            // EMOCIONES Y ACTITUD (ESTILO CREATIK)
+            emocion_triste: ["¡Ánimo! A veces los días grises son el mejor fondo para una foto espectacular. Cuenta con nosotros para alegrarte el día. ✨ ¿En qué te ayudamos?"],
+            emocion_feliz: ["¡Esa es la actitud Creatik! 🚀 Aprovechemos esa energía para planear una sesión increíble. ¿Qué historia quieres contar hoy?"],
+            emocion_enojado: ["¡Respira profundo! Aquí estamos para que todo fluya sin estrés. 🧘‍♂️ Relájate y cuéntame en qué podemos apoyarte."],
+            emocion_dudoso: ["¡Es normal tener dudas antes de crear algo grande! Para eso estoy aquí. ¿Te oriento con nuestros paquetes o me cuentas tu idea? 💡"],
+            
+            // HATERS / TROLLS
+            hater_celular: ["Respetamos todas las herramientas, ¡los celulares de hoy son geniales! 📱 Pero en Creatik ofrecemos iluminación profesional, óptica Full Frame, edición detallada y una visión artística que hace toda la diferencia. ✨"],
+            hater_barato: ["Entendemos que hay opciones para todo presupuesto. Nuestro valor refleja la pasión, el equipo de alta gama, los materiales entregados (como las fotos impresas) y las horas de dedicación para que tu historia sea nivel cine. ¡Siempre damos el 100%! 🚀"],
+
+            robo_info: ["¡Nos alegra que te guste nuestra técnica! Mantenemos nuestra 'receta secreta' de edición y flujo de trabajo en casa, pero nos encanta inspirar a otros creadores. ✨"],
+            contratar: ["¡Esa es la actitud! 🚀 Para formalizar y apartar tu fecha, el siguiente paso es hablar con nuestro coordinador humano en WhatsApp: <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b>. ¡Te esperamos ahí para empezar!"],
+            regateo: ["Entiendo que el presupuesto es clave. No solemos hacer recortes directos porque nuestro equipo y tiempo garantizan una calidad premium, pero ¡escríbenos a WhatsApp! A veces podemos ajustar el paquete para hacer posible tu idea."],
+            caro: ["Entiendo tu punto. Nuestros precios reflejan el uso de equipo de alta gama, iluminación profesional y horas de edición detallada para que el resultado sea nivel cine. ✨ ¡Es una inversión en calidad!"],
+            barato: ["¡Queremos que el arte visual sea accesible! Optimizamos nuestros procesos para darte la mejor calidad sin que tengas que gastar una fortuna. 😎"],
+            solo_cotiza: ["¡No hay ningún problema! Cotizar es el primer paso para crear algo genial. Llévate la info y cuando estés listo, aquí estaremos para ti. 📸"],
+            crisis: ["Comprendo. Seré más directo y formal a partir de ahora. ¿En qué le puedo asistir?"],
+            bad_strange: ["¡Ups! 😅 Mi programación solo me permite hablar de fotografía, video y diseño. ¿Te ayudo con eso?"],
+            negativa_mascotas: ["Por el momento estamos 100% enfocados en sesiones para personas, empresas y eventos. 📸 Aunque amamos a los peluditos, aún no tenemos el set listo para ellos."],
+            prohibido_discotecas: ["Por políticas de la agencia, no realizamos coberturas en discotecas o ambientes similares. 🚫 Preferimos enfocarnos en eventos sociales, culturales y corporativos."],
+            donar_academy: ["¡Qué increíble que quieras sumar! 🤩 Creatik Academy siempre tiene las puertas abiertas para seguir formando jóvenes. ¡Escríbenos al WhatsApp para coordinar tu apoyo! ✨"],
+            institucion_gobierno: ["¡Excelente! Tenemos gran experiencia trabajando con instituciones, escuelas y proyectos. 🏢 Podemos crear una propuesta formal. Escríbenos al WhatsApp para más detalles."],
+            empresa: ["¡Las marcas son nuestro fuerte! 📈 Para contenido corporativo o de emprendimiento, te recomiendo el paquete Pro de $125 o armar algo a la medida."],
+            marca_personal: ["¡Perfecto para impulsar tu imagen! 🚀 El paquete de $50 (Sesión Personal) es ideal para empezar."],
+            religion_evasion: ["¡Hola! Somos una agencia creativa independiente. 🎥 Cubrimos con respeto eventos de cualquier iglesia o culto."],
+            evento: ["¡Nos encantan los eventos! 🎉 Nuestro paquete Intermedio ($100) es el más pedido e incluye video. Si es algo muy grande, el Express ($170) es ideal."],
+            foto_pareja: ["¡Qué romántico! ❤️ Podemos ir a la locación que signifique mucho para ustedes (playa, montaña). El paquete básico ($50) es perfecto para esto."],
+            foto_familia: ["¡Los recuerdos en familia son invaluables! 🥰 La pasamos súper bien y capturamos esa conexión real. Tenemos paquetes desde $50."],
+            personal: ["¡Una sesión para ti es un súper regalo! ✨ Sacaremos tu mejor perfil con dirección de poses. Te recomiendo nuestro paquete de $50."],
+            academy: ["Creatik Academy es nuestro orgullo social. ✨ Llevamos más de dos años uniendo talentos mediante salidas de campo."],
+            ubicacion: ["Actualmente no contamos con un local físico, ¡porque nosotros nos trasladamos a donde tú prefieras! 🚗 Somos de El Salvador 🇸🇻."],
+            tecnico: ["Usamos equipo profesional y óptica Full Frame. ⚡ Entregamos fotos editadas y crudas en unos 5 a 8 días hábiles."],
+            redes: ["¡Nos encanta conectar! 📱 Búscanos en Instagram, Facebook y TikTok como <b>@soycreatik</b>."],
+            contacto: ["¡Te paso con un humano! 🏃‍♂️ Escríbenos a nuestro WhatsApp directo: <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b>."],
+            precios: ["Manejamos varias opciones. Para algo rápido: Sesión Personal o Básico ($50). En eventos, nuestro paquete estrella es el Intermedio de $100. También el Express por $170."],
+            precios_detalle: ["Las sesiones de 1 hora ($50 a $125) son ideales para fotos tuyas o de marca. Los planes de eventos ($75 a $170) te aseguran cobertura total, ¡e incluso video!"],
+            servicios_info: ["En Creatik ofrecemos Fotografía Profesional, Video Cinematográfico y Diseño Gráfico. ¡Contamos tu historia de forma integral!"],
+            idea: ["¡Me encanta escuchar nuevas ideas! 🤩 Cuéntame, ¿de qué trata tu proyecto?"],
+            ayuda: ["¡Claro que sí! Estoy para ayudarte. ¿Buscas info sobre precios, servicios, o quieres contarme tu idea?"],
+            identidad: ["¡Soy Creatik IA! Tu asistente con alma de fotógrafo y puro código salvadoreño. 🇸🇻"],
+            como_estas: ["¡Todo excelente por aquí! Con mucha energía y ganas de crear. ✨ ¿En qué te puedo ayudar hoy?"],
+            despedida: ["¡De nada! Ha sido un placer platicar contigo. ¡Hasta la próxima! 📸"],
+            saludo: ["¡Hola! Qué alegría que pienses en Creatik. ✨ ¿En qué te puedo ayudar hoy?"],
+            interjeccion: ["¡Totalmente! La buena vibra es parte de Creatik. 😎 ¿En qué más te apoyo?"]
         };
 
         const intents = [
-            // Intenciones Compuestas o Específicas primero (tienen prioridad)
+            // 1. PREGUNTAS Y FLUJOS DIRECTOS
+            { name: 'pregunta', regex: "\\b(pregunta|quiero hacer una pregunta|una duda|tengo una duda|consultar)\\b" },
             { name: 'quiero_fotos', regex: "\\b(quiero una sesion|quiero fotos|sesion de fotos|hacerme fotos|necesito fotos|quisiera una sesion|quisiera fotos|cotizar una sesion)\\b" },
+            { name: 'solo_video', regex: "\\b(solo video|quiero un video|hacen video|graban video|videografia|hacer un video|servicios de video)\\b" },
+            { name: 'video_emprendimiento', regex: "\\b(video emprendimiento)\\b" },
+            { name: 'video_sesion', regex: "\\b(video sesion)\\b" },
+            { name: 'video_evento', regex: "\\b(video evento)\\b" },
+            
+            // 2. EMOCIONES
+            { name: 'emocion_triste', regex: "\\b(triste|deprimido|mal|bajoneado|tristesa)\\b" },
+            { name: 'emocion_feliz', regex: "\\b(feliz|contento|alegre|emocionado|excelente|super bien|genial)\\b" },
+            { name: 'emocion_enojado', regex: "\\b(enojado|molesto|furioso|cabreado|enojada|harto)\\b" },
+            { name: 'emocion_dudoso', regex: "\\b(dudoso|indeciso|no se|confundido|dudosa)\\b" },
+            
+            // 3. HATERS / OBJECIONES
+            { name: 'hater_celular', regex: "\\b(celular|iphone|mi telefono|telefono toma mejores|cel hace lo mismo|no sirve|basura|asco|feos|malos)\\b" },
+            { name: 'hater_barato', regex: "\\b(otros cobran menos|muy caro|gratis|me cobran menos|se la pican|creidos|vanidosos|superiores|se creen mucho|creidas|pican)\\b" },
+            
+            // 4. TIEMPO
+            { name: 'tiempo_hora', regex: "\\b(hora es|que hora son|dime la hora|la hora)\\b" },
+            { name: 'tiempo_dia', regex: "\\b(que dia es|fecha de hoy|dia de hoy|que fecha)\\b" },
+            
+            // 5. NEGATIVAS / LIMITACIONES
             { name: 'no_estudio', regex: "\\b(estudio|cedula|pasaporte|titulo|carnet|foto carnet|fotografia de estudio|estudio fotografico)\\b" },
             { name: 'no_bebes', regex: "\\b(bebe|bebes|recien nacido|newborn|nino recien|nina recien)\\b" },
             { name: 'viaticos', regex: "\\b(fuera de san salvador|fuera de ss|otro departamento|interior del pais|viaticos|transporte|cobran extra|costo adicional|lejos|santa ana|san miguel|chalatenango|sonsonate|usulutan|la libertad|la paz|cabanas|cuscatlan|morazan|san vicente|la union|ahuachapan|viajan)\\b" },
+            
+            // 6. ASESORÍA Y PAQUETES
             { name: 'asesoria', regex: "\\b(asesoria|asesorar|asesorame|ayudame a elegir|no se que elegir|recomiendame|ayuda|orientacion|que me recomiendas)\\b" },
             { name: 'rango_bajo', regex: "\\b(bajo|economico|barato|50|75|menos de 100|presupuesto bajo)\\b" },
             { name: 'rango_medio', regex: "\\b(medio|intermedio|100|125|equilibrado|presupuesto medio)\\b" },
@@ -987,6 +954,17 @@
                 }
             }
 
+            // INTERCEPTAMOS HORA Y FECHA DINÁMICA
+            if (intent === 'tiempo_hora') {
+                const hora = new Date().toLocaleTimeString('es-SV', { hour: '2-digit', minute: '2-digit' });
+                return `¡Aquí Creatik IA reportándose! 🤖 Son las <b>${hora}</b>. ¿En qué te ayudo?`;
+            }
+            if (intent === 'tiempo_dia') {
+                const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                const fecha = new Date().toLocaleDateString('es-SV', opcionesFecha);
+                return `Hoy es <b>${fecha}</b>, un día perfecto para planear tu próxima sesión. ✨`;
+            }
+
             if (intent === 'interjeccion') {
                 if (lastTopic === 'servicios_info') response = "¡Así es! Nos apasiona crear contenido de alta calidad. ✨ ¿Te gustaría ver nuestros paquetes de precios?";
                 else if (lastTopic === 'precios') response = "¡Excelente! Si algún paquete te llama la atención, me avisas y te digo cómo reservar. 📅";
@@ -994,50 +972,31 @@
                 else if (lastTopic === 'idea' || lastTopic === 'empresa' || lastTopic === 'evento') response = "¡Totalmente! Tenemos la misma visión creativa entonces. 🚀 ¿Vemos paquetes o prefieres hablar con un humano en WhatsApp?";
                 else response = getRandom(botResponses['interjeccion']);
                 
-                unknownCount = 0;
                 return response;
-            }
-
-            if (cleanInput.length < 25 && lastTopic === 'precios' && new RegExp("\\b(y el|y los|otro|pro|basico|small|express|mas|menos|caro|barato)\\b", "i").test(cleanInput)) {
-                intent = 'precios_detalle';
             }
 
             if (['precios', 'servicios_info', 'academy', 'ubicacion', 'identidad', 'idea', 'empresa', 'evento', 'marca_personal', 'foto_familia', 'foto_pareja', 'personal', 'institucion_gobierno'].includes(intent)) {
                 lastTopic = intent;
-            } else if (intent !== 'default' && intent !== 'negativa_mascotas' && intent !== 'prohibido_discotecas' && intent !== 'religion_evasion') {
+            } else if (intent !== 'default') {
                 lastTopic = 'inicio';
             }
 
             if (intent !== 'default') {
                 response = getRandom(botResponses[intent]);
-                unknownCount = 0; 
             } else {
-                unknownCount++;
+                // CUANDO NO ENTIENDE, PASA ESTO EN VEZ DE "MMM NO ESTOY SEGURO":
+                let fallbackMsg = "¡Hola! Estoy listo para ayudarte a resolver cualquier duda. ¿De qué tema te gustaría hablar? 👇";
+                const btnStyle = "display:block; width:100%; margin-top:8px; padding:10px; background:rgba(168,85,247,0.15); border:1px solid rgba(168,85,247,0.5); color:white; border-radius:10px; cursor:pointer; text-align:left; font-family:inherit; transition:0.3s; font-size: 0.85rem;";
                 
-                if (unknownCount >= 3) {
-                    response = "Creo que no nos estamos entendiendo bien 😅. Mejor platiquemos con un humano por WhatsApp: <b><a href='https://wa.me/50375778333' target='_blank' style='color:#a855f7; text-decoration:none;'>+503 7577 8333</a></b> o búscanos en Instagram como <b>@soycreatik</b>.";
-                    unknownCount = 0; 
-                } 
-                else if (!buttonsSent) {
-                    let fallbackMsg = "Mmm, ¡qué interesante! 🤔 Pero no estoy 100% seguro de entenderte. ¿Te ayudo con alguna de estas opciones?";
-                    const pool = ["📷 Ver paquetes y precios", "🎥 Información de servicios", "📍 ¿Dónde están ubicados?", "👤 Hablar con un asesor"].sort(() => 0.5 - Math.random());
-                    const btnStyle = "display:block; width:100%; margin-top:8px; padding:10px; background:rgba(168,85,247,0.15); border:1px solid rgba(168,85,247,0.5); color:white; border-radius:10px; cursor:pointer; text-align:left; font-family:inherit; transition:0.3s; font-size: 0.85rem;";
-                    
-                    let buttonsHTML = `
-                        <div style="margin-top: 12px;">
-                            <button style="${btnStyle}" onmouseover="this.style.background='rgba(168,85,247,0.4)'" onmouseout="this.style.background='rgba(168,85,247,0.15)'" onclick="sendChatOption('💡 Quiero contarte mi idea')">💡 Quiero contarte mi idea</button>
-                            <button style="${btnStyle}" onmouseover="this.style.background='rgba(168,85,247,0.4)'" onmouseout="this.style.background='rgba(168,85,247,0.15)'" onclick="sendChatOption('${pool[0]}')">${pool[0]}</button>
-                            <button style="${btnStyle}" onmouseover="this.style.background='rgba(168,85,247,0.4)'" onmouseout="this.style.background='rgba(168,85,247,0.15)'" onclick="sendChatOption('${pool[1]}')">${pool[1]}</button>
-                        </div>
-                    `;
-                    response = fallbackMsg + buttonsHTML;
-                    buttonsSent = true; 
-                } 
-                else {
-                    response = "¿Podrías reformular tu idea o preguntarme sobre nuestros servicios de foto, video o precios? 😊";
-                }
+                let buttonsHTML = `
+                    <div style="margin-top: 12px;">
+                        <button style="${btnStyle}" onclick="sendChatOption('Ver paquetes y precios')">📷 Ver paquetes y precios</button>
+                        <button style="${btnStyle}" onclick="sendChatOption('Servicios de video')">🎥 Servicios de Video</button>
+                        <button style="${btnStyle}" onclick="sendChatOption('Hablar con un asesor')">👤 Hablar con un asesor</button>
+                    </div>
+                `;
+                response = fallbackMsg + buttonsHTML;
             }
-            if (!response || response === "") response = "Mmm, ¿podrías repetirlo de otra forma? 🤔";
             return response;
         }
 
@@ -1045,7 +1004,7 @@
             isChatbotOpen = true;
             chatbotWindow.classList.add('active');
             chatbotFab.classList.add('hide-chatbot-ui');
-            document.body.classList.add('chat-active'); 
+            document.body.classList.add('chat-active'); // Activa la magia CSS para ocultar botones del header
             if (hasNewMessage) {
                 hasNewMessage = false;
                 chatbotFab.classList.remove('has-new-message');
@@ -1060,7 +1019,7 @@
             isChatbotOpen = false;
             chatbotWindow.classList.remove('active');
             chatbotFab.classList.remove('hide-chatbot-ui');
-            document.body.classList.remove('chat-active'); 
+            document.body.classList.remove('chat-active'); // Devuelve los botones a su lugar
         });
 
         function appendUserMessage(text) {
