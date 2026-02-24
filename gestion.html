@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión Creatik</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #020005; 
+            color: white; 
+            font-family: 'Inter', sans-serif;
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0;
+            background-image: radial-gradient(circle at 50% 110%, rgba(107, 33, 168, 0.4) 0%, rgba(30, 10, 50, 0.6) 50%, #020005 90%);
+        }
+        .panel {
+            background: rgba(30, 10, 50, 0.8); 
+            padding: 40px; 
+            border-radius: 20px;
+            border: 1px solid rgba(168, 85, 247, 0.4); 
+            text-align: center; 
+            width: 350px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+        }
+        .logo-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+        .logo-text span { color: #a855f7; }
+        
+        input {
+            width: 100%; 
+            padding: 14px; 
+            margin-bottom: 20px; 
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.2); 
+            background: rgba(255,255,255,0.05);
+            color: white; 
+            font-size: 1rem; 
+            box-sizing: border-box;
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus {
+            border-color: #a855f7;
+            background: rgba(255,255,255,0.1);
+        }
+        button {
+            width: 100%; 
+            background: linear-gradient(90deg, #a855f7, #db2777);
+            color: white; 
+            border: none; 
+            padding: 14px; 
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 5px 15px rgba(168, 85, 247, 0.3);
+        }
+        button:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 8px 20px rgba(168, 85, 247, 0.5);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        #resultado { 
+            margin-top: 20px; 
+            font-weight: bold; 
+            color: #10b981; 
+            min-height: 20px;
+        }
+        .codigo-generado { 
+            font-size: 1.8rem; 
+            letter-spacing: 2px; 
+            color: #ffd700; 
+            margin-top: 10px; 
+            font-family: monospace;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="panel">
+        <div class="logo-text">creatik<span>.</span></div>
+        <h3 style="margin-top: 0; font-weight: 400; font-size: 1rem; color: #ccc; margin-bottom: 25px;">Generador de Códigos</h3>
+        
+        <input type="text" id="nombreCliente" placeholder="Ingresa el nombre del cliente" autocomplete="off" required>
+        <button id="btnGenerar" onclick="generarYGuardar()">Generar y Guardar</button>
+        
+        <div id="resultado"></div>
+        <div id="codigoMuestra" class="codigo-generado"></div>
+    </div>
+
+    <script>
+        // AQUÍ ESTÁ TU URL OFICIAL DE GOOGLE SCRIPT
+        const GOOGLE_APP_URL = "https://script.google.com/macros/s/AKfycbya4Eq0jSOrY1NZCF6JUgfSu_xM0vm31tB8rZcrBceYn3lOpTRdJ_Cfx3DgHQP1Nj_P/exec";
+
+        function generarCodigoUnico() {
+            // Genera un código estilo CRTK-ABCD12
+            const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let codigo = 'CRTK-';
+            for (let i = 0; i < 6; i++) {
+                codigo += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+            }
+            return codigo;
+        }
+
+        async function generarYGuardar() {
+            const nombreInput = document.getElementById('nombreCliente');
+            const nombre = nombreInput.value.trim();
+            const boton = document.getElementById('btnGenerar');
+            const divResultado = document.getElementById('resultado');
+            const divCodigo = document.getElementById('codigoMuestra');
+
+            // Limpiar mensajes previos
+            divResultado.innerText = "";
+            divCodigo.innerText = "";
+
+            if (!nombre) {
+                divResultado.innerText = "⚠️ Por favor ingresa un nombre.";
+                divResultado.style.color = "#ef4444";
+                nombreInput.focus();
+                return;
+            }
+
+            const codigoUnico = generarCodigoUnico();
+            
+            // Cambiar estado del botón mientras carga
+            boton.innerText = "Guardando en la nube...";
+            boton.disabled = true;
+
+            try {
+                // Enviar datos a Google Sheets usando tu URL
+                await fetch(GOOGLE_APP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Fundamental para que no dé error de seguridad en archivos locales
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nombre: nombre,
+                        codigo: codigoUnico
+                    })
+                });
+
+                // Mostrar éxito (al usar no-cors, asumimos éxito si el fetch no falla)
+                divResultado.innerText = "¡Guardado exitosamente!";
+                divResultado.style.color = "#10b981";
+                divCodigo.innerText = codigoUnico;
+                
+                // Limpiar input para el siguiente cliente
+                nombreInput.value = ""; 
+
+            } catch (error) {
+                divResultado.innerText = "❌ Error al guardar. Revisa tu internet.";
+                divResultado.style.color = "#ef4444";
+                console.error("Error:", error);
+            } finally {
+                // Restaurar el botón
+                boton.innerText = "Generar y Guardar";
+                boton.disabled = false;
+            }
+        }
+
+        // Permitir usar la tecla "Enter" para generar
+        document.getElementById('nombreCliente').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                generarYGuardar();
+            }
+        });
+    </script>
+</body>
+</html>
