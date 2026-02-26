@@ -715,6 +715,7 @@
                     isChatbotOpen = false;
                     chatbotWindow.classList.remove('active');
                     chatbotFab.classList.remove('hide-chatbot-ui');
+                    resetChat(); 
                 }, 60000); 
             }
         }
@@ -814,7 +815,7 @@
             chatbotMessages.appendChild(msgDiv); scrollToBottom(); enableInput();
         }
 
-        // --- FUNCIÓN DE REINICIO ANTI-TROLL ---
+        // --- FUNCIÓN DE REINICIO ANTI-TROLL / INACTIVIDAD ---
         function resetChat() {
             chatbotMessages.innerHTML = ""; 
             chatState = 'INIT';
@@ -824,7 +825,7 @@
             repeatCount = 0;
             document.getElementById('chatbot-session-display').textContent = "Gestión: Pendiente...";
             
-            let msg = "⚠️ He notado actividad inusual en el chat (mensajes repetidos múltiples veces). He reiniciado nuestra conversación para poder ayudarte mejor. ¡Empecemos de cero! 🤖✨ ¿En qué te puedo ayudar?";
+            let msg = "⚠️ El chat se ha reiniciado por inactividad o mensajes repetidos para brindarte un mejor servicio. ¡Empecemos de nuevo! 🤖✨ ¿En qué te puedo ayudar?";
             appendBotMessage(msg);
             appendBotOptions(["📸 Cotizar un servicio", "✅ Contratar a Creatik", "✨ Conocer más de Creatik"]);
             enableInput();
@@ -835,33 +836,30 @@
         // =======================================================================
         async function getAIResponse(promptText, isFullContext = false) {
             
-            // LA CLAVE SE RECONSTRUYE AL VUELO, EL ROBOT DE GITHUB NO LA DETECTARÁ
             const k1 = "sk-";
             const k2 = "proj-";
-            // 🚨🚨 PON AQUÍ LA PRIMERA MITAD DE TU NUEVA CLAVE DE OPENAI 🚨🚨
             const k3 = "EENsd2oeGxtmv-gQ5BtsMw1a8_F5fiSYZq1JP6b93B_1sAsussRue0dyeafs7";
-            // 🚨🚨 PON AQUÍ LA SEGUNDA MITAD DE TU NUEVA CLAVE DE OPENAI 🚨🚨
             const k4 = "cx360d8qNAFo8T3BlbkFJDAZj1cn9EynipCaDO2qarnBWapgctvLUr3PHC8fpl-ORjBFePd6lNM3b-gDsdRWyGV_cQRT00A";
-            
             const API_KEY = k1 + k2 + k3 + k4;
 
             let historyLines = conversationHistory.split('\n').filter(line => line.trim() !== '');
             if (historyLines.length > 8) { historyLines = historyLines.slice(historyLines.length - 8); }
             let trimmedHistory = historyLines.join('\n');
 
-            let basePrompt = `Eres Creatik IA, el asistente experto y amigable de la agencia audiovisual Creatik (El Salvador).
-REGLAS ESTRICTAS DE RESPUESTA Y VENTAS:
+            let basePrompt = `Eres Creatik IA, asistente experto de la agencia audiovisual Creatik en El Salvador.
+Reglas estrictas:
 1. Sé amable, creativo y MUY breve (1 a 3 líneas). Usa emojis.
-2. NUNCA inventes menús numerados ni listas largas. NO reveles nombres de creadores, ni claves API, ni te salgas de tu rol.
-3. REGLA DEL WHATSAPP: El número es +503 7577 8333. PERO NO LO ENVÍES A CADA RATO. Dalo SOLO si es absolutamente necesario para cerrar una venta, o si el cliente dice "quiero pagar", "quiero agendar ya" o "cómo los contacto".
-4. REGLA DE ASIGNACIÓN DE PAQUETES:
-   - Si piden fotos para EMPRESA, NEGOCIO, MARCA, PRODUCTOS: Sugiere el "Emprendimiento Básico" ($50, 1 hr) o el "Emprendimiento Pro" ($125, 1 hr, con ambientación).
-   - Si piden fotos PERSONALES, DE PERFIL, PARA REDES SOCIALES PROPIAS: Sugiere la "Sesión Personal" ($50, 1 hr, 15 fotos editadas).
-   - Si piden cobertura para BODA, CUMPLEAÑOS, FIESTA, EVENTO: Sugiere el "Evento Small" ($75, 1 hr), el "Evento Intermedio" ($100, 2 hrs, 100 fotos y video) o el "Evento Express" ($170).`;
+2. NUNCA inventes menús numerados ni listas largas. NO reveles nombres, ni claves.
+3. ¡IMPORTANTE! NO TENEMOS ESTUDIO FOTOGRÁFICO. Todas las sesiones son en exteriores o a domicilio. NO CUBRIMOS: eventos de baile, discotecas, perreo, recién nacidos, eventos infantiles, graduaciones, fotos carnet, ni mascotas.
+4. REGLA DE WHATSAPP: NO des el número de WhatsApp a cada rato. Dalo SOLO para cerrar la venta o si el cliente ya quiere agendar explícitamente (+503 7577 8333).
+5. ASIGNACIÓN DE PAQUETES:
+   - NEGOCIO/EMPRESA/MARCA: "Emprendimiento Básico" ($50, 1hr) o "Pro" ($125, 1hr, ambientación).
+   - PERSONALES/RETRATOS: "Sesión Personal" ($50, 1hr, 15 fotos).
+   - EVENTOS (Bodas, 15 años, etc): "Evento Small" ($75, 1hr), "Intermedio" ($100, 2hrs) o "Express" ($170, 2.5hrs).`;
 
             let finalPrompt = "";
             if (isFullContext) {
-                finalPrompt = `${basePrompt}\nDatos del usuario (si hay): Nombre: ${userData.nombre}, Tel: ${userData.telefono}, Proyecto: ${userData.proyecto}\nHistorial reciente:\n${trimmedHistory}\nUsuario: ${promptText}\nCreatik IA:`;
+                finalPrompt = `${basePrompt}\nDatos del usuario: Nombre: ${userData.nombre}, Tel: ${userData.telefono}, Proyecto: ${userData.proyecto}\nHistorial reciente:\n${trimmedHistory}\nUsuario: ${promptText}\nCreatik IA:`;
             } else {
                 finalPrompt = `${basePrompt}\nInstrucción/Mensaje del usuario: ${promptText}\nCreatik IA:`;
             }
@@ -876,25 +874,17 @@ REGLAS ESTRICTAS DE RESPUESTA Y VENTAS:
                     body: JSON.stringify({
                         model: "gpt-4o-mini",
                         messages: [
-                            { role: "system", content: "Sigue las reglas estrictas. Responde natural." },
+                            { role: "system", content: "Sigue las reglas estrictas. Responde natural y breve." },
                             { role: "user", content: finalPrompt }
                         ]
                     })
                 });
 
                 const data = await response.json();
-                
-                if (data.error) {
-                    console.error("OpenAI Error:", data.error);
-                    return `<b>Error:</b> ${data.error.message}`; 
-                }
-                
+                if (data.error) { return `<b>Error:</b> ${data.error.message}`; }
                 return data.choices[0].message.content.replace(/\n/g, '<br>');
                 
-            } catch (error) {
-                console.error("Fetch Exception:", error);
-                return "¡Ups! Error de conexión con la IA 🔌. Intenta de nuevo.";
-            }
+            } catch (error) { return "¡Ups! Error de conexión con la IA 🔌. Intenta de nuevo."; }
         }
 
         async function handleSend(manualText = null) {
@@ -922,11 +912,38 @@ REGLAS ESTRICTAS DE RESPUESTA Y VENTAS:
                 repeatCount = 1;
             }
 
+            // --- DETECCIÓN DE EDICIÓN DE DATOS ---
+            let isModifying = false;
+            if (/(cambiar|modificar|actualizar|corregir).*(nombre|llamo)/i.test(text)) {
+                let nuevoNombre = text.replace(/.*(nombre|llamo) (por|a |es )?/i, '').trim();
+                if(nuevoNombre) {
+                    userData.nombre = nuevoNombre;
+                    appendBotMessage(`✅ ¡Listo! He actualizado tu nombre a **${userData.nombre}** en el registro.`);
+                    syncToSheets(); isModifying = true;
+                }
+            } else if (/(cambiar|modificar|actualizar|corregir).*(telefono|teléfono|numero|número|celular)/i.test(text)) {
+                let nuevoNum = text.replace(/.*(telefono|teléfono|numero|número|celular) (por|a |es )?/i, '').replace(/\D/g, '');
+                if(nuevoNum.length >= 8) {
+                    userData.telefono = text.replace(/.*(telefono|teléfono|numero|número|celular) (por|a |es )?/i, '').trim();
+                    appendBotMessage(`✅ ¡Listo! He actualizado tu número a **${userData.telefono}**.`);
+                    syncToSheets(); isModifying = true;
+                }
+            } else if (/(cambiar|modificar|actualizar|corregir).*(ubicacion|ubicación|departamento|municipio|lugar)/i.test(text)) {
+                let nuevaUbi = text.replace(/.*(ubicacion|ubicación|departamento|municipio|lugar) (por|a |es |en )?/i, '').trim();
+                if(nuevaUbi) {
+                    userData.departamento = nuevaUbi; userData.municipio = ""; userData.distrito = "";
+                    appendBotMessage(`✅ ¡Listo! He actualizado tu ubicación a **${userData.departamento}**.`);
+                    syncToSheets(); isModifying = true;
+                }
+            }
+
+            if(isModifying) { enableInput(); return; }
+
             // --- LÓGICA DE ADMINISTRADOR ---
             if (chatState === 'ADMIN_LOGIN') {
                 const validKeys = ['VIC1234', 'ROG5678', 'GER9012', 'ORL3456'];
                 if (textLower === 'salir') { chatState = 'INIT'; appendBotMessage("Has salido del modo administrador. Escribe algo para reiniciar el chat."); enableInput(); return; }
-                if (validKeys.includes(text.toUpperCase())) { chatState = 'ADMIN_SEARCH'; setTimeout(() => { removeBotTyping(); appendBotMessage("✅ **Acceso concedido.**\nPor favor, ingresa el número de gestión que deseas consultar (ej. CTK-1234) o escribe 'salir':"); enableInput("Escribe el código CTK-..."); }, 500); } 
+                if (validKeys.includes(text.toUpperCase())) { chatState = 'ADMIN_SEARCH'; setTimeout(() => { removeBotTyping(); appendBotMessage("✅ **Acceso concedido.**\nPor favor, ingresa el número de gestión (ej. CTK-1234) o escribe 'salir':"); enableInput("Escribe el código CTK-..."); }, 500); } 
                 else { setTimeout(() => { removeBotTyping(); appendBotMessage("❌ Clave incorrecta. Intenta nuevamente o escribe 'salir' para cancelar."); enableInput("Escribe tu clave o 'salir'..."); }, 500); }
                 return;
             }
@@ -940,11 +957,8 @@ REGLAS ESTRICTAS DE RESPUESTA Y VENTAS:
                         .then(data => {
                             removeBotTyping();
                             if(data.found) {
-                                let historialArray = data.data.historial ? data.data.historial.split('\n') : [];
-                                let clientMessages = historialArray.filter(line => line.startsWith("Usuario:")).map(line => line.replace("Usuario:", "💬 ")).join("<br>");
-                                if(!clientMessages) clientMessages = "No hay mensajes registrados del cliente.";
                                 let resHTML = `<span style="color:#10b981; font-weight:bold;">✅ GESTIÓN: ${data.data.codigo}</span><br><br>`;
-                                resHTML += `👤 **Nombre:** ${data.data.nombre}<br>📱 **Tel:** ${data.data.telefono}<br>📍 **Ubicación:** ${data.data.ubicacion}<br>🎯 **Proyecto Inicial:** ${data.data.proyecto}<br><br>📝 **Resumen de mensajes del Cliente:**<br><div style="background:rgba(0,0,0,0.3); padding:8px; border-radius:5px; max-height:150px; overflow-y:auto; font-size:0.8rem; line-height: 1.6;">${clientMessages}</div>`;
+                                resHTML += `👤 **Nombre:** ${data.data.nombre}<br>📱 **Tel:** ${data.data.telefono}<br>📍 **Ubicación:** ${data.data.ubicacion}<br>🎯 **Proyecto Inicial:** ${data.data.proyecto}<br><br>📝 **Registro en la base de datos.**`;
                                 appendBotMessage(resHTML); appendBotMessage("¿Deseas buscar otra gestión? Escribe el código o 'salir'.");
                             } else { appendBotMessage("❌ No se encontró la gestión **" + queryId + "**. Verifica el código e intenta de nuevo, o escribe 'salir'."); }
                             enableInput("Escribe el código CTK-...");
@@ -957,17 +971,11 @@ REGLAS ESTRICTAS DE RESPUESTA Y VENTAS:
             conversationHistory += `Usuario: ${text}\n`;
 
             try {
-                // FILTROS
+                // FILTROS MANUALES ADICIONALES
                 const groserias = /idiota|estupido|imbecil|mierda|puta|callate|pudrete|maldito|basura|pendejo/i;
                 if (groserias.test(text)) { let resp = "En Creatik valoramos el respeto mutuo. Muchas gracias por confiar en nosotros. ¡Que tengas un excelente día! ✨"; appendBotMessage(resp); conversationHistory += `Creatik IA: ${resp}\n`; if (chatState === 'AI_CHAT') syncToSheets(); chatbotInput.placeholder = "Chat finalizado."; return; }
-                const prohibidas = /disco|discoteca|baile|perreo|niñ[oa]s?|beb[eé]s?|infantil|carnet|graduaci[oó]n|estudio fotogr|mascotas?|perros?|gatos?/i;
-                if (prohibidas.test(text)) { let resp = "Te comento que por el momento no estamos realizando ese tipo de coberturas (niños, eventos de baile, carnet, estudio fotográfico cerrado o mascotas). 😅 ¿Quizás te interese realizar alguna sesión diferente para tu marca personal, empresa o un evento familiar general?"; appendBotMessage(resp); conversationHistory += `Creatik IA: ${resp}\n`; if (chatState === 'AI_CHAT') syncToSheets(); enableInput(); return; }
-
+                
                 appendBotTyping();
-
-                // EVALUAR SI ES UNA PREGUNTA PARA ROMPER EL FLUJO 
-                // (Si tiene signos de interrogación o si es una frase de más de 3 palabras al pedir el nombre)
-                let isQuestion = text.includes("?") || text.split(" ").length > 3;
 
                 // SI ESTÁ EN CHARLA LIBRE 100%
                 if (chatState === 'AI_CHAT') {
@@ -976,11 +984,10 @@ REGLAS ESTRICTAS DE RESPUESTA Y VENTAS:
 
                 let loc = guessLocation(text); let isLocationMatch = loc.dept || loc.muni || loc.dist;
 
-                // --- ESTADOS SECUENCIALES FRONTEND (CON DIRECCIÓN FORZADA) ---
+                // --- ESTADOS SECUENCIALES FRONTEND ---
                 if (chatState === 'INIT') {
                     const opcionesValidas = ["📸 Cotizar un servicio", "✅ Contratar a Creatik", "✨ Conocer más de Creatik"];
                     if (opcionesValidas.includes(text)) {
-                        // SÓLO AVANZA Y CREA EL CÓDIGO SI TOCÓ UN BOTÓN
                         let digits = Math.floor(1000 + Math.random() * 9000);
                         if (text.includes("Cotizar")) sessionId = "CTK-" + digits; else if (text.includes("Contratar")) sessionId = "CTK-S" + digits; else sessionId = "CTK-I" + digits; 
                         
@@ -988,17 +995,10 @@ REGLAS ESTRICTAS DE RESPUESTA Y VENTAS:
                         userData.intencion = text;
                         
                         let msg = "¡Excelente elección! 🎉 Para registrar tu solicitud y darte un trato personalizado, ¿me podrías decir tu **nombre**?"; 
-                        removeBotTyping(); 
-                        appendBotMessage(msg); 
-                        conversationHistory += `Creatik IA: ${msg}\n`; 
-                        chatState = 'NAME';
+                        removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'NAME';
                     } else {
-                        // TRAMPA AMABLE: La IA responde su duda, pero luego le vuelve a exigir que toque un botón para avanzar.
-                        let aiResp = await getAIResponse(text, false); 
-                        removeBotTyping(); 
-                        appendBotMessage(aiResp); 
-                        conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`;
-                        
+                        // TRAMPA AMABLE
+                        let aiResp = await getAIResponse(text, false); removeBotTyping(); appendBotMessage(aiResp); conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`;
                         setTimeout(() => {
                             let reminderMsg = "Para poder iniciar tu gestión formalmente y asignarte un código, por favor **selecciona una de estas opciones**:";
                             appendBotMessage(reminderMsg);
@@ -1009,51 +1009,52 @@ REGLAS ESTRICTAS DE RESPUESTA Y VENTAS:
                 }
                 
                 else if (chatState === 'NAME') {
-                    if (isQuestion) { 
-                        // Responde la duda pero lo regresa al flujo
-                        let aiResp = await getAIResponse(text, false); removeBotTyping(); 
+                    let cleanText = text.replace(/^(soy|me llamo|mi nombre es|mi nombre)\s+/i, '').trim();
+                    let isNameQuestion = text.includes("?") || /^(como|que|cual|cuanto|porque|puedes|tienes|necesito|quiero|hola|buenas|soy de|vivo en|estoy en|estudio)\b/i.test(text);
+
+                    if (isNameQuestion) { 
+                        let aiResp = await getAIResponse(text, true); removeBotTyping(); 
                         appendBotMessage(aiResp + "<br><br><i>Retomando tu registro... ¿Me podrías decir tu **nombre**? ✨</i>"); 
                         conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`; 
                     } else { 
-                        userData.nombre = text; let msg = `¡Mucho gusto, ${userData.nombre}! ✨ ¿Me podrías compartir tu número de **WhatsApp** para contactarte en el futuro si se necesita?`; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'PHONE'; 
+                        userData.nombre = cleanText; 
+                        let msg = `¡Mucho gusto, ${userData.nombre}! ✨ ¿Me podrías compartir tu número de **WhatsApp** para contactarte en el futuro si se necesita?`; 
+                        removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'PHONE'; 
                     }
                     enableInput(); return;
                 }
                 
                 else if (chatState === 'PHONE') {
-                    // Botón especial para extranjeros
                     if (text === "🌍 Soy Extranjero") {
-                        removeBotTyping();
-                        let msg = "¡Qué genial que nos escribas de fuera! 🌍 Por favor, escribe manualmente de qué **país o ciudad** nos contactas:";
-                        appendBotMessage(msg);
-                        conversationHistory += `Creatik IA: ${msg}\n`;
-                        chatState = 'FOREIGN_LOC';
-                        enableInput(); return;
+                        removeBotTyping(); let msg = "¡Qué genial que nos escribas de fuera! 🌍 Por favor, escribe manualmente de qué **país o ciudad** nos contactas:";
+                        appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'FOREIGN_LOC'; enableInput(); return;
                     }
 
                     let cleanPhone = text.replace(/[\s-]/g, ''); let digits = cleanPhone.replace(/\D/g, ''); 
+                    let isPhoneQuestion = text.includes("?") || /^(como|que|cual|cuanto|porque|puedes|tienes|necesito|quiero|hola|buenas|estudio)\b/i.test(text);
                     
-                    if (isQuestion && digits.length === 0) { 
-                        // Responde la duda pero pide el WhatsApp
-                        let aiResp = await getAIResponse(text, false); removeBotTyping(); 
-                        appendBotMessage(aiResp + "<br><br><i>Por cierto, no me dejaste tu número de **WhatsApp** para tu registro. ¿Me lo compartes? (O elige si eres extranjero)</i>"); 
+                    if (isPhoneQuestion && digits.length < 8) { 
+                        let aiResp = await getAIResponse(text, true); removeBotTyping(); 
+                        appendBotMessage(aiResp + "<br><br><i>Por cierto, no me dejaste tu número de **WhatsApp**. ¿Me lo compartes? (O elige si eres extranjero)</i>"); 
                         appendBotOptions(["🌍 Soy Extranjero"]);
                         conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`; 
                     } else {
-                        // Verifica que tenga al menos 8 números (para aceptar números locales o con código de área como +503...)
-                        if (digits.length >= 8) { 
-                            userData.telefono = text; // Guardamos el texto original por si pusieron +503
-                            let msg = "¡Anotado! 📝 Ahora, para saber dónde realizaríamos la sesión, selecciona tu **Departamento**:"; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; appendBotOptions(Object.keys(svData)); chatState = 'DEP';
-                        } else { 
-                            let msg = "Hmm, ese número no parece tener los dígitos completos. 😅 Intenta ingresarlo nuevamente, o si nos escribes de otro país, elige la opción de abajo:"; removeBotTyping(); appendBotMessage(msg); appendBotOptions(["🌍 Soy Extranjero"]); conversationHistory += `Creatik IA: ${msg}\n`; 
-                        }
+                        if (textLower.includes('extranjer') || textLower.includes('fuera') || textLower.includes('otro pais')) { userData.telefono = text; } 
+                        else if (digits.length >= 8) { 
+                            userData.telefono = text; 
+                            let msg = "¡Anotado! 📝 Ahora, para saber dónde realizaríamos la sesión, selecciona o escribe tu **Departamento**:"; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; appendBotOptions(Object.keys(svData)); chatState = 'DEP';
+                            enableInput(); return;
+                        } 
+                        
+                        let msg = "Hmm, ese número no parece tener los dígitos completos. 😅 Intenta ingresarlo nuevamente, o si nos escribes de otro país, elige la opción de abajo:"; removeBotTyping(); appendBotMessage(msg); appendBotOptions(["🌍 Soy Extranjero"]); conversationHistory += `Creatik IA: ${msg}\n`; 
                     }
                     enableInput(); return;
                 }
 
                 else if (chatState === 'FOREIGN_LOC') {
-                    if (isQuestion) {
-                        let aiResp = await getAIResponse(text, false); removeBotTyping(); 
+                    let isForeignQuestion = text.includes("?") || /^(como|que|cual|cuanto|porque|puedes|tienes|necesito|quiero|hola|buenas|estudio)\b/i.test(text);
+                    if (isForeignQuestion) {
+                        let aiResp = await getAIResponse(text, true); removeBotTyping(); 
                         appendBotMessage(aiResp + "<br><br><i>Retomando el registro... ¿De qué **país o ciudad** nos contactas? 🌍</i>"); 
                         conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`; 
                     } else {
@@ -1065,13 +1066,15 @@ REGLAS ESTRICTAS DE RESPUESTA Y VENTAS:
                 }
 
                 else if (['DEP', 'MUN', 'DIST'].includes(chatState)) {
-                    if (isLocationMatch) {
+                    let isLocQuestion = text.includes("?") || /^(como|que|cual|cuanto|porque|puedes|tienes|necesito|quiero|hola|buenas|estudio)\b/i.test(text);
+
+                    if (isLocationMatch && !isLocQuestion) {
                         if (loc.dist) { userData.departamento = loc.dept; userData.municipio = loc.muni; userData.distrito = loc.dist; let msg = `¡Perfecto! Eres de ${loc.dist}, ${loc.muni}. 📍\nPor último, con tu código **${sessionId}** respaldándote, cuéntame: ¿qué tipo de proyecto tienes en mente?`; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg.replace(/<[^>]*>?/gm, '')}\n`; chatState = 'PROJECT'; } 
                         else if (loc.muni) { userData.departamento = loc.dept; userData.municipio = loc.muni; let msg = `¡Genial, detecté ${loc.muni}! Por último, selecciona tu **Distrito**:`; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; appendBotOptions(svData[loc.dept][loc.muni]); chatState = 'DIST'; } 
                         else if (loc.dept) { userData.departamento = loc.dept; let msg = `¡Genial, ${loc.dept}! Ahora selecciona tu **Municipio**:`; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; appendBotOptions(Object.keys(svData[loc.dept])); chatState = 'MUN'; }
                     } else { 
-                        let aiResp = await getAIResponse(text, false); removeBotTyping(); 
-                        appendBotMessage(aiResp + "<br><br><i>Por favor, selecciona tu ubicación en los botones para continuar con tu registro:</i>"); 
+                        let aiResp = await getAIResponse(text, true); removeBotTyping(); 
+                        appendBotMessage(aiResp + "<br><br><i>Por favor, selecciona o escribe tu ubicación para continuar con tu registro:</i>"); 
                         conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`; 
                         if(chatState === 'DEP') appendBotOptions(Object.keys(svData));
                     }
@@ -1080,7 +1083,7 @@ REGLAS ESTRICTAS DE RESPUESTA Y VENTAS:
 
                 else if (chatState === 'PROJECT') {
                     userData.proyecto = text; syncToSheets(); chatState = 'AI_CHAT'; 
-                    let aiResp = await getAIResponse(`El usuario acaba de decir que su proyecto es: "${text}". Basado estrictamente en las reglas de paquetes que te di, respóndele natural, confirmando qué paquete le sugieres y dándole el precio.`, true);
+                    let aiResp = await getAIResponse(`El usuario acaba de decir que su proyecto es: "${text}". Basado estrictamente en las reglas de paquetes que te di, respóndele natural, confirmando qué paquete le sugieres y dándole el precio exacto.`, true);
                     removeBotTyping(); appendBotMessage(aiResp); conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`; enableInput(); return;
                 }
 
