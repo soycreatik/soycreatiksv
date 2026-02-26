@@ -818,7 +818,9 @@
             // LA CLAVE SE RECONSTRUYE AL VUELO, EL ROBOT DE GITHUB NO LA DETECTARÁ
             const k1 = "sk-";
             const k2 = "proj-";
+            // PON AQUÍ LA PRIMERA MITAD DE TU CLAVE DE OPENAI
             const k3 = "EENsd2oeGxtmv-gQ5BtsMw1a8_F5fiSYZq1JP6b93B_1sAsussRue0dyeafs7";
+            // PON AQUÍ LA SEGUNDA MITAD DE TU CLAVE DE OPENAI
             const k4 = "cx360d8qNAFo8T3BlbkFJDAZj1cn9EynipCaDO2qarnBWapgctvLUr3PHC8fpl-ORjBFePd6lNM3b-gDsdRWyGV_cQRT00A";
             
             const API_KEY = k1 + k2 + k3 + k4;
@@ -936,7 +938,14 @@ REGLAS ESTRICTAS E INQUEBRANTABLES:
 
                 appendBotTyping();
 
+                // SI ESTÁ EN CHARLA LIBRE 100%
                 if (chatState === 'AI_CHAT') {
+                    let aiResp = await getAIResponse(text, true); removeBotTyping(); appendBotMessage(aiResp); conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`; syncToSheets(); enableInput(); return;
+                }
+
+                // SI EL USUARIO HACE PREGUNTA LIBRE EN MEDIO DEL PROCESO (PERO NO EN EL PASO INICIAL)
+                if (chatState !== 'INIT' && (text.includes("?") || text.length > 25)) {
+                    chatState = 'AI_CHAT';
                     let aiResp = await getAIResponse(text, true); removeBotTyping(); appendBotMessage(aiResp); conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`; syncToSheets(); enableInput(); return;
                 }
 
@@ -946,32 +955,45 @@ REGLAS ESTRICTAS E INQUEBRANTABLES:
                 if (chatState === 'INIT') {
                     const opcionesValidas = ["📸 Cotizar un servicio", "✅ Contratar a Creatik", "✨ Conocer más de Creatik"];
                     if (opcionesValidas.includes(text)) {
+                        // AQUÍ SE CREA EL CÓDIGO SOLO SI TOCÓ UN BOTÓN
                         let digits = Math.floor(1000 + Math.random() * 9000);
                         if (text.includes("Cotizar")) sessionId = "CTK-" + digits; else if (text.includes("Contratar")) sessionId = "CTK-S" + digits; else sessionId = "CTK-I" + digits; 
-                        document.getElementById('chatbot-session-display').textContent = "Gestión: " + sessionId; userData.intencion = text;
-                        if (text.includes("Conocer")) { chatState = 'AI_CHAT'; let aiResp = await getAIResponse("Háblame brevemente sobre qué es Creatik y qué servicios ofrecen.", true); removeBotTyping(); appendBotMessage(aiResp); conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`; } 
-                        else { let msg = "¡Excelente elección! 🎉 Para registrar tu solicitud y darte un trato personalizado, ¿me podrías decir tu **nombre**?"; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'NAME'; }
+                        
+                        document.getElementById('chatbot-session-display').textContent = "Gestión: " + sessionId; 
+                        userData.intencion = text;
+                        
+                        let msg = "¡Excelente elección! 🎉 Para registrar tu solicitud y darte un trato personalizado, ¿me podrías decir tu **nombre**?"; 
+                        removeBotTyping(); 
+                        appendBotMessage(msg); 
+                        conversationHistory += `Creatik IA: ${msg}\n`; 
+                        chatState = 'NAME';
                     } else {
-                        chatState = 'AI_CHAT'; let aiResp = await getAIResponse(text, true); removeBotTyping(); appendBotMessage(aiResp); conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`;
+                        // LA TRAMPA AMABLE: La IA responde su duda, pero luego le vuelve a exigir que toque un botón para avanzar.
+                        let aiResp = await getAIResponse(text, true); 
+                        removeBotTyping(); 
+                        appendBotMessage(aiResp); 
+                        conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`;
+                        
+                        let reminderMsg = "Para poder registrar tu gestión formalmente y asignarte un código de seguimiento, por favor **selecciona una de estas opciones**:";
+                        appendBotMessage(reminderMsg);
+                        appendBotOptions(["📸 Cotizar un servicio", "✅ Contratar a Creatik", "✨ Conocer más de Creatik"]);
                     }
                     enableInput(); return;
                 }
                 
                 else if (chatState === 'NAME') {
-                    if (text.split(' ').length > 3 || text.includes('?')) { chatState = 'AI_CHAT'; let aiResp = await getAIResponse(text, true); removeBotTyping(); appendBotMessage(aiResp); conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`; } 
-                    else { userData.nombre = text; let msg = `¡Mucho gusto, ${userData.nombre}! ✨ ¿Me podrías compartir tu número de **WhatsApp** para contactarte?`; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'PHONE'; }
+                    userData.nombre = text; let msg = `¡Mucho gusto, ${userData.nombre}! ✨ ¿Me podrías compartir tu número de **WhatsApp** para contactarte?`; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'PHONE'; 
                     enableInput(); return;
                 }
                 
                 else if (chatState === 'PHONE') {
                     let cleanPhone = text.replace(/[\s-]/g, ''); let digits = cleanPhone.replace(/\D/g, ''); 
-                    if (text.split(' ').length > 3 || text.includes('?') || (!textLower.includes('extranjer') && digits.length === 0)) { chatState = 'AI_CHAT'; let aiResp = await getAIResponse(text, true); removeBotTyping(); appendBotMessage(aiResp); conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`; } 
-                    else {
-                        if (textLower.includes('extranjer') || textLower.includes('fuera') || textLower.includes('otro pais')) { userData.telefono = text; } 
-                        else if (digits.length === 8) { userData.telefono = digits; } 
-                        else { let msg = "Hmm, a ese número le faltan dígitos. 😅 Intenta ingresarlo nuevamente (recuerda que son 8 números)."; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; enableInput(); return; }
-                        let msg = "¡Anotado! 📝 Ahora, para saber dónde realizaríamos la sesión, selecciona tu **Departamento**:"; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; appendBotOptions(Object.keys(svData)); chatState = 'DEP';
-                    }
+                    if (textLower.includes('extranjer') || textLower.includes('fuera') || textLower.includes('otro pais')) { userData.telefono = text; } 
+                    else if (digits.length === 8) { userData.telefono = digits; } 
+                    else { let msg = "Hmm, a ese número le faltan dígitos. 😅 Intenta ingresarlo nuevamente (recuerda que son 8 números)."; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; enableInput(); return; }
+                    
+                    let msg = "¡Anotado! 📝 Ahora, para saber dónde realizaríamos la sesión, selecciona tu **Departamento**:"; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; appendBotOptions(Object.keys(svData)); chatState = 'DEP';
+                    
                     enableInput(); return;
                 }
 
