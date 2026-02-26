@@ -242,7 +242,7 @@
         .float-tag { position: absolute; background: rgba(20, 20, 25, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); padding: 8px 15px; border-radius: 12px; display: flex; align-items: center; gap: 10px; backdrop-filter: blur(8px); font-size: 0.8rem; font-weight: 700; box-shadow: 0 10px 20px rgba(0,0,0,0.5); animation: floatAnim 6s ease-in-out infinite; z-index: 4; color: white; white-space: nowrap; will-change: transform; }
         @keyframes floatAnim { 0%, 100% { transform: translate3d(0, 0px, 0); } 50% { transform: translate3d(0, -15px, 0); } }
         .f-icon { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; } .f-icon svg { width: 100%; height: 100%; fill: #f97316; filter: drop-shadow(0 0 5px #f97316); }
-        .bottom-glow-arc { fixed; bottom: -400px; left: 50%; transform: translateX(-50%); width: 150vw; height: 500px; border-radius: 50%; background: radial-gradient(ellipse at top, rgba(249, 115, 22, 0.4) 0%, transparent 60%); box-shadow: 0 -20px 100px rgba(249, 115, 22, 0.3); z-index: 1; pointer-events: none; }
+        .bottom-glow-arc { position: fixed; bottom: -400px; left: 50%; transform: translateX(-50%); width: 150vw; height: 500px; border-radius: 50%; background: radial-gradient(ellipse at top, rgba(249, 115, 22, 0.4) 0%, transparent 60%); box-shadow: 0 -20px 100px rgba(249, 115, 22, 0.3); z-index: 1; pointer-events: none; }
         .slider-deco { position: absolute; bottom: -30px; width: 300px; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); }
 
         /* --- DASHBOARD --- */
@@ -681,7 +681,7 @@
         console.log("%cTodos los derechos reservados. Uso no autorizado prohibido.", "color: white; font-size: 12px;");
         console.log("%c==========================================", "color: #0ea5e9; font-weight: bold; font-size: 14px;");
 
-        // --- CONEXIÓN CON GOOGLE SHEETS ---
+        // CONEXIÓN AL GOOGLE SCRIPT (SOLO PARA GUARDAR EN GOOGLE SHEETS)
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbya4Eq0jSOrY1NZCF6JUgfSu_xM0vm31tB8rZcrBceYn3lOpTRdJ_Cfx3DgHQP1Nj_P/exec';
 
         function syncToSheets() {
@@ -692,9 +692,9 @@
 
             fetch(GOOGLE_SCRIPT_URL, {
                 method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({
+                    action: "save",
                     codigo: sessionId,
                     historial: conversationHistory,
                     ubicacion: ubicacion,
@@ -723,151 +723,44 @@
 
         // --- DATOS DE UBICACIONES EL SALVADOR ---
         const svData = {
-            "Ahuachapán": {
-                "Ahuachapán Norte": ["Atiquizaya", "El Refugio", "San Lorenzo", "Turín"],
-                "Ahuachapán Centro": ["Ahuachapán", "Apaneca", "Concepción de Ataco", "Tacuba"],
-                "Ahuachapán Sur": ["Guaymango", "Jujutla", "San Francisco Menendez", "San Pedro Puxtla"]
-            },
-            "San Salvador": {
-                "San Salvador Norte": ["Aguilares", "El Paisnal", "Guazapa"],
-                "San Salvador Oeste": ["Apopa", "Nejapa"],
-                "San Salvador Este": ["llopango", "San Martín", "Soyapango", "Tonacatepeque"],
-                "San Salvador Centro": ["Ayutuxtepeque", "Mejicanos", "San Salvador", "Cuscatancingo", "Ciudad Delgado"],
-                "San Salvador Sur": ["Panchimalco", "Rosario de Mora", "San Marcos", "Santo Tomás", "Santiago Texacuangos"]
-            },
-            "La Libertad": {
-                "La Libertad Norte": ["Quezaltepeque", "San Matías", "San Pablo Tacachico"],
-                "La Libertad Centro": ["San Juan Opico", "Ciudad Arce"],
-                "La Libertad Oeste": ["Colón", "Jayaque", "Sacacoyo", "Tepecoyo", "Talnique"],
-                "La Libertad Este": ["Antiguo Cuscatlán", "Huizucar", "Nuevo Cuscatlán", "San José Villanueva", "Zaragoza"],
-                "La Libertad Costa": ["Chiltuipán", "Jicalapa", "La Libertad", "Tamanique", "Teotepeque"],
-                "La Libertad Sur": ["Comasagua", "Santa Tecla"]
-            },
-            "Chalatenango": {
-                "Chalatenango Norte": ["La Palma", "Citalá", "San Ignacio"],
-                "Chalatenango Centro": ["Nueva Concepción", "Tejutla", "La Reina", "Agua Caliente", "Dulce Nombre de María", "El Paraíso", "San Francisco Morazán", "San Rafael", "Santa Rita", "San Fernando"],
-                "Chalatenango Sur": ["Chalatenango", "Arcatao", "Azacualpa", "Comalapa", "Concepción Quezaltepeque", "El Carrizal", "La Laguna", "Las Vueltas", "Nombre de Jesús", "Nueva Trinidad", "Ojos de Agua", "Potonico", "San Antonio de La Cruz", "San Antonio Los Ranchos", "San Francisco Lempa", "San Isidro Labrador", "San José Cancasque", "San Miguel de Mercedes", "San José Las Flores", "San Luis del Carmen"]
-            },
-            "Cuscatlán": {
-                "Cuscatlán Norte": ["Suchitoto", "San José Guayabal", "Oratorio de Concepción", "San Bartolomé Perulapán", "San Pedro Perulapán"],
-                "Cuscatlán Sur": ["Cojutepeque", "San Rafael Cedros", "Candelaria", "Monte San Juan", "El Carmen", "San Cristóbal", "Santa Cruz Michapa", "San Ramón", "El Rosario", "Santa Cruz Analquito", "Tenancingo"]
-            },
-            "Cabañas": {
-                "Cabañas Este": ["Sensuntepeque", "Victoria", "Dolores", "Guacotecti", "San Isidro"],
-                "Cabañas Oeste": ["llobasco", "Tejutepeque", "Jutiapa", "Cinquera"]
-            },
-            "La Paz": {
-                "La Paz Oeste": ["Cuyultitán", "Olocuilta", "San Juan Talpa", "San Luis Talpa", "San Pedro Masahuat", "Tapalhuaca", "San Francisco Chinameca"],
-                "La Paz Centro": ["El Rosario", "Jerusalén", "Mercedes La Ceiba", "Paraíso de Osorio", "San Antonio Masahuat", "San Emigdio", "San Juan Tepezontes", "San Luis La Herradura", "San Miguel Tepezontes", "San Pedro Nonualco", "Santa María Ostuma", "Santiago Nonualco"],
-                "La Paz Este": ["San Juan Nonualco", "San Rafael Obrajuelo", "Zacatecoluca"]
-            },
-            "La Unión": {
-                "La Unión Norte": ["Anamorós", "Bolivar", "Concepción de Oriente", "El Sauce", "Lislique", "Nueva Esparta", "Pasaquina", "Polorós", "San José La Fuente", "Santa Rosa de Lima"],
-                "La Unión Sur": ["Conchagua", "El Carmen", "lntipucá", "La Unión", "Meanguera del Golfo", "San Alejo", "Yayantique", "Yucuaiquín"]
-            },
-            "Usulután": {
-                "Usulután Norte": ["Santiago de María", "Alegría", "Berlín", "Mercedes Umana", "Jucuapa", "El Triunfo", "Estanzuelas", "San Buenaventura", "Nueva Granada"],
-                "Usulután Este": ["Usulután", "Jucuarán", "San Dionisio", "Concepción Batres", "Santa María", "Ozatlán", "Tecapán", "Santa Elena", "California", "Ereguayquín"],
-                "Usulután Oeste": ["Jiquilisco", "Puerto El Triunfo", "San Agustín", "San Francisco Javier"]
-            },
-            "Sonsonate": {
-                "Sonsonate Norte": ["Juayúa", "Nahuizalco", "Salcoatitán", "Santa Catarina Masahuat"],
-                "Sonsonate Centro": ["Sonsonate", "Sonzacate", "Nahulingo", "San Antonio del Monte", "Santo Domingo de Guzmán"],
-                "Sonsonate Este": ["lzalco", "Armenia", "Caluco", "San Julián", "Cuisnahuat", "Santa Isabel lshuatán"],
-                "Sonsonate Oeste": ["Acajutla"]
-            },
-            "Santa Ana": {
-                "Santa Ana Norte": ["Masahuat", "Metapán", "Santa Rosa Guachipilín", "Texistepeque"],
-                "Santa Ana Centro": ["Santa Ana"],
-                "Santa Ana Este": ["Coatepeque", "El Congo"],
-                "Santa Ana Oeste": ["Candelaria de la Frontera", "Chalchuapa", "El Porvenir", "San Antonio Pajonal", "San Sebastián Salitrillo", "Santiago de La Frontera"]
-            },
-            "San Vicente": {
-                "San Vicente Norte": ["Apastepeque", "Santa Clara", "San Ildefonso", "San Esteban Catarina", "San Sebastián", "San Lorenzo", "Santo Domingo"],
-                "San Vicente Sur": ["San Vicente", "Guadalupe", "Verapaz", "Tepetitán", "Tecoluca", "San Cayetano lstepeque"]
-            },
-            "San Miguel": {
-                "San Miguel Norte": ["Ciudad Barrios", "Sesori", "Nuevo Edén de San Juan", "San Gerardo", "San Luis de La Reina", "Carolina", "San Antonio del Mosco", "Chapeltique"],
-                "San Miguel Centro": ["San Miguel", "Comacarán", "Uluazapa", "Moncagua", "Quelepa", "Chirilagua"],
-                "San Miguel Oeste": ["Chinameca", "Nueva Guadalupe", "Lolotique", "San Jorge", "San Rafael Oriente", "El Tránsito"]
-            },
-            "Morazán": {
-                "Morazán Norte": ["Arambala", "Cacaopera", "Corinto", "El Rosario", "Joateca", "Jocoaitique", "Meanguera", "Perquín", "San Fernando", "San Isidro", "Torola"],
-                "Morazán Sur": ["Chilanga", "Delicias de Concepción", "El Divisadero", "Gualococti", "Guatajiagua", "Jocoro", "Lolotiquillo", "Osicala", "San Carlos", "San Francisco Gotera", "San Simón", "Sensembra", "Sociedad", "Yamabal", "Yoloaiquín"]
-            }
+            "Ahuachapán": { "Ahuachapán Norte": ["Atiquizaya", "El Refugio", "San Lorenzo", "Turín"], "Ahuachapán Centro": ["Ahuachapán", "Apaneca", "Concepción de Ataco", "Tacuba"], "Ahuachapán Sur": ["Guaymango", "Jujutla", "San Francisco Menendez", "San Pedro Puxtla"] },
+            "San Salvador": { "San Salvador Norte": ["Aguilares", "El Paisnal", "Guazapa"], "San Salvador Oeste": ["Apopa", "Nejapa"], "San Salvador Este": ["llopango", "San Martín", "Soyapango", "Tonacatepeque"], "San Salvador Centro": ["Ayutuxtepeque", "Mejicanos", "San Salvador", "Cuscatancingo", "Ciudad Delgado"], "San Salvador Sur": ["Panchimalco", "Rosario de Mora", "San Marcos", "Santo Tomás", "Santiago Texacuangos"] },
+            "La Libertad": { "La Libertad Norte": ["Quezaltepeque", "San Matías", "San Pablo Tacachico"], "La Libertad Centro": ["San Juan Opico", "Ciudad Arce"], "La Libertad Oeste": ["Colón", "Jayaque", "Sacacoyo", "Tepecoyo", "Talnique"], "La Libertad Este": ["Antiguo Cuscatlán", "Huizucar", "Nuevo Cuscatlán", "San José Villanueva", "Zaragoza"], "La Libertad Costa": ["Chiltuipán", "Jicalapa", "La Libertad", "Tamanique", "Teotepeque"], "La Libertad Sur": ["Comasagua", "Santa Tecla"] },
+            "Chalatenango": { "Chalatenango Norte": ["La Palma", "Citalá", "San Ignacio"], "Chalatenango Centro": ["Nueva Concepción", "Tejutla", "La Reina", "Agua Caliente", "Dulce Nombre de María", "El Paraíso", "San Francisco Morazán", "San Rafael", "Santa Rita", "San Fernando"], "Chalatenango Sur": ["Chalatenango", "Arcatao", "Azacualpa", "Comalapa", "Concepción Quezaltepeque", "El Carrizal", "La Laguna", "Las Vueltas", "Nombre de Jesús", "Nueva Trinidad", "Ojos de Agua", "Potonico", "San Antonio de La Cruz", "San Antonio Los Ranchos", "San Francisco Lempa", "San Isidro Labrador", "San José Cancasque", "San Miguel de Mercedes", "San José Las Flores", "San Luis del Carmen"] },
+            "Cuscatlán": { "Cuscatlán Norte": ["Suchitoto", "San José Guayabal", "Oratorio de Concepción", "San Bartolomé Perulapán", "San Pedro Perulapán"], "Cuscatlán Sur": ["Cojutepeque", "San Rafael Cedros", "Candelaria", "Monte San Juan", "El Carmen", "San Cristóbal", "Santa Cruz Michapa", "San Ramón", "El Rosario", "Santa Cruz Analquito", "Tenancingo"] },
+            "Cabañas": { "Cabañas Este": ["Sensuntepeque", "Victoria", "Dolores", "Guacotecti", "San Isidro"], "Cabañas Oeste": ["llobasco", "Tejutepeque", "Jutiapa", "Cinquera"] },
+            "La Paz": { "La Paz Oeste": ["Cuyultitán", "Olocuilta", "San Juan Talpa", "San Luis Talpa", "San Pedro Masahuat", "Tapalhuaca", "San Francisco Chinameca"], "La Paz Centro": ["El Rosario", "Jerusalén", "Mercedes La Ceiba", "Paraíso de Osorio", "San Antonio Masahuat", "San Emigdio", "San Juan Tepezontes", "San Luis La Herradura", "San Miguel Tepezontes", "San Pedro Nonualco", "Santa María Ostuma", "Santiago Nonualco"], "La Paz Este": ["San Juan Nonualco", "San Rafael Obrajuelo", "Zacatecoluca"] },
+            "La Unión": { "La Unión Norte": ["Anamorós", "Bolivar", "Concepción de Oriente", "El Sauce", "Lislique", "Nueva Esparta", "Pasaquina", "Polorós", "San José La Fuente", "Santa Rosa de Lima"], "La Unión Sur": ["Conchagua", "El Carmen", "lntipucá", "La Unión", "Meanguera del Golfo", "San Alejo", "Yayantique", "Yucuaiquín"] },
+            "Usulután": { "Usulután Norte": ["Santiago de María", "Alegría", "Berlín", "Mercedes Umana", "Jucuapa", "El Triunfo", "Estanzuelas", "San Buenaventura", "Nueva Granada"], "Usulután Este": ["Usulután", "Jucuarán", "San Dionisio", "Concepción Batres", "Santa María", "Ozatlán", "Tecapán", "Santa Elena", "California", "Ereguayquín"], "Usulután Oeste": ["Jiquilisco", "Puerto El Triunfo", "San Agustín", "San Francisco Javier"] },
+            "Sonsonate": { "Sonsonate Norte": ["Juayúa", "Nahuizalco", "Salcoatitán", "Santa Catarina Masahuat"], "Sonsonate Centro": ["Sonsonate", "Sonzacate", "Nahulingo", "San Antonio del Monte", "Santo Domingo de Guzmán"], "Sonsonate Este": ["lzalco", "Armenia", "Caluco", "San Julián", "Cuisnahuat", "Santa Isabel lshuatán"], "Sonsonate Oeste": ["Acajutla"] },
+            "Santa Ana": { "Santa Ana Norte": ["Masahuat", "Metapán", "Santa Rosa Guachipilín", "Texistepeque"], "Santa Ana Centro": ["Santa Ana"], "Santa Ana Este": ["Coatepeque", "El Congo"], "Santa Ana Oeste": ["Candelaria de la Frontera", "Chalchuapa", "El Porvenir", "San Antonio Pajonal", "San Sebastián Salitrillo", "Santiago de La Frontera"] },
+            "San Vicente": { "San Vicente Norte": ["Apastepeque", "Santa Clara", "San Ildefonso", "San Esteban Catarina", "San Sebastián", "San Lorenzo", "Santo Domingo"], "San Vicente Sur": ["San Vicente", "Guadalupe", "Verapaz", "Tepetitán", "Tecoluca", "San Cayetano lstepeque"] },
+            "San Miguel": { "San Miguel Norte": ["Ciudad Barrios", "Sesori", "Nuevo Edén de San Juan", "San Gerardo", "San Luis de La Reina", "Carolina", "San Antonio del Mosco", "Chapeltique"], "San Miguel Centro": ["San Miguel", "Comacarán", "Uluazapa", "Moncagua", "Quelepa", "Chirilagua"], "San Miguel Oeste": ["Chinameca", "Nueva Guadalupe", "Lolotique", "San Jorge", "San Rafael Oriente", "El Tránsito"] },
+            "Morazán": { "Morazán Norte": ["Arambala", "Cacaopera", "Corinto", "El Rosario", "Joateca", "Jocoaitique", "Meanguera", "Perquín", "San Fernando", "San Isidro", "Torola"], "Morazán Sur": ["Chilanga", "Delicias de Concepción", "El Divisadero", "Gualococti", "Guatajiagua", "Jocoro", "Lolotiquillo", "Osicala", "San Carlos", "San Francisco Gotera", "San Simón", "Sensembra", "Sociedad", "Yamabal", "Yoloaiquín"] }
         };
 
-        function normalizeStr(str) {
-            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
-        }
+        function normalizeStr(str) { return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim(); }
 
         function guessLocation(input) {
             let cleanInput = normalizeStr(input);
             let match = { dept: null, muni: null, dist: null };
-
-            for (let d in svData) {
-                for (let m in svData[d]) {
-                    for (let dist of svData[d][m]) {
-                        let normDist = normalizeStr(dist);
-                        if (cleanInput.includes(normDist)) return { dept: d, muni: m, dist: dist };
-                    }
-                }
-            }
-            for (let d in svData) {
-                for (let m in svData[d]) {
-                    let normMuni = normalizeStr(m);
-                    if (cleanInput.includes(normMuni)) return { dept: d, muni: m, dist: null };
-                }
-            }
-            for (let d in svData) {
-                let normDept = normalizeStr(d);
-                if (cleanInput.includes(normDept)) return { dept: d, muni: null, dist: null };
-            }
+            for (let d in svData) { for (let m in svData[d]) { for (let dist of svData[d][m]) { let normDist = normalizeStr(dist); if (cleanInput.includes(normDist)) return { dept: d, muni: m, dist: dist }; } } }
+            for (let d in svData) { for (let m in svData[d]) { let normMuni = normalizeStr(m); if (cleanInput.includes(normMuni)) return { dept: d, muni: m, dist: null }; } }
+            for (let d in svData) { let normDept = normalizeStr(d); if (cleanInput.includes(normDept)) return { dept: d, muni: null, dist: null }; }
             return match;
         }
 
         // --- SISTEMA DISOLUCIÓN CRUZADA ACADEMY ---
-        const academyImagesList = [
-            'academy1.jpg', '_DSC7744.jpg', 'academy2.jpg', 'academy3.jpg', 'academy4.jpg', 
-            'academy5.jpg', 'academy6.jpg', 'academy7.jpg', 'academy8.jpg', 
-            'academy9.jpg', 'academy10.jpg', 'academy11.jpg', 'academy12.jpg', 
-            'academy13.jpg', 'academy14.jpg'
-        ];
-        let currentPairIndex = 0;
-        let activeLayer = 'A'; 
-
-        function shuffleArray(arr) {
-            let array = arr.slice();
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
+        const academyImagesList = ['academy1.jpg', '_DSC7744.jpg', 'academy2.jpg', 'academy3.jpg', 'academy4.jpg', 'academy5.jpg', 'academy6.jpg', 'academy7.jpg', 'academy8.jpg', 'academy9.jpg', 'academy10.jpg', 'academy11.jpg', 'academy12.jpg', 'academy13.jpg', 'academy14.jpg'];
+        let currentPairIndex = 0; let activeLayer = 'A'; 
+        function shuffleArray(arr) { let array = arr.slice(); for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
         let shuffledAcademy = shuffleArray(academyImagesList);
-
         function changeAcademyImages() {
             if (!document.getElementById('academy-A')) return;
-            if (currentPairIndex >= shuffledAcademy.length) {
-                let lastImage = shuffledAcademy[shuffledAcademy.length - 1];
-                let newShuffle;
-                do { newShuffle = shuffleArray(academyImagesList); } while (newShuffle[0] === lastImage);
-                shuffledAcademy = newShuffle;
-                currentPairIndex = 0;
-            }
-            let nextImage = shuffledAcademy[currentPairIndex];
-            currentPairIndex++;
-            const layerOut = document.getElementById(`academy-${activeLayer}`);
-            activeLayer = activeLayer === 'A' ? 'B' : 'A';
-            const layerIn = document.getElementById(`academy-${activeLayer}`);
-            const tempImg = new Image();
-            tempImg.onload = function() {
-                layerIn.src = this.src;
-                layerIn.classList.add('active');
-                layerOut.classList.remove('active');
-            };
-            tempImg.src = `Creatik Academy/${nextImage}`;
+            if (currentPairIndex >= shuffledAcademy.length) { let lastImage = shuffledAcademy[shuffledAcademy.length - 1]; let newShuffle; do { newShuffle = shuffleArray(academyImagesList); } while (newShuffle[0] === lastImage); shuffledAcademy = newShuffle; currentPairIndex = 0; }
+            let nextImage = shuffledAcademy[currentPairIndex]; currentPairIndex++;
+            const layerOut = document.getElementById(`academy-${activeLayer}`); activeLayer = activeLayer === 'A' ? 'B' : 'A'; const layerIn = document.getElementById(`academy-${activeLayer}`);
+            const tempImg = new Image(); tempImg.onload = function() { layerIn.src = this.src; layerIn.classList.add('active'); layerOut.classList.remove('active'); }; tempImg.src = `Creatik Academy/${nextImage}`;
         }
         setInterval(changeAcademyImages, 4000); 
 
@@ -883,120 +776,47 @@
         let isChatbotOpen = false;
         let sessionId = "Pendiente...";
         let conversationHistory = ""; 
-        
         let chatState = 'INIT';
         let userData = { nombre: '', telefono: '', departamento: '', municipio: '', distrito: '', intencion: '', proyecto: '' };
 
         chatbotFab.addEventListener('click', () => {
-            isChatbotOpen = true;
-            chatbotWindow.classList.add('active');
-            chatbotFab.classList.add('hide-chatbot-ui');
-            resetInactivityTimer();
-            
+            isChatbotOpen = true; chatbotWindow.classList.add('active'); chatbotFab.classList.add('hide-chatbot-ui'); resetInactivityTimer();
             if(chatbotMessages.children.length === 0) {
                 let saludoInicial = "¡Hola! Soy Creatik IA. 🤖✨ Para brindarte una mejor atención, ¿qué te gustaría hacer hoy?";
-                appendBotMessage(saludoInicial);
-                conversationHistory += "Creatik IA: " + saludoInicial + "\n";
-                
-                appendBotOptions([
-                    "📸 Cotizar un servicio",
-                    "✅ Contratar a Creatik",
-                    "✨ Conocer más de Creatik"
-                ]);
+                appendBotMessage(saludoInicial); conversationHistory += "Creatik IA: " + saludoInicial + "\n";
+                appendBotOptions(["📸 Cotizar un servicio", "✅ Contratar a Creatik", "✨ Conocer más de Creatik"]);
             }
             setTimeout(() => chatbotInput.focus(), 300);
         });
 
-        closeChatbotBtn.addEventListener('click', () => {
-            isChatbotOpen = false;
-            chatbotWindow.classList.remove('active');
-            chatbotFab.classList.remove('hide-chatbot-ui'); 
-            clearTimeout(inactivityTimer);
-        });
-
-        chatbotVerifyBtn.addEventListener('click', () => {
-            resetInactivityTimer();
-            chatState = 'ADMIN_LOGIN';
-            appendBotMessage("🔒 **Acceso de Administración**\nPor favor, ingresa tu clave única reservada para el equipo (3 letras y 4 números):");
-            enableInput("Escribe tu clave o 'salir'...");
-        });
+        closeChatbotBtn.addEventListener('click', () => { isChatbotOpen = false; chatbotWindow.classList.remove('active'); chatbotFab.classList.remove('hide-chatbot-ui'); clearTimeout(inactivityTimer); });
+        chatbotVerifyBtn.addEventListener('click', () => { resetInactivityTimer(); chatState = 'ADMIN_LOGIN'; appendBotMessage("🔒 **Acceso de Administración**\nPor favor, ingresa tu clave única reservada para el equipo (3 letras y 4 números):"); enableInput("Escribe tu clave o 'salir'..."); });
 
         function scrollToBottom() { chatbotMessages.scrollTop = chatbotMessages.scrollHeight; }
-
-        function appendUserMessage(text) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'message user-message';
-            msgDiv.textContent = text;
-            chatbotMessages.appendChild(msgDiv);
-            scrollToBottom();
-        }
-
-        function appendBotMessage(text) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'message bot-message';
-            msgDiv.innerHTML = text; 
-            chatbotMessages.appendChild(msgDiv);
-            scrollToBottom();
-        }
-
-        function appendBotTyping() {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'message bot-message typing-container';
-            msgDiv.id = 'bot-typing';
-            msgDiv.innerHTML = '<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
-            chatbotMessages.appendChild(msgDiv);
-            scrollToBottom();
-        }
-
-        function removeBotTyping() {
-            const typingDiv = document.getElementById('bot-typing');
-            if (typingDiv) typingDiv.remove();
-        }
-
-        function enableInput(placeholder = "Escribe tu mensaje...") {
-            chatbotInput.disabled = false;
-            chatbotSendBtn.disabled = false;
-            chatbotInput.placeholder = placeholder;
-            chatbotInput.focus();
-        }
+        function appendUserMessage(text) { const msgDiv = document.createElement('div'); msgDiv.className = 'message user-message'; msgDiv.textContent = text; chatbotMessages.appendChild(msgDiv); scrollToBottom(); }
+        function appendBotMessage(text) { const msgDiv = document.createElement('div'); msgDiv.className = 'message bot-message'; msgDiv.innerHTML = text; chatbotMessages.appendChild(msgDiv); scrollToBottom(); }
+        function appendBotTyping() { const msgDiv = document.createElement('div'); msgDiv.className = 'message bot-message typing-container'; msgDiv.id = 'bot-typing'; msgDiv.innerHTML = '<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>'; chatbotMessages.appendChild(msgDiv); scrollToBottom(); }
+        function removeBotTyping() { const typingDiv = document.getElementById('bot-typing'); if (typingDiv) typingDiv.remove(); }
+        function enableInput(placeholder = "Escribe tu mensaje...") { chatbotInput.disabled = false; chatbotSendBtn.disabled = false; chatbotInput.placeholder = placeholder; chatbotInput.focus(); }
 
         function appendBotOptions(options) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'chat-options-container';
+            const msgDiv = document.createElement('div'); msgDiv.className = 'chat-options-container';
             options.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = 'chat-option-btn';
-                btn.textContent = opt;
-                btn.onclick = () => {
-                    msgDiv.style.pointerEvents = 'none';
-                    msgDiv.style.opacity = '0.5';
-                    handleSend(opt);
-                };
+                const btn = document.createElement('button'); btn.className = 'chat-option-btn'; btn.textContent = opt;
+                btn.onclick = () => { msgDiv.style.pointerEvents = 'none'; msgDiv.style.opacity = '0.5'; handleSend(opt); };
                 msgDiv.appendChild(btn);
             });
-            chatbotMessages.appendChild(msgDiv);
-            scrollToBottom();
-            enableInput();
+            chatbotMessages.appendChild(msgDiv); scrollToBottom(); enableInput();
         }
 
-        // --- CONEXIÓN API ---
+        // --- CONEXIÓN API A TRAVÉS DEL BACKEND DE VERCEL ---
         async function getAIResponse(promptText, isFullContext = false) {
-            const API_KEY = "sk-proj-N3TEsTMaFqhj-IIO8_t0PzvKiXBlNIXjCn4-tIsNGAk-U4OAf1jhnF0Yidx1m06_TUK3oVwE7dT3BlbkFJpal4Tbq6bFocJaRqj4bIeZwm7yi7GDIz7jEHB2jR9RxRzxcQj7gmpZpp_leNkG4WmOUEYNRPIA"; 
             
-            let finalPrompt = "";
-            
-            if (isFullContext) {
-                finalPrompt = `Eres Creatik IA, el asistente experto de Creatik.
-El usuario se llama ${userData.nombre} y es de ${userData.municipio}, ${userData.departamento}.
-Su proyecto: ${userData.proyecto}.
+            let historyLines = conversationHistory.split('\n').filter(line => line.trim() !== '');
+            if (historyLines.length > 8) { historyLines = historyLines.slice(historyLines.length - 8); }
+            let trimmedHistory = historyLines.join('\n');
 
-Reglas de comportamiento:
-1. CONVERSACIONAL: Eres un humano chateando. Responde ÚNICAMENTE a lo que el usuario pregunta de forma natural. 
-2. REGLA ESTRICTA: ESTÁ TOTALMENTE PROHIBIDO crear menús, listas numeradas de opciones o pedirle al usuario que elija un número. La interfaz ya le muestra botones, así que nunca le pidas que seleccione un número.
-3. TONO: Cálido, MUY conciso (máximo 2 a 3 líneas). Usa emojis.
-4. CIERRE: Solo si el usuario se despide o indica que quiere agendar formalmente, pídele que escriba a nuestro WhatsApp +503 7577 8333 dando su código: ${sessionId}.
-
---- INFORMACIÓN DE CREATIK ---
+            let basePrompt = `Eres Creatik IA, el asistente experto y amigable de Creatik (agencia audiovisual en El Salvador).
 Servicios: Fotografía, Video y Diseño Gráfico.
 Paquetes:
 - Personal / Emprendimiento Básico ($50): 1 hr, 15 fotos editadas. Anticipo $15.
@@ -1005,62 +825,39 @@ Paquetes:
 - Emprendimiento Pro ($125): 1 hr, 25 fotos, ambientación. Anticipo $45.
 - Evento Express ($170): 2.5 hrs, 150 fotos, filmación (30 min), video vertical, 16 impresas. Anticipo $60.
 
-Historial de conversación:
-${conversationHistory}
-Usuario: ${promptText}
-Creatik IA:`;
+REGLAS ESTRICTAS E INQUEBRANTABLES:
+1. Responde SIEMPRE con texto fluido, cálido y como humano. Usa emojis. No te extiendas demasiado.
+2. NUNCA generes menús, ni listas numeradas (1, 2, 3), ni le pidas al usuario que elija un número. Está TOTALMENTE PROHIBIDO.
+3. Responde directamente las dudas sobre precios si el usuario pregunta.
+4. Para agendar formalmente, pídeles escribir a WhatsApp +503 7577 8333.`;
+
+            let finalPrompt = "";
+            if (isFullContext) {
+                finalPrompt = `${basePrompt}\nDatos del usuario: Nombre: ${userData.nombre}, Tel: ${userData.telefono}, Proyecto: ${userData.proyecto}\nHistorial reciente:\n${trimmedHistory}\nUsuario: ${promptText}\nCreatik IA:`;
             } else {
-                finalPrompt = `Eres Creatik IA. Responde natural y conciso. REGLA ESTRICTA: NO inventes menús, ni listas numeradas, ni le pidas al usuario que elija un número. Los botones visuales ya existen en la pantalla. Instrucción: ${promptText}`;
+                finalPrompt = `${basePrompt}\nInstrucción/Mensaje del usuario: ${promptText}\nCreatik IA:`;
             }
 
             try {
-                const response = await fetch("https://api.openai.com/v1/responses", {
+                // Aquí llamamos al servidor seguro que acabas de crear en Vercel
+                const response = await fetch("/api/chat", {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${API_KEY}`
-                    },
-                    body: JSON.stringify({
-                        "model": "gpt-5-nano",
-                        "input": finalPrompt,
-                        "store": true
-                    })
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ prompt: finalPrompt })
                 });
 
                 const data = await response.json();
                 
-                let responseText = "";
-                if (data.output && typeof data.output === 'string') {
-                    responseText = data.output;
-                } else if (data.output && data.output.content && Array.isArray(data.output.content)) {
-                    responseText = data.output.content.map(c => c.text || c.text?.value || "").join("");
-                } else if (data.choices && data.choices.length > 0) {
-                    responseText = data.choices[0].text || (data.choices[0].message && data.choices[0].message.content) || "";
-                } else if (data.response) {
-                    responseText = data.response;
+                if (data.success) {
+                    return data.text.replace(/\n/g, '<br>');
                 } else {
-                    const findText = (obj) => {
-                        if (!obj || typeof obj !== 'object') return null;
-                        if (obj.text && typeof obj.text === 'string') return obj.text;
-                        if (obj.content && typeof obj.content === 'string') return obj.content;
-                        for (let key in obj) {
-                            let res = findText(obj[key]);
-                            if (res) return res;
-                        }
-                        return null;
-                    };
-                    responseText = findText(data);
+                    console.error("Error desde Vercel:", data.error);
+                    return `<b>Error:</b> ${data.error}`; 
                 }
-
-                if (!responseText) {
-                    return "Recibí una respuesta, pero tuve problemas para leerla. ¿Me lo repites?";
-                }
-
-                return responseText.replace(/\n/g, '<br>');
                 
             } catch (error) {
-                console.error("Error en petición:", error);
-                return "Hubo un error de conexión con nuestra IA.";
+                console.error("Fetch Exception:", error);
+                return "¡Ups! Error de conexión con el servidor 🔌. Revisa la consola.";
             }
         }
 
@@ -1080,41 +877,16 @@ Creatik IA:`;
             // --- LÓGICA DE ADMINISTRADOR ---
             if (chatState === 'ADMIN_LOGIN') {
                 const validKeys = ['VIC1234', 'ROG5678', 'GER9012', 'ORL3456'];
-                if (textLower === 'salir') {
-                    chatState = 'INIT';
-                    appendBotMessage("Has salido del modo administrador. Escribe algo para reiniciar el chat.");
-                    enableInput();
-                    return;
-                }
-                if (validKeys.includes(text.toUpperCase())) {
-                    chatState = 'ADMIN_SEARCH';
-                    setTimeout(() => {
-                        removeBotTyping();
-                        appendBotMessage("✅ **Acceso concedido.**\nPor favor, ingresa el número de gestión que deseas consultar (ej. CTK-1234) o escribe 'salir':");
-                        enableInput("Escribe el código CTK-...");
-                    }, 500);
-                } else {
-                    setTimeout(() => {
-                        removeBotTyping();
-                        appendBotMessage("❌ Clave incorrecta. Intenta nuevamente o escribe 'salir' para cancelar.");
-                        enableInput("Escribe tu clave o 'salir'...");
-                    }, 500);
-                }
+                if (textLower === 'salir') { chatState = 'INIT'; appendBotMessage("Has salido del modo administrador. Escribe algo para reiniciar el chat."); enableInput(); return; }
+                if (validKeys.includes(text.toUpperCase())) { chatState = 'ADMIN_SEARCH'; setTimeout(() => { removeBotTyping(); appendBotMessage("✅ **Acceso concedido.**\nPor favor, ingresa el número de gestión que deseas consultar (ej. CTK-1234) o escribe 'salir':"); enableInput("Escribe el código CTK-..."); }, 500); } 
+                else { setTimeout(() => { removeBotTyping(); appendBotMessage("❌ Clave incorrecta. Intenta nuevamente o escribe 'salir' para cancelar."); enableInput("Escribe tu clave o 'salir'..."); }, 500); }
                 return;
             }
             else if (chatState === 'ADMIN_SEARCH') {
-                if (textLower === 'salir') {
-                    chatState = 'INIT';
-                    appendBotMessage("Has salido del modo administrador. Escribe algo para reiniciar el chat.");
-                    enableInput();
-                    return;
-                }
+                if (textLower === 'salir') { chatState = 'INIT'; appendBotMessage("Has salido del modo administrador. Escribe algo para reiniciar el chat."); enableInput(); return; }
                 const queryId = text.toUpperCase().trim();
                 setTimeout(() => {
-                    removeBotTyping();
-                    appendBotMessage("🔍 Buscando la gestión **" + queryId + "** en la base de datos...");
-                    appendBotTyping();
-                    
+                    removeBotTyping(); appendBotMessage("🔍 Buscando la gestión **" + queryId + "** en la base de datos..."); appendBotTyping();
                     fetch(GOOGLE_SCRIPT_URL + "?id=" + encodeURIComponent(queryId))
                         .then(res => res.json())
                         .then(data => {
@@ -1123,26 +895,12 @@ Creatik IA:`;
                                 let historialArray = data.data.historial ? data.data.historial.split('\n') : [];
                                 let clientMessages = historialArray.filter(line => line.startsWith("Usuario:")).map(line => line.replace("Usuario:", "💬 ")).join("<br>");
                                 if(!clientMessages) clientMessages = "No hay mensajes registrados del cliente.";
-
                                 let resHTML = `<span style="color:#10b981; font-weight:bold;">✅ GESTIÓN: ${data.data.codigo}</span><br><br>`;
-                                resHTML += `👤 **Nombre:** ${data.data.nombre}<br>`;
-                                resHTML += `📱 **Tel:** ${data.data.telefono}<br>`;
-                                resHTML += `📍 **Ubicación:** ${data.data.ubicacion}<br>`;
-                                resHTML += `🎯 **Proyecto Inicial:** ${data.data.proyecto}<br><br>`;
-                                resHTML += `📝 **Resumen de mensajes del Cliente:**<br><div style="background:rgba(0,0,0,0.3); padding:8px; border-radius:5px; max-height:150px; overflow-y:auto; font-size:0.8rem; line-height: 1.6;">${clientMessages}</div>`;
-                                
-                                appendBotMessage(resHTML);
-                                appendBotMessage("¿Deseas buscar otra gestión? Escribe el código o 'salir'.");
-                            } else {
-                                appendBotMessage("❌ No se encontró la gestión **" + queryId + "**. Verifica el código e intenta de nuevo, o escribe 'salir'.");
-                            }
+                                resHTML += `👤 **Nombre:** ${data.data.nombre}<br>📱 **Tel:** ${data.data.telefono}<br>📍 **Ubicación:** ${data.data.ubicacion}<br>🎯 **Proyecto Inicial:** ${data.data.proyecto}<br><br>📝 **Resumen de mensajes del Cliente:**<br><div style="background:rgba(0,0,0,0.3); padding:8px; border-radius:5px; max-height:150px; overflow-y:auto; font-size:0.8rem; line-height: 1.6;">${clientMessages}</div>`;
+                                appendBotMessage(resHTML); appendBotMessage("¿Deseas buscar otra gestión? Escribe el código o 'salir'.");
+                            } else { appendBotMessage("❌ No se encontró la gestión **" + queryId + "**. Verifica el código e intenta de nuevo, o escribe 'salir'."); }
                             enableInput("Escribe el código CTK-...");
-                        })
-                        .catch(e => {
-                            removeBotTyping();
-                            appendBotMessage("⚠️ Error de conexión con la base de datos.");
-                            enableInput();
-                        });
+                        }).catch(e => { removeBotTyping(); appendBotMessage("⚠️ Error de conexión con la base de datos."); enableInput(); });
                 }, 500);
                 return;
             }
@@ -1153,380 +911,89 @@ Creatik IA:`;
             try {
                 // FILTROS
                 const groserias = /idiota|estupido|imbecil|mierda|puta|callate|pudrete|maldito|basura|pendejo/i;
-                if (groserias.test(text)) {
-                     let resp = "En Creatik valoramos el respeto mutuo. Muchas gracias por confiar en nosotros. ¡Que tengas un excelente día! ✨";
-                     appendBotMessage(resp);
-                     conversationHistory += `Creatik IA: ${resp}\n`;
-                     if (chatState === 'AI_CHAT') syncToSheets();
-                     chatbotInput.placeholder = "Chat finalizado.";
-                     return; 
-                }
-
+                if (groserias.test(text)) { let resp = "En Creatik valoramos el respeto mutuo. Muchas gracias por confiar en nosotros. ¡Que tengas un excelente día! ✨"; appendBotMessage(resp); conversationHistory += `Creatik IA: ${resp}\n`; if (chatState === 'AI_CHAT') syncToSheets(); chatbotInput.placeholder = "Chat finalizado."; return; }
                 const prohibidas = /disco|discoteca|baile|perreo|niñ[oa]s?|beb[eé]s?|infantil|carnet|graduaci[oó]n|estudio fotogr|mascotas?|perros?|gatos?/i;
-                if (prohibidas.test(text)) {
-                     let resp = "Te comento que por el momento no estamos realizando ese tipo de coberturas (niños, eventos de baile, carnet, estudio fotográfico cerrado o mascotas). 😅 ¿Quizás te interese realizar alguna sesión diferente para tu marca personal, empresa o un evento familiar general?";
-                     appendBotMessage(resp);
-                     conversationHistory += `Creatik IA: ${resp}\n`;
-                     if (chatState === 'AI_CHAT') syncToSheets();
-                     enableInput();
-                     return;
-                }
+                if (prohibidas.test(text)) { let resp = "Te comento que por el momento no estamos realizando ese tipo de coberturas (niños, eventos de baile, carnet, estudio fotográfico cerrado o mascotas). 😅 ¿Quizás te interese realizar alguna sesión diferente para tu marca personal, empresa o un evento familiar general?"; appendBotMessage(resp); conversationHistory += `Creatik IA: ${resp}\n`; if (chatState === 'AI_CHAT') syncToSheets(); enableInput(); return; }
 
                 appendBotTyping();
 
-                // BUSCAR UBICACIÓN INTELIGENTE (Auto-fill)
-                let loc = guessLocation(text);
-                let isLocationMatch = loc.dept || loc.muni || loc.dist;
-
-                // SI DETECTAMOS UBICACIÓN, SALTAR PASOS
-                if (['DEP', 'MUN', 'DIST'].includes(chatState) || (chatState === 'PHONE' && isLocationMatch)) {
-                    if (loc.dist) {
-                        userData.departamento = loc.dept;
-                        userData.municipio = loc.muni;
-                        userData.distrito = loc.dist;
-                        let msg = `¡Perfecto! Detecté que eres de ${loc.dist}, ${loc.muni} (${loc.dept}). 📍\nAhora sí, con tu código **${sessionId}** respaldándote, cuéntame: ¿qué tipo de proyecto audiovisual tienes en mente?`;
-                        removeBotTyping();
-                        appendBotMessage(msg);
-                        conversationHistory += `Creatik IA: ${msg.replace(/<[^>]*>?/gm, '')}\n`;
-                        chatState = 'PROJECT';
-                        enableInput();
-                        return;
-                    }
-
-                    if (chatState === 'DEP' || (chatState === 'PHONE' && isLocationMatch)) {
-                        if (loc.muni) {
-                            userData.departamento = loc.dept;
-                            userData.municipio = loc.muni;
-                            let msg = `¡Genial, detecté ${loc.muni} en ${loc.dept}! Por último, selecciona o escribe tu **Distrito** exacto:`;
-                            removeBotTyping();
-                            appendBotMessage(msg);
-                            conversationHistory += `Creatik IA: ${msg}\n`;
-                            appendBotOptions(svData[loc.dept][loc.muni]);
-                            chatState = 'DIST';
-                            return;
-                        } else if (loc.dept) {
-                            userData.departamento = loc.dept;
-                            let msg = `¡Genial, ${loc.dept}! Ahora selecciona el **Municipio** al que pertenece:`;
-                            removeBotTyping();
-                            appendBotMessage(msg);
-                            conversationHistory += `Creatik IA: ${msg}\n`;
-                            appendBotOptions(Object.keys(svData[loc.dept]));
-                            chatState = 'MUN';
-                            return;
-                        } else if (chatState === 'DEP') {
-                            removeBotTyping();
-                            appendBotMessage("Por favor, selecciona o escribe un departamento válido de la lista:");
-                            appendBotOptions(Object.keys(svData));
-                            return;
-                        }
-                    }
-
-                    if (chatState === 'MUN') {
-                        if (loc.muni) { 
-                            userData.municipio = loc.muni;
-                            userData.departamento = loc.dept; 
-                            let msg = `Ya casi terminamos. Por último, selecciona el **Distrito** exacto:`;
-                            removeBotTyping();
-                            appendBotMessage(msg);
-                            conversationHistory += `Creatik IA: ${msg}\n`;
-                            appendBotOptions(svData[userData.departamento][userData.municipio]);
-                            chatState = 'DIST';
-                            return;
-                        } else {
-                            removeBotTyping();
-                            appendBotMessage("Por favor, selecciona un municipio válido de la lista:");
-                            appendBotOptions(Object.keys(svData[userData.departamento]));
-                            return;
-                        }
-                    }
-
-                    if (chatState === 'DIST') {
-                        userData.distrito = text;
-                        let msg = `¡Datos guardados con éxito! 🎉 Ahora sí, con tu código **${sessionId}** respaldándote, cuéntame: ¿qué tipo de proyecto audiovisual tienes en mente?`;
-                        removeBotTyping();
-                        appendBotMessage(msg);
-                        conversationHistory += `Creatik IA: ${msg.replace(/<[^>]*>?/gm, '')}\n`;
-                        chatState = 'PROJECT';
-                        enableInput();
-                        return;
-                    }
+                if (chatState === 'AI_CHAT') {
+                    let aiResp = await getAIResponse(text, true); removeBotTyping(); appendBotMessage(aiResp); conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`; syncToSheets(); enableInput(); return;
                 }
+
+                let loc = guessLocation(text); let isLocationMatch = loc.dept || loc.muni || loc.dist;
 
                 // --- ESTADOS SECUENCIALES FRONTEND ---
                 if (chatState === 'INIT') {
                     const opcionesValidas = ["📸 Cotizar un servicio", "✅ Contratar a Creatik", "✨ Conocer más de Creatik"];
                     if (opcionesValidas.includes(text)) {
                         let digits = Math.floor(1000 + Math.random() * 9000);
-                        if (text.includes("Cotizar")) sessionId = "CTK-" + digits;
-                        else if (text.includes("Contratar")) sessionId = "CTK-S" + digits;
-                        else sessionId = "CTK-I" + digits; 
-                        
-                        document.getElementById('chatbot-session-display').textContent = "Gestión: " + sessionId;
-                        userData.intencion = text;
-                        
-                        let msg = "¡Excelente elección! 🎉 Para registrar tu solicitud y darte un trato VIP, ¿me podrías decir tu **nombre**?";
-                        removeBotTyping();
-                        appendBotMessage(msg);
-                        conversationHistory += `Creatik IA: ${msg}\n`;
-                        chatState = 'NAME';
-                        enableInput();
+                        if (text.includes("Cotizar")) sessionId = "CTK-" + digits; else if (text.includes("Contratar")) sessionId = "CTK-S" + digits; else sessionId = "CTK-I" + digits; 
+                        document.getElementById('chatbot-session-display').textContent = "Gestión: " + sessionId; userData.intencion = text;
+                        if (text.includes("Conocer")) { chatState = 'AI_CHAT'; let aiResp = await getAIResponse("Háblame brevemente sobre qué es Creatik y qué servicios ofrecen.", true); removeBotTyping(); appendBotMessage(aiResp); conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`; } 
+                        else { let msg = "¡Excelente elección! 🎉 Para registrar tu solicitud y darte un trato personalizado, ¿me podrías decir tu **nombre**?"; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'NAME'; }
                     } else {
-                        // LA IA INTERVIENE CON REGLA ESTRICTA CONTRA MENÚS NUMERADOS
-                        let promptFallback = `El usuario ignoró los botones visuales y escribió: "${text}". Respóndele natural y amablemente. REGLA ESTRICTA: NO escribas ningún menú, ni opciones, ni listas numeradas. Solo invítalo a "tocar uno de los botones de opciones" para poder ayudarle mejor.`;
-                        let aiResp = await getAIResponse(promptFallback, false);
-                        removeBotTyping();
-                        appendBotMessage(aiResp);
-                        conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`;
-                        appendBotOptions(opcionesValidas);
+                        chatState = 'AI_CHAT'; let aiResp = await getAIResponse(text, true); removeBotTyping(); appendBotMessage(aiResp); conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`;
                     }
-                    return;
+                    enableInput(); return;
                 }
                 
                 else if (chatState === 'NAME') {
-                    if (text.split(' ').length > 3 || text.includes('?')) {
-                        let promptFallback = `El usuario debía dar su nombre pero preguntó o dijo: "${text}". Responde su duda muy brevemente. REGLA ESTRICTA: NUNCA generes menús ni le pidas que escriba números. Luego pídele amablemente su nombre para continuar con el registro.`;
-                        let aiResp = await getAIResponse(promptFallback, false);
-                        removeBotTyping();
-                        appendBotMessage(aiResp);
-                        conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`;
-                        enableInput();
-                    } else {
-                        userData.nombre = text;
-                        let msg = `¡Mucho gusto, ${userData.nombre}! ✨ ¿Me podrías compartir tu número de **WhatsApp** para contactarte?`;
-                        removeBotTyping();
-                        appendBotMessage(msg);
-                        conversationHistory += `Creatik IA: ${msg}\n`;
-                        chatState = 'PHONE';
-                        enableInput();
-                    }
-                    return;
+                    if (text.split(' ').length > 3 || text.includes('?')) { chatState = 'AI_CHAT'; let aiResp = await getAIResponse(text, true); removeBotTyping(); appendBotMessage(aiResp); conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`; } 
+                    else { userData.nombre = text; let msg = `¡Mucho gusto, ${userData.nombre}! ✨ ¿Me podrías compartir tu número de **WhatsApp** para contactarte?`; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'PHONE'; }
+                    enableInput(); return;
                 }
                 
                 else if (chatState === 'PHONE') {
-                    let cleanPhone = text.replace(/[\s-]/g, ''); 
-                    let digits = cleanPhone.replace(/\D/g, ''); 
-                    
-                    if (textLower.includes('extranjer') || textLower.includes('fuera') || textLower.includes('otro pais')) {
-                        userData.telefono = text; 
-                    } else if (digits.length === 8) {
-                        userData.telefono = digits;
-                    } else if (digits.length > 8) {
-                        let msg = "Veo que pusiste más números de lo normal. 🤔 Si eres del extranjero, confírmamelo diciendo 'soy extranjero'. Si eres de El Salvador, ingresa solo tus 8 dígitos exactos.";
-                        removeBotTyping();
-                        appendBotMessage(msg);
-                        conversationHistory += `Creatik IA: ${msg}\n`;
-                        enableInput();
-                        return;
-                    } else if (text.includes('?')) {
-                        let promptFallback = `El usuario debía dar su teléfono pero preguntó: "${text}". Responde su duda muy brevemente. REGLA ESTRICTA: NO crees opciones ni menús. Luego dile que escriba su WhatsApp para seguir con el registro.`;
-                        let aiResp = await getAIResponse(promptFallback, false);
-                        removeBotTyping();
-                        appendBotMessage(aiResp);
-                        conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`;
-                        enableInput();
-                        return;
-                    } else {
-                        let msg = "Hmm, a ese número le faltan dígitos. 😅 Intenta ingresarlo nuevamente (recuerda que son 8 números).";
-                        removeBotTyping();
-                        appendBotMessage(msg);
-                        conversationHistory += `Creatik IA: ${msg}\n`;
-                        enableInput();
-                        return;
+                    let cleanPhone = text.replace(/[\s-]/g, ''); let digits = cleanPhone.replace(/\D/g, ''); 
+                    if (text.split(' ').length > 3 || text.includes('?') || (!textLower.includes('extranjer') && digits.length === 0)) { chatState = 'AI_CHAT'; let aiResp = await getAIResponse(text, true); removeBotTyping(); appendBotMessage(aiResp); conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`; } 
+                    else {
+                        if (textLower.includes('extranjer') || textLower.includes('fuera') || textLower.includes('otro pais')) { userData.telefono = text; } 
+                        else if (digits.length === 8) { userData.telefono = digits; } 
+                        else { let msg = "Hmm, a ese número le faltan dígitos. 😅 Intenta ingresarlo nuevamente (recuerda que son 8 números)."; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; enableInput(); return; }
+                        let msg = "¡Anotado! 📝 Ahora, para saber dónde realizaríamos la sesión, selecciona tu **Departamento**:"; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; appendBotOptions(Object.keys(svData)); chatState = 'DEP';
                     }
-                    
-                    let msg = "¡Anotado! 📝 Ahora, para saber dónde realizaríamos la sesión, selecciona tu **Departamento**:";
-                    removeBotTyping();
-                    appendBotMessage(msg);
-                    conversationHistory += `Creatik IA: ${msg}\n`;
-                    appendBotOptions(Object.keys(svData));
-                    chatState = 'DEP';
-                    return;
+                    enableInput(); return;
+                }
+
+                else if (['DEP', 'MUN', 'DIST'].includes(chatState)) {
+                    if (isLocationMatch) {
+                        if (loc.dist) { userData.departamento = loc.dept; userData.municipio = loc.muni; userData.distrito = loc.dist; let msg = `¡Perfecto! Eres de ${loc.dist}, ${loc.muni}. 📍\nPor último, con tu código **${sessionId}** respaldándote, cuéntame: ¿qué tipo de proyecto tienes en mente?`; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg.replace(/<[^>]*>?/gm, '')}\n`; chatState = 'PROJECT'; } 
+                        else if (loc.muni) { userData.departamento = loc.dept; userData.municipio = loc.muni; let msg = `¡Genial, detecté ${loc.muni}! Por último, selecciona tu **Distrito**:`; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; appendBotOptions(svData[loc.dept][loc.muni]); chatState = 'DIST'; } 
+                        else if (loc.dept) { userData.departamento = loc.dept; let msg = `¡Genial, ${loc.dept}! Ahora selecciona tu **Municipio**:`; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; appendBotOptions(Object.keys(svData[loc.dept])); chatState = 'MUN'; }
+                    } else { chatState = 'AI_CHAT'; let aiResp = await getAIResponse(text, true); removeBotTyping(); appendBotMessage(aiResp); conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`; }
+                    enableInput(); return;
                 }
 
                 else if (chatState === 'PROJECT') {
-                    userData.proyecto = text;
-                    syncToSheets(); 
-
-                    let successMsj = `¡Me encanta la idea! 📸 Estoy listo para resolver cualquier duda que tengas sobre nuestros paquetes y precios. ¿Qué te gustaría saber primero?`;
-                    removeBotTyping();
-                    appendBotMessage(successMsj);
-                    conversationHistory += `Creatik IA: ${successMsj.replace(/<[^>]*>?/gm, '')}\n`;
-                    
-                    chatState = 'AI_CHAT'; 
-                    enableInput();
-                    return;
+                    userData.proyecto = text; syncToSheets(); chatState = 'AI_CHAT'; 
+                    let aiResp = await getAIResponse(`El usuario acaba de decir que su proyecto es: "${text}". Respóndele natural, confirmando que te gusta la idea y pregúntale si tiene dudas sobre precios.`, false);
+                    removeBotTyping(); appendBotMessage(aiResp); conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`; enableInput(); return;
                 }
 
-                // --- ESTADO FINAL: CHARLA LIBRE CON IA ---
-                let aiResp = await getAIResponse(text, true); 
-                removeBotTyping();
-                appendBotMessage(aiResp);
-                
-                conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`;
-                
-                syncToSheets();
-                
-            } catch (err) {
-                console.error("Fallo general:", err);
-                removeBotTyping();
-                appendBotMessage("Ocurrió un error inesperado de conexión. Por favor, intenta enviar tu mensaje de nuevo.");
-            } finally {
-                // ESTE BLOQUE GARANTIZA QUE SIEMPRE SE DESBLOQUEE LA CAJA DE TEXTO
-                enableInput();
-                scrollToBottom();
-            }
+            } catch (err) { console.error("Fallo general:", err); removeBotTyping(); appendBotMessage("Tuvimos un fallo temporal en el sistema 🔌. Por favor, intenta de nuevo."); } 
+            finally { enableInput(); scrollToBottom(); }
         }
 
-        chatbotSendBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            handleSend();
-        });
-        
-        chatbotInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                handleSend();
-            }
-        });
+        chatbotSendBtn.addEventListener('click', (e) => { e.preventDefault(); handleSend(); });
+        chatbotInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); handleSend(); } });
 
         // --- NAVEGADOR Y OVERLAYS ---
-        const loader = document.getElementById('intro-loader');
-        const introText = document.getElementById('intro-text');
-        const glow = document.querySelector('.cursor-glow');
-        const panel = document.getElementById('scroll-panel');
-        const bgPresentation = document.getElementById('bg-presentation');
-        const marquee = document.getElementById('marquee-transition');
-        const mainHeader = document.getElementById('main-header');
-        
+        const loader = document.getElementById('intro-loader'); const introText = document.getElementById('intro-text'); const glow = document.querySelector('.cursor-glow'); const panel = document.getElementById('scroll-panel'); const bgPresentation = document.getElementById('bg-presentation'); const marquee = document.getElementById('marquee-transition'); const mainHeader = document.getElementById('main-header');
         let isMenuOpen = false, isPaquetesOpen = false, isAcademyOpen = false;
-        
-        const menuBtn = document.getElementById('toggle-menu-btn');
-        const menuOverlay = document.getElementById('full-menu-overlay');
-        const paquetesBtn = document.getElementById('toggle-paquetes-btn');
-        const paquetesOverlay = document.getElementById('paquetes-overlay');
-        const closePaquetesMobileBtn = document.getElementById('close-paquetes-mobile-btn');
-        const paquetesLogoBtn = document.getElementById('paquetes-logo-btn');
-        const btnContactOpen = document.getElementById('btn-contact-open');
-        const contactOverlay = document.getElementById('contact-overlay');
-        const btnContactClose = document.getElementById('close-contact-btn');
-        const btnAcademyOpen = document.getElementById('open-academy-btn');
-        const academyOverlay = document.getElementById('academy-overlay');
-        const btnAcademyClose = document.getElementById('close-academy-btn');
-
-        let slideshowInterval;
-        const slides = document.querySelectorAll('.phone-slideshow .slide');
-        let currentSlideIdx = 0;
-
-        function nextSlide() {
-            slides[currentSlideIdx].classList.remove('active');
-            currentSlideIdx = (currentSlideIdx + 1) % slides.length;
-            slides[currentSlideIdx].classList.add('active');
-        }
-
-        function updateHeaderVisibility() {
-            if (isPaquetesOpen || isAcademyOpen || contactOverlay.classList.contains('active') || isMenuOpen) {
-                bgPresentation.classList.add('paused-animation'); marquee.classList.add('paused-animation');
-                chatbotFab.classList.add('hide-chatbot-ui'); chatbotWindow.classList.remove('active'); isChatbotOpen = false;
-                if (!isMenuOpen) { mainHeader.style.opacity = '0'; mainHeader.style.visibility = 'hidden'; mainHeader.style.pointerEvents = 'none'; }
-            } else {
-                bgPresentation.classList.remove('paused-animation'); marquee.classList.remove('paused-animation');
-                chatbotFab.classList.remove('hide-chatbot-ui');
-                mainHeader.style.visibility = 'visible'; mainHeader.style.pointerEvents = 'auto';
-                mainHeader.style.opacity = Math.max(0, 1 - window.scrollY / 300);
-            }
-        }
-
-        function triggerIntro() {
-            loader.classList.remove('hidden'); introText.classList.remove('animate-letters');
-            void introText.offsetWidth; introText.classList.add('animate-letters');
-            setTimeout(() => loader.classList.add('hidden'), window.innerWidth <= 900 ? 2500 : 1500);
-        }
-
-        menuBtn.addEventListener('click', () => {
-            isMenuOpen = !isMenuOpen;
-            mainHeader.classList.toggle('menu-mode', isMenuOpen);
-            if (isMenuOpen) {
-                menuOverlay.classList.add('active'); menuBtn.classList.add('active-btn'); document.body.style.overflow = 'hidden';
-                menuBtn.innerHTML = '<span class="dot"></span> Cerrar'; mainHeader.style.opacity = 1; 
-                if (!slideshowInterval && slides.length > 0) slideshowInterval = setInterval(nextSlide, 3000);
-            } else {
-                menuOverlay.classList.remove('active'); menuBtn.classList.remove('active-btn'); document.body.style.overflow = 'auto';
-                menuBtn.innerHTML = '<span class="dot"></span> Menú';
-                if (slideshowInterval) { clearInterval(slideshowInterval); slideshowInterval = null; }
-            }
-            updateHeaderVisibility();
-        });
-
-        paquetesBtn.addEventListener('click', () => { isPaquetesOpen = true; paquetesOverlay.scrollTop = 0; paquetesOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; updateHeaderVisibility(); });
-        closePaquetesMobileBtn.addEventListener('click', () => { isPaquetesOpen = false; paquetesOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; updateHeaderVisibility(); });
-        paquetesLogoBtn.addEventListener('click', () => { isPaquetesOpen = false; paquetesOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; updateHeaderVisibility(); triggerIntro(); });
-        btnContactOpen.addEventListener('click', () => { contactOverlay.scrollTop = 0; contactOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; updateHeaderVisibility(); });
-        btnContactClose.addEventListener('click', () => { contactOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; updateHeaderVisibility(); });
-        btnAcademyOpen.addEventListener('click', () => { isAcademyOpen = true; academyOverlay.scrollTop = 0; academyOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; updateHeaderVisibility(); });
-        btnAcademyClose.addEventListener('click', () => { isAcademyOpen = false; academyOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; updateHeaderVisibility(); });
-
-        const viewer = document.getElementById('main-viewer');
-        const thumbBoxes = document.querySelectorAll('#thumbnail-grid .icon-box');
-        const dashImages = ['img1.jpg', 'img2_2.jpg', 'img3.jpg', 'img4.jpg', 'img5.jpg', 'img6.jpg', 'img7_7.jpg', 'img8.jpg', 'img9.jpg'];
-        let dashIdx = 0;
-
-        function autoShowImage() {
-            if (!viewer || thumbBoxes.length === 0) return;
-            const panelRect = panel.getBoundingClientRect();
-            if (panelRect.bottom < 0 || panelRect.top > window.innerHeight) return;
-            if (window.innerWidth <= 900) { thumbBoxes.forEach(box => { box.style.borderColor = 'rgba(255,255,255,0.08)'; box.style.background = 'rgba(255,255,255,0.04)'; box.style.transform = 'scale(1) translate3d(0,0,0)'; }); return; }
-            viewer.style.opacity = 0; 
-            setTimeout(() => {
-                const newSrc = dashImages[dashIdx];
-                viewer.src = newSrc; viewer.style.objectPosition = (newSrc.includes('img2') || newSrc.includes('img7')) ? 'center top' : 'center center'; viewer.style.opacity = 1;
-                thumbBoxes.forEach((box, i) => {
-                    if (i === dashIdx) { box.style.borderColor = '#a855f7'; box.style.background = 'rgba(168, 85, 247, 0.25)'; box.style.transform = 'scale(1.05) translate3d(0,0,0)'; } 
-                    else { box.style.borderColor = 'rgba(255,255,255,0.08)'; box.style.background = 'rgba(255,255,255,0.04)'; box.style.transform = 'scale(1) translate3d(0,0,0)'; }
-                });
-                dashIdx = (dashIdx + 1) % dashImages.length;
-            }, 300); 
-        }
-
-        let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
-        let ballX = window.innerWidth / 2, ballY = window.innerHeight / 2;
-        document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; }, { passive: true });
-        function animateGlow() { if (window.innerWidth > 900) { ballX += (mouseX - ballX) * 0.1; ballY += (mouseY - ballY) * 0.1; glow.style.transform = `translate3d(${ballX}px, ${ballY}px, 0) translate3d(-50%, -50%, 0)`; } requestAnimationFrame(animateGlow); }
-        animateGlow();
-
-        function initDynamicBox() {
-            const words = document.querySelectorAll('#dynamic-box .world-text');
-            const box = document.getElementById('dynamic-box');
-            const titleHistoria = document.getElementById('title-historia');
-            const titleHagamos = document.getElementById('title-hagamos');
-            if (!box || words.length === 0) return;
-            let currentIndex = 0;
-            function updateText() {
-                const boxRect = box.getBoundingClientRect();
-                if (boxRect.bottom < 0 || boxRect.top > window.innerHeight) return;
-                words[currentIndex].classList.remove('active'); currentIndex = (currentIndex + length) % words.length; const nextWord = words[currentIndex]; nextWord.classList.add('active');
-                if(window.innerWidth > 900) { box.style.width = `${nextWord.scrollWidth + 80}px`; }
-                if (nextWord.textContent.trim().toLowerCase() === 'inolvidable') { titleHistoria.classList.remove('active'); titleHagamos.classList.add('active'); } else { titleHagamos.classList.remove('active'); titleHistoria.classList.add('active'); }
-            }
-            document.fonts.ready.then(() => { words[0].classList.add('active'); titleHistoria.classList.add('active'); if(window.innerWidth > 900) { box.style.width = `${words[0].scrollWidth + 80}px`; } setInterval(updateText, 3000); });
-        }
-
-        let isScrolling = false;
-        window.addEventListener('scroll', () => {
-            if(isMenuOpen || isPaquetesOpen || contactOverlay.classList.contains('active') || isAcademyOpen) return;
-            if (!isScrolling) {
-                window.requestAnimationFrame(() => {
-                    const scrollVal = window.scrollY;
-                    const fadeFactor = Math.max(0, 1 - scrollVal / 300).toFixed(2);
-                    bgPresentation.style.opacity = fadeFactor; 
-                    if (window.innerWidth > 900) { if (!isChatbotOpen) mainHeader.style.opacity = fadeFactor; if (scrollVal > 100) panel.classList.add('visible'); else panel.classList.remove('visible'); }
-                    isScrolling = false;
-                });
-                isScrolling = true;
-            }
-        }, { passive: true });
-
+        const menuBtn = document.getElementById('toggle-menu-btn'); const menuOverlay = document.getElementById('full-menu-overlay'); const paquetesBtn = document.getElementById('toggle-paquetes-btn'); const paquetesOverlay = document.getElementById('paquetes-overlay'); const closePaquetesMobileBtn = document.getElementById('close-paquetes-mobile-btn'); const paquetesLogoBtn = document.getElementById('paquetes-logo-btn'); const btnContactOpen = document.getElementById('btn-contact-open'); const contactOverlay = document.getElementById('contact-overlay'); const btnContactClose = document.getElementById('close-contact-btn'); const btnAcademyOpen = document.getElementById('open-academy-btn'); const academyOverlay = document.getElementById('academy-overlay'); const btnAcademyClose = document.getElementById('close-academy-btn');
+        let slideshowInterval; const slides = document.querySelectorAll('.phone-slideshow .slide'); let currentSlideIdx = 0;
+        function nextSlide() { slides[currentSlideIdx].classList.remove('active'); currentSlideIdx = (currentSlideIdx + 1) % slides.length; slides[currentSlideIdx].classList.add('active'); }
+        function updateHeaderVisibility() { if (isPaquetesOpen || isAcademyOpen || contactOverlay.classList.contains('active') || isMenuOpen) { bgPresentation.classList.add('paused-animation'); marquee.classList.add('paused-animation'); chatbotFab.classList.add('hide-chatbot-ui'); chatbotWindow.classList.remove('active'); isChatbotOpen = false; if (!isMenuOpen) { mainHeader.style.opacity = '0'; mainHeader.style.visibility = 'hidden'; mainHeader.style.pointerEvents = 'none'; } } else { bgPresentation.classList.remove('paused-animation'); marquee.classList.remove('paused-animation'); chatbotFab.classList.remove('hide-chatbot-ui'); mainHeader.style.visibility = 'visible'; mainHeader.style.pointerEvents = 'auto'; mainHeader.style.opacity = Math.max(0, 1 - window.scrollY / 300); } }
+        function triggerIntro() { loader.classList.remove('hidden'); introText.classList.remove('animate-letters'); void introText.offsetWidth; introText.classList.add('animate-letters'); setTimeout(() => loader.classList.add('hidden'), window.innerWidth <= 900 ? 2500 : 1500); }
+        menuBtn.addEventListener('click', () => { isMenuOpen = !isMenuOpen; mainHeader.classList.toggle('menu-mode', isMenuOpen); if (isMenuOpen) { menuOverlay.classList.add('active'); menuBtn.classList.add('active-btn'); document.body.style.overflow = 'hidden'; menuBtn.innerHTML = '<span class="dot"></span> Cerrar'; mainHeader.style.opacity = 1; if (!slideshowInterval && slides.length > 0) slideshowInterval = setInterval(nextSlide, 3000); } else { menuOverlay.classList.remove('active'); menuBtn.classList.remove('active-btn'); document.body.style.overflow = 'auto'; menuBtn.innerHTML = '<span class="dot"></span> Menú'; if (slideshowInterval) { clearInterval(slideshowInterval); slideshowInterval = null; } } updateHeaderVisibility(); });
+        paquetesBtn.addEventListener('click', () => { isPaquetesOpen = true; paquetesOverlay.scrollTop = 0; paquetesOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; updateHeaderVisibility(); }); closePaquetesMobileBtn.addEventListener('click', () => { isPaquetesOpen = false; paquetesOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; updateHeaderVisibility(); }); paquetesLogoBtn.addEventListener('click', () => { isPaquetesOpen = false; paquetesOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; updateHeaderVisibility(); triggerIntro(); }); btnContactOpen.addEventListener('click', () => { contactOverlay.scrollTop = 0; contactOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; updateHeaderVisibility(); }); btnContactClose.addEventListener('click', () => { contactOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; updateHeaderVisibility(); }); btnAcademyOpen.addEventListener('click', () => { isAcademyOpen = true; academyOverlay.scrollTop = 0; academyOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; updateHeaderVisibility(); }); btnAcademyClose.addEventListener('click', () => { isAcademyOpen = false; academyOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; updateHeaderVisibility(); });
+        const viewer = document.getElementById('main-viewer'); const thumbBoxes = document.querySelectorAll('#thumbnail-grid .icon-box'); const dashImages = ['img1.jpg', 'img2_2.jpg', 'img3.jpg', 'img4.jpg', 'img5.jpg', 'img6.jpg', 'img7_7.jpg', 'img8.jpg', 'img9.jpg']; let dashIdx = 0;
+        function autoShowImage() { if (!viewer || thumbBoxes.length === 0) return; const panelRect = panel.getBoundingClientRect(); if (panelRect.bottom < 0 || panelRect.top > window.innerHeight) return; if (window.innerWidth <= 900) { thumbBoxes.forEach(box => { box.style.borderColor = 'rgba(255,255,255,0.08)'; box.style.background = 'rgba(255,255,255,0.04)'; box.style.transform = 'scale(1) translate3d(0,0,0)'; }); return; } viewer.style.opacity = 0; setTimeout(() => { const newSrc = dashImages[dashIdx]; viewer.src = newSrc; viewer.style.objectPosition = (newSrc.includes('img2') || newSrc.includes('img7')) ? 'center top' : 'center center'; viewer.style.opacity = 1; thumbBoxes.forEach((box, i) => { if (i === dashIdx) { box.style.borderColor = '#a855f7'; box.style.background = 'rgba(168, 85, 247, 0.25)'; box.style.transform = 'scale(1.05) translate3d(0,0,0)'; } else { box.style.borderColor = 'rgba(255,255,255,0.08)'; box.style.background = 'rgba(255,255,255,0.04)'; box.style.transform = 'scale(1) translate3d(0,0,0)'; } }); dashIdx = (dashIdx + 1) % dashImages.length; }, 300); }
+        let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2; let ballX = window.innerWidth / 2, ballY = window.innerHeight / 2; document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; }, { passive: true }); function animateGlow() { if (window.innerWidth > 900) { ballX += (mouseX - ballX) * 0.1; ballY += (mouseY - ballY) * 0.1; glow.style.transform = `translate3d(${ballX}px, ${ballY}px, 0) translate3d(-50%, -50%, 0)`; } requestAnimationFrame(animateGlow); } animateGlow();
+        function initDynamicBox() { const words = document.querySelectorAll('#dynamic-box .world-text'); const box = document.getElementById('dynamic-box'); const titleHistoria = document.getElementById('title-historia'); const titleHagamos = document.getElementById('title-hagamos'); if (!box || words.length === 0) return; let currentIndex = 0; function updateText() { const boxRect = box.getBoundingClientRect(); if (boxRect.bottom < 0 || boxRect.top > window.innerHeight) return; words[currentIndex].classList.remove('active'); currentIndex = (currentIndex + length) % words.length; const nextWord = words[currentIndex]; nextWord.classList.add('active'); if(window.innerWidth > 900) { box.style.width = `${nextWord.scrollWidth + 80}px`; } if (nextWord.textContent.trim().toLowerCase() === 'inolvidable') { titleHistoria.classList.remove('active'); titleHagamos.classList.add('active'); } else { titleHagamos.classList.remove('active'); titleHistoria.classList.add('active'); } } document.fonts.ready.then(() => { words[0].classList.add('active'); titleHistoria.classList.add('active'); if(window.innerWidth > 900) { box.style.width = `${words[0].scrollWidth + 80}px`; } setInterval(updateText, 3000); }); }
+        let isScrolling = false; window.addEventListener('scroll', () => { if(isMenuOpen || isPaquetesOpen || contactOverlay.classList.contains('active') || isAcademyOpen) return; if (!isScrolling) { window.requestAnimationFrame(() => { const scrollVal = window.scrollY; const fadeFactor = Math.max(0, 1 - scrollVal / 300).toFixed(2); bgPresentation.style.opacity = fadeFactor; if (window.innerWidth > 900) { if (!isChatbotOpen) mainHeader.style.opacity = fadeFactor; if (scrollVal > 100) panel.classList.add('visible'); else panel.classList.remove('visible'); } isScrolling = false; }); isScrolling = true; } }, { passive: true });
         window.addEventListener('load', () => { triggerIntro(); initDynamicBox(); if (viewer) { autoShowImage(); setInterval(autoShowImage, 3500); } });
     </script>
 </body>
-
 </html>
