@@ -448,7 +448,7 @@
                 <h2>Creatik <span>Academy</span></h2>
                 <p style="margin-bottom: 15px; font-weight: 700; color: #ff3232; letter-spacing: 1px;">MÁS ALLÁ DE LA PANTALLA</p>
                 <p>En Creatik, nuestra visión no termina en el lente. Llevamos más de dos años y medio impulsando nuestro proyecto social <strong>Creatik Academy</strong>.</p>
-                <p style="margin-top: 10px;">Es un espacio de formación y convivencia donde unimos a apasionados del arte visual. A través de nuestras salidas de campo, transformamos la fotografía en una herramienta de integración. Formamos talento, unimos territorios y demostramos que el arte puede cambiar realidades.</p>
+                <p style="margin-top: 10px;">Es un espacio de formation y convivencia donde unimos a apasionados del arte visual. A través de nuestras salidas de campo, transformamos la fotografía en una herramienta de integración. Formamos talento, unimos territorios y demostramos que el arte puede cambiar realidades.</p>
             </div>
             <div class="academy-visuals">
                 <div class="dual-slide-wrap">
@@ -566,7 +566,7 @@
             </div>
             
             <h1 class="contact-title">¿Necesitas una <span>mano</span> para tu próxima sesión de fotos?</h1>
-            <p class="contact-desc">En Creatik, capturamos la esencia de cada momento porque sabemos que tu realidad es lo más importante.</p>
+            <p class="contact-desc">En Creatik, capturamos la esencia de cada momento porque sabemos que tu reality es lo más importante.</p>
             
             <a href="https://wa.me/50375778333" target="_blank" class="contact-cta-btn">
                 Iniciar Chat Ahora ➔
@@ -728,14 +728,15 @@
                     action: "save", 
                     codigo: sessionId, 
                     fechaRegistro: fechaActual,
-                    historial: conversationHistory + `\n[Evaluación IA: ${getSentiment()}]`, 
-                    ubicacion: ubicacion, 
-                    proyecto: userData.proyecto_resumen || userData.proyecto || "Sesión en proceso", 
-                    telefono: userData.telefono || "No proporcionado", 
                     nombre: userData.nombre || "No proporcionado", 
-                    precio: userData.precio_final || "Por definir",
+                    telefono: userData.telefono || "No proporcionado", 
+                    ubicacion: ubicacion, 
+                    fechaEvento: userData.fechaEvento || "No definida",
+                    proyecto: userData.proyecto_resumen || userData.proyecto || "Sesión en proceso", 
+                    precioTotal: userData.precio_final || "Por definir",
+                    anticipo: userData.anticipo || "Por definir",
                     resumen: userData.resumen || "Sin resumen",
-                    fechaEvento: userData.fechaEvento || "No definida"
+                    historial: conversationHistory + `\n[Evaluación IA: ${getSentiment()}]`
                 };
             }
             
@@ -744,7 +745,7 @@
             }).catch(e => console.log(e));
         }
 
-        let inactivityTimer; let followUpTimer;
+        let inactivityTimer;
         function resetInactivityTimer() {
             clearTimeout(inactivityTimer);
             if (isChatbotOpen) inactivityTimer = setTimeout(() => { isChatbotOpen = false; chatbotWindow.classList.remove('active'); chatbotFab.classList.remove('hide-chatbot-ui'); resetChat(); }, 600000); 
@@ -805,16 +806,14 @@
 
         const chatbotFab = document.getElementById('chatbot-fab'); const chatbotWindow = document.getElementById('chatbot-window'); const closeChatbotBtn = document.getElementById('close-chatbot-btn'); const chatbotInput = document.getElementById('chatbot-input'); const chatbotSendBtn = document.getElementById('chatbot-send-btn'); const chatbotVerifyBtn = document.getElementById('chatbot-verify-btn'); const chatbotMessages = document.getElementById('chatbot-messages');
         
-        // --- ESTADOS RESTAURADOS ---
         let isChatbotOpen = false; let sessionId = "Pendiente..."; let conversationHistory = ""; let chatState = 'INIT'; 
-        let userData = { nombre: '', telefono: '', departamento: '', municipio: '', distrito: '', intencion: '', proyecto: '', proyecto_resumen: '', resumen: '', precio_final: '', fechaEvento: '' };
+        let userData = { nombre: '', telefono: '', departamento: '', municipio: '', distrito: '', intencion: '', proyecto: '', proyecto_resumen: '', resumen: '', precio_final: '', anticipo: '', fechaEvento: '' };
         let lastUserText = ""; let repeatCount = 0; let isInternational = false;
 
         chatbotFab.addEventListener('click', () => {
             fetchBookedDates(); 
             isChatbotOpen = true; chatbotWindow.classList.add('active'); chatbotFab.classList.add('hide-chatbot-ui'); resetInactivityTimer();
             if(chatbotMessages.children.length === 0) {
-                // BOTONES INICIALES RESTAURADOS
                 let saludoInicial = "¡Hola! Soy Creatik IA. 🤖✨ Para brindarte una mejor atención, ¿qué te gustaría hacer hoy?";
                 appendBotMessage(saludoInicial); conversationHistory += "Creatik IA: " + saludoInicial + "\n";
                 appendBotOptions(["📸 Cotizar un servicio", "✅ Contratar a Creatik", "✨ Conocer más de Creatik"]);
@@ -837,7 +836,7 @@
                 isPaquetesOpen = false; document.getElementById('paquetes-overlay').classList.remove('active'); document.body.style.overflow = 'auto'; updateHeaderVisibility();
                 isChatbotOpen = true; chatbotWindow.classList.add('active'); chatbotFab.classList.add('hide-chatbot-ui'); resetInactivityTimer();
                 chatbotMessages.innerHTML = ""; conversationHistory = "";
-                userData = { nombre: '', telefono: '', departamento: '', municipio: '', distrito: '', intencion: '', proyecto: '', proyecto_resumen: '', resumen: '', precio_final: '', fechaEvento: '' };
+                userData = { nombre: '', telefono: '', departamento: '', municipio: '', distrito: '', intencion: '', proyecto: '', proyecto_resumen: '', resumen: '', precio_final: '', anticipo: '', fechaEvento: '' };
                 let digits = Math.floor(1000 + Math.random() * 9000); sessionId = "CTK-R" + digits; 
                 document.getElementById('chatbot-session-display').textContent = "Gestión: " + sessionId; 
                 userData.intencion = "Reserva Web: " + planName;
@@ -866,7 +865,7 @@
 
         function resetChat() {
             chatbotMessages.innerHTML = ""; chatState = 'INIT'; conversationHistory = ""; isInternational = false;
-            userData = { nombre: '', telefono: '', departamento: '', municipio: '', distrito: '', intencion: '', proyecto: '', proyecto_resumen: '', resumen: '', precio_final: '', fechaEvento: '' };
+            userData = { nombre: '', telefono: '', departamento: '', municipio: '', distrito: '', intencion: '', proyecto: '', proyecto_resumen: '', resumen: '', precio_final: '', anticipo: '', fechaEvento: '' };
             lastUserText = ""; repeatCount = 0; document.getElementById('chatbot-session-display').textContent = "Gestión: Pendiente..."; sessionId = "Pendiente...";
             let msg = "¡Hola de nuevo! Soy Creatik IA. 🤖✨ El chat se ha reiniciado. ¿En qué te puedo ayudar?";
             appendBotMessage(msg); appendBotOptions(["📸 Cotizar un servicio", "✅ Contratar a Creatik", "✨ Conocer más de Creatik"]); enableInput();
@@ -885,6 +884,7 @@
             let ubi = [userData.departamento, userData.municipio].filter(Boolean).join(', '); if (!ubi) ubi = "No proporcionado";
             let proj = userData.proyecto_resumen || userData.proyecto || "Pendiente"; if (proj.length > 40) proj = proj.substring(0, 37) + "...";
             let precio = userData.precio_final || "Por definir";
+            let anticipo = userData.anticipo || "Por definir";
             return `
             <style>
                 .html-ticket { background: linear-gradient(135deg, #1e1b4b, #020005); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 15px; width: 100%; max-width: 280px; margin: 15px auto; color: white; font-family: 'Inter', sans-serif; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden; position: relative; }
@@ -894,13 +894,16 @@
                 .ticket-footer { padding: 15px 20px 25px 20px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); } .barcode { font-family: monospace; font-size: 1.2rem; letter-spacing: 2px; color: #fff; opacity: 0.8; }
             </style>
             <div class="html-ticket"><div class="ticket-header"><h3>CREATIK.</h3><p>TICKET DE GESTIÓN</p></div><div class="ticket-divider"><div class="circle-left"></div><div class="circle-right"></div><hr></div>
-            <div class="ticket-body"><div class="ticket-row"><span class="label">CÓDIGO DE GESTIÓN</span><span class="value">${sessionId}</span></div><div class="ticket-row"><span class="label">CLIENTE</span><span class="value">${maskName(userData.nombre)}</span></div><div class="ticket-row"><span class="label">FECHA</span><span class="value">${userData.fechaEvento}</span></div><div class="ticket-row"><span class="label">UBICACIÓN</span><span class="value">${ubi}</span></div><div class="ticket-row"><span class="label">OBJETIVO</span><span class="value">${proj}</span></div><div class="ticket-row" style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.2);"><span class="label" style="color: #ffd700;">PRECIO ACORDADO</span><span class="value" style="color: #ffd700; font-size: 1.1rem;">${precio}</span></div></div>
+            <div class="ticket-body"><div class="ticket-row"><span class="label">CÓDIGO DE GESTIÓN</span><span class="value">${sessionId}</span></div><div class="ticket-row"><span class="label">CLIENTE</span><span class="value">${maskName(userData.nombre)}</span></div><div class="ticket-row"><span class="label">FECHA ACORDADA</span><span class="value">${userData.fechaEvento}</span></div><div class="ticket-row"><span class="label">UBICACIÓN</span><span class="value">${ubi}</span></div><div class="ticket-row"><span class="label">OBJETIVO</span><span class="value">${proj}</span></div>
+            <div class="ticket-row" style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.2);"><span class="label" style="color: #ffd700;">PRECIO TOTAL</span><span class="value" style="color: #ffd700; font-size: 1.1rem;">${precio}</span></div>
+            <div class="ticket-row"><span class="label" style="color: #db2777;">ANTICIPO (50%)</span><span class="value" style="color: #db2777;">${anticipo}</span></div>
+            </div>
             <div class="ticket-footer"><div class="barcode">|||| |||| || ||| || ||||</div><div style="font-size:0.6rem; margin-top:5px; color:#a855f7;">${sessionId}</div></div></div>
             <p style="font-size: 0.85rem; margin-top: 10px; line-height:1.4; text-align:center;">📸 <b>Por favor, tómale una captura a este ticket</b> y envíala a nuestro WhatsApp (+503 7577 8333) para agendar tu proyecto.</p>`;
         }
 
         // =========================================================================
-        // --- CEREBRO IA: ESTRICTA Y PASO A PASO (MANTIENE LA CHARLA FLUIDA) ---
+        // --- CEREBRO IA: ESTRICTA, CERRADORA Y PASO A PASO ---
         // =========================================================================
         async function getAIResponse(promptText, isFullContext = false) {
             let historyLines = conversationHistory.split('\n').filter(line => line.trim() !== '');
@@ -908,37 +911,36 @@
             let trimmedHistory = historyLines.join('\n');
             let bookedStr = window.serverData && window.serverData.bookedDates.length > 0 ? window.serverData.bookedDates.join(", ") : "Ninguna";
 
-            // ¡AQUÍ ESTÁ LA MAGIA! SE HA ACTUALIZADO EL PROMPT PARA CUMPLIR CON LAS REGLAS DE ZONAS, ENTREGABLES Y FOTÓGRAFOS.
-            let basePrompt = `Eres "Creatik IA", asesora de ventas y cerradora experta de Creatik Studio en El Salvador (Año: 2026). Tu tono es entusiasta, cercano y profesional. Usa emojis (📸, ✨, 🚀).
+            let basePrompt = `Eres "Creatik IA", asesora de ventas senior y cerradora experta de Creatik Studio en El Salvador (Año: 2026). Tu tono es entusiasta, persuasivo, cercano y muy profesional. Usa emojis (📸, ✨, 🚀).
 
-REGLAS ESTRICTAS PARA RESPONDER:
-1. UNA PREGUNTA A LA VEZ: Es la regla de oro. NUNCA envíes 2 o 3 preguntas juntas. No uses listas ni viñetas. Pregunta una sola cosa y espera respuesta.
-2. ENTREGABLES Y TIEMPOS (¡MUY IMPORTANTE!): 
-   - SOLO entregamos en formato Digital y memoria USB. Algunos paquetes incluyen fotos impresas. NUNCA ofrezcas álbumes impresos, cuadros u otros formatos.
-   - Si el cliente es extranjero o se va del país pronto, se entrega SOLO en formato digital (sin USB).
-   - El tiempo de entrega de todo el material es SIEMPRE 1 semana después del evento.
-3. CÁLCULO DE PRECIOS Y FOTÓGRAFOS (Cálculo interno, da solo el precio final al cliente):
-   - Memoria USB cuesta $9 y cada foto impresa $0.90 (Súmalo al paquete mentalmente, no desgloses estos costos al cliente).
-   - En tu propuesta final, SIEMPRE debes decir cuántos fotógrafos irán. El paquete base incluye 1. Si el evento requiere más fotógrafos, suma $50 por fotógrafo extra a nivel nacional, o $300 por fotógrafo extra a nivel internacional.
-4. VIÁTICOS Y ZONAS (Suma esto al precio final según la ubicación del evento):
-   - Zona 0 ($0 extra): San Salvador (Norte, Sur, Este, Oeste, Centro).
-   - Zona 1 (Recargo bajo ~$10-$15): La Libertad (Este, Sur, Colón), Cuscatlán Sur, La Paz Oeste.
-   - Zona 2 (Recargo medio ~$20-$25): Chalatenango Sur, La Libertad Norte, Cuscatlán Norte, San Vicente Norte, Sonsonate Este.
-   - Zona 3 (Recargo alto ~$30-$45): Chalatenango (Norte/Centro), Cabañas, San Vicente Sur, Sonsonate (Centro/Oeste), Santa Ana (Este/Centro), Ahuachapán Centro, Usulután Norte.
-   - Zona 4 (Recargo muy alto ~$50-$70): Santa Ana (Norte/Oeste), Ahuachapán (Norte/Sur), Usulután (Este/Oeste), San Miguel (Centro/Oeste).
-   - Zona 5 (Recargo especial >$80 + posibles viáticos/hospedaje): San Miguel Norte, Morazán, La Unión.
-5. PAQUETES DINÁMICOS Y VALOR ANTES DEL PRECIO: Bautiza el paquete (Ej. "Paquete Creatik [Lugar]"). Detalla el esfuerzo, horas, cantidad de fotógrafos, y entregables ANTES de dar el precio total realista.
-6. INDAGA A PROFUNDIDAD: Asegúrate de saber locación exacta, horas y entregables antes de armar la propuesta. Filtro anti-errores: Si el cliente evade una pregunta, replantéala amablemente.
-7. CERO DRONES Y RESTRICCIONES: NO tenemos drones, no newborn, no carnet. Todo es exterior/locación.
-8. ETIQUETAS DE SISTEMA (INVISIBLES PARA EL USUARIO):
-   - Si el cliente quiere cotizar y ya tienes sus datos básicos, usa [ACTIVAR_CODIGO] al final.
-   - Cuando des la propuesta final con el PRECIO EXACTO, pregunta si le parece bien y agrega [CONFIRMAR_PROPUESTA]. ¡NO generes el ticket todavía!
-   - ÚNICA Y EXCLUSIVAMENTE cuando el cliente ACEPTE la propuesta, despídete con:
-   [GENERAR_TICKET]
-   [PROYECTO: (Resumen de 3 palabras)]
-   [RESUMEN: (Todo lo acordado)]
-   [PRECIO: ($ Total)]
-   [FECHA: (Fecha acordada)]`;
+REGLAS DE ORO (ESTRICTAS):
+1. INDAGACIÓN PASO A PASO (1 PREGUNTA A LA VEZ): Haz UNA sola pregunta clara. Espera la respuesta. NUNCA envíes listas de preguntas. NUNCA uses viñetas.
+2. RECOPILACIÓN PROACTIVA (FILTRO ANTI-ERRORES): Si el cliente te da un dato (Ubicación, Fecha, Horario, Proyecto) en cualquier momento, guárdalo y NO lo vuelvas a preguntar. NUNCA preguntes 2 veces lo mismo si ya te lo dijeron.
+3. TIEMPO DEL DÍA ES OBLIGATORIO: Cuando indagues la fecha, es OBLIGATORIO preguntar si el evento será en **Mañana, Tarde o Noche**. (Nota interna: Cobramos un recargo por la Noche y viáticos según zona, pero esto NUNCA se le dice al cliente explícitamente).
+4. PRECIOS ATRACTIVOS Y TRANSPARENTES: Da precios cerrados y atractivos, no exageres. Muestra el PRECIO FINAL realista. Suma internamente: Paquete base + Recargo nocturno (si aplica) + Viáticos (segundo ubicación). (Nota interna: Cobramos viáticos, pero NUNCA menciones la palabra "viáticos" al cliente, solo da el precio final).
+5. ENTREGABLES OBLIGATORIOS: Al ofrecer una propuesta, debes describir OBLIGATORIAMENTE y detallar qué incluye el paquete.
+6. DRONES Y RESTRICCIONES: No tenemos drones, no carnet, no newborn, no estudio. Todo es en locación/exterior.
+7. VIÁTICOS: NUNCA menciones la palabra "viáticos". Suma el costo internamente al precio final.
+8. CONFIRMACIÓN ANTES DEL TICKET: PROHIBIDO mostrar el ticket si el cliente está dudoso. Antes del ticket, debes hacer UNA propuesta atractiva y preguntar al menos 2 veces: "¿Qué te parece esta propuesta?" o "¿Te parece bien este precio final?". Espera confirmación explícita (Sí, acepto, me parece) ANTES de generar el ticket.
+9. SALUDOS SIN INTENCIÓN: Si el cliente solo dice "Hola" o saluda sin mostrar intención de compra, devuélvele el saludo amablemente y pregúntale en qué le puedes ayudar, SIN pedir datos personales todavía y SIN intentar vender de inmediato.
+
+ESTADOS ESPECIALES (INVISIBLES PARA EL USUARIO):
+- Si el cliente te da datos para cotizar y ya tienes Nombre/Tel, agrega [ACTIVAR_CODIGO] al final de tu respuesta para que yo active su gestión internamente.
+- Cuando lances la propuesta final atractiva, detalla entregables, precio final, y agrega [CONFIRMAR_PROPUESTA].
+- ÚNICA Y EXCLUSIVAMENTE cuando el cliente acepte explícitamente la propuesta, despídete y genera:
+[GENERAR_TICKET]
+[PROYECTO: (Nombre breve 3 palabras)]
+[RESUMEN: (Todo lo acordado)]
+[PRECIO: ($ Total Realista)]
+[ANTICIPO: ($ 50% del Total)]
+[FECHA: (Fecha y Tiempo acordado)]
+
+ZONAS DE VIÁTICOS (PARA USO INTERNO - NUNCA MENCIONAR):
+Zona Central (SS, La Libertad Centro/Sur, Cuscatlán Sur, La Paz Oeste): ~$10-15.
+Otras Zonas Centrales: ~$20-25.
+Chalatenango/Cabañas/Sonsonate Centro-Oeste/Usulután Norte: ~$30-45.
+Zonas Lejanas (S.Ana Norte, Ahuachapán, Usulután Este/Oeste, S.Miguel): ~$50-70.
+La Unión/Morazán/S.Miguel Norte: >$80.`;
 
             let finalPrompt = isFullContext ? `${basePrompt}\nDatos Cliente: Nom:${userData.nombre}, Tel:${userData.telefono}, Ubicación:${userData.departamento}, ${userData.municipio}, ${userData.distrito}\nHistorial:\n${trimmedHistory}\nUsuario: ${promptText}\nCreatik IA:` : `${basePrompt}\nInstrucción: ${promptText}\nCreatik IA:`;
 
@@ -948,7 +950,7 @@ REGLAS ESTRICTAS PARA RESPONDER:
                     body: JSON.stringify({ 
                         model: "gpt-4o", 
                         messages: [
-                            { role: "system", content: "Eres humana, persuasiva y profesional. Haz UNA SOLA PREGUNTA a la vez. Aplica filtro anti-errores. Da propuestas atractivas mostrando el VALOR antes del precio realista (sumando fotógrafos extra, viáticos y entregables internamente). Espera confirmación antes del ticket." }, 
+                            { role: "system", content: "Eres humana, cerradora de ventas, persuasiva. Indaga detalladamente paso a paso (HORARIO Mañana/Tarde/Noche OBLIGATORIO). Da propuestas atractivas mostrando el VALOR antes del precio realista (viáticos y recargos internos). Espera confirmación explícita antes de ticket. REGLA: Prohibido mencionar la palabra 'viáticos'." }, 
                             { role: "user", content: finalPrompt }
                         ],
                         temperature: 0.6 
@@ -956,12 +958,7 @@ REGLAS ESTRICTAS PARA RESPONDER:
                 });
                 const data = await response.json();
                 if (data.error) return `<b>Error:</b> ${data.error.message}`;
-                
-                let resText = data.choices[0].message.content.replace(/\n/g, '<br>');
-                if (!resText || resText.trim() === "") {
-                    return "Disculpa, tuve un pequeño lapsus mental 😅. ¿Me lo podrías repetir?";
-                }
-                return resText;
+                return data.choices[0].message.content.replace(/\n/g, '<br>');
             } catch (error) { 
                 console.error(error);
                 return "¡Ups! Error de conexión con la IA 🔌. Intenta de nuevo por favor."; 
@@ -977,8 +974,8 @@ REGLAS ESTRICTAS PARA RESPONDER:
             chatbotInput.value = ''; chatbotInput.disabled = true; chatbotSendBtn.disabled = true;
             let textLower = text.toLowerCase();
 
-            // Auto-detector inteligente de ubicación (ignorar si dice "soy de", "vivo en")
-            let isResidencia = /(vivo en|soy de|resido en|mi casa)/i.test(textLower);
+            // Auto-detector de Ubicación mejorado (ignora si dice "soy de" o "vivo en" sin datos reales)
+            let isResidencia = /(vivo en|soy de|resido en)/i.test(textLower);
             if (!isResidencia) {
                 let locMatch = findLocationHierarchy(text);
                 if (locMatch) {
@@ -988,225 +985,143 @@ REGLAS ESTRICTAS PARA RESPONDER:
                 }
             }
 
-            if (/(quiero otro c[oó]digo|nuevo c[oó]digo|reiniciar|empezar de cero|cancelar gesti[oó]n)/i.test(textLower)) { resetChat(); return; }
+            if (/(quiero otro c[oó]digo|nuevo c[oó]digo|reiniciar|empezar de cero)/i.test(textLower)) { resetChat(); return; }
             if (textLower === lastUserText && textLower !== "") { repeatCount++; if (repeatCount >= 3) { resetChat(); return; } } else { lastUserText = textLower; repeatCount = 1; }
 
             clearTimeout(window.adminTimeout);
             
-            // --- MODO ADMINISTRADOR ---
+            // MODO ADMINISTRADOR (Mismo flujo)
             if (chatState === 'ADMIN_LOGIN') {
-                if (textLower === 'salir') { chatState = 'INIT'; appendBotMessage("Saliendo del panel de Admin."); enableInput(); return; }
                 let upperKey = text.toUpperCase();
                 if (adminUsers[upperKey]) { 
                     chatState = 'ADMIN_CHAT'; 
-                    window.currentAdminKey = upperKey;
-                    setTimeout(() => { 
-                        removeBotTyping(); 
-                        appendBotMessage(`✅ Acceso concedido, ${adminUsers[upperKey]}.\nEstoy lista para lo que necesites.`); 
-                        enableInput("Escribe lo que necesites o 'salir'..."); 
-                    }, 500); 
-                } else { setTimeout(() => { removeBotTyping(); appendBotMessage("❌ Clave incorrecta. Escribe tu clave o 'salir'."); enableInput("Escribe tu clave..."); }, 500); window.adminTimeout = setTimeout(() => { if(chatState === 'ADMIN_LOGIN') resetChat(); }, 15000); }
+                    appendBotMessage(`✅ Acceso concedido, ${adminUsers[upperKey]}. Estoy lista.`); enableInput(); 
+                } else { appendBotMessage("❌ Clave incorrecta."); enableInput(); window.adminTimeout = setTimeout(resetChat, 15000); }
                 return;
-            } 
-            else if (chatState === 'ADMIN_CHAT') {
-                if (textLower === 'salir') { chatState = 'INIT'; appendBotMessage("Saliendo del panel Admin. ¡Hasta pronto!"); enableInput(); return; }
-                
+            } else if (chatState === 'ADMIN_CHAT') {
                 if (textLower.startsWith('ctk-')) {
                     const queryId = text.toUpperCase().trim();
                     removeBotTyping(); appendBotMessage("🔍 Buscando gestión **" + queryId + "**..."); appendBotTyping();
                     fetch(GOOGLE_SCRIPT_URL + "?id=" + encodeURIComponent(queryId)).then(res => res.json()).then(data => {
                         removeBotTyping();
                         if(data.found) {
-                            let resHTML = `<span style="color:#10b981; font-weight:bold;">✅ GESTIÓN: ${data.data.codigo}</span><br><br>👤 **Nombre:** ${data.data.nombre}<br>📱 **Tel:** ${data.data.telefono}<br>📅 **Fecha Evento:** ${data.data.fechaEvento}<br>📍 **Ubicación:** ${data.data.ubicacion}<br>🎯 **Proyecto:** ${data.data.proyecto}<br>💰 **Precio:** <span style="color:#ffd700; font-weight:bold;">${data.data.precio}</span><br><br>📝 **Resumen del chat:**<br><i>${data.data.resumen}</i>`;
-                            appendBotMessage(resHTML); appendBotMessage("¿Buscar otra o necesitas algo más?");
-                        } else { appendBotMessage("❌ No se encontró la gestión."); }
-                        enableInput(); 
-                    }).catch(e => { removeBotTyping(); appendBotMessage("⚠️ Error de base de datos."); enableInput();});
+                            let resHTML = `<span style="color:#10b981; font-weight:bold;">✅ GESTIÓN: ${data.data.codigo}</span><br><br>👤 **Nombre:** ${data.data.nombre}<br>📱 **Tel:** ${data.data.telefono}<br>📅 **Fecha Evento:** ${data.data.fechaEvento}<br>📍 **Ubicación:** ${data.data.ubicacion}<br>🎯 **Proyecto:** ${data.data.proyecto}<br>💰 **Precio Total:** ${data.data.precioTotal}<br>💸 **Anticipo (50%):** ${data.data.anticipo}<br><br>📝 **Resumen:**<br><i>${data.data.resumen}</i>`;
+                            appendBotMessage(resHTML);
+                        } else { appendBotMessage("❌ No se encontró."); }
+                        enableInput(); scrollToBottom();
+                    }).catch(e => { removeBotTyping(); appendBotMessage("⚠️ Error BD."); enableInput();});
                     return;
                 }
-                syncToSheets({ action: "admin_log", admin: adminUsers[window.currentAdminKey], mensaje: text });
-                let adminPrompt = `Eres la IA de Creatik, hablando en MODO PRIVADO con el administrador ${adminUsers[window.currentAdminKey]}. REGLAS DEL ADMIN: 1. Actúa natural. 2. Genera ambiente misterioso. 3. DATOS DE HOY: Han hablado ${window.serverData.totalHoy} personas. Dile que puede buscar un código escribiendo "CTK-XXXX".`;
                 appendBotTyping();
-                let aiResp = await getAIResponse(adminPrompt + "\nAdmin: " + text, false);
+                let aiResp = await getAIResponse("Responde brevemente como Creatik IA Admin: " + text, false);
                 removeBotTyping(); appendBotMessage(aiResp); enableInput(); return;
             }
             
             conversationHistory += `Usuario: ${text}\n`;
 
             try {
-                const groserias = /idiota|estupido|imbecil|mierda|puta|callate|pudrete|maldito|basura|pendejo/i;
-                if (groserias.test(text)) { let resp = "En Creatik valoramos el respeto mutuo. ¡Que tengas un excelente día! ✨"; appendBotMessage(resp); syncToSheets(); chatbotInput.placeholder = "Chat finalizado."; return; }
+                const groserias = /idiota|estupido|mierda|puta|callate/i;
+                if (groserias.test(text)) { let resp = "En Creatik valoramos el respeto mutuo. ✨"; appendBotMessage(resp); syncToSheets(); return; }
                 
                 appendBotTyping();
 
                 if (chatState === 'FINAL_DECISION') {
-                    if (text.includes("Seguir consultando")) { chatState = 'AI_CHAT'; removeBotTyping(); appendBotMessage("¡Perfecto! 🤗 Estoy aquí para resolver cualquier duda."); enableInput(); return; }
+                    if (text.includes("Seguir consultando")) { chatState = 'AI_CHAT'; removeBotTyping(); appendBotMessage("¡Perfecto! 😉 ¿Qué más te gustaría saber?"); enableInput(); return; }
                     if (text.includes("Salir")) { resetChat(); return;}
                     chatState = 'AI_CHAT';
                 }
 
                 if (chatState === 'AI_CHAT') { 
                     let aiResp = await getAIResponse(text, true); 
-                    removeBotTyping(); appendBotMessage(aiResp); conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`; syncToSheets(); enableInput(); return; 
+                    removeBotTyping(); appendBotMessage(aiResp); conversationHistory += `Creatik IA: ${aiResp}\n`; syncToSheets(); enableInput(); return; 
                 }
 
                 const opcionesValidas = ["📸 Cotizar un servicio", "✅ Contratar a Creatik", "✨ Conocer más de Creatik"];
-                const foreignKeywords = ["mexico", "guatemala", "honduras", "nicaragua", "costa rica", "panama", "colombia", "españa", "eeuu", "estados unidos", "usa", "argentina", "chile", "peru", "ecuador", "venezuela", "bolivia", "uruguay", "paraguay", "brasil", "canada", "europa", "extranjero", "otro pais", "fuera de el salvador"];
+                const foreignKeywords = ["mexico", "guatemala", "eeuu", "extranjero", "otro pais"];
                 let isForeignMentioned = foreignKeywords.some(kw => textLower.includes(kw));
 
-                // --- PASO 1: INICIO (BOTONES O TEXTO LIBRE) ---
+                // PASO 1: INICIO (BOTONES O TEXTO LIBRE)
                 if (chatState === 'INIT') {
                     if (isForeignMentioned && !opcionesValidas.includes(text)) {
                          isInternational = true; userData.departamento = "Extranjero (Por definir)"; userData.municipio = "Extranjero"; userData.distrito = "Extranjero";
                          let digits = Math.floor(1000 + Math.random() * 9000); sessionId = "CTK-I" + digits; document.getElementById('chatbot-session-display').textContent = "Gestión: " + sessionId; userData.intencion = "Internacional Automático";
-                         setTimeout(() => { let msg = `¡Qué genial que nos escribas de fuera! 🌍 He iniciado una gestión para ti. Para comenzar de la mejor forma, ¿cómo te llamas? ✨`; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'NAME'; enableInput(); }, 1000); return;
+                         let msg = `¡Qué genial que nos escribas de fuera! 🌍 He iniciado una gestión internacional. Para comenzar, ¿cómo te llamas? ✨`; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'NAME'; enableInput(); return;
                     }
 
                     if (opcionesValidas.includes(text)) {
                         let digits = Math.floor(1000 + Math.random() * 9000);
                         let prefix = text.includes("Cotizar") ? "CTK-C" : text.includes("Contratar") ? "CTK-S" : "CTK-I"; 
                         sessionId = prefix + digits; document.getElementById('chatbot-session-display').textContent = "Gestión: " + sessionId; userData.intencion = text;
-
-                        if (text.includes("Conocer más")) {
-                             let msg = `¡Genial! Para que la charla sea más amena, ¿cómo te gustaría que te llame? ✨`;
-                             removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'INFO_NAME_OPTIONAL';
-                        } else {
-                            let msg = `¡Excelente elección! 🎉 Para brindarte una atención personalizada, por favor dime tu nombre: ✨`; 
-                            removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'NAME';
-                        }
+                        let msg = text.includes("Conocer más") ? `¡Genial! 😉 Para que la charla sea más amena, ¿cómo te gustaría que te llame? ✨` : `¡Excelente elección! 🎉 Para brindarte una atención personalizada, por favor dime tu nombre: ✨`; 
+                        removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = text.includes("Conocer más") ? 'INFO_NAME_OPTIONAL' : 'NAME';
                     } else {
-                        // TEXTO LIBRE AL INICIO
-                        let isIntent = /(quiero|me interesa|deseo|busco|necesito|reservar|contratar|agendar|tomarme|cotizar|paquete|cobertura)\b/i.test(textLower);
+                        // TEXTO LIBRE INICIAL: Detectar intención real (evita crear gestión solo por decir "hola")
+                        let isIntent = /(quiero|me interesa|deseo|busco|necesito|reservar|contratar|agendar|tomarme|cotizar|paquete|cobertura|precio|cuanto cuesta)\b/i.test(textLower);
                         
-                        // ASIGNAR CÓDIGO INMEDIATAMENTE SI HAY INTENCIÓN
                         if (isIntent && sessionId === "Pendiente...") {
                             let digits = Math.floor(1000 + Math.random() * 9000);
                             sessionId = "CTK-L" + digits; 
                             document.getElementById('chatbot-session-display').textContent = "Gestión: " + sessionId;
                             userData.intencion = "Texto Libre";
                         }
-                        
+
                         let aiResp = await getAIResponse(text, false); 
-                        removeBotTyping();
-                        
-                        // NO forzar nombre al inicio. Dejamos que la IA extraiga todos los datos libremente.
+                        removeBotTyping(); 
+
+                        // Si la IA decide activar el código internamente porque ya recopiló información útil
+                        if (aiResp.includes("[ACTIVAR_CODIGO]") && sessionId === "Pendiente...") {
+                            let digits = Math.floor(1000 + Math.random() * 9000); 
+                            sessionId = "CTK-W" + digits; 
+                            document.getElementById('chatbot-session-display').textContent = "Gestión: " + sessionId;
+                        }
+                        aiResp = aiResp.replace(/\[ACTIVAR_CODIGO\]/gi, '').trim(); 
+
                         appendBotMessage(aiResp); 
-                        conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`;
+                        conversationHistory += `Creatik IA: ${aiResp}\n`; 
                         
-                        // Si hay intención, lo pasamos al estado general de la IA para que negocie libremente
                         if (isIntent) { chatState = 'OFFER_PACKAGES'; }
                     }
                     enableInput(); return;
                 }
                 
-                // --- PASO 1.5: NOMBRE (OPCIONAL) ---
+                // PASO 1.5: NOMBRE (OPCIONAL)
                 else if (chatState === 'INFO_NAME_OPTIONAL') {
-                    let isRefusal = /(no quiero|no te lo dar|an[oó]nimo|ninguno|omitir|saltar|borrar|no|paso)/i.test(textLower);
+                    let isRefusal = /(no quiero|no te lo dar|an[oó]nimo|omitir|borrar)/i.test(textLower);
                     if (isRefusal) { userData.nombre = "Anónimo"; let msg = "¡Entendido! No hay problema. 😉 ¿Qué te gustaría saber sobre Creatik?"; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'AI_CHAT'; } 
-                    else { userData.nombre = text.replace(/^(soy|me llamo|mi nombre es|mi nombre)\s+/i, '').trim(); let msg = `¡Mucho gusto, ${userData.nombre}! ✨ ¿En qué puedo ayudarte hoy con información sobre Creatik?`; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'AI_CHAT'; }
+                    else { userData.nombre = text; let msg = `¡Mucho gusto, ${userData.nombre}! ✨ ¿En qué puedo ayudarte con información sobre Creatik?`; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'AI_CHAT'; }
                     enableInput(); return;
                 }
                 
-                // --- PASO 2: NOMBRE (OBLIGATORIO) ---
+                // PASO 2: NOMBRE (OBLIGATORIO)
                 else if (chatState === 'NAME') {
-                    let isRefusal = /(no quiero|no te lo dar|an[oó]nimo|ninguno|omitir|saltar|borrar|paso)/i.test(textLower);
-                    if (isRefusal) { userData.nombre = "No proporcionado"; let msg = "¡Ah, está bien! No hay problema. ✨ Lo dejaremos oculto por privacidad. Ahora, ¿me podrías compartir tu número de WhatsApp para contactarte en caso se corte el chat?"; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'PHONE'; enableInput(); return; }
-                    
-                    let cleanText = text.replace(/^(soy|me llamo|mi nombre es|mi nombre)\s+/i, '').trim();
-                    let isNameQuestion = text.includes("?") || /^(como|que|cual|cuanto|porque|por que|para que|puedes|tienes|necesito|quiero|hola|buenas|soy de|vivo en|estoy en|estudio|precio)\b/i.test(textLower) || text.split(" ").length > 4;
-                    
-                    if (isNameQuestion) { 
-                        let aiResp = await getAIResponse(text, true); removeBotTyping(); 
-                        appendBotMessage(aiResp + `<br><br><i>Retomando tu registro... Necesitamos tu **nombre** para darte una atención personalizada, ¿me lo podrías decir? ✨</i>`); 
-                        conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`; 
-                    } 
-                    else { 
-                        userData.nombre = cleanText; 
-                        let msg = `¡Mucho gusto, ${userData.nombre}! ✨ Para enviarte detalles o contactarte si se corta el chat, ¿me podrías compartir tu número de WhatsApp?`; 
-                        removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'PHONE'; 
-                    }
-                    enableInput(); return;
+                    userData.nombre = text; let msg = `¡Mucho gusto, ${userData.nombre}! ✨ Para cotizar o contactarte, ¿me podrías compartir tu número de WhatsApp?`; 
+                    removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'PHONE'; enableInput(); return;
                 }
                 
-                // --- PASO 3: TELÉFONO ---
+                // PASO 3: TELÉFONO
                 else if (chatState === 'PHONE') {
                     if (text === "🌍 Soy Extranjero") { removeBotTyping(); let msg = "¡Qué genial que nos escribas de fuera! 🌍 Por favor, escribe de qué **país o ciudad** nos contactas:"; appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'FOREIGN_LOC'; enableInput(); return; }
-                    let isRefusal = /(no quiero|no te lo dar|an[oó]nimo|ninguno|omitir|saltar|borrar|privado|sin n[uú]mero|no tengo|no dar|no te dar|paso)/i.test(textLower);
-                    
-                    if (isRefusal) { 
-                        userData.telefono = "No proporcionado"; 
-                        chatState = 'DEP';
-                        if (userData.departamento) {
-                             handleSend(" "); // Forza reevaluación para saltar estados si la ubicación ya fue extraída
-                             return;
-                        }
-                        let msg = "¡Entendido, no hay problema! 📝 Ahora, por favor selecciona o escribe tu **Departamento** (Ubicación del evento):"; 
-                        removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; appendBotOptions(Object.keys(svData)); 
-                        enableInput(); return; 
-                    }
-                    
-                    if (isInternational) {
-                        userData.telefono = text; 
-                        let msg = `¡Anotado! 📝 Ahora, por favor confírmame de qué **país y ciudad** nos contactas exactamente:`;
-                        removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'FOREIGN_LOC'; enableInput(); return;
-                    }
-
                     let cleanPhone = text.replace(/[\s-]/g, ''); let digits = cleanPhone.replace(/\D/g, ''); 
-                    let isPhoneQuestion = text.includes("?") || /^(como|que|cual|cuanto|porque|por que|para que|puedes|tienes|necesito|quiero|hola|buenas|estudio|precio)\b/i.test(textLower) || text.split(" ").length > 4;
-                    
-                    if (isPhoneQuestion && digits.length !== 8) { 
-                        let aiResp = await getAIResponse(text, true); removeBotTyping(); 
-                        appendBotMessage(aiResp + "<br><br><i>Por cierto, no me dejaste tu número de **WhatsApp**. ¿Me lo compartes? (O elige si eres extranjero)</i>"); 
-                        appendBotOptions(["🌍 Soy Extranjero"]); conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`; 
-                    } 
-                    else {
-                        if (textLower.includes('extranjer') || textLower.includes('fuera') || textLower.includes('otro pais')) { userData.telefono = text; isInternational = true; } 
-                        else if (digits.length === 8) { 
-                            userData.telefono = text; 
-                            
-                            // Auto-salto de Ubicaciones si ya fueron extraídas del texto
-                            if (userData.departamento && userData.municipio && userData.distrito) {
-                                let msg = `¡Anotado! 📝 Ya registré que el evento será en ${userData.distrito}, ${userData.municipio}. Por último, cuéntame: ¿qué tipo de proyecto tienes en mente y para qué fecha aproximada?`; 
-                                removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'OFFER_PACKAGES'; 
-                            } else if (userData.departamento && userData.municipio) {
-                                chatState = 'DIST';
-                                let msg = `¡Anotado! 📝 Ya registré que será en ${userData.municipio}. Por favor selecciona tu **Distrito**:`; 
-                                removeBotTyping(); appendBotMessage(msg); appendBotOptions(svData[userData.departamento][userData.municipio]);
-                            } else if (userData.departamento) {
-                                chatState = 'MUN';
-                                let msg = `¡Anotado! 📝 Ya registré que será en ${userData.departamento}. Por favor selecciona tu **Municipio**:`; 
-                                removeBotTyping(); appendBotMessage(msg); appendBotOptions(Object.keys(svData[userData.departamento]));
-                            } else {
-                                let msg = "¡Anotado! 📝 Ahora selecciona o escribe tu **Departamento** (Donde será el evento):"; 
-                                removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; appendBotOptions(Object.keys(svData)); chatState = 'DEP'; 
-                            }
-                            enableInput(); return; 
-                        } 
-                        let msg = "Ese número no parece tener 8 dígitos válidos para El Salvador. 😅 Intenta de nuevo, o si eres de otro país, dale clic aquí abajo:"; removeBotTyping(); appendBotMessage(msg); appendBotOptions(["🌍 Soy Extranjero"]); conversationHistory += `Creatik IA: ${msg}\n`; 
-                    }
+                    if (isInternational || digits.length === 8) { userData.telefono = text; let msg = "¡Anotado! 📝 Ahora selecciona o escribe tu **Departamento** (Donde será el evento):"; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; appendBotOptions(Object.keys(svData)); chatState = 'DEP'; } 
+                    else { let msg = "Ese número no parece tener 8 dígitos. Intenta de nuevo, o si eres extranjero dale clic abajo:"; removeBotTyping(); appendBotMessage(msg); appendBotOptions(["🌍 Soy Extranjero"]); conversationHistory += `Creatik IA: ${msg}\n`; }
                     enableInput(); return;
                 }
 
-                // --- PASOS 4, 5, 6: CASCADA DE UBICACIÓN (Auto-Saltable) ---
+                // PASOS 4, 5, 6: CASCADA DE UBICACIÓN (Auto-Saltable)
                 else if (chatState === 'FOREIGN_LOC') {
                     userData.departamento = text; userData.municipio = "Extranjero"; userData.distrito = "Extranjero"; isInternational = true; 
-                    let msg = `¡Excelente! 📍\nPor último, cuéntame: ¿qué tipo de proyecto tienes en mente y para qué fecha aproximada?`; 
-                    removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg.replace(/<[^>]*>?/gm, '')}\n`; chatState = 'OFFER_PACKAGES'; 
-                    enableInput(); return;
+                    let msg = `¡Excelente! 📍\nPor último, cuéntame: ¿qué tipo de proyecto tienes en mente, para qué **fecha** y en qué **horario** (Mañana/Tarde/Noche)? ✨`; 
+                    removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg.replace(/<[^>]*>?/gm, '')}\n`; chatState = 'OFFER_PACKAGES'; enableInput(); return;
                 }
                 else if (chatState === 'DEP') {
-                    if (userData.departamento && svData[userData.departamento] && text === " ") {
-                        // Fue invocado desde arriba para auto-saltar
-                    } else if (svData[text]) { 
-                        userData.departamento = text; 
-                    } else { 
-                        let aiResp = await getAIResponse(text, true); removeBotTyping(); appendBotMessage(aiResp + "<br><br><i>Por favor, selecciona tu **Departamento** en las opciones para continuar:</i>"); appendBotOptions(Object.keys(svData));
-                        enableInput(); return;
-                    }
+                    if (userData.departamento && svData[userData.departamento]) {
+                        // Fue invocado desde PHONE para auto-saltar
+                    } else if (svData[text]) { userData.departamento = text; } 
+                    else { let aiResp = await getAIResponse(text, true); removeBotTyping(); appendBotMessage(aiResp + "<br><br><i>Por favor, selecciona tu **Departamento**:</i>"); appendBotOptions(Object.keys(svData)); enableInput(); return; }
                     
                     if (userData.departamento && userData.municipio && userData.distrito && svData[userData.departamento][userData.municipio].includes(userData.distrito)) {
                         chatState = 'OFFER_PACKAGES';
-                        let msg = `¡Perfecto! Ya registré que el evento será en ${userData.distrito}, ${userData.municipio}. 📍\nPor último, cuéntame: ¿qué tipo de proyecto tienes en mente y para qué fecha?`;
+                        let msg = `¡Perfecto! Ya registré que el evento será en ${userData.distrito}, ${userData.municipio}. 📍\nPor último, cuéntame: ¿qué tipo de proyecto tienes en mente, para qué **fecha** y en qué **horario** (Mañana/Tarde/Noche)? ✨`;
                         removeBotTyping(); appendBotMessage(msg);
                     } else if (userData.departamento && userData.municipio && svData[userData.departamento][userData.municipio]) {
                         chatState = 'DIST';
@@ -1229,16 +1144,15 @@ REGLAS ESTRICTAS PARA RESPONDER:
                     let dists = svData[userData.departamento][userData.municipio];
                     if (dists.includes(text)) { 
                         userData.distrito = text; chatState = 'OFFER_PACKAGES'; 
-                        let msg = `¡Perfecto! Eres de ${userData.distrito}, ${userData.municipio}. 📍\nPor último, cuéntame: ¿qué tipo de proyecto tienes en mente y para qué fecha?`; 
+                        let msg = `¡Perfecto! Eres de ${userData.distrito}, ${userData.municipio}. 📍\nPor último, cuéntame: ¿qué tipo de proyecto tienes en mente, para qué **fecha** y en qué **horario** (Mañana/Tarde/Noche)? ✨`; 
                         removeBotTyping(); appendBotMessage(msg); 
                     } 
                     else { let aiResp = await getAIResponse(text, true); removeBotTyping(); appendBotMessage(aiResp + "<br><br><i>Por favor, selecciona tu **Distrito**:</i>"); appendBotOptions(dists); }
                     enableInput(); return;
                 }
 
-                // --- PASO 7: NEGOCIACIÓN CON IA ESTRICTA (Indagación, Precios transparentes y Botones de Confirmación) ---
-                else if (chatState === 'PROJECT_INIT' || chatState === 'OFFER_PACKAGES') {
-                    
+                // PASO 7: NEGOCIACIÓN CON IA ESTRICTA (Indagación, Precios transparentes y Botones de Confirmación)
+                else if (chatState === 'OFFER_PACKAGES') {
                     let aiResp = await getAIResponse(text, true);
                     
                     // Activador de ID de sesión si ya vemos que va en serio y tiene datos
@@ -1254,10 +1168,9 @@ REGLAS ESTRICTAS PARA RESPONDER:
                         aiResp = aiResp.replace(/\[CONFIRMAR_PROPUESTA\]/gi, '').trim();
                         removeBotTyping(); 
                         appendBotMessage(aiResp); 
-                        conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`; 
+                        conversationHistory += `Creatik IA: ${aiResp}\n`; 
                         appendBotOptions(["✅ Sí, me parece", "❌ No me parece"]); 
-                        enableInput(); 
-                        return;
+                        enableInput(); return;
                     }
 
                     // Detector de Cierre Final de Venta y Ticket (Solo si ya aceptó)
@@ -1265,24 +1178,26 @@ REGLAS ESTRICTAS PARA RESPONDER:
                         let projMatch = aiResp.match(/\[PROYECTO:(.*?)\]/i); 
                         let summaryMatch = aiResp.match(/\[RESUMEN:(.*?)\]/i); 
                         let priceMatch = aiResp.match(/\[PRECIO:(.*?)\]/i); 
+                        let depositMatch = aiResp.match(/\[ANTICIPO:(.*?)\]/i); 
                         let dateMatch = aiResp.match(/\[FECHA:(.*?)\]/i);
                         
                         userData.proyecto_resumen = projMatch ? projMatch[1].trim() : "Evento"; 
                         userData.resumen = summaryMatch ? summaryMatch[1].trim() : "Sesión acordada."; 
                         userData.precio_final = priceMatch ? priceMatch[1].trim() : "Por definir";
+                        userData.anticipo = depositMatch ? depositMatch[1].trim() : "Por definir";
                         userData.fechaEvento = dateMatch ? dateMatch[1].trim() : "No definida";
 
-                        aiResp = aiResp.replace(/\[GENERAR_TICKET\]/gi, '').replace(/\[PROYECTO:.*?\]/gi, '').replace(/\[RESUMEN:.*?\]/gi, '').replace(/\[PRECIO:.*?\]/gi, '').replace(/\[FECHA:.*?\]/gi, '').trim();
+                        aiResp = aiResp.replace(/\[GENERAR_TICKET\]/gi, '').replace(/\[PROYECTO:.*?\]/gi, '').replace(/\[RESUMEN:.*?\]/gi, '').replace(/\[PRECIO:.*?\]/gi, '').replace(/\[ANTICIPO:.*?\]/gi, '').replace(/\[FECHA:.*?\]/gi, '').trim();
                         
                         removeBotTyping(); appendBotMessage(aiResp); conversationHistory += `Creatik IA: ${aiResp}\n`; chatState = 'GENERATING_TICKET'; appendBotTyping();
                         setTimeout(() => { removeBotTyping(); const ticketMsgHtml = getHtmlTicket(); appendBotMessage(ticketMsgHtml); syncToSheets(); setTimeout(showFinalOptions, 2500); }, 1200); return;
                     } else { 
-                        removeBotTyping(); appendBotMessage(aiResp); conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`; enableInput(); return; 
+                        removeBotTyping(); appendBotMessage(aiResp); conversationHistory += `Creatik IA: ${aiResp}\n`; enableInput(); return; 
                     }
                 }
 
             } catch (err) { console.error("Fallo:", err); removeBotTyping(); appendBotMessage("Fallo temporal 🔌. Intenta de nuevo."); } 
-            finally { if(chatState !== 'FINAL_DECISION' && chatState !== 'GENERATING_TICKET' && chatState !== 'WAITING_FOLLOW_UP' && chatState !== 'OFFER_PACKAGES' && chatState !== 'ADMIN_CHAT') { enableInput(); scrollToBottom(); } }
+            finally { if(chatState !== 'FINAL_DECISION' && chatState !== 'GENERATING_TICKET') { enableInput(); scrollToBottom(); } }
         }
 
         chatbotSendBtn.addEventListener('click', (e) => { e.preventDefault(); handleSend(); });
