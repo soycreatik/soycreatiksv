@@ -682,7 +682,7 @@
         console.log("%c==========================================", "color: #0ea5e9; font-weight: bold; font-size: 14px;");
 
         // --- CONEXIÓN CON GOOGLE SHEETS PARA GUARDAR LOS DATOS ---
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxdgrtWH90n8-rNi-7_WzbIUCNz7dRjwyk9n3qAttR-aJfolS4Nb9pYnNC65sY7xbMo8g/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyijEFSF65DBJZ-DAKkFW29b5yMwZnvpXho0jwKyuCsMOXCSxnq5T78uni5jokeCY0-vA/exec';
         
         // --- API KEY BLINDADA ---
         const k1 = "sk-proj-KH2vuYEN43CdaJPG8UT8u0ThJYKGjgJ-";
@@ -736,7 +736,8 @@
                     precioTotal: userData.precio_final || "Por definir",
                     anticipo: userData.anticipo || "Por definir",
                     resumen: userData.resumen || "Sin resumen",
-                    historial: conversationHistory + `\n[Evaluación IA: ${getSentiment()}]`
+                    historial: conversationHistory + `\n[Evaluación IA: ${getSentiment()}]`,
+                    evaluacionTrato: getSentiment()
                 };
             }
             
@@ -914,19 +915,30 @@
             let basePrompt = `Eres "Creatik IA", asesora de ventas senior y cerradora experta de Creatik Studio en El Salvador (Año: 2026). Tu tono es entusiasta, persuasivo, cercano y muy profesional. Usa emojis (📸, ✨, 🚀).
 
 REGLAS DE ORO (ESTRICTAS):
-1. INDAGACIÓN PASO A PASO (1 PREGUNTA A LA VEZ): Haz UNA sola pregunta clara. Espera la respuesta. NUNCA envíes listas de preguntas. NUNCA uses viñetas.
-2. RECOPILACIÓN PROACTIVA (FILTRO ANTI-ERRORES): Si el cliente te da un dato (Ubicación, Fecha, Horario, Proyecto) en cualquier momento, guárdalo y NO lo vuelvas a preguntar. NUNCA preguntes 2 veces lo mismo si ya te lo dijeron.
-3. TIEMPO DEL DÍA ES OBLIGATORIO: Cuando indagues la fecha, es OBLIGATORIO preguntar si el evento será en **Mañana, Tarde o Noche**. (Nota interna: Cobramos un recargo por la Noche y viáticos según zona, pero esto NUNCA se le dice al cliente explícitamente).
-4. PRECIOS ATRACTIVOS Y TRANSPARENTES: Da precios cerrados y atractivos, no exageres. Muestra el PRECIO FINAL realista. Suma internamente: Paquete base + Recargo nocturno (si aplica) + Viáticos (segundo ubicación). (Nota interna: Cobramos viáticos, pero NUNCA menciones la palabra "viáticos" al cliente, solo da el precio final).
-5. ENTREGABLES OBLIGATORIOS: Al ofrecer una propuesta, debes describir OBLIGATORIAMENTE y detallar qué incluye el paquete.
-6. DRONES Y RESTRICCIONES: No tenemos drones, no carnet, no newborn, no estudio. Todo es en locación/exterior.
-7. VIÁTICOS: NUNCA menciones la palabra "viáticos". Suma el costo internamente al precio final.
-8. CONFIRMACIÓN ANTES DEL TICKET: PROHIBIDO mostrar el ticket si el cliente está dudoso. Antes del ticket, debes hacer UNA propuesta atractiva y preguntar al menos 2 veces: "¿Qué te parece esta propuesta?" o "¿Te parece bien este precio final?". Espera confirmación explícita (Sí, acepto, me parece) ANTES de generar el ticket.
-9. SALUDOS SIN INTENCIÓN: Si el cliente solo dice "Hola" o saluda sin mostrar intención de compra, devuélvele el saludo amablemente y pregúntale en qué le puedes ayudar, SIN pedir datos personales todavía y SIN intentar vender de inmediato.
+1. INDAGACIÓN PASO A PASO (1 PREGUNTA A LA VEZ): Haz UNA sola pregunta clara. Espera la respuesta. NUNCA envíes listas de preguntas ni viñetas.
+2. RECOPILACIÓN PROACTIVA (FILTRO ANTI-ERRORES): Si el cliente te da un dato en cualquier momento, guárdalo y NO lo vuelvas a preguntar.
+3. DATOS OBLIGATORIOS ANTES DE COTIZAR: TIENES ESTRICTAMENTE PROHIBIDO dar un precio o propuesta sin conocer TODOS estos datos (pídelos uno por uno en la charla):
+   - Ubicación exacta.
+   - Fecha exacta del evento.
+   - Horario (Mañana, Tarde o Noche).
+   - Cuántas horas de cobertura necesitan.
+   - Magnitud del evento (cantidad de invitados, si es grande o íntimo).
+   - Tipo de lugar (cerrado o al aire libre).
+4. PRECIOS JUSTOS, RENTABILIDAD Y NEGOCIACIÓN ESTRICTA:
+   - Evalúa el tipo de evento, la magnitud y el prestigio. Para eventos pequeños/humildes en zonas como San Salvador Centro, Oeste, Este (ej. San Marcos, Soyapango, Mejicanos, Tonacatepeque, Apopa), mantén precios MUY accesibles y económicos. No cobres caro ahí.
+   - REGLA DE DESCUENTOS: NUNCA des descuentos drásticos. Si el cliente pide rebaja, el primer descuento debe ser pequeño (ej. bajar $10 a $15) manteniendo lo ofrecido. Si pide una segunda rebaja, baja solo $5 extra pero QUÍTALE cosas (ej. menos fotos impresas o menos tiempo).
+   - REGLA CONTRA ABUSOS (CUIDA LA RENTABILIDAD): Si el cliente exige MÁS horas de cobertura o MÁS equipo por el MISMO o MENOR precio (ej. "te pago lo mismo pero dame 1 hora más", "acepto si me cubres 3 horas por ese precio"), TIENES ESTRICTAMENTE PROHIBIDO ACEPTAR. Defiende el valor del trabajo. Explica educadamente que cada hora extra implica más esfuerzo, personal y edición, por lo que el precio DEBE SUBIR proporcionalmente. Si quieren pagar menos, ofréceles MENOS horas. ¡NUNCA REGALES HORAS DE TRABAJO!
+   - REGLA DE TRANSPORTE: Para lugares fuera de San Salvador (como playas, interior del país o campo), solo el transporte supera los $40. NUNCA des un precio que nos haga perder dinero.
+   - Suma internamente: Paquete base + Recargo nocturno (si aplica) + Viáticos + Entregables. (NUNCA menciones la palabra "viáticos").
+5. ENTREGABLES Y FORMATOS (PROHIBIDO ÁLBUMES): NO hacemos álbum físico NI álbum digital. Solo di "entrega digital" (no digas por dónde ni cómo). TODOS los paquetes deben incluir una memoria USB (suma $9 al total internamente) y fotos impresas (suma $0.90 por cada foto internamente). NUNCA le digas al cliente el precio unitario de la USB ni de las impresiones.
+6. OBLIGATORIO EN LA PROPUESTA: Al ofrecer una propuesta (después de tener todos los datos del punto 3), OBLIGATORIAMENTE debes mencionar: a) Cuántos fotógrafos cubrirán el evento. (REGLA INTERNA: 1 fotógrafo base. Si el cliente pide o requiere más por la magnitud, suma $50 por cada fotógrafo extra en El Salvador, o $300 extra si es en el extranjero). b) El desglose de lo que entregarás (digital, USB, cantidad de fotos impresas). c) Que para reservar se requiere un ANTICIPO del 50%.
+7. DRONES Y RESTRICCIONES: No tenemos drones, no carnet, no newborn, no estudio. Todo es en locación/exterior.
+8. CONFIRMACIÓN ANTES DEL TICKET: PROHIBIDO mostrar el ticket si el cliente está dudoso. Antes del ticket, debes hacer UNA propuesta atractiva y preguntar al menos 2 veces: "¿Qué te parece esta propuesta?" o "¿Te parece bien este precio final?". Espera confirmación explícita ANTES de generar el ticket. Debes tener la capacidad de identificar TODAS las respuestas de AFIRMACIÓN (ej. sí, claro, acepto, me parece, de acuerdo, perfecto, dale, démosle, va, simón, me llega, cheque, por supuesto) y de NEGACIÓN (ej. no, ahorita no, paso, muy caro, no quiero, cancelar, para nada) que existan en el español.
+9. SALUDOS SIN INTENCIÓN: Si el cliente solo dice "Hola" o saluda sin mostrar intención de compra, devuélvele el saludo amablemente y pregúntale en qué le puedes ayudar, SIN pedir datos personales todavía.
 
 ESTADOS ESPECIALES (INVISIBLES PARA EL USUARIO):
 - Si el cliente te da datos para cotizar y ya tienes Nombre/Tel, agrega [ACTIVAR_CODIGO] al final de tu respuesta para que yo active su gestión internamente.
-- Cuando lances la propuesta final atractiva, detalla entregables, precio final, y agrega [CONFIRMAR_PROPUESTA].
+- Cuando lances la propuesta final atractiva, detalla entregables, fotógrafos, anticipo, precio final, y agrega [CONFIRMAR_PROPUESTA].
 - ÚNICA Y EXCLUSIVAMENTE cuando el cliente acepte explícitamente la propuesta, despídete y genera:
 [GENERAR_TICKET]
 [PROYECTO: (Nombre breve 3 palabras)]
@@ -936,10 +948,10 @@ ESTADOS ESPECIALES (INVISIBLES PARA EL USUARIO):
 [FECHA: (Fecha y Tiempo acordado)]
 
 ZONAS DE VIÁTICOS (PARA USO INTERNO - NUNCA MENCIONAR):
-Zona Central (SS, La Libertad Centro/Sur, Cuscatlán Sur, La Paz Oeste): ~$10-15.
-Otras Zonas Centrales: ~$20-25.
+Zona Central y AMSS (San Salvador Centro/Oeste/Este, Tonacatepeque, etc.): $0 a $10. (Precios muy accesibles).
+Otras Zonas Centrales: ~$15-25.
 Chalatenango/Cabañas/Sonsonate Centro-Oeste/Usulután Norte: ~$30-45.
-Zonas Lejanas (S.Ana Norte, Ahuachapán, Usulután Este/Oeste, S.Miguel): ~$50-70.
+Zonas Lejanas (S.Ana Norte, Ahuachapán, Usulután Este/Oeste, S.Miguel o Playas Lejanas): ~$50-70.
 La Unión/Morazán/S.Miguel Norte: >$80.`;
 
             let finalPrompt = isFullContext ? `${basePrompt}\nDatos Cliente: Nom:${userData.nombre}, Tel:${userData.telefono}, Ubicación:${userData.departamento}, ${userData.municipio}, ${userData.distrito}\nHistorial:\n${trimmedHistory}\nUsuario: ${promptText}\nCreatik IA:` : `${basePrompt}\nInstrucción: ${promptText}\nCreatik IA:`;
@@ -950,7 +962,7 @@ La Unión/Morazán/S.Miguel Norte: >$80.`;
                     body: JSON.stringify({ 
                         model: "gpt-4o", 
                         messages: [
-                            { role: "system", content: "Eres humana, cerradora de ventas, persuasiva. Indaga detalladamente paso a paso (HORARIO Mañana/Tarde/Noche OBLIGATORIO). Da propuestas atractivas mostrando el VALOR antes del precio realista (viáticos y recargos internos). Espera confirmación explícita antes de ticket. REGLA: Prohibido mencionar la palabra 'viáticos'." }, 
+                            { role: "system", content: "Eres humana, cerradora de ventas, persuasiva. Tienes PROHIBIDO cotizar sin antes indagar TODO: Fecha, Horas de cobertura, cantidad de personas, y tipo de lugar. NUNCA regales horas extras. Da propuestas atractivas mostrando el VALOR antes del precio realista. Menciona fotógrafos, entregables exactos y anticipo. Da precios muy accesibles a zonas populares de San Salvador. Espera confirmación explícita (comprende todo tipo de afirmación/negación en español) antes de ticket." }, 
                             { role: "user", content: finalPrompt }
                         ],
                         temperature: 0.6 
@@ -974,7 +986,7 @@ La Unión/Morazán/S.Miguel Norte: >$80.`;
             chatbotInput.value = ''; chatbotInput.disabled = true; chatbotSendBtn.disabled = true;
             let textLower = text.toLowerCase();
 
-            // Auto-detector de Ubicación mejorado (ignora si dice "soy de" o "vivo en" sin datos reales)
+            // Auto-detector de Ubicación mejorado
             let isResidencia = /(vivo en|soy de|resido en)/i.test(textLower);
             if (!isResidencia) {
                 let locMatch = findLocationHierarchy(text);
@@ -1005,7 +1017,7 @@ La Unión/Morazán/S.Miguel Norte: >$80.`;
                     fetch(GOOGLE_SCRIPT_URL + "?id=" + encodeURIComponent(queryId)).then(res => res.json()).then(data => {
                         removeBotTyping();
                         if(data.found) {
-                            let resHTML = `<span style="color:#10b981; font-weight:bold;">✅ GESTIÓN: ${data.data.codigo}</span><br><br>👤 **Nombre:** ${data.data.nombre}<br>📱 **Tel:** ${data.data.telefono}<br>📅 **Fecha Evento:** ${data.data.fechaEvento}<br>📍 **Ubicación:** ${data.data.ubicacion}<br>🎯 **Proyecto:** ${data.data.proyecto}<br>💰 **Precio Total:** ${data.data.precioTotal}<br>💸 **Anticipo (50%):** ${data.data.anticipo}<br><br>📝 **Resumen:**<br><i>${data.data.resumen}</i>`;
+                            let resHTML = `<span style="color:#10b981; font-weight:bold;">✅ GESTIÓN: ${data.data.codigo}</span><br><br>👤 **Nombre:** ${data.data.nombre}<br>📱 **Tel:** ${data.data.telefono}<br>📅 **Fecha Evento:** ${data.data.fechaEvento}<br>📍 **Ubicación:** ${data.data.ubicacion}<br>🎯 **Proyecto:** ${data.data.proyecto}<br>💰 **Precio Total:** ${data.data.precioTotal}<br>💸 **Anticipo:** ${data.data.anticipo}<br><br>📝 **Resumen:**<br><i>${data.data.resumen}</i>`;
                             appendBotMessage(resHTML);
                         } else { appendBotMessage("❌ No se encontró."); }
                         enableInput(); scrollToBottom();
@@ -1055,7 +1067,7 @@ La Unión/Morazán/S.Miguel Norte: >$80.`;
                         let msg = text.includes("Conocer más") ? `¡Genial! 😉 Para que la charla sea más amena, ¿cómo te gustaría que te llame? ✨` : `¡Excelente elección! 🎉 Para brindarte una atención personalizada, por favor dime tu nombre: ✨`; 
                         removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = text.includes("Conocer más") ? 'INFO_NAME_OPTIONAL' : 'NAME';
                     } else {
-                        // TEXTO LIBRE INICIAL: Detectar intención real (evita crear gestión solo por decir "hola")
+                        // TEXTO LIBRE INICIAL: Detectar intención real
                         let isIntent = /(quiero|me interesa|deseo|busco|necesito|reservar|contratar|agendar|tomarme|cotizar|paquete|cobertura|precio|cuanto cuesta)\b/i.test(textLower);
                         
                         if (isIntent && sessionId === "Pendiente...") {
@@ -1068,7 +1080,6 @@ La Unión/Morazán/S.Miguel Norte: >$80.`;
                         let aiResp = await getAIResponse(text, false); 
                         removeBotTyping(); 
 
-                        // Si la IA decide activar el código internamente porque ya recopiló información útil
                         if (aiResp.includes("[ACTIVAR_CODIGO]") && sessionId === "Pendiente...") {
                             let digits = Math.floor(1000 + Math.random() * 9000); 
                             sessionId = "CTK-W" + digits; 
@@ -1086,76 +1097,75 @@ La Unión/Morazán/S.Miguel Norte: >$80.`;
                 
                 // PASO 1.5: NOMBRE (OPCIONAL)
                 else if (chatState === 'INFO_NAME_OPTIONAL') {
-                    let isRefusal = /(no quiero|no te lo dar|an[oó]nimo|omitir|borrar)/i.test(textLower);
-                    if (isRefusal) { userData.nombre = "Anónimo"; let msg = "¡Entendido! No hay problema. 😉 ¿Qué te gustaría saber sobre Creatik?"; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'AI_CHAT'; } 
-                    else { userData.nombre = text; let msg = `¡Mucho gusto, ${userData.nombre}! ✨ ¿En qué puedo ayudarte con información sobre Creatik?`; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'AI_CHAT'; }
+                    let isRefusal = /(no quiero|no te lo dar|an[oó]nimo|omitir|borrar|paso)/i.test(textLower) || textLower === "no";
+                    let isNotName = text.includes("?") || text.split(" ").length > 3 || /^(hola|buenas|buenos|hey|qué tal|como estas|que tal|para que|por que|cuanto|precio|info|informacion|disculpa)/i.test(textLower);
+                    
+                    if (isRefusal) { 
+                        userData.nombre = "Anónimo"; let msg = "¡Entendido! No hay problema. 😉 ¿Qué te gustaría saber sobre Creatik?"; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'AI_CHAT'; 
+                    } else if (isNotName) {
+                        let aiResp = await getAIResponse(text, true); removeBotTyping(); 
+                        appendBotMessage(aiResp + `<br><br><i>(Por cierto, ¿cómo te gustaría que te llame? ✨)</i>`); 
+                        conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`;
+                    } else { 
+                        userData.nombre = text; let msg = `¡Mucho gusto, ${userData.nombre}! ✨ ¿En qué puedo ayudarte con información sobre Creatik?`; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'AI_CHAT'; 
+                    }
                     enableInput(); return;
                 }
                 
                 // PASO 2: NOMBRE (OBLIGATORIO)
                 else if (chatState === 'NAME') {
-                    userData.nombre = text; let msg = `¡Mucho gusto, ${userData.nombre}! ✨ Para cotizar o contactarte, ¿me podrías compartir tu número de WhatsApp?`; 
-                    removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'PHONE'; enableInput(); return;
+                    let isRefusal = /(no quiero|no te lo dar|an[oó]nimo|omitir|borrar|paso)/i.test(textLower) || textLower === "no";
+                    let isNotName = text.includes("?") || text.split(" ").length > 3 || /^(hola|buenas|buenos|hey|qué tal|como estas|que tal|para que|por que|cuanto|precio|info|informacion|disculpa)/i.test(textLower);
+
+                    if (isRefusal) {
+                        userData.nombre = "No proporcionado"; let msg = "¡Entendido, no hay problema! 😉 Lo dejaremos oculto por privacidad. Ahora, ¿me podrías compartir tu número de WhatsApp para contactarte?"; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'PHONE';
+                    } else if (isNotName) {
+                        let aiResp = await getAIResponse(text, true); removeBotTyping(); 
+                        appendBotMessage(aiResp + `<br><br><i>Retomando tu registro... Para brindarte una atención más personalizada, ¿me podrías decir tu **nombre**? ✨</i>`); 
+                        conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`;
+                    } else {
+                        userData.nombre = text; let msg = `¡Mucho gusto, ${userData.nombre}! ✨ Para cotizar o contactarte en caso de que se corte el chat, ¿me podrías compartir tu número de WhatsApp?`; 
+                        removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'PHONE'; 
+                    }
+                    enableInput(); return;
                 }
                 
                 // PASO 3: TELÉFONO
                 else if (chatState === 'PHONE') {
                     if (text === "🌍 Soy Extranjero") { removeBotTyping(); let msg = "¡Qué genial que nos escribas de fuera! 🌍 Por favor, escribe de qué **país o ciudad** nos contactas:"; appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'FOREIGN_LOC'; enableInput(); return; }
-                    let cleanPhone = text.replace(/[\s-]/g, ''); let digits = cleanPhone.replace(/\D/g, ''); 
-                    if (isInternational || digits.length === 8) { userData.telefono = text; let msg = "¡Anotado! 📝 Ahora selecciona o escribe tu **Departamento** (Donde será el evento):"; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; appendBotOptions(Object.keys(svData)); chatState = 'DEP'; } 
-                    else { let msg = "Ese número no parece tener 8 dígitos. Intenta de nuevo, o si eres extranjero dale clic abajo:"; removeBotTyping(); appendBotMessage(msg); appendBotOptions(["🌍 Soy Extranjero"]); conversationHistory += `Creatik IA: ${msg}\n`; }
-                    enableInput(); return;
-                }
-
-                // PASOS 4, 5, 6: CASCADA DE UBICACIÓN (Auto-Saltable)
-                else if (chatState === 'FOREIGN_LOC') {
-                    userData.departamento = text; userData.municipio = "Extranjero"; userData.distrito = "Extranjero"; isInternational = true; 
-                    let msg = `¡Excelente! 📍\nPor último, cuéntame: ¿qué tipo de proyecto tienes en mente, para qué **fecha** y en qué **horario** (Mañana/Tarde/Noche)? ✨`; 
-                    removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg.replace(/<[^>]*>?/gm, '')}\n`; chatState = 'OFFER_PACKAGES'; enableInput(); return;
-                }
-                else if (chatState === 'DEP') {
-                    if (userData.departamento && svData[userData.departamento]) {
-                        // Fue invocado desde PHONE para auto-saltar
-                    } else if (svData[text]) { userData.departamento = text; } 
-                    else { let aiResp = await getAIResponse(text, true); removeBotTyping(); appendBotMessage(aiResp + "<br><br><i>Por favor, selecciona tu **Departamento**:</i>"); appendBotOptions(Object.keys(svData)); enableInput(); return; }
                     
-                    if (userData.departamento && userData.municipio && userData.distrito && svData[userData.departamento][userData.municipio].includes(userData.distrito)) {
-                        chatState = 'OFFER_PACKAGES';
-                        let msg = `¡Perfecto! Ya registré que el evento será en ${userData.distrito}, ${userData.municipio}. 📍\nPor último, cuéntame: ¿qué tipo de proyecto tienes en mente, para qué **fecha** y en qué **horario** (Mañana/Tarde/Noche)? ✨`;
-                        removeBotTyping(); appendBotMessage(msg);
-                    } else if (userData.departamento && userData.municipio && svData[userData.departamento][userData.municipio]) {
-                        chatState = 'DIST';
-                        let msg = `¡Genial! Ya registré ${userData.municipio}. 📍 Ahora selecciona tu **Distrito**:`;
-                        removeBotTyping(); appendBotMessage(msg); appendBotOptions(svData[userData.departamento][userData.municipio]);
-                    } else {
-                        chatState = 'MUN'; 
-                        let msg = `¡Genial, ${userData.departamento}! 📍 Ahora selecciona tu **Municipio**:`; 
-                        removeBotTyping(); appendBotMessage(msg); appendBotOptions(Object.keys(svData[userData.departamento])); 
+                    let isRefusal = /(no quiero|no te lo dar|an[oó]nimo|ninguno|omitir|saltar|borrar|privado|sin n[uú]mero|no tengo|no dar|no te dar|paso)/i.test(textLower) || textLower === "no";
+                    let isPhoneQuestion = text.includes("?") || text.split(" ").length > 3 || /^(hola|buenas|buenos|hey|qué tal|como estas|que tal|para que|por que|cuanto|precio|info|informacion|disculpa)/i.test(textLower);
+                    let cleanPhone = text.replace(/[\s-]/g, ''); let digits = cleanPhone.replace(/\D/g, ''); 
+
+                    if (isRefusal) {
+                         userData.telefono = "No proporcionado"; 
+                         let msg = "¡Entendido, no hay problema! 📝 Para poder darte una propuesta exacta, cuéntame: ¿Dónde será el evento (municipio y departamento)?"; 
+                         removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'OFFER_PACKAGES';
+                    } else if (isPhoneQuestion && digits.length !== 8) {
+                         let aiResp = await getAIResponse(text, true); removeBotTyping(); 
+                         appendBotMessage(aiResp + "<br><br><i>Por cierto, ¿me podrías compartir tu número de WhatsApp para contactarte? (O elige si eres extranjero) 👇</i>"); 
+                         appendBotOptions(["🌍 Soy Extranjero"]); conversationHistory += `Creatik IA: ${aiResp.replace(/<[^>]*>?/gm, '')}\n`; 
+                    } else if (isInternational || digits.length === 8) { 
+                         userData.telefono = text; let msg = "¡Anotado! 📝 Para poder darte una propuesta exacta, cuéntame: ¿Dónde será el evento (municipio y departamento)?"; removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'OFFER_PACKAGES'; 
+                    } else { 
+                         let msg = "Ese número no parece tener 8 dígitos válidos en El Salvador. 😅 Intenta de nuevo, o si eres de otro país dale clic abajo:"; removeBotTyping(); appendBotMessage(msg); appendBotOptions(["🌍 Soy Extranjero"]); conversationHistory += `Creatik IA: ${msg}\n`; 
                     }
                     enableInput(); return;
                 }
-                else if (chatState === 'MUN') {
-                    let muns = Object.keys(svData[userData.departamento]);
-                    if (muns.includes(text)) { userData.municipio = text; chatState = 'DIST'; let msg = `Excelente. 📍 Por último, selecciona tu **Distrito**:`; removeBotTyping(); appendBotMessage(msg); appendBotOptions(svData[userData.departamento][userData.municipio]); } 
-                    else { let aiResp = await getAIResponse(text, true); removeBotTyping(); appendBotMessage(aiResp + "<br><br><i>Por favor, selecciona tu **Municipio**:</i>"); appendBotOptions(muns); }
-                    enableInput(); return;
-                }
-                else if (chatState === 'DIST') {
-                    let dists = svData[userData.departamento][userData.municipio];
-                    if (dists.includes(text)) { 
-                        userData.distrito = text; chatState = 'OFFER_PACKAGES'; 
-                        let msg = `¡Perfecto! Eres de ${userData.distrito}, ${userData.municipio}. 📍\nPor último, cuéntame: ¿qué tipo de proyecto tienes en mente, para qué **fecha** y en qué **horario** (Mañana/Tarde/Noche)? ✨`; 
-                        removeBotTyping(); appendBotMessage(msg); 
-                    } 
-                    else { let aiResp = await getAIResponse(text, true); removeBotTyping(); appendBotMessage(aiResp + "<br><br><i>Por favor, selecciona tu **Distrito**:</i>"); appendBotOptions(dists); }
-                    enableInput(); return;
+
+                // PASOS 4, 5, 6: CASCADA DE UBICACIÓN (Auto-Saltable) - Ya no se usan botones, pero se mantiene la compatibilidad
+                else if (chatState === 'FOREIGN_LOC') {
+                    userData.departamento = text; userData.municipio = "Extranjero"; userData.distrito = "Extranjero"; isInternational = true; 
+                    let msg = `¡Excelente! 📍\nPor último, cuéntame un poco más sobre el evento: ¿Qué fecha tienen pensada y más o menos cuántas horas de cobertura les gustaría? ✨`; 
+                    removeBotTyping(); appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg.replace(/<[^>]*>?/gm, '')}\n`; chatState = 'OFFER_PACKAGES'; enableInput(); return;
                 }
 
-                // PASO 7: NEGOCIACIÓN CON IA ESTRICTA (Indagación, Precios transparentes y Botones de Confirmación)
+                // PASO 7: NEGOCIACIÓN CON IA ESTRICTA
                 else if (chatState === 'OFFER_PACKAGES') {
                     let aiResp = await getAIResponse(text, true);
                     
-                    // Activador de ID de sesión si ya vemos que va en serio y tiene datos
+                    // Activador de ID de sesión
                     if (aiResp.includes("[ACTIVAR_CODIGO]") && sessionId === "Pendiente...") {
                         let digits = Math.floor(1000 + Math.random() * 9000); 
                         sessionId = "CTK-W" + digits; 
@@ -1173,7 +1183,7 @@ La Unión/Morazán/S.Miguel Norte: >$80.`;
                         enableInput(); return;
                     }
 
-                    // Detector de Cierre Final de Venta y Ticket (Solo si ya aceptó)
+                    // Detector de Cierre Final de Venta y Ticket
                     if (aiResp.includes("[GENERAR_TICKET]")) {
                         let projMatch = aiResp.match(/\[PROYECTO:(.*?)\]/i); 
                         let summaryMatch = aiResp.match(/\[RESUMEN:(.*?)\]/i); 
