@@ -472,7 +472,7 @@
                 <h1>Contamos tu <span>historia</span> con el alma.</h1>
                 <h2>Capturamos momentos reales para hacerlos eternos.</h2>
             </div>
-            <p class="menu-desc">En Creatik, capturamos la esencia de cada momento porque sabemos que tu reality es lo más importante. No solo entregamos una imagen, entregamos un recuerdo con alma.</p>
+            <p class="menu-desc">En Creatik, capturamos la esencia de cada momento porque sabemos que tu realidad es lo más importante. No solo entregamos una imagen, entregamos un recuerdo con alma.</p>
             <div class="menu-interactive-area">
                 <div class="float-tag ft-smm">
                     <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></svg></div>
@@ -882,7 +882,7 @@
         // =========================================================================
         // --- CEREBRO IA: ESTRICTA Y PASO A PASO (100% CONVERSACIONAL) ---
         // =========================================================================
-        async function getAIResponse(promptText, isFullContext = false) {
+        async function getAIResponse(promptText, isFullContext = false, systemInjection = "") {
             let historyLines = conversationHistory.split('\n').filter(line => line.trim() !== '');
             if (historyLines.length > 24) historyLines = historyLines.slice(historyLines.length - 24); 
             let trimmedHistory = historyLines.join('\n');
@@ -902,27 +902,29 @@ REGLA DE ORO 1 (INTERÉS Y DATOS): Si el cliente solo dice "Hola" o hace pregunt
 REGLA DE ORO 2 (QUÉ EVENTO ES): ES OBLIGATORIO preguntar de qué trata el evento (Boda, cumpleaños, etc) si dice FALTA.
 REGLA DE ORO 3 (LAS 6 PREGUNTAS MÍNIMAS): HAZ UNA SOLA PREGUNTA A LA VEZ. No agobies. NUNCA des precios sin antes preguntar: 1. Tipo de Evento, 2. Nombre/Teléfono, 3. Ubicación, 4. Fecha/Hora, y MÍNIMO 3 DETALLES PROFUNDOS MÁS (horas, invitados, estilo).
 REGLA DE ORO 4 (FECHAS APARTADAS): Rechaza fechas ocupadas de la lista de arriba.
-REGLA DE ORO 5 (OBJECIÓN POR PRECIO A TERCEROS): No iguales precios de tickets de amigos.
+REGLA DE ORO 5 (OBJECIÓN POR PRECIO A TERCEROS): No iguales precios de tickets de amigos. Defiende tu precio por temporada y exclusividad.
 
 POLÍTICAS DE CANCELACIÓN Y REPROGRAMACIÓN (ESTRICTAS):
 Si el cliente elige "Reprogramar o Cancelar" o toca el botón:
-1. ¡ALTO! ES OBLIGATORIO pedirle primero su CÓDIGO DE GESTIÓN ANTERIOR.
-2. Luego, hazle 3 preguntas de seguridad para confirmar su identidad (Ej: ¿Cuál es tu nombre completo? ¿Qué fecha tenías reservada? ¿De qué era el evento?).
-3. Si confirma, infórmale firmemente: CANCELACIÓN pierde el anticipo (perdimos eventos por apartar su fecha). REPROGRAMACIÓN cuesta 30% extra del total del paquete.
+1. ¡ALTO! ES OBLIGATORIO pedirle primero su CÓDIGO DE GESTIÓN ANTERIOR (Ej: CTK-XXXX).
+2. Cuando el cliente te dé su código, el [SISTEMA INTERNO] te enviará los datos ocultos. 
+3. HAZLE 3 PREGUNTAS DE SEGURIDAD (Nombre, Fecha, Ubicación) para confirmar su identidad.
+4. VERIFICACIÓN ESTRICTA: Si la información que te responde el cliente NO COINCIDE con la que te dio el [SISTEMA INTERNO], RECHÁZALO DEFINITIVAMENTE y no le des información. Si el sistema te dice GESTIÓN INCOMPLETA, dile que no es válido.
+5. Si todo coincide, infórmale firmemente: CANCELACIÓN pierde el anticipo (perdimos eventos por apartar su fecha). REPROGRAMACIÓN cuesta 30% extra del total.
 
 REGLAS DE PRECIOS Y ENTREGABLES (¡SECRETO INTERNO!):
-- NUNCA MUESTRES LOS PRECIOS INTERNOS. LA MEMORIA USB ES OBLIGATORIA.
+- NUNCA MUESTRES LOS PRECIOS INTERNOS. LA MEMORIA USB ES OBLIGATORIA (No desgloses precio).
 - PRECIOS NO EXAGERADOS. Permite regatear máx 3 veces.
 - NOMBRE CREATIVO OBLIGATORIO.
 
 ETIQUETAS INVISIBLES (OBLIGATORIO AL FINAL DE TU RESPUESTA):
-Si notas intención de cotizar, reprogramar o contratar, usa [ACTIVAR_CODIGO] para generar un ticket.
+Si notas intención de cotizar o reprogramar usa [ACTIVAR_CODIGO].
 [ACTIVAR_CODIGO]
 [N: (Nombre o "No proporcionado")]
 [T: (Teléfono o "No proporcionado")]
 [U: (Ubicación)]
 [E: (Fecha y Hora)]
-[R: (Resumen exacto del evento hasta ahora y Tipo de Evento)]
+[R: (Resumen exacto del evento y Tipo de Evento)]
 
 CIERRE Y TICKET (REGLA DE LAS 3 CONFIRMACIONES):
 Confirma la propuesta 3 veces. Si acepta explícitamente, despídete y pon EXACTAMENTE al final:
@@ -931,7 +933,7 @@ Confirma la propuesta 3 veces. Si acepta explícitamente, despídete y pon EXACT
 [PRECIO: (Monto total en número, ej: $150)]
 [ANTICIPO: (Monto del anticipo en número, ej: $75)]`;
 
-            let finalPrompt = isFullContext ? `${basePrompt}\nHistorial:\n${trimmedHistory}\nUsuario: ${promptText}\nCreatik IA:` : `${basePrompt}\nInstrucción: ${promptText}\nCreatik IA:`;
+            let finalPrompt = isFullContext ? `${basePrompt}\nHistorial:\n${trimmedHistory}\nUsuario: ${promptText}\n${systemInjection}\nCreatik IA:` : `${basePrompt}\nInstrucción: ${promptText}\n${systemInjection}\nCreatik IA:`;
 
             try {
                 const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -939,7 +941,7 @@ Confirma la propuesta 3 veces. Si acepta explícitamente, despídete y pon EXACT
                     body: JSON.stringify({ 
                         model: "gpt-4o", 
                         messages: [
-                            { role: "system", content: "Eres humana. NO pidas nombre sin interés. Activa código al notar interés. Obligatorio pedir de qué es el evento y 6 preguntas previas al precio. Reglas de reprogramación: Pedir Código Anterior y 3 preguntas de seguridad, aplicar penalidades (sin %). Confirma 3 veces antes de cerrar. Usa etiquetas ocultas al final." }, 
+                            { role: "system", content: "Eres humana. NO pidas nombre sin interés. Activa código al notar interés. Obligatorio pedir de qué es el evento y 6 preguntas previas al precio. Reglas de reprogramación: Pedir Código Anterior, si el [SISTEMA INTERNO] te da los datos haz 3 preguntas de seguridad y valida estrictamente. Aplica penalidades (sin %). Confirma 3 veces antes de cerrar. Usa etiquetas ocultas al final." }, 
                             { role: "user", content: finalPrompt }
                         ],
                         temperature: 0.6 
@@ -991,8 +993,14 @@ Confirma la propuesta 3 veces. Si acepta explícitamente, despídete y pon EXACT
                     fetch(GOOGLE_SCRIPT_URL + "?id=" + encodeURIComponent(queryId)).then(res => res.json()).then(data => {
                         removeBotTyping();
                         if(data.found) {
-                            let resHTML = `<span style="color:#10b981; font-weight:bold;">✅ GESTIÓN: ${data.data.codigo}</span><br><br>👤 **Nombre:** ${data.data.nombre}<br>📱 **Tel:** ${data.data.telefono}<br>📅 **Fecha Evento:** ${data.data.fechaEvento}<br>📍 **Ubicación:** ${data.data.ubicacion}<br>🎯 **Proyecto:** ${data.data.proyecto}<br>💰 **Precio Total:** ${data.data.precioTotal}<br>💸 **Anticipo:** ${data.data.anticipo}<br><br>📝 **Resumen del chat:**<br><i>${data.data.resumen}</i>`;
-                            appendBotMessage(resHTML); appendBotMessage("¿Buscar otra o necesitas algo más?");
+                            if (data.data.resumen === "GESTIÓN INCOMPLETA" || data.data.proyecto === "GESTIÓN INCOMPLETA") {
+                                let resHTML = `<span style="color:#ef4444; font-weight:bold;">⚠️ GESTIÓN INCOMPLETA: ${data.data.codigo}</span><br>Esta gestión fue abandonada antes de generar el ticket.`;
+                                appendBotMessage(resHTML);
+                            } else {
+                                let resHTML = `<span style="color:#10b981; font-weight:bold;">✅ GESTIÓN: ${data.data.codigo}</span><br><br>👤 **Nombre:** ${data.data.nombre}<br>📱 **Tel:** ${data.data.telefono}<br>📅 **Fecha Evento:** ${data.data.fechaEvento}<br>📍 **Ubicación:** ${data.data.ubicacion}<br>🎯 **Proyecto:** ${data.data.proyecto}<br>💰 **Precio Total:** ${data.data.precioTotal}<br>💸 **Anticipo:** ${data.data.anticipo}<br><br>📝 **Resumen del chat:**<br><i>${data.data.resumen}</i>`;
+                                appendBotMessage(resHTML); 
+                            }
+                            appendBotMessage("¿Buscar otra o necesitas algo más?");
                         } else { appendBotMessage("❌ No se encontró la gestión."); }
                         enableInput(); 
                     }).catch(e => { removeBotTyping(); appendBotMessage("⚠️ Error de base de datos."); enableInput();});
@@ -1000,7 +1008,7 @@ Confirma la propuesta 3 veces. Si acepta explícitamente, despídete y pon EXACT
                 }
                 let adminPrompt = `Eres la IA de Creatik en MODO PRIVADO con el admin ${adminUsers[window.currentAdminKey]}. Actúa natural. Dile que busque códigos escribiendo "CTK-XXXX".`;
                 appendBotTyping();
-                let aiResp = await getAIResponse(adminPrompt + "\nAdmin: " + text, false);
+                let aiResp = await getAIResponse(adminPrompt + "\nAdmin: " + text, false, "");
                 removeBotTyping(); appendBotMessage(aiResp); enableInput(); return;
             }
             
@@ -1015,7 +1023,7 @@ Confirma la propuesta 3 veces. Si acepta explícitamente, despídete y pon EXACT
                 if (text.includes("Cotizar")) prefix = "CTK-C";
                 else if (text.includes("Contratar")) prefix = "CTK-S";
                 else if (text.includes("Conocer más")) prefix = "CTK-I";
-                else if (text.includes("Reprogramar")) prefix = "CTK-M";
+                else if (text.includes("Reprogramar") || text.includes("Cancelar")) prefix = "CTK-M";
                 let digits = Math.floor(1000 + Math.random() * 9000);
                 sessionId = prefix + digits; 
                 document.getElementById('chatbot-session-display').textContent = "Gestión: " + sessionId;
@@ -1048,10 +1056,34 @@ Confirma la propuesta 3 veces. Si acepta explícitamente, despídete y pon EXACT
 
                 if (chatState === 'INIT') chatState = 'AI_CHAT';
 
+                // --- SISTEMA DE VERIFICACIÓN PARA REPROGRAMACIONES ---
+                let systemInjection = "";
+                const codeMatch = text.match(/(CTK-[A-Z0-9]{4})/i);
+                
+                if (chatState === 'AI_CHAT' && codeMatch) {
+                    appendBotTyping();
+                    try {
+                        let res = await fetch(GOOGLE_SCRIPT_URL + "?id=" + encodeURIComponent(codeMatch[1].toUpperCase()));
+                        let dbData = await res.json();
+                        if (dbData.found) {
+                            if (dbData.data.resumen === "GESTIÓN INCOMPLETA" || dbData.data.proyecto === "GESTIÓN INCOMPLETA") {
+                                systemInjection = `\n[SISTEMA INTERNO: El código ${codeMatch[1].toUpperCase()} es una GESTIÓN INCOMPLETA. Dile al cliente que este código no tiene un ticket válido porque la gestión anterior se abandonó, y no le des ninguna información.]`;
+                            } else {
+                                systemInjection = `\n[SISTEMA INTERNO: Datos reales del código ${codeMatch[1].toUpperCase()}: Nombre="${dbData.data.nombre}", Fecha="${dbData.data.fechaEvento}", Ubicación="${dbData.data.ubicacion}". HAZLE 3 PREGUNTAS DE SEGURIDAD. COMPARA ESTRICTAMENTE SUS RESPUESTAS CON ESTOS DATOS. SI SE EQUIVOCA EN ALGUNO, RECHÁZALO Y NO LE DES INFORMACIÓN.]`;
+                            }
+                        } else {
+                            systemInjection = `\n[SISTEMA INTERNO: El código ${codeMatch[1].toUpperCase()} NO EXISTE. Dile al cliente que el código es inválido.]`;
+                        }
+                    } catch(e) {
+                        console.log(e);
+                    }
+                    removeBotTyping();
+                }
+
                 appendBotTyping();
 
                 if (chatState === 'AI_CHAT') { 
-                    let aiResp = await getAIResponse(text, true); 
+                    let aiResp = await getAIResponse(text, true, systemInjection); 
                     removeBotTyping(); 
                     
                     // EXTRACCIÓN DE DATOS EN TIEMPO REAL A TRAVÉS DE ETIQUETAS DE LA IA
@@ -1066,7 +1098,8 @@ Confirma la propuesta 3 veces. Si acepta explícitamente, despídete y pon EXACT
                                    .replace(/\[T:.*?\]/gi, '')
                                    .replace(/\[U:.*?\]/gi, '')
                                    .replace(/\[E:.*?\]/gi, '')
-                                   .replace(/\[R:.*?\]/gi, '');
+                                   .replace(/\[R:.*?\]/gi, '')
+                                   .replace(/\[ACTIVAR_CODIGO\]/gi, '');
 
                     // Activación inteligente del código por parte de la IA si el JS no lo detectó
                     if (aiResp.includes("[ACTIVAR_CODIGO]") && sessionId === "Pendiente...") {
@@ -1074,7 +1107,6 @@ Confirma la propuesta 3 veces. Si acepta explícitamente, despídete y pon EXACT
                         sessionId = "CTK-W" + digits; 
                         document.getElementById('chatbot-session-display').textContent = "Gestión: " + sessionId;
                     }
-                    aiResp = aiResp.replace(/\[ACTIVAR_CODIGO\]/gi, '');
 
                     if (aiResp.includes("[GENERAR_TICKET]")) {
                         let projMatch = aiResp.match(/\[PROYECTO:(.*?)\]/i); 
