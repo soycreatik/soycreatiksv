@@ -847,6 +847,10 @@
             let proj = userData.proyecto_resumen || "Pendiente"; if (proj.length > 40) proj = proj.substring(0, 37) + "...";
             let precio = userData.precio_final || "-";
             let anticipo = userData.anticipo || "-";
+            
+            let qrData = encodeURIComponent(`TICKET CREATIK\nGestión: ${sessionId}\nCliente: ${maskName(userData.nombre)}\nFecha: ${userData.fechaEvento}\nLugar: ${ubi}\nTotal: ${precio}\nAnticipo: ${anticipo}`);
+            let qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${qrData}&color=a855f7&bgcolor=0f0a19`;
+
             return `
             <style>
                 .html-ticket { background: linear-gradient(135deg, #1e1b4b, #020005); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 15px; width: 100%; max-width: 280px; margin: 15px auto; color: white; font-family: 'Inter', sans-serif; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden; position: relative; }
@@ -854,22 +858,24 @@
                 .ticket-divider { position: relative; height: 20px; display: flex; align-items: center; justify-content: center; } .ticket-divider hr { width: 80%; border: none; border-top: 2px dashed rgba(255,255,255,0.2); margin: 0; } .ticket-divider .circle-left, .ticket-divider .circle-right { position: absolute; width: 20px; height: 20px; background: #0f0a19; border-radius: 50%; top: 0; } .ticket-divider .circle-left { left: -10px; border-right: 1px solid rgba(168, 85, 247, 0.4); } .ticket-divider .circle-right { right: -10px; border-left: 1px solid rgba(168, 85, 247, 0.4); }
                 .ticket-body { padding: 20px; text-align: left; } .ticket-row { margin-bottom: 15px; display: flex; flex-direction: column; gap: 4px; } .ticket-row .label { font-size: 0.65rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1px; } .ticket-row .value { font-size: 0.95rem; font-weight: 700; color: #fff; line-height: 1.3; }
                 .ticket-footer { padding: 15px 20px 25px 20px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); } .barcode { font-family: monospace; font-size: 1.2rem; letter-spacing: 2px; color: #fff; opacity: 0.8; }
+                .qr-container { display: flex; justify-content: center; margin-top: 15px; } .qr-container img { width: 80px; height: 80px; border: 2px solid #a855f7; border-radius: 8px; padding: 2px; background: #0f0a19;}
             </style>
             <div class="html-ticket"><div class="ticket-header"><h3>CREATIK.</h3><p>TICKET DE GESTIÓN</p></div><div class="ticket-divider"><div class="circle-left"></div><div class="circle-right"></div><hr></div>
             <div class="ticket-body"><div class="ticket-row"><span class="label">CÓDIGO DE GESTIÓN</span><span class="value">${sessionId}</span></div><div class="ticket-row"><span class="label">CLIENTE</span><span class="value">${maskName(userData.nombre)}</span></div><div class="ticket-row"><span class="label">FECHA ACORDADA</span><span class="value">${userData.fechaEvento}</span></div><div class="ticket-row"><span class="label">UBICACIÓN</span><span class="value">${ubi}</span></div><div class="ticket-row"><span class="label">OBJETIVO</span><span class="value">${proj}</span></div>
             <div class="ticket-row" style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.2);"><span class="label" style="color: #ffd700;">PRECIO TOTAL</span><span class="value" style="color: #ffd700; font-size: 1.1rem;">${precio}</span></div>
             <div class="ticket-row"><span class="label" style="color: #db2777;">ANTICIPO (50%)</span><span class="value" style="color: #db2777;">${anticipo}</span></div>
+            <div class="qr-container"><img src="${qrUrl}" alt="QR Ticket"></div>
             </div>
             <div class="ticket-footer"><div class="barcode">|||| |||| || ||| || ||||</div><div style="font-size:0.6rem; margin-top:5px; color:#a855f7;">${sessionId}</div></div></div>
             <p style="font-size: 0.85rem; margin-top: 10px; line-height:1.4; text-align:center;">📸 <b>Por favor, tómale una captura a este ticket</b> y envíala a nuestro WhatsApp (+503 7577 8333) para agendar tu proyecto.</p>`;
         }
 
         // =========================================================================
-        // --- CEREBRO IA: ESTRICTA Y PASO A PASO (MANTIENE LA CHARLA FLUIDA) ---
+        // --- CEREBRO IA: ESTRICTA Y PASO A PASO (100% CONVERSACIONAL) ---
         // =========================================================================
         async function getAIResponse(promptText, isFullContext = false) {
             let historyLines = conversationHistory.split('\n').filter(line => line.trim() !== '');
-            if (historyLines.length > 20) historyLines = historyLines.slice(historyLines.length - 20);
+            if (historyLines.length > 20) historyLines = historyLines.slice(historyLines.length - 20); // Mayor memoria de la conversación
             let trimmedHistory = historyLines.join('\n');
             let bookedStr = window.serverData && window.serverData.bookedDates.length > 0 ? window.serverData.bookedDates.join(", ") : "Ninguna";
 
@@ -882,24 +888,25 @@ ESTADO ACTUAL DE DATOS (REVISA ESTO ANTES DE RESPONDER):
 - Ubicación: ${userData.departamento ? userData.departamento : "FALTA"}
 - Fecha del Evento: ${userData.fechaEvento ? userData.fechaEvento : "FALTA"}
 
-REGLA 1 (FECHAS): Compara la fecha que pide el cliente con las "Fechas Ocupadas". ¡SI LA FECHA ESTÁ EN LA LISTA DE OCUPADAS, RECHÁZALA INMEDIATAMENTE y dile que ya está reservada! Solo acepta si hay 1 hora de diferencia y es en San Salvador Centro/Oeste.
-REGLA 2 (DATOS FALTANTES): Es OBLIGATORIO pedir Nombre y Ubicación. Si dicen "FALTA", haz UNA sola pregunta directa para obtener el primer dato que falte. ¡NO des precios si alguna de estas 4 cosas dice FALTA! (También debes preguntar horas y cantidad de personas antes de dar precio).
+REGLA DE ORO 1: NUNCA vuelvas a pedir un dato que ya no diga "FALTA". Si el nombre dice "No proporcionado", ya no lo pidas. ¡SOLO pregunta lo que diga "FALTA"!
+REGLA DE ORO 2: El Teléfono de WhatsApp es ESTRICTAMENTE OBLIGATORIO. Si no te lo dan al inicio, pídelo amablemente antes de dar el precio.
+REGLA DE ORO 3: HAZ UNA SOLA PREGUNTA A LA VEZ. No agobies al cliente. NUNCA des precio si falta Nombre, Teléfono, Ubicación, Fecha o detalles (horas/personas).
+REGLA DE ORO 4 (FECHAS): Compara la fecha solicitada con las "Fechas Ocupadas". Recházala si ya está tomada, a menos que sea en San Salvador (Centro/Oeste) y haya 1 hora de diferencia.
 
 REGLAS DE PRECIOS Y PROPUESTA:
-- De Lunes a Viernes máximo 2 fotógrafos. Fines de semana hasta 4 si es masivo. Mínimo 2 siempre.
+- De Lunes a Viernes máximo 2 fotógrafos. Fines de semana hasta 4 si es masivo. Mínimo 2 siempre (menciónalo en la propuesta).
 - Transporte fuera de San Salvador cuesta más de $40 (Súmalo internamente, no digas viáticos).
-- Si piden rebaja: 1ra vez baja $10-$15 sin quitar nada. 2da vez baja $5 pero QUITA cosas.
-- NUNCA regales horas extra. Entregables: Solo digital, 1 USB (+$9 interno) y fotos impresas (+$0.90 c/u). No desgloses precios. Menciona el 50% de anticipo.
+- Entregables: Solo digital, 1 USB (+$9 interno) y fotos impresas (+$0.90 c/u). No desgloses precios. Menciona el 50% de anticipo.
 
 ETIQUETAS INVISIBLES (OBLIGATORIO AL FINAL DE TU RESPUESTA):
-Siempre pon estas etiquetas al final para guardar los datos. Si NO tienes el dato aún, pon la palabra FALTA. Si ya lo tienes, inclúyelo en la etiqueta.
-[N: (Nombre)]
+Si descubres un nuevo dato en el mensaje actual del cliente, actualiza su etiqueta. Si se niega a dar el nombre o teléfono, pon "No proporcionado". NUNCA escribas la etiqueta de un dato si aún no lo conoces y dice FALTA.
+[N: (Nombre o "No proporcionado")]
 [T: (Teléfono)]
 [U: (Ubicación)]
 [E: (Fecha)]
-[R: (Resumen de lo pedido)]
+[R: (Resumen exacto del evento hasta ahora)]
 
-CIERRE: Si el cliente acepta la propuesta con precio (ej. "sí", "acepto"), despídete y pon EXACTAMENTE al final:
+CIERRE: Si ya diste el precio y el cliente acepta (ej. "sí", "acepto", "me parece"), despídete y pon EXACTAMENTE al final:
 [GENERAR_TICKET]
 [PROYECTO: (Resumen de 3 palabras)]
 [PRECIO: ($ Total)]
