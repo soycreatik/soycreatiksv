@@ -705,8 +705,8 @@
 
         function getSentiment() {
             let hist = conversationHistory.toLowerCase();
-            let badWords = ["malo", "pesimo", "pésimo", "no sirve", "basura", "lento", "estupido", "idiota", "odio", "mentira", "fraude", "apurate", "rapido", "asqueroso", "no quiero", "para que", "privado", "estafa", "caro", "robo", "mal servicio", "decepcionante", "peor", "horrible", "falta de respeto", "grosero"];
-            let goodWords = ["gracias", "excelente", "me encanta", "perfecto", "amable", "por favor", "genial", "super", "lindo", "buen servicio", "increible", "mucho gusto", "sí me parece", "acepto", "maravilloso", "increíble", "fascinante", "me gusta", "buenísimo", "ok", "vale", "está bien", "de acuerdo", "encantado", "bella", "hermoso"];
+            let badWords = ["malo", "pesimo", "pésimo", "no sirve", "basura", "lento", "estupido", "idiota", "odio", "mentira", "fraude", "apurate", "rapido", "asqueroso", "no quiero", "para que", "privado", "estafa", "caro", "robo", "mal servicio", "decepcionante", "peor", "horrible", "falta de respeto", "grosero", "abusivo", "incompetente"];
+            let goodWords = ["gracias", "excelente", "me encanta", "perfecto", "amable", "por favor", "genial", "super", "lindo", "buen servicio", "increible", "mucho gusto", "sí me parece", "acepto", "maravilloso", "increíble", "fascinante", "me gusta", "buenísimo", "ok", "vale", "está bien", "de acuerdo", "encantado", "bella", "hermoso", "muy bien", "trato hecho"];
             let badScore = badWords.filter(w => hist.includes(w)).length;
             let goodScore = goodWords.filter(w => hist.includes(w)).length;
             if (badScore > goodScore) return "Mal Trato 🔴";
@@ -904,13 +904,14 @@ REGLA DE ORO 3 (LAS 6 PREGUNTAS MÍNIMAS): HAZ UNA SOLA PREGUNTA A LA VEZ. No ag
 REGLA DE ORO 4 (FECHAS APARTADAS): Rechaza fechas ocupadas de la lista de arriba.
 REGLA DE ORO 5 (OBJECIÓN POR PRECIO A TERCEROS): No iguales precios de tickets de amigos. Defiende tu precio por temporada y exclusividad.
 
-POLÍTICAS DE CANCELACIÓN Y REPROGRAMACIÓN (ESTRICTAS):
-Si el cliente elige "Reprogramar o Cancelar" o toca el botón:
-1. ¡ALTO! ES OBLIGATORIO pedirle primero su CÓDIGO DE GESTIÓN ANTERIOR (Ej: CTK-XXXX).
-2. Cuando el cliente te dé su código, el [SISTEMA INTERNO] te enviará los datos ocultos. 
+POLÍTICAS DE CANCELACIÓN Y REPROGRAMACIÓN (SOLO PARA EVENTOS YA COMPRADOS):
+¡OJO! Si el cliente apenas está cotizando HOY y te pide "mover la fecha" de su idea actual, hazlo gratis, es solo un ajuste de la cotización. 
+PERO si el cliente elige "Reprogramar o Cancelar" UN EVENTO DEL PASADO:
+1. ¡ALTO! ES OBLIGATORIO pedirle primero su CÓDIGO DE GESTIÓN ANTERIOR (Ej: CTK-XXXXX).
+2. Cuando te dé su código, el [SISTEMA INTERNO] te enviará los datos. 
 3. HAZLE 3 PREGUNTAS DE SEGURIDAD (Nombre, Fecha, Ubicación) para confirmar su identidad.
-4. VERIFICACIÓN ESTRICTA: Si la información que te responde el cliente NO COINCIDE con la que te dio el [SISTEMA INTERNO], RECHÁZALO DEFINITIVAMENTE y no le des información. Si el sistema te dice GESTIÓN INCOMPLETA, dile que no es válido.
-5. Si todo coincide, infórmale firmemente: CANCELACIÓN pierde el anticipo (perdimos eventos por apartar su fecha). REPROGRAMACIÓN cuesta 30% extra del total.
+4. VERIFICACIÓN ESTRICTA: Debes validar sus respuestas con las del sistema. SI EL CLIENTE SE EQUIVOCA EN ALGUNA RESPUESTA, O SI EL SISTEMA DICE "GESTIÓN INCOMPLETA", RECHÁZALO ABSOLUTAMENTE Y NO LE DES NINGUNA INFORMACIÓN.
+5. Si responde perfecto, infórmale firmemente: CANCELACIÓN pierde el anticipo. REPROGRAMACIÓN cuesta 30% extra del total.
 
 REGLAS DE PRECIOS Y ENTREGABLES (¡SECRETO INTERNO!):
 - NUNCA MUESTRES LOS PRECIOS INTERNOS. LA MEMORIA USB ES OBLIGATORIA (No desgloses precio).
@@ -924,7 +925,7 @@ Si notas intención de cotizar o reprogramar usa [ACTIVAR_CODIGO].
 [T: (Teléfono o "No proporcionado")]
 [U: (Ubicación)]
 [E: (Fecha y Hora)]
-[R: (Resumen exacto del evento y Tipo de Evento)]
+[R: (Resumen exacto del evento hasta ahora y Tipo de Evento)]
 
 CIERRE Y TICKET (REGLA DE LAS 3 CONFIRMACIONES):
 Confirma la propuesta 3 veces. Si acepta explícitamente, despídete y pon EXACTAMENTE al final:
@@ -941,7 +942,7 @@ Confirma la propuesta 3 veces. Si acepta explícitamente, despídete y pon EXACT
                     body: JSON.stringify({ 
                         model: "gpt-4o", 
                         messages: [
-                            { role: "system", content: "Eres humana. NO pidas nombre sin interés. Activa código al notar interés. Obligatorio pedir de qué es el evento y 6 preguntas previas al precio. Reglas de reprogramación: Pedir Código Anterior, si el [SISTEMA INTERNO] te da los datos haz 3 preguntas de seguridad y valida estrictamente. Aplica penalidades (sin %). Confirma 3 veces antes de cerrar. Usa etiquetas ocultas al final." }, 
+                            { role: "system", content: "Eres humana. NO pidas nombre sin interés. Activa código al notar interés. Obligatorio pedir de qué es el evento y 6 preguntas previas al precio. Si cambian fecha de cotización actual, es gratis. Si es Reprogramación de evento pasado: Pedir Código Anterior, validar 100% estricto con las 3 preguntas de seguridad. Si falla, rechazarlo sin información. Confirma 3 veces antes de cerrar. Usa etiquetas ocultas al final." }, 
                             { role: "user", content: finalPrompt }
                         ],
                         temperature: 0.6 
@@ -1058,21 +1059,22 @@ Confirma la propuesta 3 veces. Si acepta explícitamente, despídete y pon EXACT
 
                 // --- SISTEMA DE VERIFICACIÓN PARA REPROGRAMACIONES ---
                 let systemInjection = "";
-                const codeMatch = text.match(/(CTK-[A-Z0-9]{4})/i);
+                const codeMatch = text.match(/(CTK-[a-zA-Z0-9]+)/i);
                 
                 if (chatState === 'AI_CHAT' && codeMatch) {
                     appendBotTyping();
                     try {
-                        let res = await fetch(GOOGLE_SCRIPT_URL + "?id=" + encodeURIComponent(codeMatch[1].toUpperCase()));
+                        let fetchedId = codeMatch[1].toUpperCase();
+                        let res = await fetch(GOOGLE_SCRIPT_URL + "?id=" + encodeURIComponent(fetchedId));
                         let dbData = await res.json();
                         if (dbData.found) {
                             if (dbData.data.resumen === "GESTIÓN INCOMPLETA" || dbData.data.proyecto === "GESTIÓN INCOMPLETA") {
-                                systemInjection = `\n[SISTEMA INTERNO: El código ${codeMatch[1].toUpperCase()} es una GESTIÓN INCOMPLETA. Dile al cliente que este código no tiene un ticket válido porque la gestión anterior se abandonó, y no le des ninguna información.]`;
+                                systemInjection = `\n[SISTEMA INTERNO: El código ${fetchedId} es una GESTIÓN INCOMPLETA. Dile al cliente que este código no tiene un ticket válido porque la gestión anterior se abandonó, y no le des ninguna información.]`;
                             } else {
-                                systemInjection = `\n[SISTEMA INTERNO: Datos reales del código ${codeMatch[1].toUpperCase()}: Nombre="${dbData.data.nombre}", Fecha="${dbData.data.fechaEvento}", Ubicación="${dbData.data.ubicacion}". HAZLE 3 PREGUNTAS DE SEGURIDAD. COMPARA ESTRICTAMENTE SUS RESPUESTAS CON ESTOS DATOS. SI SE EQUIVOCA EN ALGUNO, RECHÁZALO Y NO LE DES INFORMACIÓN.]`;
+                                systemInjection = `\n[SISTEMA INTERNO: Datos reales del código ${fetchedId}: Nombre="${dbData.data.nombre}", Fecha="${dbData.data.fechaEvento}", Ubicación="${dbData.data.ubicacion}". HAZLE 3 PREGUNTAS DE SEGURIDAD. COMPARA ESTRICTAMENTE SUS RESPUESTAS CON ESTOS DATOS. SI SE EQUIVOCA EN ALGUNO, RECHÁZALO Y NO LE DES INFORMACIÓN.]`;
                             }
                         } else {
-                            systemInjection = `\n[SISTEMA INTERNO: El código ${codeMatch[1].toUpperCase()} NO EXISTE. Dile al cliente que el código es inválido.]`;
+                            systemInjection = `\n[SISTEMA INTERNO: El código ${fetchedId} NO EXISTE. Dile al cliente que el código es inválido.]`;
                         }
                     } catch(e) {
                         console.log(e);
