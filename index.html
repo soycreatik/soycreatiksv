@@ -805,7 +805,7 @@
                 let digits = Math.floor(1000 + Math.random() * 9000); sessionId = "CTK-R" + digits; 
                 document.getElementById('chatbot-session-display').textContent = "Gestión: " + sessionId; 
                 userData.intencion = "Reserva Web: " + planName;
-                let msg = `¡Excelente elección! 🎉 Has seleccionado el paquete **${planName}**. Para iniciar tu gestión, ¿me podrías decir tu nombre? ✨`;
+                let msg = `¡Excelente elección! 🎉 Has seleccionado el paquete **${planName}**. Para iniciar tu gestión de forma fluida, ¿me podrías decir tu nombre? ✨`;
                 appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'AI_CHAT'; enableInput();
                 syncToSheets();
             });
@@ -848,8 +848,9 @@
             let precio = userData.precio_final || "-";
             let anticipo = userData.anticipo || "-";
             
+            // CÓDIGO QR BLANCO Y NEGRO ESTRICTO
             let qrData = encodeURIComponent(`TICKET CREATIK\nGestión: ${sessionId}\nCliente: ${maskName(userData.nombre)}\nFecha: ${userData.fechaEvento}\nLugar: ${ubi}\nTotal: ${precio}\nAnticipo: ${anticipo}`);
-            let qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${qrData}&color=a855f7&bgcolor=0f0a19`;
+            let qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=${qrData}&color=000000&bgcolor=ffffff`;
 
             return `
             <style>
@@ -858,10 +859,10 @@
                 .ticket-divider { position: relative; height: 20px; display: flex; align-items: center; justify-content: center; } .ticket-divider hr { width: 80%; border: none; border-top: 2px dashed rgba(255,255,255,0.2); margin: 0; } .ticket-divider .circle-left, .ticket-divider .circle-right { position: absolute; width: 20px; height: 20px; background: #0f0a19; border-radius: 50%; top: 0; } .ticket-divider .circle-left { left: -10px; border-right: 1px solid rgba(168, 85, 247, 0.4); } .ticket-divider .circle-right { right: -10px; border-left: 1px solid rgba(168, 85, 247, 0.4); }
                 .ticket-body { padding: 20px; text-align: left; } .ticket-row { margin-bottom: 15px; display: flex; flex-direction: column; gap: 4px; } .ticket-row .label { font-size: 0.65rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1px; } .ticket-row .value { font-size: 0.95rem; font-weight: 700; color: #fff; line-height: 1.3; }
                 .ticket-footer { padding: 15px 20px 25px 20px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); } .barcode { font-family: monospace; font-size: 1.2rem; letter-spacing: 2px; color: #fff; opacity: 0.8; }
-                .qr-container { display: flex; justify-content: center; margin-top: 15px; } .qr-container img { width: 80px; height: 80px; border: 2px solid #a855f7; border-radius: 8px; padding: 2px; background: #0f0a19;}
+                .qr-container { display: flex; justify-content: center; margin-top: 15px; margin-bottom: 10px; } .qr-container img { width: 90px; height: 90px; border: 4px solid #ffffff; border-radius: 4px; background: #ffffff;}
             </style>
             <div class="html-ticket"><div class="ticket-header"><h3>CREATIK.</h3><p>TICKET DE GESTIÓN</p></div><div class="ticket-divider"><div class="circle-left"></div><div class="circle-right"></div><hr></div>
-            <div class="ticket-body"><div class="ticket-row"><span class="label">CÓDIGO DE GESTIÓN</span><span class="value">${sessionId}</span></div><div class="ticket-row"><span class="label">CLIENTE</span><span class="value">${maskName(userData.nombre)}</span></div><div class="ticket-row"><span class="label">FECHA ACORDADA</span><span class="value">${userData.fechaEvento}</span></div><div class="ticket-row"><span class="label">UBICACIÓN</span><span class="value">${ubi}</span></div><div class="ticket-row"><span class="label">OBJETIVO</span><span class="value">${proj}</span></div>
+            <div class="ticket-body"><div class="ticket-row"><span class="label">CÓDIGO DE GESTIÓN</span><span class="value">${sessionId}</span></div><div class="ticket-row"><span class="label">CLIENTE</span><span class="value">${maskName(userData.nombre)}</span></div><div class="ticket-row"><span class="label">FECHA ACORDADA</span><span class="value">${userData.fechaEvento}</span></div><div class="ticket-row"><span class="label">UBICACIÓN</span><span class="value">${ubi}</span></div><div class="ticket-row"><span class="label">PAQUETE</span><span class="value" style="color: #a855f7;">${proj}</span></div>
             <div class="ticket-row" style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.2);"><span class="label" style="color: #ffd700;">PRECIO TOTAL</span><span class="value" style="color: #ffd700; font-size: 1.1rem;">${precio}</span></div>
             <div class="ticket-row"><span class="label" style="color: #db2777;">ANTICIPO (50%)</span><span class="value" style="color: #db2777;">${anticipo}</span></div>
             <div class="qr-container"><img src="${qrUrl}" alt="QR Ticket"></div>
@@ -875,9 +876,9 @@
         // =========================================================================
         async function getAIResponse(promptText, isFullContext = false) {
             let historyLines = conversationHistory.split('\n').filter(line => line.trim() !== '');
-            if (historyLines.length > 20) historyLines = historyLines.slice(historyLines.length - 20); // Mayor memoria de la conversación
+            if (historyLines.length > 20) historyLines = historyLines.slice(historyLines.length - 20); 
             let trimmedHistory = historyLines.join('\n');
-            let bookedStr = window.serverData && window.serverData.bookedDates.length > 0 ? window.serverData.bookedDates.join(", ") : "Ninguna";
+            let bookedStr = window.serverData && window.serverData.bookedDates && window.serverData.bookedDates.length > 0 ? window.serverData.bookedDates.join(", ") : "Ninguna (todo disponible)";
 
             let basePrompt = `Eres "Creatik IA", asesora de ventas senior de Creatik Studio en El Salvador (2026). Tu tono es entusiasta, persuasivo, cercano y profesional. Usa emojis.
 
@@ -888,29 +889,34 @@ ESTADO ACTUAL DE DATOS (REVISA ESTO ANTES DE RESPONDER):
 - Ubicación: ${userData.departamento ? userData.departamento : "FALTA"}
 - Fecha del Evento: ${userData.fechaEvento ? userData.fechaEvento : "FALTA"}
 
-REGLA DE ORO 1: NUNCA vuelvas a pedir un dato que ya no diga "FALTA". Si el nombre dice "No proporcionado", ya no lo pidas. ¡SOLO pregunta lo que diga "FALTA"!
-REGLA DE ORO 2: El Teléfono de WhatsApp es ESTRICTAMENTE OBLIGATORIO. Si no te lo dan al inicio, pídelo amablemente antes de dar el precio.
-REGLA DE ORO 3: HAZ UNA SOLA PREGUNTA A LA VEZ. No agobies al cliente. NUNCA des precio si falta Nombre, Teléfono, Ubicación, Fecha o detalles (horas/personas).
-REGLA DE ORO 4 (FECHAS): Compara la fecha solicitada con las "Fechas Ocupadas". Recházala si ya está tomada, a menos que sea en San Salvador (Centro/Oeste) y haya 1 hora de diferencia.
+REGLA DE ORO 1: Lee el ESTADO ACTUAL. NUNCA vuelvas a pedir un dato que ya no diga "FALTA". Si el cliente se niega a dar un dato, acéptalo, guárdalo como "No proporcionado" en la etiqueta y JAMÁS lo vuelvas a pedir.
+REGLA DE ORO 2: El Teléfono de WhatsApp es ESTRICTAMENTE OBLIGATORIO. Si no te lo dan al inicio, reténlo en tu memoria y pídelo amablemente ANTES de dar el precio final.
+REGLA DE ORO 3: HAZ UNA SOLA PREGUNTA A LA VEZ. No agobies al cliente. NUNCA des precio si falta Nombre, Teléfono, Ubicación, Fecha o detalles importantes del evento.
+REGLA DE ORO 4 (FECHAS APARTADAS): REVISA LAS FECHAS OCUPADAS ARRIBA. Si el cliente pide una de esas fechas EXACTAS, RECHÁZALA educadamente porque ya está reservada (a menos que sea San Salvador Centro/Oeste y haya 1 hora de diferencia).
+REGLA DE ORO 5 (4 PREGUNTAS DEL EVENTO): ANTES DE DAR PRECIO, es OBLIGATORIO que hagas por lo menos 4 PREGUNTAS CLAVE sobre el evento durante la charla (Ej: 1. ¿Cuántas horas de cobertura?, 2. ¿Cuántas personas asistirán?, 3. ¿Es en interior o exterior?, 4. ¿Qué estilo de fotos buscan?). ¡Recuerda, UNA pregunta a la vez!
 
-REGLAS DE PRECIOS Y PROPUESTA:
-- De Lunes a Viernes máximo 2 fotógrafos. Fines de semana hasta 4 si es masivo. Mínimo 2 siempre (menciónalo en la propuesta).
+REGLAS DE PRECIOS, DESCUENTOS Y PROPUESTA:
+- El cliente puede regatear las veces que quiera, pero TÚ MANTENTE FIRME AL MARGEN CON TUS REGLAS: 1ra rebaja baja $10-$15 sin quitar nada. 2da rebaja baja $5 pero QUITA entregables o tiempo. NUNCA regales horas extra.
 - Transporte fuera de San Salvador cuesta más de $40 (Súmalo internamente, no digas viáticos).
-- Entregables: Solo digital, 1 USB (+$9 interno) y fotos impresas (+$0.90 c/u). No desgloses precios. Menciona el 50% de anticipo.
+- Entregables: Solo digital, 1 USB (+$9 interno) y fotos impresas (+$0.90 c/u interno). No desgloses el costo de los entregables.
+- NOMBRE CREATIVO OBLIGATORIO: Siempre inventa un nombre creativo y atractivo para el paquete al momento de dar la propuesta (Ej: "Paquete Atardecer Dorado").
+- Menciona SIEMPRE el PRECIO TOTAL y el ANTICIPO (50%) en la propuesta.
 
 ETIQUETAS INVISIBLES (OBLIGATORIO AL FINAL DE TU RESPUESTA):
-Si descubres un nuevo dato en el mensaje actual del cliente, actualiza su etiqueta. Si se niega a dar el nombre o teléfono, pon "No proporcionado". NUNCA escribas la etiqueta de un dato si aún no lo conoces y dice FALTA.
+Actualiza las etiquetas con los datos que ya te haya dado. NUNCA escribas la etiqueta de un dato si aún no lo conoces y dice FALTA.
 [N: (Nombre o "No proporcionado")]
-[T: (Teléfono)]
+[T: (Teléfono o "No proporcionado")]
 [U: (Ubicación)]
 [E: (Fecha)]
 [R: (Resumen exacto del evento hasta ahora)]
 
-CIERRE: Si ya diste el precio y el cliente acepta (ej. "sí", "acepto", "me parece"), despídete y pon EXACTAMENTE al final:
+CIERRE Y TICKET (REGLA DE LAS 3 CONFIRMACIONES):
+Antes de cerrar el trato y generar el ticket, ES OBLIGATORIO intentar confirmar la propuesta con el cliente al menos 3 veces durante la negociación (ej. "¿Te parece bien esta propuesta?", "¿Cerramos trato?").
+ESTRICTAMENTE CUANDO EL CLIENTE ACEPTE EXPLÍCITAMENTE la propuesta final, despídete y pon EXACTAMENTE al final (Asegúrate de poner los NÚMEROS REALES en Precio y Anticipo):
 [GENERAR_TICKET]
-[PROYECTO: (Resumen de 3 palabras)]
-[PRECIO: ($ Total)]
-[ANTICIPO: ($ Anticipo)]`;
+[PROYECTO: (El Nombre Creativo del Paquete)]
+[PRECIO: (Monto total en número, ej: $150)]
+[ANTICIPO: (Monto del anticipo en número, ej: $75)]`;
 
             let finalPrompt = isFullContext ? `${basePrompt}\nHistorial:\n${trimmedHistory}\nUsuario: ${promptText}\nCreatik IA:` : `${basePrompt}\nInstrucción: ${promptText}\nCreatik IA:`;
 
@@ -920,7 +926,7 @@ CIERRE: Si ya diste el precio y el cliente acepta (ej. "sí", "acepto", "me pare
                     body: JSON.stringify({ 
                         model: "gpt-4o", 
                         messages: [
-                            { role: "system", content: "Eres humana, conversacional. El cliente responde libremente. Haz UNA sola pregunta a la vez basándote en lo que diga FALTA en el ESTADO ACTUAL. NUNCA des precio si falta Nombre, Teléfono, Ubicación o Fecha. Usa etiquetas [N:], [T:], [U:], [E:], [R:] SIEMPRE al final de tu respuesta. Rechaza fechas ocupadas." }, 
+                            { role: "system", content: "Eres humana, conversacional. Haz UNA sola pregunta a la vez. No repitas preguntas respondidas. Debes hacer 4 preguntas del evento antes de dar precio. Confirma 3 veces antes de cerrar. Usa etiquetas [N:], [T:], [U:], [E:], [R:] al final en tiempo real. Genera nombre creativo para el paquete. Da precios numéricos exactos en la etiqueta del ticket." }, 
                             { role: "user", content: finalPrompt }
                         ],
                         temperature: 0.6 
@@ -987,7 +993,7 @@ CIERRE: Si ya diste el precio y el cliente acepta (ej. "sí", "acepto", "me pare
             
             conversationHistory += `Usuario: ${text}\n`;
             
-            // --- CÓDIGO DE GESTIÓN (ACTIVA CON "SI" o INTENCIÓN) ---
+            // --- CÓDIGO DE GESTIÓN (ACTIVA CON "SI" o INTENCIÓN CLARA) ---
             let isIntent = /(quiero|me interesa|deseo|busco|necesito|reservar|contratar|agendar|tomarme|cotizar|paquete|cobertura|sesi[oó]n|precio|cuanto cuesta|\bs[ií]\b|te quiero|lo quiero)/i.test(textLower);
             let isButton = ["📸 Cotizar un servicio", "✅ Contratar a Creatik", "✨ Conocer más de Creatik"].includes(text);
 
@@ -1062,7 +1068,7 @@ CIERRE: Si ya diste el precio y el cliente acepta (ej. "sí", "acepto", "me pare
                             removeBotTyping(); 
                             const ticketMsgHtml = getHtmlTicket(); 
                             appendBotMessage(ticketMsgHtml); 
-                            syncToSheets(); // Guarda Ticket
+                            syncToSheets(); // Guarda Ticket final
                             setTimeout(showFinalOptions, 2500); 
                         }, 1200); 
                         return;
