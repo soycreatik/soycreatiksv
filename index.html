@@ -472,7 +472,7 @@
                 <h1>Contamos tu <span>historia</span> con el alma.</h1>
                 <h2>Capturamos momentos reales para hacerlos eternos.</h2>
             </div>
-            <p class="menu-desc">En Creatik, capturamos la esencia de cada momento porque sabemos que tu realidad es lo más importante. No solo entregamos una imagen, entregamos un recuerdo con alma.</p>
+            <p class="menu-desc">En Creatik, capturamos la esencia de cada momento porque sabemos que tu reality es lo más importante. No solo entregamos una imagen, entregamos un recuerdo con alma.</p>
             <div class="menu-interactive-area">
                 <div class="float-tag ft-smm">
                     <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></svg></div>
@@ -705,12 +705,12 @@
 
         function getSentiment() {
             let hist = conversationHistory.toLowerCase();
-            let badWords = ["malo", "pesimo", "pésimo", "no sirve", "basura", "lento", "estupido", "idiota", "odio", "mentira", "fraude", "apurate", "rapido", "asqueroso", "no quiero", "para que", "privado"];
-            let goodWords = ["gracias", "excelente", "me encanta", "perfecto", "amable", "por favor", "genial", "super", "lindo", "buen servicio", "increible", "mucho gusto", "sí me parece", "acepto"];
+            let badWords = ["malo", "pesimo", "pésimo", "no sirve", "basura", "lento", "estupido", "idiota", "odio", "mentira", "fraude", "apurate", "rapido", "asqueroso", "no quiero", "para que", "privado", "estafa", "caro", "robo", "mal servicio", "decepcionante", "peor", "horrible", "falta de respeto", "grosero"];
+            let goodWords = ["gracias", "excelente", "me encanta", "perfecto", "amable", "por favor", "genial", "super", "lindo", "buen servicio", "increible", "mucho gusto", "sí me parece", "acepto", "maravilloso", "increíble", "fascinante", "me gusta", "buenísimo", "ok", "vale", "está bien", "de acuerdo", "encantado", "bella", "hermoso"];
             let badScore = badWords.filter(w => hist.includes(w)).length;
             let goodScore = goodWords.filter(w => hist.includes(w)).length;
             if (badScore > goodScore) return "Mal Trato 🔴";
-            if (goodScore > badScore) return "Buen Trato 🟢";
+            if (goodScore > badScore && goodScore > 1) return "Buen Trato 🟢";
             return "Neutral ⚪";
         }
 
@@ -732,10 +732,10 @@
                     telefono: userData.telefono || "En proceso...", 
                     ubicacion: userData.departamento || "En proceso...", 
                     fechaEvento: userData.fechaEvento || "En proceso...",
-                    proyecto: userData.proyecto_resumen || userData.intencion || "Charla en curso...", 
+                    proyecto: userData.proyecto_resumen || "GESTIÓN INCOMPLETA", 
                     precioTotal: userData.precio_final || "Calculando...",
                     anticipo: userData.anticipo || "Calculando...",
-                    resumen: userData.resumen || "Charla en curso...",
+                    resumen: userData.resumen || "GESTIÓN INCOMPLETA",
                     historial: conversationHistory + `\n[Evaluación IA: ${getSentiment()}]`,
                     evaluacionTrato: getSentiment()
                 };
@@ -781,7 +781,7 @@
             if(chatbotMessages.children.length === 0) {
                 let saludoInicial = "¡Hola! Soy Creatik IA. 🤖✨ Para brindarte una mejor atención, ¿qué te gustaría hacer hoy?";
                 appendBotMessage(saludoInicial); conversationHistory += "Creatik IA: " + saludoInicial + "\n";
-                appendBotOptions(["📸 Cotizar un servicio", "✅ Contratar a Creatik", "✨ Conocer más de Creatik"]);
+                appendBotOptions(["📸 Cotizar un servicio", "✅ Contratar a Creatik", "✨ Conocer más de Creatik", "📅 Reprogramar o Cancelar"]);
             }
             setTimeout(() => chatbotInput.focus(), 300);
         });
@@ -842,7 +842,7 @@
             userData = { nombre: '', telefono: '', departamento: '', intencion: '', proyecto_resumen: '', resumen: '', precio_final: '', anticipo: '', fechaEvento: '' };
             lastUserText = ""; repeatCount = 0; document.getElementById('chatbot-session-display').textContent = "Gestión: Pendiente..."; sessionId = "Pendiente...";
             let msg = "¡Hola de nuevo! Soy Creatik IA. 🤖✨ El chat se ha reiniciado. ¿En qué te puedo ayudar?";
-            appendBotMessage(msg); appendBotOptions(["📸 Cotizar un servicio", "✅ Contratar a Creatik", "✨ Conocer más de Creatik"]); enableInput();
+            appendBotMessage(msg); appendBotOptions(["📸 Cotizar un servicio", "✅ Contratar a Creatik", "✨ Conocer más de Creatik", "📅 Reprogramar o Cancelar"]); enableInput();
         }
 
         function maskName(name) {
@@ -884,7 +884,7 @@
         // =========================================================================
         async function getAIResponse(promptText, isFullContext = false) {
             let historyLines = conversationHistory.split('\n').filter(line => line.trim() !== '');
-            if (historyLines.length > 20) historyLines = historyLines.slice(historyLines.length - 20); 
+            if (historyLines.length > 24) historyLines = historyLines.slice(historyLines.length - 24); 
             let trimmedHistory = historyLines.join('\n');
             let bookedStr = window.serverData && window.serverData.bookedDates && window.serverData.bookedDates.length > 0 ? window.serverData.bookedDates.join(", ") : "Ninguna (todo disponible)";
 
@@ -892,39 +892,40 @@
 
 ESTADO ACTUAL DE DATOS (REVISA ESTO ANTES DE RESPONDER):
 - Fechas Ocupadas (¡NO DISPONIBLES!): ${bookedStr}
+- Tipo de Evento: ${userData.proyecto_resumen ? userData.proyecto_resumen : "FALTA"}
 - Nombre: ${userData.nombre ? userData.nombre : "FALTA"}
 - Teléfono: ${userData.telefono ? userData.telefono : "FALTA"}
 - Ubicación: ${userData.departamento ? userData.departamento : "FALTA"}
-- Fecha del Evento: ${userData.fechaEvento ? userData.fechaEvento : "FALTA"}
+- Fecha y Hora exacta: ${userData.fechaEvento ? userData.fechaEvento : "FALTA"}
 
-REGLA DE ORO 1: Lee el ESTADO ACTUAL. Si el Nombre o Ubicación dicen "FALTA", ES TU OBLIGACIÓN ABSOLUTA PREGUNTARLOS INMEDIATAMENTE de forma amable. NUNCA vuelvas a pedir un dato que ya no diga "FALTA". Si el cliente dice "no quiero dar mi nombre", acéptalo, guárdalo como "No proporcionado" en la etiqueta y JAMÁS lo vuelvas a pedir.
-REGLA DE ORO 2: El Teléfono de WhatsApp es ESTRICTAMENTE OBLIGATORIO. Si no te lo dan al inicio, reténlo en tu memoria y pídelo amablemente ANTES de dar el precio final.
-REGLA DE ORO 3 (3 PREGUNTAS MÍNIMO): HAZ UNA SOLA PREGUNTA A LA VEZ. No agobies al cliente. NUNCA des precio si falta Nombre, Teléfono, Ubicación, Fecha o no has hecho por lo menos 3 preguntas sobre los detalles del evento (ej. ¿Cuántas horas?, ¿Cuántos invitados?, ¿Interior o exterior?).
-REGLA DE ORO 4 (FECHAS APARTADAS): REVISA LAS FECHAS OCUPADAS ARRIBA. Si el cliente pide una de esas fechas EXACTAS, RECHÁZALA educadamente porque ya está reservada (a menos que sea San Salvador Centro/Oeste y haya 1 hora de diferencia).
-REGLA DE ORO 5 (OBJECIÓN POR PRECIO A TERCEROS): Si el cliente te dice el número de gestión de un amigo o conocido para reclamar que a él le cobraste menos, NUNCA iguales el precio ni le des la razón. Explica educadamente que cada evento es único, la logística y temporada varían, y tu precio actual garantiza la máxima calidad. Defiende tu precio con clase.
+REGLA DE ORO 1 (INTERÉS Y DATOS): Si el cliente solo dice "Hola" o hace preguntas generales, NO le pidas el nombre. SOLO SI muestra interés en cotizar, contratar, reprogramar, cancelar o te da detalles del evento, ES OBLIGATORIO pedir Nombre y WhatsApp si dicen FALTA.
+REGLA DE ORO 2 (QUÉ EVENTO ES): ES OBLIGATORIO preguntar de qué trata el evento (Boda, cumpleaños, etc) si dice FALTA.
+REGLA DE ORO 3 (LAS 6 PREGUNTAS MÍNIMAS): HAZ UNA SOLA PREGUNTA A LA VEZ. No agobies. NUNCA des precios sin antes preguntar: 1. Tipo de Evento, 2. Nombre/Teléfono, 3. Ubicación, 4. Fecha/Hora, y MÍNIMO 3 DETALLES PROFUNDOS MÁS (horas, invitados, estilo).
+REGLA DE ORO 4 (FECHAS APARTADAS): Rechaza fechas ocupadas de la lista de arriba.
+REGLA DE ORO 5 (OBJECIÓN POR PRECIO A TERCEROS): No iguales precios de tickets de amigos.
 
-REGLAS DE PRECIOS, REGATEO Y PROPUESTA:
-- LOS PRECIOS NO DEBEN SER EXAGERADOS. Deben ser justos y accesibles.
-- LÍMITE DE REGATEO: Máximo puedes hacer 3 ofertas. Si a la 3ra no acepta, no bajes más el precio. 1ra rebaja baja solo $10-$15. 2da rebaja baja $5 pero QUITA cosas. NO BAJES TANTO DINERO.
-- SI EL CLIENTE YA ESTÁ CONVENCIDO: ¡No bajes el precio! Trata de cerrar el trato con el precio actual.
-- POLÍTICA DE CANCELACIÓN/REAGENDAMIENTO: NO se puede reagendar gratuitamente. Si preguntan, diles que cambiar la fecha conlleva un costo extra (NUNCA menciones que es el 15%, solo di que hay una penalidad/costo adicional).
-- De Lunes a Viernes máximo 2 fotógrafos. Fines de semana hasta 4 si es masivo. Mínimo 2 siempre (menciónalo en la propuesta).
-- Transporte fuera de San Salvador cuesta más de $40 (Súmalo internamente, no digas viáticos).
-- NUNCA regales horas extra. Entregables: Solo digital, 1 USB (+$9 interno) y fotos impresas (+$0.90 c/u interno). No desgloses precios. Menciona el 50% de anticipo.
-- NOMBRE CREATIVO OBLIGATORIO: Bautiza tu paquete con un nombre atractivo en tu propuesta final (Ej: "Paquete Atardecer Dorado").
+POLÍTICAS DE CANCELACIÓN Y REPROGRAMACIÓN (ESTRICTAS):
+Si el cliente elige "Reprogramar o Cancelar" o toca el botón:
+1. ¡ALTO! ES OBLIGATORIO pedirle primero su CÓDIGO DE GESTIÓN ANTERIOR.
+2. Luego, hazle 3 preguntas de seguridad para confirmar su identidad (Ej: ¿Cuál es tu nombre completo? ¿Qué fecha tenías reservada? ¿De qué era el evento?).
+3. Si confirma, infórmale firmemente: CANCELACIÓN pierde el anticipo (perdimos eventos por apartar su fecha). REPROGRAMACIÓN cuesta 30% extra del total del paquete.
+
+REGLAS DE PRECIOS Y ENTREGABLES (¡SECRETO INTERNO!):
+- NUNCA MUESTRES LOS PRECIOS INTERNOS. LA MEMORIA USB ES OBLIGATORIA.
+- PRECIOS NO EXAGERADOS. Permite regatear máx 3 veces.
+- NOMBRE CREATIVO OBLIGATORIO.
 
 ETIQUETAS INVISIBLES (OBLIGATORIO AL FINAL DE TU RESPUESTA):
-Actualiza las etiquetas con los datos que ya te haya dado. Si notas intención de cotizar o reservar, incluye la etiqueta [ACTIVAR_CODIGO].
+Si notas intención de cotizar, reprogramar o contratar, usa [ACTIVAR_CODIGO] para generar un ticket.
 [ACTIVAR_CODIGO]
 [N: (Nombre o "No proporcionado")]
 [T: (Teléfono o "No proporcionado")]
 [U: (Ubicación)]
-[E: (Fecha)]
-[R: (Resumen exacto del evento hasta ahora)]
+[E: (Fecha y Hora)]
+[R: (Resumen exacto del evento hasta ahora y Tipo de Evento)]
 
 CIERRE Y TICKET (REGLA DE LAS 3 CONFIRMACIONES):
-Antes de cerrar el trato y generar el ticket, ES OBLIGATORIO intentar confirmar la propuesta con el cliente al menos 3 veces durante la negociación (ej. "¿Te parece bien esta propuesta?", "¿Cerramos trato?").
-ESTRICTAMENTE CUANDO EL CLIENTE ACEPTE EXPLÍCITAMENTE la propuesta final, despídete y pon EXACTAMENTE al final (Asegúrate de poner los NÚMEROS REALES en Precio y Anticipo):
+Confirma la propuesta 3 veces. Si acepta explícitamente, despídete y pon EXACTAMENTE al final:
 [GENERAR_TICKET]
 [PROYECTO: (El Nombre Creativo del Paquete)]
 [PRECIO: (Monto total en número, ej: $150)]
@@ -938,7 +939,7 @@ ESTRICTAMENTE CUANDO EL CLIENTE ACEPTE EXPLÍCITAMENTE la propuesta final, desp�
                     body: JSON.stringify({ 
                         model: "gpt-4o", 
                         messages: [
-                            { role: "system", content: "Eres humana, conversacional. PRIORIDAD ABSOLUTA: Si el Nombre o Ubicación dicen 'FALTA', pregúntalos INMEDIATAMENTE de forma amable. Haz UNA sola pregunta a la vez. No repitas preguntas respondidas. Haz al menos 3 preguntas sobre el evento antes de dar precios. Permite regateo máximo 3 veces sin bajar mucho. Penalización por reagendar (no digas %). Si está convencido, cierra. Confirma 3 veces antes de ticket. Usa etiquetas [ACTIVAR_CODIGO], [N:], [T:], [U:], [E:], [R:] al final. Genera nombre creativo. Da precios numéricos." }, 
+                            { role: "system", content: "Eres humana. NO pidas nombre sin interés. Activa código al notar interés. Obligatorio pedir de qué es el evento y 6 preguntas previas al precio. Reglas de reprogramación: Pedir Código Anterior y 3 preguntas de seguridad, aplicar penalidades (sin %). Confirma 3 veces antes de cerrar. Usa etiquetas ocultas al final." }, 
                             { role: "user", content: finalPrompt }
                         ],
                         temperature: 0.6 
@@ -1005,15 +1006,16 @@ ESTRICTAMENTE CUANDO EL CLIENTE ACEPTE EXPLÍCITAMENTE la propuesta final, desp�
             
             conversationHistory += `Usuario: ${text}\n`;
             
-            // --- CÓDIGO DE GESTIÓN (ACTIVA CON INTENCIÓN CLARA O POR LA IA) ---
-            let isIntent = /(quiero|qyuero|me interesa|deseo|busco|necesito|reservar|contratar|agendar|tomarme|cotizar|paquete|cobertura|sesi[oó]n|precio|cuanto cuesta|\bs[ií]\b|te quiero|lo quiero|asesor[ií]a|info|informaci[oó]n|evento|boda|cumplea[ñn]os)/i.test(textLower);
-            let isButton = ["📸 Cotizar un servicio", "✅ Contratar a Creatik", "✨ Conocer más de Creatik"].includes(text);
+            // --- CÓDIGO DE GESTIÓN (ACTIVA CON INTENCIÓN CLARA O BOTONES) ---
+            let isIntent = /(quiero|qyuero|me interesa|deseo|busco|necesito|reservar|contratar|agendar|tomarme|cotizar|paquete|cobertura|sesi[oó]n|precio|cuanto cuesta|\bs[ií]\b|te quiero|lo quiero|asesor[ií]a|info|informaci[oó]n|evento|boda|cumplea[ñn]os|reprogramar|cancelar)/i.test(textLower);
+            let isButton = ["📸 Cotizar un servicio", "✅ Contratar a Creatik", "✨ Conocer más de Creatik", "📅 Reprogramar o Cancelar"].includes(text);
 
             if (sessionId === "Pendiente..." && (isIntent || isButton)) {
                 let prefix = "CTK-L";
                 if (text.includes("Cotizar")) prefix = "CTK-C";
                 else if (text.includes("Contratar")) prefix = "CTK-S";
                 else if (text.includes("Conocer más")) prefix = "CTK-I";
+                else if (text.includes("Reprogramar")) prefix = "CTK-M";
                 let digits = Math.floor(1000 + Math.random() * 9000);
                 sessionId = prefix + digits; 
                 document.getElementById('chatbot-session-display').textContent = "Gestión: " + sessionId;
