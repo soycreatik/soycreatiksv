@@ -83,7 +83,7 @@
         #chatbot-fab {
             position: fixed; bottom: 40px; right: 4vw; width: 65px; height: 65px;
             background: linear-gradient(135deg, #a855f7, #db2777); border-radius: 50%;
-            display: flex; justify-content: center; align-items: center; z-index: 100001; /* POR ENCIMA DE TODO */
+            display: flex; justify-content: center; align-items: center; z-index: 100001; 
             box-shadow: 0 10px 25px rgba(219, 39, 119, 0.4); cursor: pointer;
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s, visibility 0.4s;
             animation: pulseFab 2.5s infinite;
@@ -95,7 +95,7 @@
             position: fixed; bottom: 120px; right: 4vw; width: 450px; max-width: 90vw; height: 600px; max-height: 80vh;
             background: rgba(15, 10, 25, 0.95); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 25px;
             box-shadow: 0 25px 60px rgba(0,0,0,0.9), 0 0 30px rgba(168, 85, 247, 0.2);
-            display: flex; flex-direction: column; z-index: 100001; /* POR ENCIMA DE TODO */
+            display: flex; flex-direction: column; z-index: 100001; 
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             opacity: 0; visibility: hidden; transform: translateY(30px) scale(0.9);
             transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0.4s;
@@ -715,7 +715,7 @@
         function getSentiment() {
             let hist = conversationHistory.toLowerCase();
             let badWords = ["malo", "pesimo", "pésimo", "no sirve", "basura", "lento", "estupido", "idiota", "odio", "mentira", "fraude", "apurate", "rapido", "asqueroso", "no quiero", "para que", "privado", "estafa", "caro", "robo", "mal servicio", "decepcionante", "peor", "horrible", "falta de respeto", "grosero", "abusivo", "incompetente"];
-            let goodWords = ["gracias", "excelente", "me encanta", "perfecto", "amable", "por favor", "genial", "super", "lindo", "buen servicio", "increible", "mucho gusto", "sí me parece", "acepto", "maravilloso", "increíble", "fascinante", "me gusta", "buenísimo", "ok", "vale", "está bien", "de acuerdo", "encantado", "bella", "hermoso", "muy bien", "trato hecho"];
+            let goodWords = ["gracias", "excelente", "me encanta", "perfecto", "amable", "por favor", "genial", "super", "lindo", "buen servicio", "increible", "mucho gusto", "sí me parece", "acepto", "maravilloso", "increíble", "fascinante", "me gusta", "buenísimo", "ok", "vale", "está bien", "de acuerdo", "encantado", "bella", "hermoso", "muy bien", "trato hecho", "interesa"];
             let badScore = badWords.filter(w => hist.includes(w)).length;
             let goodScore = goodWords.filter(w => hist.includes(w)).length;
             if (badScore > goodScore) return "Mal Trato 🔴";
@@ -731,7 +731,7 @@
             if (!finalPayload) {
                 if (!sessionId || sessionId === "Pendiente...") return;
                 
-                let fechaActual = new Date().toLocaleString("es-SV", { timeZone: "America/El_Salvador" });
+                let fechaActual = new Date().toLocaleString("en-US", { timeZone: "America/El_Salvador" });
                 
                 finalPayload = { 
                     action: "save", 
@@ -792,9 +792,6 @@
         
         // Variables para aislamiento de Admin
         let adminConversationHistory = "";
-        let savedClientHistory = "";
-        let savedClientHTML = "";
-        let savedChatState = 'INIT';
         let adminFullLog = "";
 
         chatbotFab.addEventListener('click', () => {
@@ -813,8 +810,8 @@
         // AUDITORÍA DE ADMINISTRADORES (Se guarda en una sola fila por sesión)
         function logAdminActivity(adminName, actionDetail) {
             if (!GOOGLE_SCRIPT_URL.startsWith('http')) return;
-            adminFullLog += `[${new Date().toLocaleTimeString('es-SV')}] ${actionDetail}\n`;
-            let fechaActual = new Date().toLocaleString("es-SV", { timeZone: "America/El_Salvador" });
+            adminFullLog += `[${new Date().toLocaleTimeString('en-US')}] ${actionDetail}\n`;
+            let fechaActual = new Date().toLocaleString("en-US", { timeZone: "America/El_Salvador" });
 
             let payload = {
                 action: "save",
@@ -836,13 +833,11 @@
 
         chatbotVerifyBtn.addEventListener('click', () => { 
             resetInactivityTimer(); 
-            savedChatState = chatState; 
             chatState = 'ADMIN_LOGIN'; 
             appendBotMessage("🔒 **Acceso de Administración**\nPor favor, ingresa tu clave única:"); enableInput("Escribe tu clave..."); 
             clearTimeout(window.adminTimeout); 
             window.adminTimeout = setTimeout(() => { 
                 if(chatState === 'ADMIN_LOGIN') {
-                    chatState = savedChatState; 
                     chatbotMessages.lastChild.remove(); 
                     enableInput();
                 }
@@ -854,7 +849,7 @@
         adminExitBtn.addEventListener('click', () => {
             logAdminActivity(window.currentAdminKey ? adminUsers[window.currentAdminKey].name : "Desconocido", "Cerró sesión del panel de administrador manualmente mediante el botón.");
             
-            // Restaura el chat del cliente (Reinicia de cero)
+            // Restaura y reinicia el chat del cliente
             chatState = 'INIT'; 
             document.querySelector('.chatbot-header').style.background = "rgba(0,0,0,0.5)";
             adminExitBtn.style.display = 'none';
@@ -958,55 +953,64 @@
 
             if (isAdminMode) {
                 let adminSys = `Eres el asistente privado de Creatik. Hablas EXCLUSIVAMENTE con el Administrador: ${adminName}.
-REGLA 1: Eres asistente, NO hablas como si fuera un cliente.
-REGLA 2: PROHIBIDO generar códigos a nombre de otro administrador. Si te lo piden, niégate educadamente.
-REGLA 3 (CÓDIGOS): Haz las 5 preguntas (tipo evento, %, a quién, por qué, y dile la regla del 25% menos de ganancia para él). ESTRICTAMENTE UNA PREGUNTA A LA VEZ. NUNCA HAGAS 2 PREGUNTAS JUNTAS.
-REGLA 4: El admin tiene ${window.cuponesAdminMes} de 5 cupones mensuales. Si ya tiene 5, recházalo.
-REGLA 5: Al final genera el código [Letra][10 alfanuméricos]CREATIK y pon [LOG_PROMO: codigo | descuento].
-REGLA 6: Responde cualquier otra duda administrativa libremente.`;
+REGLA 1 (IDENTIDAD Y CONVERSACIÓN LIBRE): Eres asistente, NO hablas como si fuera un cliente. Tienes PROHIBIDO generar códigos promocionales a nombre de otro administrador. 
+REGLA 2 (CREACIÓN DE CÓDIGOS Y 5 PASOS): Si ${adminName} pide crear un código de descuento, HAZLE ESTAS PREGUNTAS (UNA SOLA PREGUNTA A LA VEZ, ESTRICTAMENTE PROHIBIDO HACER 2 JUNTAS):
+   1. ¿Para qué tipo de evento es?
+   2. ¿De cuánto será el porcentaje de descuento?
+   3. ¿Es para alguien en específico o lo puede canjear cualquiera?
+   4. ¿Por qué motivo se está creando este cupón?
+   5. ADVERTENCIA (Dila al final antes de generar el código): "Ten en cuenta que del 100% del descuento otorgado, se te descontará el 25% de tus ganancias por usar este cupón. ¡Pero velo como una gran oportunidad para ganar clientes, gracias a ti lo lograremos!"
+REGLA 3 (LÍMITE DE CUPONES): El admin tiene ${window.cuponesAdminMes} de 5 cupones creados este mes. Si te pide crear uno y ya tiene 5, DÍSELO Y RECHÁZALO firmemente.
+REGLA 4: Si tiene menos de 5 y ya respondió todo, GENERA EL CÓDIGO y MUÉSTRALO VISIBLEMENTE EN EL CHAT en negritas (Formato: [Primera letra de su nombre en Mayúscula] + [10 letras y números complejos al azar] + CREATIK. Ej: ${adminName.charAt(0).toUpperCase()}X7K9P2M4W1CREATIK).
+REGLA 5: ADEMÁS de mostrarlo, es OBLIGATORIO que pongas al final de tu mensaje EXACTAMENTE esta etiqueta oculta: [LOG_PROMO: el_codigo_generado | porcentaje_de_descuento]`;
                 
                 messagesArray = [
                     { role: "system", content: adminSys },
                     { role: "user", content: (isFullContext ? `Historial de Admin:\n${trimmedHistory}\nAdmin: ${promptText}` : `Admin: ${promptText}`) }
                 ];
             } else {
-                let basePrompt = `Eres "Creatik IA", asesora de ventas de Creatik Studio El Salvador.
+                let basePrompt = `Eres "Creatik IA", asesora de ventas senior de Creatik Studio en El Salvador (2026). Tu tono es entusiasta, persuasivo, cercano y profesional. Usa emojis.
 
-ESTADO ACTUAL:
-- Fechas Ocupadas (INTERNO, NO MENCIONAR): ${bookedStr}
+ESTADO ACTUAL DE DATOS (REVISA ESTO ANTES DE RESPONDER):
+- Fechas Ocupadas (¡NO DISPONIBLES!): ${bookedStr}
 - Tipo de Evento: ${userData.proyecto_resumen ? userData.proyecto_resumen : "FALTA"}
 - Nombre: ${userData.nombre ? userData.nombre : "FALTA"}
 - Teléfono: ${userData.telefono ? userData.telefono : "FALTA"}
 - Ubicación: ${userData.departamento ? userData.departamento : "FALTA"}
 - Fecha y Hora exacta: ${userData.fechaEvento ? userData.fechaEvento : "FALTA"}
 
-REGLAS DE CONVERSACIÓN ESTRICTAS:
-1. UNA PREGUNTA A LA VEZ: Tienes ESTRICTAMENTE PROHIBIDO hacer 2 o más preguntas en un solo mensaje. 
-2. NUNCA TE QUEDES CALLADA TRAS VALIDAR ALGO. Siempre avanza a la siguiente pregunta o da la propuesta.
-3. NO PIDAS NOMBRE SIN INTERÉS: Si solo saludan, responde normal. Solo pide Nombre/Teléfono si ves intención de cotizar. Si te responden "NO" al pedir nombre, acéptalo (No hay problema), pon la etiqueta [N: No proporcionado] y sigue preguntando sobre el evento, NO TE REINICIES NI CAMBIES EL TEMA.
-4. OBLIGATORIO: Debes saber Tipo de Evento, Nombre, Teléfono, Lugar, Fecha y 3 detalles más ANTES de dar un precio. 
+REGLAS DE ATENCIÓN Y SERVICIOS (¡MUY IMPORTANTE!):
+- NOSOTROS SOLO OFRECEMOS FOTOGRAFÍA Y VIDEO. NO ofrecemos catering, ni DJ, ni decoración, NI NADA MÁS. ¡NO INVENTES SERVICIOS!
+- Si el cliente solo dice "Hola" o hace preguntas generales, NO le pidas el nombre. SOLO SI muestra interés en cotizar, contratar, reprogramar o da detalles, PIDE el Nombre y WhatsApp.
+- BLOQUEO DE DATOS: PROHIBIDO dar precios sin antes tener el Nombre, Teléfono, Tipo de Evento y Ubicación. 
+- ¡OJO! Si el cliente te responde "NO" a dar su nombre o algún dato, NO CAMBIES DE TEMA NI REINICIES. Simplemente dile "No hay problema", usa la etiqueta [N: No proporcionado] y SIGUE preguntando sobre el evento normal.
+- HAZ UNA SOLA PREGUNTA A LA VEZ. No agobies. NUNCA des precios sin preguntar: 1. Tipo Evento, 2. Nombre/Teléfono, 3. Ubicación, 4. Fecha/Hora, y MÍNIMO 3 DETALLES PROFUNDOS MÁS (horas, invitados, estilo).
+- NUNCA te quedes callada (Ej: No digas "Dame un momento"). Siempre lanza tu siguiente pregunta.
 
-SERVICIOS Y PRECIOS (LEY ABSOLUTA):
-- SOLO VENDEMOS FOTO Y VIDEO. PROHIBIDO INVENTAR O OFRECER CATERING, DJ O DECORACIÓN.
-- NUNCA desgloses precios internos. NUNCA menciones "+$9" ni cuánto cuesta la USB. La USB va siempre incluida en el precio final cerrado.
-- PRECIO REALISTA: Inventa un precio lógico (Ej: 150, 250, 350). ¡PROHIBIDO ESCRIBIR "$XXX"! Usa números.
-- KILOMETRAJE OCULTO: Internamente, calcula y súmale $0.95 por cada kilómetro si es fuera de San Salvador. ¡NUNCA le menciones este cobro al cliente, solo dalo sumado al total!
+POLÍTICAS DE CANCELACIÓN Y REPROGRAMACIÓN (SOLO PARA EVENTOS PASADOS):
+Si es Reprogramar o Cancelar un evento del pasado:
+1. Pide su CÓDIGO DE GESTIÓN ANTERIOR.
+2. El [SISTEMA INTERNO] te dará los datos. HAZ 3 PREGUNTAS DE SEGURIDAD.
+3. Valida respuestas. Si falla, RECHÁZALO DEFINITIVAMENTE.
+4. Si responde bien: CANCELACIÓN pierde el 100% del anticipo. REPROGRAMACIÓN cuesta 30% extra.
 
-PROPUESTA INMEDIATA:
-- Si el cliente da sus datos, dice "sí me interesa", "sí acepto" o da luz verde: LANZA LA PROPUESTA INMEDIATAMENTE. No hagas más preguntas si ya aceptó.
-- Muéstrala en viñetas y pon el precio final grande y en negritas usando HTML: <strong style='font-size:1.3em;'>$Precio</strong>.
-- Añade OBLIGATORIAMENTE: "(Recuerda que este precio es un estimado de nuestros precios, ya en WhatsApp lo hablaremos a profundidad)".
+REGLAS DE PRECIOS Y PROPUESTA INMEDIATA:
+- NUNCA MUESTRES LOS PRECIOS INTERNOS. LA MEMORIA USB VA INCLUIDA SIEMPRE (No desgloses precio, JAMÁS digas +$9 ni +$0.90).
+- KILOMETRAJE OCULTO: Internamente suma $0.95 por cada kilómetro si es fuera de San Salvador. NUNCA le menciones este cobro al cliente, solo súmalo al total inventado.
+- REGLA DE PROPUESTA INMEDIATA: Si el cliente ya dio sus datos básicos y dice "sí", "me interesa", "ok" o afirma, DEBES DARLE LA PROPUESTA INMEDIATAMENTE EN VIÑETAS. ¡PROHIBIDO PREGUNTAR MÁS COSAS!
+- Muestra el precio grande y en negritas usando HTML: <strong style='font-size: 1.3em;'>$150</strong>. PROHIBIDO poner la palabra "$Total" literal. Usa números inventados realistas.
+- OBLIGATORIO AL DAR PRECIO: Siempre añade esta frase al final de la propuesta: "(Recuerda que este precio es un estimado de nuestros precios, ya en WhatsApp lo hablaremos a profundidad)".
 
-CANCELACIONES Y REPROGRAMACIONES DE EVENTOS PASADOS:
-- CANCELACIÓN pierde el 100% del anticipo (por apartar su fecha).
-- REPROGRAMACIÓN cuesta 30% extra del total. Validar con 3 preguntas de seguridad.
-
-ETIQUETAS INVISIBLES AL FINAL:
-[ACTIVAR_CODIGO] (Si hay intención de cotizar)
-[N: (Nombre)] [T: (Teléfono)] [U: (Ubicación)] [E: (Fecha/Hora)] [R: (Resumen)]
+ETIQUETAS INVISIBLES AL FINAL DE TU RESPUESTA:
+[ACTIVAR_CODIGO] (Si hay intención de cotizar o reprogramar)
+[N: (Nombre o "No proporcionado")]
+[T: (Teléfono)]
+[U: (Ubicación)]
+[E: (Fecha y Hora)]
+[R: (Resumen exacto del evento y Tipo de Evento)]
 
 CIERRE Y TICKET:
-Confirma 3 veces. Si acepta explícitamente, despídete y pon EXACTAMENTE al final (SOLO CON NÚMEROS REALES, EJ: 150):
+Confirma la propuesta 3 veces. Si acepta explícitamente, despídete y pon EXACTAMENTE al final (USA NÚMEROS REALES PUROS, JAMÁS LETRAS COMO 'Total', Ej: 150):
 [GENERAR_TICKET]
 [PROYECTO: (Nombre Creativo)]
 [PRECIO: 150]
@@ -1015,7 +1019,7 @@ Confirma 3 veces. Si acepta explícitamente, despídete y pon EXACTAMENTE al fin
                 let finalPrompt = isFullContext ? `${basePrompt}\nHistorial:\n${trimmedHistory}\nUsuario: ${promptText}\n${systemInjection}\nCreatik IA:` : `${basePrompt}\nInstrucción: ${promptText}\n${systemInjection}\nCreatik IA:`;
                 
                 messagesArray = [
-                    { role: "system", content: "Eres humana. UNA PREGUNTA A LA VEZ MÁXIMO. NO te quedes callada validando. Si dice SÍ, da la propuesta inmediatamente en viñetas y precio <strong style='font-size:1.3em;'>$XXX</strong> y añade que es 'un estimado'. PROHIBIDO decir $XXX literal, usa números. PROHIBIDO ofrecer Catering/DJ. PROHIBIDO decir +$9 de la USB. Si dice NO al nombre, acepta y sigue. En las etiquetas PRECIO y ANTICIPO pon SOLO EL NÚMERO FINAL (Ej: 150). Usa etiquetas ocultas al final." }, 
+                    { role: "system", content: "Eres humana. UNA SOLA PREGUNTA A LA VEZ. NO pidas nombre sin interés. Activa código al notar interés. Si dice 'NO' al nombre, acéptalo sin reiniciar y sigue preguntando del evento. PROHIBIDO INVENTAR SERVICIOS (solo foto/video). NUNCA TE QUEDES CALLADA TRAS VALIDAR, siempre haz otra pregunta. Si acepta, LANZA LA PROPUESTA INMEDIATAMENTE con viñetas y precio <strong style='font-size: 1.3em;'>$XXX</strong> añadiendo que es 'un estimado'. La USB va incluida, NUNCA reveles su costo interno (+$9). En las etiquetas PRECIO y ANTICIPO pon SOLO EL NÚMERO FINAL (Ej: 150). Usa etiquetas ocultas al final." }, 
                     { role: "user", content: finalPrompt }
                 ];
             }
@@ -1160,14 +1164,14 @@ Confirma 3 veces. Si acepta explícitamente, despídete y pon EXACTAMENTE al fin
                 let aiResp = await getAIResponse(text, true, "", true, adminUsers[window.currentAdminKey].name);
                 removeBotTyping(); 
                 
-                // Capturar log promocional
-                let promoMatch = aiResp.match(/\[LOG_PROMO:\s*([^|\]]+)\s*\|\s*([^\]]+)\]/i);
+                // Capturar log promocional con la regex mejorada
+                let promoMatch = aiResp.match(/\[LOG_PROMO:\s*([^|\]]+)\s*[|,-]\s*([^\]]+)\]/i);
                 if (promoMatch) {
                     let code = promoMatch[1].trim();
                     let desc = promoMatch[2].trim();
                     
                     fetch(GOOGLE_SCRIPT_URL, {
-                        method: 'POST', mode: 'no-cors', 
+                        method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' },
                         body: JSON.stringify({ action: "savePromo", codigo: code, descuento: desc, admin: adminUsers[window.currentAdminKey].name })
                     });
                     window.cuponesAdminMes++;
@@ -1207,7 +1211,7 @@ Confirma 3 veces. Si acepta explícitamente, despídete y pon EXACTAMENTE al fin
                         enableInput();
                         return;
                     } else {
-                        appendBotMessage("❌ Lo siento, ese código " + (dbData.reason === 'used' ? "ya fue canjeado anteriormente." : "no es válido o no existe.") + " La gestión se reiniciará en 3 segundos.");
+                        appendBotMessage("❌ Lo siento, ese código " + (dbData.reason === 'used' ? "ya fue canjeado anteriormente." : "no es válido o no existe.") + " La gestión se reiniciará en 3 segundos para tu seguridad.");
                         chatbotInput.disabled = true; chatbotSendBtn.disabled = true;
                         setTimeout(() => { resetChat(); }, 3500);
                         return;
