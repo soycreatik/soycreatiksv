@@ -880,7 +880,7 @@
         }
 
         // =========================================================================
-        // --- CEREBRO IA: ESTRICTA Y PASO A PASO (100% CONVERSACIONAL Y EN VIVO) ---
+        // --- CEREBRO IA: ESTRICTA Y PASO A PASO (100% CONVERSACIONAL) ---
         // =========================================================================
         async function getAIResponse(promptText, isFullContext = false) {
             let historyLines = conversationHistory.split('\n').filter(line => line.trim() !== '');
@@ -890,8 +890,6 @@
 
             let basePrompt = `Eres "Creatik IA", asesora de ventas senior de Creatik Studio en El Salvador (2026). Tu tono es entusiasta, persuasivo, cercano y profesional. Usa emojis.
 
-MANTÉN EL HILO DE LA CONVERSACIÓN: El cliente puede responder libremente y en cualquier orden. Tu trabajo es fluir con la charla, responder sus dudas y GUIARLO amablemente hasta obtener TODOS los datos obligatorios.
-
 ESTADO ACTUAL DE DATOS (REVISA ESTO ANTES DE RESPONDER):
 - Fechas Ocupadas (¡NO DISPONIBLES!): ${bookedStr}
 - Nombre: ${userData.nombre ? userData.nombre : "FALTA"}
@@ -899,7 +897,7 @@ ESTADO ACTUAL DE DATOS (REVISA ESTO ANTES DE RESPONDER):
 - Ubicación: ${userData.departamento ? userData.departamento : "FALTA"}
 - Fecha del Evento: ${userData.fechaEvento ? userData.fechaEvento : "FALTA"}
 
-REGLA DE ORO 1: Lee el ESTADO ACTUAL. NUNCA vuelvas a pedir un dato que ya no diga "FALTA". Si el cliente se niega a dar un dato, acéptalo, guárdalo como "No proporcionado" en la etiqueta y JAMÁS lo vuelvas a pedir. Si el Nombre o Ubicación dice "FALTA", ES TU OBLIGACIÓN PEDIRLOS ANTES DE DAR EL PRECIO.
+REGLA DE ORO 1: Lee el ESTADO ACTUAL. Si el Nombre o Ubicación dicen "FALTA", ES TU OBLIGACIÓN ABSOLUTA PREGUNTARLOS INMEDIATAMENTE de forma amable. NUNCA vuelvas a pedir un dato que ya no diga "FALTA". Si el cliente dice "no quiero dar mi nombre", acéptalo, guárdalo como "No proporcionado" en la etiqueta y JAMÁS lo vuelvas a pedir.
 REGLA DE ORO 2: El Teléfono de WhatsApp es ESTRICTAMENTE OBLIGATORIO. Si no te lo dan al inicio, reténlo en tu memoria y pídelo amablemente ANTES de dar el precio final.
 REGLA DE ORO 3 (3 PREGUNTAS MÍNIMO): HAZ UNA SOLA PREGUNTA A LA VEZ. No agobies al cliente. NUNCA des precio si falta Nombre, Teléfono, Ubicación, Fecha o no has hecho por lo menos 3 preguntas sobre los detalles del evento (ej. ¿Cuántas horas?, ¿Cuántos invitados?, ¿Interior o exterior?).
 REGLA DE ORO 4 (FECHAS APARTADAS): REVISA LAS FECHAS OCUPADAS ARRIBA. Si el cliente pide una de esas fechas EXACTAS, RECHÁZALA educadamente porque ya está reservada (a menos que sea San Salvador Centro/Oeste y haya 1 hora de diferencia).
@@ -907,14 +905,17 @@ REGLA DE ORO 5 (OBJECIÓN POR PRECIO A TERCEROS): Si el cliente te dice el núme
 
 REGLAS DE PRECIOS, REGATEO Y PROPUESTA:
 - LOS PRECIOS NO DEBEN SER EXAGERADOS. Deben ser justos y accesibles.
-- EL CLIENTE PUEDE REGATEAR Y DAR OFERTAS. Puedes negociar: 1ra rebaja baja $10-$15 sin quitar nada. 2da rebaja baja $5 pero QUITA cosas. Mantente al margen de estas reglas sin regalar el trabajo.
+- LÍMITE DE REGATEO: Máximo puedes hacer 3 ofertas. Si a la 3ra no acepta, no bajes más el precio. 1ra rebaja baja solo $10-$15. 2da rebaja baja $5 pero QUITA cosas. NO BAJES TANTO DINERO.
+- SI EL CLIENTE YA ESTÁ CONVENCIDO: ¡No bajes el precio! Trata de cerrar el trato con el precio actual.
+- POLÍTICA DE CANCELACIÓN/REAGENDAMIENTO: NO se puede reagendar gratuitamente. Si preguntan, diles que cambiar la fecha conlleva un costo extra (NUNCA menciones que es el 15%, solo di que hay una penalidad/costo adicional).
 - De Lunes a Viernes máximo 2 fotógrafos. Fines de semana hasta 4 si es masivo. Mínimo 2 siempre (menciónalo en la propuesta).
 - Transporte fuera de San Salvador cuesta más de $40 (Súmalo internamente, no digas viáticos).
 - NUNCA regales horas extra. Entregables: Solo digital, 1 USB (+$9 interno) y fotos impresas (+$0.90 c/u interno). No desgloses precios. Menciona el 50% de anticipo.
 - NOMBRE CREATIVO OBLIGATORIO: Bautiza tu paquete con un nombre atractivo en tu propuesta final (Ej: "Paquete Atardecer Dorado").
 
 ETIQUETAS INVISIBLES (OBLIGATORIO AL FINAL DE TU RESPUESTA):
-Actualiza las etiquetas con los datos que ya te haya dado. NUNCA escribas la etiqueta de un dato si aún no lo conoces y dice FALTA.
+Actualiza las etiquetas con los datos que ya te haya dado. Si notas intención de cotizar o reservar, incluye la etiqueta [ACTIVAR_CODIGO].
+[ACTIVAR_CODIGO]
 [N: (Nombre o "No proporcionado")]
 [T: (Teléfono o "No proporcionado")]
 [U: (Ubicación)]
@@ -937,7 +938,7 @@ ESTRICTAMENTE CUANDO EL CLIENTE ACEPTE EXPLÍCITAMENTE la propuesta final, desp�
                     body: JSON.stringify({ 
                         model: "gpt-4o", 
                         messages: [
-                            { role: "system", content: "Eres humana, conversacional. PRIORIDAD 1: Si el Nombre o Ubicación dicen 'FALTA', pregúntalos. Haz UNA sola pregunta a la vez. No repitas preguntas respondidas. Haz al menos 3 preguntas sobre el evento antes de dar precios NO EXAGERADOS. Permite el regateo. Maneja objeciones de códigos de amigos con clase. Confirma 3 veces antes de cerrar. Usa etiquetas [N:], [T:], [U:], [E:], [R:] al final. Genera nombre creativo. Da precios numéricos." }, 
+                            { role: "system", content: "Eres humana, conversacional. PRIORIDAD ABSOLUTA: Si el Nombre o Ubicación dicen 'FALTA', pregúntalos INMEDIATAMENTE de forma amable. Haz UNA sola pregunta a la vez. No repitas preguntas respondidas. Haz al menos 3 preguntas sobre el evento antes de dar precios. Permite regateo máximo 3 veces sin bajar mucho. Penalización por reagendar (no digas %). Si está convencido, cierra. Confirma 3 veces antes de ticket. Usa etiquetas [ACTIVAR_CODIGO], [N:], [T:], [U:], [E:], [R:] al final. Genera nombre creativo. Da precios numéricos." }, 
                             { role: "user", content: finalPrompt }
                         ],
                         temperature: 0.6 
@@ -1004,8 +1005,8 @@ ESTRICTAMENTE CUANDO EL CLIENTE ACEPTE EXPLÍCITAMENTE la propuesta final, desp�
             
             conversationHistory += `Usuario: ${text}\n`;
             
-            // --- CÓDIGO DE GESTIÓN (ACTIVA CON "SI" o INTENCIÓN CLARA) ---
-            let isIntent = /(quiero|me interesa|deseo|busco|necesito|reservar|contratar|agendar|tomarme|cotizar|paquete|cobertura|sesi[oó]n|precio|cuanto cuesta|\bs[ií]\b|te quiero|lo quiero)/i.test(textLower);
+            // --- CÓDIGO DE GESTIÓN (ACTIVA CON INTENCIÓN CLARA O POR LA IA) ---
+            let isIntent = /(quiero|qyuero|me interesa|deseo|busco|necesito|reservar|contratar|agendar|tomarme|cotizar|paquete|cobertura|sesi[oó]n|precio|cuanto cuesta|\bs[ií]\b|te quiero|lo quiero|asesor[ií]a|info|informaci[oó]n|evento|boda|cumplea[ñn]os)/i.test(textLower);
             let isButton = ["📸 Cotizar un servicio", "✅ Contratar a Creatik", "✨ Conocer más de Creatik"].includes(text);
 
             if (sessionId === "Pendiente..." && (isIntent || isButton)) {
@@ -1063,8 +1064,15 @@ ESTRICTAMENTE CUANDO EL CLIENTE ACEPTE EXPLÍCITAMENTE la propuesta final, desp�
                                    .replace(/\[T:.*?\]/gi, '')
                                    .replace(/\[U:.*?\]/gi, '')
                                    .replace(/\[E:.*?\]/gi, '')
-                                   .replace(/\[R:.*?\]/gi, '')
-                                   .replace(/\[ACTIVAR_CODIGO\]/gi, '');
+                                   .replace(/\[R:.*?\]/gi, '');
+
+                    // Activación inteligente del código por parte de la IA si el JS no lo detectó
+                    if (aiResp.includes("[ACTIVAR_CODIGO]") && sessionId === "Pendiente...") {
+                        let digits = Math.floor(1000 + Math.random() * 9000); 
+                        sessionId = "CTK-W" + digits; 
+                        document.getElementById('chatbot-session-display').textContent = "Gestión: " + sessionId;
+                    }
+                    aiResp = aiResp.replace(/\[ACTIVAR_CODIGO\]/gi, '');
 
                     if (aiResp.includes("[GENERAR_TICKET]")) {
                         let projMatch = aiResp.match(/\[PROYECTO:(.*?)\]/i); 
