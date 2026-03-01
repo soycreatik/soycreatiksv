@@ -826,7 +826,15 @@
 
         function showFinalOptions() {
             appendBotMessage("¿Deseas seguir consultando información o prefieres terminar la gestión por ahora? ✨");
-            appendBotOptions(["🔍 Seguir consultando", "👋 Salir y terminar"]); chatState = 'FINAL_DECISION'; enableInput();
+            appendBotOptions(["🔍 Seguir consultando", "👋 Salir y terminar"]); 
+            chatState = 'FINAL_DECISION'; 
+            enableInput();
+            
+            // Auto reset de 2 minutos
+            clearTimeout(window.finalDecisionTimer);
+            window.finalDecisionTimer = setTimeout(() => {
+                if (chatState === 'FINAL_DECISION') resetChat();
+            }, 120000);
         }
 
         function resetChat() {
@@ -889,18 +897,18 @@ ESTADO ACTUAL DE DATOS (REVISA ESTO ANTES DE RESPONDER):
 - Ubicación: ${userData.departamento ? userData.departamento : "FALTA"}
 - Fecha del Evento: ${userData.fechaEvento ? userData.fechaEvento : "FALTA"}
 
-REGLA DE ORO 1: Lee el ESTADO ACTUAL. NUNCA vuelvas a pedir un dato que ya no diga "FALTA". Si el cliente se niega a dar un dato, acéptalo, guárdalo como "No proporcionado" en la etiqueta y JAMÁS lo vuelvas a pedir.
+REGLA DE ORO 1: Lee el ESTADO ACTUAL. Si el Nombre dice "FALTA", pregúntalo INMEDIATAMENTE de forma amable. NUNCA vuelvas a pedir un dato que ya no diga "FALTA". Si el cliente dice "no quiero dar mi nombre", acéptalo, guárdalo como "No proporcionado" en la etiqueta y JAMÁS lo vuelvas a pedir.
 REGLA DE ORO 2: El Teléfono de WhatsApp es ESTRICTAMENTE OBLIGATORIO. Si no te lo dan al inicio, reténlo en tu memoria y pídelo amablemente ANTES de dar el precio final.
-REGLA DE ORO 3: HAZ UNA SOLA PREGUNTA A LA VEZ. No agobies al cliente. NUNCA des precio si falta Nombre, Teléfono, Ubicación, Fecha o detalles importantes del evento.
+REGLA DE ORO 3: HAZ UNA SOLA PREGUNTA A LA VEZ. No agobies al cliente. NUNCA des precio si falta Nombre, Teléfono, Ubicación, Fecha o detalles (horas/personas).
 REGLA DE ORO 4 (FECHAS APARTADAS): REVISA LAS FECHAS OCUPADAS ARRIBA. Si el cliente pide una de esas fechas EXACTAS, RECHÁZALA educadamente porque ya está reservada (a menos que sea San Salvador Centro/Oeste y haya 1 hora de diferencia).
-REGLA DE ORO 5 (4 PREGUNTAS DEL EVENTO): ANTES DE DAR PRECIO, es OBLIGATORIO que hagas por lo menos 4 PREGUNTAS CLAVE sobre el evento durante la charla (Ej: 1. ¿Cuántas horas de cobertura?, 2. ¿Cuántas personas asistirán?, 3. ¿Es en interior o exterior?, 4. ¿Qué estilo de fotos buscan?). ¡Recuerda, UNA pregunta a la vez!
+REGLA DE ORO 5 (OBJECIÓN POR PRECIO A TERCEROS): Si el cliente te dice el número de gestión de un amigo o conocido para reclamar que a él le cobraste menos, NUNCA iguales el precio ni le des la razón. Explica educadamente que cada evento es único, la logística y temporada varían, y tu precio actual garantiza la máxima calidad. Defiende tu precio con clase.
 
-REGLAS DE PRECIOS, DESCUENTOS Y PROPUESTA:
-- El cliente puede regatear las veces que quiera, pero TÚ MANTENTE FIRME AL MARGEN CON TUS REGLAS: 1ra rebaja baja $10-$15 sin quitar nada. 2da rebaja baja $5 pero QUITA entregables o tiempo. NUNCA regales horas extra.
+REGLAS DE PRECIOS Y PROPUESTA:
+- De Lunes a Viernes máximo 2 fotógrafos. Fines de semana hasta 4 si es masivo. Mínimo 2 siempre (menciónalo en la propuesta).
 - Transporte fuera de San Salvador cuesta más de $40 (Súmalo internamente, no digas viáticos).
-- Entregables: Solo digital, 1 USB (+$9 interno) y fotos impresas (+$0.90 c/u interno). No desgloses el costo de los entregables.
-- NOMBRE CREATIVO OBLIGATORIO: Siempre inventa un nombre creativo y atractivo para el paquete al momento de dar la propuesta (Ej: "Paquete Atardecer Dorado").
-- Menciona SIEMPRE el PRECIO TOTAL y el ANTICIPO (50%) en la propuesta.
+- Si piden rebaja: 1ra vez baja $10-$15 sin quitar nada. 2da vez baja $5 pero QUITA cosas.
+- NUNCA regales horas extra. Entregables: Solo digital, 1 USB (+$9 interno) y fotos impresas (+$0.90 c/u interno). No desgloses precios. Menciona el 50% de anticipo.
+- NOMBRE CREATIVO OBLIGATORIO: Bautiza tu paquete con un nombre atractivo en tu propuesta final (Ej: "Paquete Atardecer Dorado").
 
 ETIQUETAS INVISIBLES (OBLIGATORIO AL FINAL DE TU RESPUESTA):
 Actualiza las etiquetas con los datos que ya te haya dado. NUNCA escribas la etiqueta de un dato si aún no lo conoces y dice FALTA.
@@ -926,7 +934,7 @@ ESTRICTAMENTE CUANDO EL CLIENTE ACEPTE EXPLÍCITAMENTE la propuesta final, desp�
                     body: JSON.stringify({ 
                         model: "gpt-4o", 
                         messages: [
-                            { role: "system", content: "Eres humana, conversacional. Haz UNA sola pregunta a la vez. No repitas preguntas respondidas. Debes hacer 4 preguntas del evento antes de dar precio. Confirma 3 veces antes de cerrar. Usa etiquetas [N:], [T:], [U:], [E:], [R:] al final en tiempo real. Genera nombre creativo para el paquete. Da precios numéricos exactos en la etiqueta del ticket." }, 
+                            { role: "system", content: "Eres humana, conversacional. PRIORIDAD 1: Si el Nombre dice 'FALTA', pregúntalo INMEDIATAMENTE. Haz UNA sola pregunta a la vez. No repitas preguntas respondidas. Maneja objeciones de códigos de amigos sin bajar precios. Confirma 3 veces antes de cerrar. Usa etiquetas [N:], [T:], [U:], [E:], [R:] al final. Genera precios numéricos." }, 
                             { role: "user", content: finalPrompt }
                         ],
                         temperature: 0.6 
@@ -1014,9 +1022,22 @@ ESTRICTAMENTE CUANDO EL CLIENTE ACEPTE EXPLÍCITAMENTE la propuesta final, desp�
                 if (groserias.test(text)) { let resp = "En Creatik valoramos el respeto mutuo. ¡Que tengas un excelente día! ✨"; appendBotMessage(resp); syncToSheets(); chatbotInput.placeholder = "Chat finalizado."; return; }
 
                 if (chatState === 'FINAL_DECISION') {
-                    if (text.includes("Seguir consultando")) { chatState = 'AI_CHAT'; removeBotTyping(); appendBotMessage("¡Perfecto! 😉 ¿Qué más te gustaría saber?"); enableInput(); return; }
+                    clearTimeout(window.finalDecisionTimer);
+                    if (text.includes("Seguir consultando")) { 
+                        chatState = 'AI_CHAT'; 
+                        removeBotTyping(); 
+                        let digits = Math.floor(1000 + Math.random() * 9000);
+                        sessionId = "CTK-C" + digits;
+                        document.getElementById('chatbot-session-display').textContent = "Gestión: " + sessionId;
+                        appendBotMessage("¡Perfecto! 😉 He abierto una nueva gestión para ti. ¿Qué más te gustaría saber?"); 
+                        enableInput(); 
+                        return; 
+                    }
                     if (text.includes("Salir")) { resetChat(); return;}
-                    chatState = 'AI_CHAT';
+                    
+                    // Si el usuario escribe algo distinto a los botones, se reinicia el chat
+                    resetChat();
+                    return;
                 }
 
                 if (chatState === 'INIT') chatState = 'AI_CHAT';
@@ -1069,6 +1090,10 @@ ESTRICTAMENTE CUANDO EL CLIENTE ACEPTE EXPLÍCITAMENTE la propuesta final, desp�
                             const ticketMsgHtml = getHtmlTicket(); 
                             appendBotMessage(ticketMsgHtml); 
                             syncToSheets(); // Guarda Ticket final
+                            
+                            // CAMBIA EL TEXTO AMARILLO A FINALIZADA
+                            document.getElementById('chatbot-session-display').textContent = "Gestión: Finalizada";
+                            
                             setTimeout(showFinalOptions, 2500); 
                         }, 1200); 
                         return;
