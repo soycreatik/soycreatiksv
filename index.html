@@ -3,1392 +3,470 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Creatik - Tu historia es única</title>
+    <title>Creatik Admin Panel</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+
     <style>
-        /* --- RESET Y PROTECCIÓN ANTICOPIA --- */
-        *, *::before, *::after { box-sizing: border-box; }
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #1f2937; display: flex; height: 100vh; overflow: hidden; }
         
-        body {
-            -webkit-user-select: none; -ms-user-select: none; user-select: none;
-            margin: 0; padding: 0; max-width: 100vw; overflow-x: hidden !important; 
-            position: relative; scroll-behavior: smooth; background-color: #020005; 
-            background-image: radial-gradient(circle at 50% 110%, rgba(107, 33, 168, 0.5) 0%, rgba(30, 10, 50, 0.6) 50%, #020005 90%);
-            background-attachment: fixed; color: #ffffff; font-family: 'Inter', sans-serif;
-            min-height: 200vh; -webkit-font-smoothing: antialiased;
-        }
-
-        img { -webkit-user-drag: none; }
-        .paused-animation, .paused-animation * { animation-play-state: paused !important; }
-
         /* --- INTRO LOADER --- */
-        #intro-loader {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background-color: #000; display: flex; justify-content: center; align-items: center;
-            z-index: 99999; transition: opacity 0.6s ease, visibility 0.6s; opacity: 1;
-        }
-        .intro-logo { font-family: 'Inter', sans-serif; font-size: 3.5rem; font-weight: 800; color: white; display: flex; }
+        #intro-loader { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #000; display: flex; justify-content: center; align-items: center; z-index: 99999; transition: opacity 0.4s ease, visibility 0.4s; opacity: 1; }
+        .intro-logo { font-family: 'Inter', sans-serif; font-size: 3rem; font-weight: 800; color: white; display: flex; }
         .intro-logo span { display: inline-block; opacity: 0; transform: translate3d(0, 10px, 0); }
-        .animate-letters span { animation: letterEntry 0.4s forwards; }
-        .intro-logo .c { animation-delay: 0.1s; } .intro-logo .r { animation-delay: 0.2s; }
-        .intro-logo .e { animation-delay: 0.3s; } .intro-logo .a { animation-delay: 0.4s; }
-        .intro-logo .t { animation-delay: 0.5s; } .intro-logo .i { animation-delay: 0.6s; }
-        .intro-logo .k { animation-delay: 0.7s; }
+        .animate-letters span { animation: letterEntry 0.3s forwards; }
+        .intro-logo span:nth-child(1) { animation-delay: 0.1s; } .intro-logo span:nth-child(2) { animation-delay: 0.15s; }
+        .intro-logo span:nth-child(3) { animation-delay: 0.2s; } .intro-logo span:nth-child(4) { animation-delay: 0.25s; }
+        .intro-logo span:nth-child(5) { animation-delay: 0.3s; } .intro-logo span:nth-child(6) { animation-delay: 0.35s; }
+        .intro-logo span:nth-child(7) { animation-delay: 0.4s; } .intro-logo span:nth-child(8) { animation-delay: 0.55s; }
+        .intro-logo span:nth-child(9) { animation-delay: 0.6s; } .intro-logo span:nth-child(10) { animation-delay: 0.65s; }
+        .intro-logo span:nth-child(11) { animation-delay: 0.7s; } .intro-logo span:nth-child(12) { animation-delay: 0.75s; }
         @keyframes letterEntry { to { opacity: 1; transform: translate3d(0, 0, 0); } }
         #intro-loader.hidden { opacity: 0; visibility: hidden; }
 
-        /* --- FONDOS --- */
-        #bg-presentation { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: 0; pointer-events: none; overflow: hidden; }
-        .bg-slide { position: absolute; top: 0; left: -10%; width: 120%; height: 100%; background-size: cover; background-position: center; opacity: 0; filter: blur(4px) brightness(0.4); animation: slideAnimation 16s infinite linear; }
-        @keyframes slideAnimation { 0% { opacity: 0; } 10% { opacity: 0.15; } 40% { opacity: 0.15; } 50% { opacity: 0; } 100% { opacity: 0; } }
-        .slide-1 { background-image: url('FONDOS/_DSC7958.jpg'); animation-delay: 0s; }
-        .slide-2 { background-image: url('FONDOS/DSC03921.jpg'); animation-delay: 8s; }
-        body::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E'); opacity: 0.5; mix-blend-mode: overlay; pointer-events: none; z-index: 2; }
-        .cursor-glow { position: fixed; width: 500px; height: 500px; background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 60%); border-radius: 50%; top: 0; left: 0; pointer-events: none; z-index: 1; will-change: transform; transform: translate3d(-50%, -50%, 0); }
+        /* --- LOGIN SCREEN --- */
+        #login-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #f3f4f6; display: flex; justify-content: center; align-items: center; z-index: 1000; transition: 0.5s; flex-direction: column; }
+        .login-box { background: #ffffff; border: 1px solid #e5e7eb; padding: 40px; border-radius: 16px; text-align: center; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); width: 100%; max-width: 350px; position: relative; }
+        .login-box h2 { margin: 0 0 25px 0; color: #111827; font-weight: 800; }
+        .login-box input { width: 100%; padding: 14px; border-radius: 8px; border: 1px solid #d1d5db; background: #f9fafb; color: #111827; font-size: 1rem; margin-bottom: 20px; outline: none; text-align: center; letter-spacing: 2px; transition: 0.3s;}
+        .login-box input:focus { border-color: #0f172a; box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1); }
+        .login-box button { width: 100%; padding: 14px; background: #0f172a; border: none; color: white; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; font-size: 1rem; }
+        .login-box button:hover { background: #1e293b; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
 
-        /* --- HEADER --- */
-        header { position: fixed; top: 0; width: 100%; z-index: 10000; display: flex; justify-content: space-between; align-items: center; padding: 20px 3vw; transition: 0.4s; }
-        .logo-img { height: 45px; cursor: pointer; transition: 0.3s; margin-left: -10px; }
-        .logo-img:hover { transform: scale(1.1); filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.6)); }
-        .nav-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; }
-        .nav-right { display: flex; align-items: center; gap: 20px; }
-        header.menu-mode .academy-btn, header.menu-mode .nav-right { display: none !important; }
-        .menu-btn, .academy-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 20px; border-radius: 20px; color: white; cursor: pointer; backdrop-filter: blur(10px); font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; transition: 0.3s;}
-        .academy-btn { border-color: rgba(168, 85, 247, 0.3); color: #d8b4fe; }
-        .menu-btn .dot { width: 6px; height: 6px; background-color: #f97316; border-radius: 50%; box-shadow: 0 0 8px #f97316; transition: 0.3s; }
-        .menu-btn.active-btn .dot { background-color: #ef4444; box-shadow: 0 0 8px #ef4444; }
-        .menu-btn:hover, .academy-btn:hover { background: rgba(255,255,255,0.15); border-color: #a855f7; }
-        .nav-right a { color: white; text-decoration: none; font-size: 0.9rem; opacity: 0.7; transition: 0.3s; }
-        .nav-right a:hover { opacity: 1; }
-        .btn-demo-outline { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-size: 0.9rem; font-weight: bold; transition: 0.3s; }
-        .btn-demo-outline:hover { background: white; color: black; border-color: white; }
+        /* --- MODAL EMERGENTE AL INICIAR SESIÓN --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.6); z-index: 10000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(4px); opacity: 0; transition: opacity 0.3s ease; }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .stats-box { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 20px; padding: 35px; width: 90%; max-width: 450px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
+        .modal-overlay.active .stats-box { transform: scale(1); }
+        .stats-box h2 { margin: 0 0 5px 0; color: #111827; font-size: 1.5rem; font-weight: 800;}
+        .stats-box p { color: #6b7280; font-size: 0.9rem; margin-bottom: 25px; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .stat-item { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px 10px; }
+        .stat-item h3 { font-size: 2.2rem; margin: 0; color: #2563eb; line-height: 1; font-weight: 900;}
+        .stat-item span { display: block; font-size: 0.75rem; color: #6b7280; text-transform: uppercase; font-weight: 700; margin-top: 8px; letter-spacing: 0.5px;}
+        .btn-enter-dash { background: #10b981; color: white; border: none; padding: 14px 30px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 1rem; width: 100%; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);}
+        .btn-enter-dash:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3);}
 
-        /* --- STICKER PAQUETES --- */
-        .overlay-fixed-logo {
-            position: fixed; top: 15px; left: 1.5vw; height: 90px; 
-            z-index: 99999; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.6)); cursor: pointer; transition: 0.3s;
-        }
-        .overlay-fixed-logo:hover { transform: scale(1.05) rotate(-5deg); }
-        .overlay-fixed-close {
-            position: fixed; top: 25px; right: 3vw; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            color: white; padding: 10px 25px; border-radius: 30px; cursor: pointer; backdrop-filter: blur(10px); z-index: 99999; font-weight: bold; font-size: 0.85rem; transition: 0.3s;
-        }
-        .overlay-fixed-close:hover { background: rgba(255,255,255,0.1); border-color: #db2777; color: #db2777; }
-
-        /* --- CHATBOT UI --- */
-        #chatbot-fab {
-            position: fixed; bottom: 40px; right: 4vw; width: 65px; height: 65px;
-            background: linear-gradient(135deg, #a855f7, #db2777); border-radius: 50%;
-            display: flex; justify-content: center; align-items: center; z-index: 100001; 
-            box-shadow: 0 10px 25px rgba(219, 39, 119, 0.4); cursor: pointer;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s, visibility 0.4s;
-            animation: pulseFab 2.5s infinite;
-        }
-        #chatbot-fab:hover { transform: scale(1.1); animation: none; box-shadow: 0 15px 35px rgba(219, 39, 119, 0.6); }
-        @keyframes pulseFab { 0% { box-shadow: 0 0 0 0 rgba(219, 39, 119, 0.6); } 70% { box-shadow: 0 0 0 15px rgba(219, 39, 119, 0); } 100% { box-shadow: 0 0 0 0 rgba(219, 39, 119, 0); } }
-
-        #chatbot-window {
-            position: fixed; bottom: 120px; right: 4vw; width: 450px; max-width: 90vw; height: 600px; max-height: 80vh;
-            background: rgba(15, 10, 25, 0.95); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 25px;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.9), 0 0 30px rgba(168, 85, 247, 0.2);
-            display: flex; flex-direction: column; z-index: 100001; 
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            opacity: 0; visibility: hidden; transform: translateY(30px) scale(0.9);
-            transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0.4s;
-            transform-origin: bottom right; pointer-events: none;
-        }
-        #chatbot-window.active { opacity: 1; visibility: visible; transform: translateY(0) scale(1); pointer-events: auto; }
-
-        .chatbot-header { display: flex; align-items: center; padding: 18px 20px; background: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(255,255,255,0.08); gap: 15px; transition: background 0.4s ease; }
-        .chatbot-logo { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #a855f7; box-shadow: 0 0 10px rgba(168, 85, 247, 0.5); }
-        .admin-logo-anim { animation: pulseLogo 1.5s infinite; border-color: #10b981; box-shadow: 0 0 15px rgba(16, 185, 129, 0.8); }
-        @keyframes pulseLogo { 0% {transform: scale(1);} 50% {transform: scale(1.1);} 100% {transform: scale(1);} }
+        /* --- DASHBOARD LAYOUT --- */
+        #dashboard-screen { display: none; width: 100%; height: 100%; }
         
-        .chatbot-title { flex: 1; }
-        .chatbot-title h4 { margin: 0; font-size: 1.1rem; color: #fff; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: space-between;}
+        /* SIDEBAR Y PERFIL */
+        .sidebar { width: 260px; background: #ffffff; border-right: 1px solid #e5e7eb; padding: 30px 20px; display: flex; flex-direction: column; box-shadow: 2px 0 10px rgba(0,0,0,0.02); z-index: 10; }
+        .brand-title { margin: 0 0 30px 0; font-size: 1.4rem; color: #111827; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        .brand-title span { background: #111827; color: white; padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; vertical-align: middle;}
         
-        #admin-exit-btn { display: none; background: #ef4444; border: 1px solid #b91c1c; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: bold; cursor: pointer; box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); transition: 0.3s; }
-        #admin-exit-btn:hover { background: #dc2626; transform: scale(1.05); }
+        .admin-profile { display: flex; flex-direction: column; align-items: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #f3f4f6; }
+        .admin-avatar { width: 70px; height: 70px; background: #f3f4f6; border-radius: 50%; color: #9ca3af; padding: 12px; margin-bottom: 10px; border: 1px solid #e5e7eb; }
+        .admin-name-display { font-weight: 700; color: #111827; font-size: 1.1rem; }
+        .admin-role { font-size: 0.75rem; color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; }
 
-        .status-online { font-size: 0.75rem; color: #10b981; display: flex; align-items: center; gap: 5px; margin-top: 3px; font-weight: 600; }
-        .status-online::before { content: ''; width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; animation: blinkOnline 2s infinite; }
-        @keyframes blinkOnline { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .nav-btn { background: transparent; border: none; color: #4b5563; text-align: left; padding: 12px 15px; font-size: 0.95rem; cursor: pointer; border-radius: 8px; transition: 0.2s; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;}
+        .nav-btn:hover { background: #f3f4f6; color: #111827; }
+        .nav-btn.active { background: #eff6ff; color: #2563eb; border-right: 3px solid #2563eb; border-radius: 8px 0 0 8px;}
         
-        #close-chatbot-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; font-size: 0.8rem; }
-        #close-chatbot-btn:hover { background: rgba(219, 39, 119, 0.5); border-color: #db2777; transform: scale(1.1); }
+        /* BOTÓN LIMPIAR (SOLO ROGER) */
+        .btn-clear-db { background: #fef2f2; color: #dc2626; border: 1px dashed #fca5a5; padding: 10px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; cursor: pointer; margin-top: 15px; display: none; transition: 0.2s; }
+        .btn-clear-db:hover { background: #fee2e2; }
 
-        .chatbot-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 18px; scrollbar-width: thin; scrollbar-color: rgba(168, 85, 247, 0.3) transparent; scroll-behavior: smooth; }
-        .chatbot-messages::-webkit-scrollbar { width: 5px; }
-        .chatbot-messages::-webkit-scrollbar-thumb { background: rgba(168, 85, 247, 0.5); border-radius: 10px; }
+        .logout-btn { margin-top: auto; background: white; color: #ef4444; border: 1px solid #fca5a5; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .logout-btn:hover { background: #fef2f2; }
 
-        .message { max-width: 85%; padding: 14px 18px; border-radius: 20px; font-size: 0.9rem; line-height: 1.5; word-wrap: break-word; animation: msgEntry 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0; transform: translateY(15px) scale(0.95); }
-        .message pre { font-family: monospace; font-size: 0.8rem; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; overflow-x: auto; white-space: pre-wrap; }
-        @keyframes msgEntry { to { opacity: 1; transform: translateY(0) scale(1); } }
+        /* CONTENIDO PRINCIPAL */
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; background: #f9fafb; display: flex; flex-direction: column;}
         
-        .bot-message { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #e2e8f0; border-bottom-left-radius: 4px; align-self: flex-start; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-        .user-message { background: linear-gradient(135deg, #a855f7, #6b21a8); color: #fff; border-bottom-right-radius: 4px; align-self: flex-end; box-shadow: 0 5px 15px rgba(168, 85, 247, 0.3); border: 1px solid rgba(168, 85, 247, 0.5); }
+        /* TARJETA DE BIENVENIDA (ESTILO SAAS OSCURO CON CONTADOR LIVE) */
+        .welcome-banner { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; padding: 30px 40px; border-radius: 16px; margin-bottom: 30px; box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15); position: relative; overflow: hidden; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; }
+        .welcome-banner::after { content: ''; position: absolute; top: 0; right: 0; width: 300px; height: 100%; background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.2), transparent); pointer-events: none;}
+        .welcome-text h1 { margin: 0 0 10px 0; font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; }
+        .welcome-text p { margin: 0; font-size: 0.9rem; color: #94a3b8; max-width: 450px; line-height: 1.5; }
+
+        /* CUADRO CONTADOR LIVE DENTRO DEL BANNER */
+        .live-stat-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 15px 25px; border-radius: 12px; text-align: center; backdrop-filter: blur(10px); min-width: 140px; z-index: 2; position: relative; }
+        .live-stat-card strong { display: block; font-size: 2.2rem; color: #10b981; font-weight: 900; line-height: 1.1; }
+        .live-stat-card span { font-size: 0.65rem; color: #94a3b8; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; margin-top: 5px; display: block; }
+
+        .section-header { margin-bottom: 20px; font-size: 1.2rem; color: #111827; font-weight: 700; display: flex; align-items: center; justify-content: space-between; }
+
+        /* TABLAS COMUNES */
+        .data-table-container { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; overflow-x: auto; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 15px; border-bottom: 1px solid #f3f4f6; }
+        th { color: #6b7280; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        td { font-size: 0.9rem; color: #1f2937; }
+        tr:hover td { background: #f9fafb; }
+        tr:last-child td { border-bottom: none; }
         
-        .typing-indicator { display: flex; gap: 5px; padding: 5px; }
-        .typing-dot { width: 6px; height: 6px; background: rgba(255,255,255,0.6); border-radius: 50%; animation: typing 1.4s infinite ease-in-out; }
-        .typing-dot:nth-child(1) { animation-delay: 0s; } .typing-dot:nth-child(2) { animation-delay: 0.2s; } .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes typing { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); background: #a855f7; box-shadow: 0 0 5px #a855f7; } }
+        /* BOTONES */
+        .btn-delete { background: white; color: #ef4444; border: 1px solid #fca5a5; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.8rem; transition: 0.2s; }
+        .btn-delete:hover { background: #fef2f2; }
+        .btn-action { background: white; color: #2563eb; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.8rem; transition: 0.2s; }
+        .btn-action:hover { background: #eff6ff; }
 
-        /* --- BOTONES DE OPCIONES DEL CHAT --- */
-        .chat-options-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; animation: msgEntry 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0; transform: translateY(15px) scale(0.95); overflow: visible; }
-        .chat-option-btn { background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.5); color: #fff; padding: 10px 15px; border-radius: 20px; cursor: pointer; transition: 0.3s; font-size: 0.85rem; font-family: 'Inter', sans-serif; backdrop-filter: blur(5px); }
-        .chat-option-btn:hover { background: linear-gradient(135deg, #a855f7, #db2777); border-color: transparent; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(219, 39, 119, 0.4); }
+        .stars-display { color: #f59e0b; letter-spacing: 2px; font-size: 1rem; }
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .chatbot-input-area { padding: 15px; background: rgba(0,0,0,0.5); border-top: 1px solid rgba(255,255,255,0.08); display: flex; gap: 12px; align-items: center; }
-        #chatbot-input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 14px 18px; border-radius: 25px; color: #fff; font-family: 'Inter', sans-serif; font-size: 0.95rem; outline: none; transition: 0.3s; min-width: 0;}
-        #chatbot-input:focus { border-color: #a855f7; background: rgba(255,255,255,0.08); box-shadow: inset 0 0 10px rgba(168, 85, 247, 0.1); }
-        #chatbot-input:disabled { opacity: 0.5; cursor: not-allowed; }
-        
-        #chatbot-send-btn { background: linear-gradient(135deg, #a855f7, #db2777); border: none; width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(168, 85, 247, 0.4); flex-shrink: 0; }
-        #chatbot-send-btn:hover { transform: scale(1.1) rotate(-10deg); box-shadow: 0 8px 20px rgba(219, 39, 119, 0.6); }
-        #chatbot-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        /* MODAL CHAT */
+        #chat-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.6); z-index: 9999; display: none; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
+        .chat-box { background: #ffffff; border: 1px solid #e5e7eb; width: 90%; max-width: 600px; height: 80vh; border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .chat-box-header { padding: 20px; background: #f9fafb; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb; }
+        .chat-box-header h3 { margin: 0; font-size: 1.1rem; color: #111827; font-weight: 700; }
+        .close-modal-btn { background: transparent; border: none; color: #6b7280; font-size: 1.2rem; cursor: pointer; transition: 0.2s; }
+        .close-modal-btn:hover { color: #111827; }
+        .chat-box-body { padding: 20px; overflow-y: auto; flex: 1; font-family: monospace; font-size: 0.85rem; line-height: 1.6; white-space: pre-wrap; color: #374151; background: #ffffff;}
+        .log-ia { color: #2563eb; font-weight: bold; }
+        .log-user { color: #059669; font-weight: bold; }
 
-        /* --- BOTÓN CHECK VERDE --- */
-        #chatbot-verify-btn { background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; flex-shrink: 0; box-shadow: 0 0 10px rgba(16, 185, 129, 0.2); }
-        #chatbot-verify-btn:hover { background: #10b981; transform: scale(1.1); box-shadow: 0 5px 15px rgba(16, 185, 129, 0.5); }
-        #chatbot-verify-btn svg { fill: #10b981; transition: 0.3s; }
-        #chatbot-verify-btn:hover svg { fill: white; }
+        /* CUPONES */
+        .coupon-header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #ffffff; padding: 20px; border-radius: 12px; border: 1px solid #e5e7eb; }
+        .btn-create-coupon { background: #111827; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .badge-status { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
+        .status-active { background: #dcfce7; color: #059669; }
+        .status-used { background: #fee2e2; color: #dc2626; }
 
-        .hide-chatbot-ui { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; transform: scale(0.5) !important; }
-
-        /* --- HERO SECTION --- */
-        .hero-section { min-height: 85vh; display: flex; justify-content: space-between; align-items: center; padding: 80px 5vw 40px 5vw; z-index: 3; position: relative; width: 100%; box-sizing: border-box; }
-        .side-text { width: 250px; font-size: 0.85rem; line-height: 1.6; color: rgba(255, 255, 255, 0.6); }
-        .center-hero { display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1; max-width: 100%; }
-        .dynamic-title-container { position: relative; height: 140px; width: 100%; display: flex; justify-content: center; }
-        .title-group { position: absolute; top: 0; display: flex; flex-direction: column; align-items: center; width: 100%; opacity: 0; transform: translate3d(0, -15px, 0); filter: blur(8px); transition: opacity 0.8s ease, transform 0.8s ease, filter 0.8s ease; pointer-events: none; will-change: transform, opacity; }
-        .title-group h1 { font-size: 4.5rem; margin: 0; font-weight: 700; letter-spacing: -2px; white-space: nowrap; }
-        .title-group h2 { font-size: 1.5rem; margin: 0 0 20px 0; font-weight: 400; }
-        .title-group.active { opacity: 1; filter: blur(0px); transform: translate3d(0, 0, 0); }
-        .text-box-container { position: relative; height: 110px; margin-bottom: 40px; display: flex; justify-content: center; align-items: center; z-index: 10; cursor: pointer; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s ease; border-radius: 12px; width: 200px; will-change: width, transform; }
-        .text-box-container:hover { transform: scale(1.05) translate3d(0,0,0); }
-        .glow-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 15, 0.5); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; backdrop-filter: blur(12px); z-index: -1; }
-        .world-text { font-family: 'Pacifico', cursive; font-size: 3.5rem; color: #ffffff; text-shadow: 0px 4px 15px rgba(255, 255, 255, 0.3); position: absolute; opacity: 0; filter: blur(8px); transform: scale(0.85) translate3d(0, -15px, 0); transition: opacity 0.8s ease, transform 0.8s ease, filter 0.8s ease; white-space: nowrap; pointer-events: none; will-change: transform, opacity; }
-        .world-text.active { opacity: 1; filter: blur(0px); transform: scale(1) translate3d(0, 0, 0); }
-        .btn-demo-glow { background: linear-gradient(90deg, #6b21a8, #a855f7); border: none; color: white; padding: 10px 35px; border-radius: 25px; font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 0 25px rgba(168, 85, 247, 0.5); transition: transform 0.2s ease; margin-bottom: 20px; will-change: transform; }
-        .btn-demo-glow:hover { transform: scale(1.05) translate3d(0,0,0); }
-        .bottom-slogan { display: none; }
-
-        /* --- MARQUEE INFINITO --- */
-        .marquee-wrapper { width: 100%; overflow: hidden; background: rgba(0, 0, 0, 0.15); padding: 30px 0; position: relative; z-index: 3; border-top: 1px solid rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.03); display: flex; flex-wrap: nowrap; pointer-events: none; transform: translateZ(0); }
-        .marquee-content { display: flex; flex-shrink: 0; width: max-content; align-items: center; animation: marqueeFlow 25s linear infinite; will-change: transform; backface-visibility: hidden; }
-        .marquee-img { height: 32px; width: auto; margin: 0 60px; display: block; opacity: 0.9; flex-shrink: 0; max-width: none; }
-        .overlay-marquee { width: 100%; overflow: hidden; padding: 50px 0; position: relative; z-index: 5; background: rgba(0, 0, 0, 0.2); border-top: 1px solid rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.03); display: flex; flex-wrap: nowrap; pointer-events: none; transform: translateZ(0); }
-        @keyframes marqueeFlow { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
-
-        /* --- OVERLAYS CONFIGURACIÓN --- */
-        #full-menu-overlay, #paquetes-overlay, #academy-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9000; opacity: 0; visibility: hidden; transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
-            display: flex; flex-direction: column; align-items: center; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth;
-        }
-        #full-menu-overlay { background: radial-gradient(circle at 50% 80%, #0a0f24 0%, #030409 60%); }
-        #paquetes-overlay { background-color: #050505; background-image: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px); background-size: 50px 50px; }
-        #academy-overlay { background: #0a0a0a; justify-content: center; }
-        #full-menu-overlay::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
-        #full-menu-overlay.active, #paquetes-overlay.active, #academy-overlay.active { opacity: 1; visibility: visible; }
-
-        /* --- ACADEMY SECCIÓN --- */
-        .academy-section {
-            width: 90%; max-width: 1100px; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 40px;
-            background: rgba(20, 10, 30, 0.85); border: 1px solid rgba(255, 50, 50, 0.3); border-radius: 30px; padding: 60px; position: relative; z-index: 5;
-            box-shadow: 0 0 40px rgba(255, 50, 50, 0.1), inset 0 0 30px rgba(20, 10, 30, 0.8); backdrop-filter: blur(20px); overflow: hidden;
-        }
-        .academy-section::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(135deg, transparent 45%, rgba(255, 20, 60, 0.1) 50%, transparent 55%);
-            background-size: 30px 30px, 30px 30px, 200% 200%; pointer-events: none; z-index: 0; animation: techScan 12s linear infinite;
-        }
-        @keyframes techScan { 0% { background-position: 0 0, 0 0, 0% 0%; } 100% { background-position: 0 0, 0 0, 100% 100%; } }
-
-        .academy-card { flex: 1; background: rgba(40, 40, 50, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-left: 4px solid #ff3232; border-radius: 20px; padding: 40px; position: relative; z-index: 2; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .academy-badge { display: inline-block; background: rgba(255, 50, 50, 0.15); border: 1px solid #ff3232; color: #ff9090; font-size: 0.75rem; font-weight: 800; padding: 6px 15px; border-radius: 50px; margin-bottom: 20px; letter-spacing: 1px; }
-        .academy-card h2 { font-size: 2.8rem; font-weight: 900; line-height: 1; margin: 0 0 20px 0; color: #ffffff; letter-spacing: -1px; }
-        .academy-card h2 span { color: #ff3232; font-family: 'Pacifico', cursive; font-weight: 300; font-size: 3.2rem; }
-        .academy-card p { font-size: 0.95rem; color: rgba(255, 255, 255, 0.8); line-height: 1.7; }
-        .academy-visuals { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; z-index: 2; }
-        .dual-slide-wrap { width: 100%; max-width: 500px; aspect-ratio: 4 / 3; border-radius: 20px; overflow: hidden; position: relative; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(255, 50, 50, 0.3); border: 3px solid rgba(255, 50, 50, 0.6); background: #000; }
-        .fade-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.8s ease-in-out; will-change: opacity; }
-        .fade-img.active { opacity: 1; z-index: 2; }
-
-        /* --- MENU OVERLAY CONTENIDO --- */
-        .menu-overlay-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 900px; padding-top: 120px; padding-bottom: 100px; text-align: center; }
-        .menu-pill-container { border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(5px); margin-bottom: 25px; position: relative; display: flex; justify-content: center; align-items: center; height: 30px; overflow: hidden; animation: dynamicPillWidth 10s infinite cubic-bezier(0.8, 0, 0.1, 1); transform: translate3d(0, 20px, 0); opacity: 0; transition: all 0.5s ease 0.1s; will-change: width; }
-        #full-menu-overlay.active .menu-pill-container { transform: translate3d(0, 0, 0); opacity: 1; }
-        .menu-pill-text { font-size: 0.7rem; font-weight: 700; letter-spacing: 1px; color: rgba(255, 255, 255, 0.8); text-transform: uppercase; position: absolute; opacity: 0; visibility: hidden; animation: textCyclePillStrict 10s infinite linear; }
-        @keyframes dynamicPillWidth { 0%, 22% { width: 90px; } 25%, 47% { width: 130px; } 50%, 72% { width: 100px; } 75%, 97% { width: 140px; } 100% { width: 90px; } }
-        @keyframes textCyclePillStrict { 0%, 20% { opacity: 1; visibility: visible; } 21%, 100% { opacity: 0; visibility: hidden; } }
-
-        .menu-overlay-title { margin: 0; position: relative; transform: translate3d(0, 20px, 0); opacity: 0; transition: all 0.5s ease 0.2s; }
-        .menu-overlay-title h1 { font-size: 3.2rem; font-weight: 900; letter-spacing: -2px; margin: 0; line-height: 1.1; }
-        .menu-overlay-title h1 span { font-style: italic; font-weight: 300; font-family: 'Pacifico', cursive; font-size: 3.8rem; padding: 0 10px; }
-        .menu-overlay-title h2 { font-size: 3.5rem; font-weight: 900; letter-spacing: -2px; margin: -15px 0 0 0; color: rgba(255,255,255,0.15); line-height: 1.1; }
-        #full-menu-overlay.active .menu-overlay-title { transform: translate3d(0, 0, 0); opacity: 1; }
-        .menu-desc { font-size: 0.9rem; color: rgba(255,255,255,0.5); max-width: 550px; margin: 25px auto 10px auto; line-height: 1.6; transform: translate3d(0, 20px, 0); opacity: 0; transition: all 0.5s ease 0.3s; }
-        #full-menu-overlay.active .menu-desc { transform: translate3d(0, 0, 0); opacity: 1; }
-        .overlay-text-bg { position: fixed; top: 45%; left: 50%; transform: translate3d(-50%, -50%, 0); font-size: 10rem; font-weight: 900; color: rgba(255,255,255,0.02); white-space: nowrap; pointer-events: none; z-index: 1; text-transform: uppercase; letter-spacing: -5px; }
-
-        .menu-interactive-area { position: relative; width: 100%; height: 450px; display: flex; justify-content: center; align-items: center; transform: translate3d(0, 30px, 0) scale(0.95); opacity: 0; transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.4s; margin-top: 20px; }
-        #full-menu-overlay.active .menu-interactive-area { transform: translate3d(0, 0, 0) scale(1); opacity: 1; }
-        
-        .ft-smm { top: 20%; left: calc(50% - 240px); } .ft-sms { bottom: 20%; left: calc(50% - 240px); } .ft-user { top: 20%; right: calc(50% - 240px); } .ft-txt { bottom: 20%; right: calc(50% - 240px); }
-        .phone-center { width: 300px; height: 180px; background: rgba(30, 27, 75, 0.2); backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 20px 50px rgba(0,0,0,0.4); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; z-index: 5; }
-        .phone-center::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 60%; background: radial-gradient(circle at top right, #f97316 0%, transparent 60%); opacity: 0.3; z-index: 3; pointer-events: none; }
-        .phone-center::after { content: ''; position: absolute; top: 30%; left: -20%; width: 80%; height: 60%; background: radial-gradient(circle at center, #ea580c 0%, transparent 70%); opacity: 0.2; z-index: 3; pointer-events: none; }
-        .phone-slideshow .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: center center; border-radius: 20px; opacity: 0; transition: opacity 1.5s ease-in-out; z-index: 1; filter: saturate(1.2); }
-        .phone-slideshow .slide.active { opacity: 1; z-index: 2; }
-        
-        .float-tag { position: absolute; background: rgba(20, 20, 25, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); padding: 8px 15px; border-radius: 12px; display: flex; align-items: center; gap: 10px; backdrop-filter: blur(8px); font-size: 0.8rem; font-weight: 700; box-shadow: 0 10px 20px rgba(0,0,0,0.5); animation: floatAnim 6s ease-in-out infinite; z-index: 4; color: white; white-space: nowrap; will-change: transform; }
-        @keyframes floatAnim { 0%, 100% { transform: translate3d(0, 0px, 0); } 50% { transform: translate3d(0, -15px, 0); } }
-        .f-icon { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; } .f-icon svg { width: 100%; height: 100%; fill: #f97316; filter: drop-shadow(0 0 5px #f97316); }
-        .bottom-glow-arc { position: fixed; bottom: -400px; left: 50%; transform: translateX(-50%); width: 150vw; height: 500px; border-radius: 50%; background: radial-gradient(ellipse at top, rgba(249, 115, 22, 0.4) 0%, transparent 60%); box-shadow: 0 -20px 100px rgba(249, 115, 22, 0.3); z-index: 1; pointer-events: none; }
-        .slider-deco { position: absolute; bottom: -30px; width: 300px; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); }
-
-        /* --- DASHBOARD --- */
-        .dashboard-container { display: grid; grid-template-columns: 1.2fr 1fr 1.2fr; gap: 30px; width: 90%; max-width: 1200px; margin: 60px auto 100px auto; padding: 50px; background: rgba(30, 10, 50, 0.2); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 40px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 30px 60px rgba(0,0,0,0.6); transform: translate3d(0, 100px, 0); opacity: 0; transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 1s ease; z-index: 3; position: relative; will-change: transform, opacity; backface-visibility: hidden; }
-        .dashboard-container.visible { transform: translate3d(0, 0, 0); opacity: 1; }
-        .dash-left h2 { font-size: 3rem; line-height: 0.9; margin-bottom: 20px; font-weight: 800; letter-spacing: -1px;}
-        .glass-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; overflow: hidden; width: 100%; box-sizing: border-box; }
-        .viewer-box { width: 100%; height: 250px; border-radius: 15px; background: rgba(255,255,255,0.05); display: flex; justify-content: center; align-items: center; position: relative; overflow: hidden; }
-        #main-viewer { width: 100%; height: 100%; object-fit: cover; border-radius: 15px; opacity: 0; transition: opacity 0.4s ease-in-out; object-position: center top; will-change: opacity; transform: translateZ(0); }
-        .idea-container { text-align: center; margin-bottom: 20px; }
-        .idea-box { background: linear-gradient(90deg, #a855f7, #6b21a8); color: white; font-size: 0.8rem; font-weight: bold; padding: 5px 15px; border-radius: 5px; display: inline-block; margin-bottom: 5px; }
-        .nosotros-text { font-size: 3rem; font-weight: 900; color: #ffffff; margin: 0; line-height: 0.9; }
-        .creamos-text { font-size: 3rem; font-weight: 900; color: #ffffff; margin: 0; line-height: 0.9; background: linear-gradient(to bottom, #ffffff 50%, #e0e0e0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .icon-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
-        .icon-box { aspect-ratio: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 15px; display: flex; justify-content: center; align-items: center; overflow: hidden; transition: all 0.4s ease-in-out; will-change: transform, border-color, background-color; backface-visibility: hidden; }
-        .icon-box img { width: 100%; height: 100%; object-fit: cover; }
-        .service-item { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); padding: 14px 20px; border-radius: 50px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; cursor: pointer; font-size: 0.8rem; font-weight: 700; text-decoration: none; color: #ffffff; width: 100%; box-sizing: border-box; }
-        .service-item:hover { transform: translate3d(10px, 0, 0); background: rgba(255,255,255,0.06); }
-        .dot-icon { width: 32px; height: 32px; border-radius: 50%; background: #a855f7; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 15px #a855f7; flex-shrink: 0; }
-        .dot-icon img { width: 60%; height: 60%; object-fit: contain; }
-
-        /* --- PRECIOS PC --- */
-        .pricing-section { position: relative; padding: 40px 1vw 150px 1vw; min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow: visible; }
-        .pricing-header { text-align: center; margin-bottom: 50px; position: relative; z-index: 5; }
-        .pricing-header h2 { font-family: 'Pacifico', cursive; color: #db2777; font-size: 4rem; margin: 0; text-transform: uppercase; }
-        .pricing-header p { font-size: 1.5rem; font-weight: 700; margin-top: -10px; text-transform: uppercase; letter-spacing: 3px; }
-        .plans-container { display: flex; justify-content: center; align-items: stretch; gap: 1vw; width: 100%; max-width: 1700px; position: relative; z-index: 5; flex-wrap: nowrap; padding: 40px 15px; }
-        .plan-card { background: rgba(15, 15, 20, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 25px 12px; flex: 1 1 0; min-width: 0; text-align: center; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.4s, border-color 0.4s, box-shadow 0.4s; position: relative; backdrop-filter: blur(10px); display: flex; flex-direction: column; justify-content: space-between; z-index: 1; }
-        .plan-card:hover { transform: scale(1.12) translate3d(0, -10px, 0); background: rgba(25, 25, 30, 1); border-color: rgba(219, 39, 119, 0.8); z-index: 50; box-shadow: 0 25px 60px rgba(0,0,0,0.9), 0 0 20px rgba(219, 39, 119, 0.3); }
-        .plan-card.popular { border: 2px solid #ffd700; box-shadow: 0 0 40px rgba(255, 215, 0, 0.15); z-index: 10; }
-        .popular-sticker { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #ffd700; color: #000; font-weight: 900; font-size: 0.6rem; padding: 4px 10px; border-radius: 5px; text-transform: uppercase; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4); white-space: nowrap; }
-        .plan-name { font-size: 0.7rem; font-weight: 800; color: rgba(255, 255, 255, 0.6); margin-bottom: 8px; text-transform: uppercase; height: 35px; display: flex; align-items: center; justify-content: center; line-height: 1.1; }
-        .plan-time { font-size: 0.65rem; color: #ffd700; font-weight: 600; margin-bottom: 12px; }
-        
-        .plan-price { display: none; } 
-        .plan-deposit { display: none; }
-        
-        .plan-features { list-style: none; padding: 0; text-align: left; margin-bottom: 20px; flex-grow: 1; }
-        .plan-features li { font-size: 0.65rem; margin-bottom: 10px; color: rgba(255, 255, 255, 0.8); display: flex; align-items: flex-start; gap: 5px; line-height: 1.2; }
-        .plan-features li::before { content: '✓'; color: #db2777; font-weight: bold; }
-        .btn-plan { background: transparent; border: 1px solid rgba(255, 255, 255, 0.2); color: #fff; padding: 10px 0; width: 100%; border-radius: 30px; font-weight: 700; font-size: 0.65rem; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
-        .popular .btn-plan { background: #ffd700; color: #000; border: none; }
-        .btn-plan:hover { background: #fff; color: #000; }
-
-        .sticker-wall-section { position: relative; min-height: 100vh; width: 100%; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-        .sticker-center-text { text-align: center; z-index: 50; pointer-events: none; transform: translate3d(0, 30px, 0); opacity: 0; transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s; position: relative; }
-        #paquetes-overlay.active .sticker-center-text { transform: translate3d(0, 0, 0); opacity: 1; }
-        .sticker-line1 { display: flex; align-items: center; justify-content: center; gap: 20px; margin: 0; line-height: 1; }
-        .sticker-logo-img { height: 70px; width: auto; }
-        .sticker-line1 span { font-family: 'Inter', sans-serif; font-size: 1.2rem; color: #ffffff; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; opacity: 0.6; margin-top: 15px; }
-        .sticker-line2 { font-family: 'Pacifico', cursive; font-size: 6rem; color: #db2777; margin: -15px 0 0 0; text-shadow: 0 10px 30px rgba(219, 39, 119, 0.3); transform: rotate(-3deg); }
-
-        .testimonials-section { position: relative; background: #0a0a0a; padding: 150px 0; color: #fff; text-align: center; z-index: 10; }
-        .torn-paper-top, .torn-paper-bottom { position: absolute; left: 0; width: 100%; height: 60px; background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 1200 120" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M0 0 L1200 0 L1200 40 L1150 60 L1100 45 L1050 70 L1000 50 L950 80 L900 60 L850 90 L800 70 L750 100 L700 80 L650 110 L600 90 L550 115 L500 95 L450 110 L400 85 L350 100 L300 75 L250 90 L200 65 L150 80 L100 55 L50 70 L0 40 Z" fill="%23050505"/%3E%3C/svg%3E'); background-size: cover; z-index: 20; }
-        .torn-paper-top { top: -30px; }
-        .torn-paper-bottom { bottom: -30px; transform: rotate(180deg); }
-        .testimonial-cards-container { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; position: relative; max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .connector-line { position: absolute; top: 50%; left: 0; width: 100%; height: 100px; transform: translateY(-50%); z-index: 0; pointer-events: none; opacity: 0.6; }
-        .testi-card { background: rgba(20, 20, 25, 0.9); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 30px; width: 300px; text-align: left; position: relative; z-index: 2; backdrop-filter: blur(10px); transition: 0.3s; }
-        .testi-card:hover { transform: translate3d(0, -10px, 0); border-color: rgba(255, 215, 0, 0.3); }
-        .user-avatar { width: 60px; height: 60px; border-radius: 50%; border: 2px solid #ffd700; }
-        .stars { color: #ffd700; }
-
-        /* --- OVERLAY CONTÁCTANOS --- */
-        #contact-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #020005; z-index: 99000; display: flex; flex-direction: column; align-items: center; overflow-y: auto; overflow-x: hidden; opacity: 0; visibility: hidden; transform: perspective(1000px) rotateX(15deg) translateY(80px) scale(0.95); transition: opacity 0.7s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0.8s; }
-        #contact-overlay.active { opacity: 1; visibility: visible; transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1); filter: blur(0px); }
-        .contact-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-image: radial-gradient(circle at 50% -20%, rgba(14, 165, 233, 0.25) 0%, transparent 60%), linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 100% 100%, 40px 40px, 40px 40px; z-index: 1; pointer-events: none; }
-        
-        .contact-floating-img { position: absolute; z-index: 5; pointer-events: none; animation: floatAnimContact 8s ease-in-out infinite; will-change: transform; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5)); }
-        .fl-top-left { top: 10%; left: 8%; width: 180px; border-radius: 15px; transform: rotate(-10deg); animation-delay: 0s; border: 3px solid rgba(255,255,255,0.1); }
-        .fl-top-right { top: 12%; right: 8%; width: 140px; animation-delay: 1s; }
-        .fl-bot-left { bottom: 15%; left: 10%; width: 150px; animation-delay: 2s; }
-        .fl-bot-right { bottom: 10%; right: 8%; width: 200px; border-radius: 15px; transform: rotate(10deg); animation-delay: 3s; border: 3px solid rgba(255,255,255,0.1); }
-        @keyframes floatAnimContact { 0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); } 50% { transform: translateY(-25px) rotate(var(--rot, 0deg)); } }
-
-        .contact-pill-container { border: 1px solid rgba(14, 165, 233, 0.4); border-radius: 50px; background: rgba(14, 165, 233, 0.1); box-shadow: 0 0 20px rgba(14, 165, 233, 0.2); margin-bottom: 30px; position: relative; display: flex; justify-content: center; align-items: center; height: 35px; overflow: hidden; animation: dynamicContactPillWidth 10s infinite cubic-bezier(0.8, 0, 0.1, 1); will-change: width; z-index: 10; }
-        .contact-pill-text { font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; color: #0ea5e9; text-transform: uppercase; position: absolute; opacity: 0; visibility: hidden; animation: textCyclePillStrict 10s infinite linear; white-space: nowrap; }
-        @keyframes dynamicContactPillWidth { 0%, 22% { width: 120px; } 25%, 47% { width: 140px; } 50%, 72% { width: 130px; } 75%, 97% { width: 150px; } 100% { width: 120px; } }
-        .contact-content-wrapper { position: relative; z-index: 2; width: 100%; max-width: 900px; padding: 100px 5vw 50px 5vw; text-align: center; display: flex; flex-direction: column; align-items: center; }
-        .contact-title { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px; margin: 0 0 20px 0; color: white; position: relative; z-index: 10; }
-        .contact-title span { color: #0ea5e9; text-shadow: 0 0 30px rgba(14, 165, 233, 0.4); }
-        .contact-desc { font-size: clamp(0.9rem, 2vw, 1.1rem); color: rgba(255,255,255,0.6); max-width: 650px; line-height: 1.6; margin-bottom: 40px; position: relative; z-index: 10; }
-        .contact-cta-btn { background: linear-gradient(90deg, #0284c7, #0ea5e9); color: white; text-decoration: none; font-size: 1.2rem; font-weight: 900; padding: 18px 50px; border-radius: 15px; display: inline-block; box-shadow: 0 15px 35px rgba(14, 165, 233, 0.3); transition: transform 0.3s, box-shadow 0.3s; border: 1px solid #38bdf8; cursor: pointer; position: relative; z-index: 10; }
-        .contact-cta-btn:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 20px 50px rgba(14, 165, 233, 0.5); }
-        .contact-trust-bar { display: flex; align-items: center; justify-content: center; gap: 30px; margin-top: 40px; flex-wrap: wrap; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.05); width: 100%; max-width: 600px; position: relative; z-index: 10; }
-        .trust-item { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; font-weight: 600; color: #fff; }
-        .trust-avatars { display: flex; } .trust-avatars img { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #020617; margin-left: -10px; } .trust-avatars img:first-child { margin-left: 0; }
-        .trust-stars { color: #0ea5e9; font-size: 1.1rem; letter-spacing: 2px; }
-
-        /* =========================================
-           ADAPTACIÓN RESPONSIVA CELULARES
-           ========================================= */
-        @media (max-width: 900px) {
-            body::before { display: none !important; }
-            .smoke-overlay { display: none !important; }
-            .cursor-glow { display: none !important; }
-            .bg-slide { filter: brightness(0.3) !important; } 
-
-            .glow-background, .dashboard-container, .phone-center, .menu-pill-container, .testi-card, .plan-card { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
-            .glow-background { background: rgba(20, 10, 30, 0.9) !important; }
-            
-            .dashboard-container { background: rgba(20, 5, 35, 0.98) !important; box-shadow: 0 5px 15px rgba(0,0,0,0.5) !important; transform: translate3d(0,0,0) !important; opacity: 1 !important; }
-            .title-group, .world-text { filter: none !important; transition: opacity 0.8s ease, transform 0.8s ease !important; }
-            .title-group.active, .world-text.active { filter: none !important; }
-            .text-box-container { width: 100% !important; max-width: 260px !important; transition: transform 0.2s ease !important; }
-
-            .side-text-left, .side-text-right { display: none !important; } 
-            .bottom-slogan { display: block !important; position: relative !important; width: 100% !important; text-align: center !important; margin-top: 30px !important; font-size: 0.85rem !important; color: rgba(255, 255, 255, 0.6) !important; letter-spacing: 1px; text-transform: uppercase; }
-            
-            header { padding: 15px 5vw; display: flex; justify-content: space-between; position: relative; width: 100%; }
-            .nav-center { position: relative; left: 0; transform: none; flex: 1; justify-content: center; margin: 0 10px; }
-            .logo-img { height: 35px; margin-left: 0; }
-            header.paquetes-mode .logo-img { height: 50px; }
-            .nav-right a { display: none !important; } 
-            .btn-demo-outline { padding: 6px 12px; font-size: 0.8rem; }
-            .menu-btn, .academy-btn { padding: 6px 12px; font-size: 0.75rem; }
-            
-            .overlay-fixed-logo { top: 10px; left: 15px; height: 65px; }
-            .overlay-fixed-close { top: 15px; right: 15px; padding: 8px 15px; font-size: 0.75rem; }
-
-            #chatbot-fab { bottom: 20px; right: 20px; width: 55px; height: 55px; }
-            #chatbot-window { bottom: 85px; right: 5vw; width: 90vw; height: 500px; border-radius: 15px; }
-            
-            .fl-top-left { top: 5%; left: -5%; width: 100px; opacity: 0.4;}
-            .fl-top-right { top: 2%; right: -5%; width: 80px; opacity: 0.4;}
-            .fl-bot-left { bottom: 5%; left: 0; width: 90px; opacity: 0.4;}
-            .fl-bot-right { bottom: 5%; right: 0; width: 110px; opacity: 0.4;}
-
-            .hero-section { flex-direction: column; justify-content: flex-start; text-align: center; padding: 150px 5vw 30px 5vw !important; min-height: auto !important; gap: 0 !important; }
-            .title-group h1 { font-size: clamp(3rem, 15vw, 4.5rem) !important; line-height: 1; } 
-            .title-group h2 { font-size: 1.4rem !important; }
-            .dynamic-title-container { height: 95px !important; margin-bottom: 5px !important; } 
-            .world-text { font-size: clamp(2.5rem, 12vw, 4rem) !important; }
-            .text-box-container { height: 75px !important; margin-bottom: 30px !important; }
-            .btn-demo-glow { margin-top: 10px !important; }
-            
-            .plans-container { flex-direction: column !important; padding: 100px 5vw 20px 5vw !important; gap: 30px !important; align-items: center !important; overflow: visible !important; width: 100% !important; }
-            .plan-card { width: 100% !important; max-width: 350px !important; flex: none !important; transform: scale(1) translate3d(0,0,0) !important; background: rgba(15, 15, 20, 0.98) !important; margin: 0 auto !important; }
-
-            .academy-section { flex-direction: column; padding: 40px 20px !important; text-align: center; gap: 30px; }
-            .academy-card { padding: 30px 20px; border-left: none; border-top: 4px solid #ff3232; } 
-            .academy-card h2 { font-size: 2.2rem; }
-            .academy-card h2 span { font-size: 2.6rem; }
-            .dual-slide-wrap { max-width: 100%; border-width: 5px; }
-
-            .dashboard-container { grid-template-columns: 1fr; padding: 30px 15px !important; margin: 20px auto 50px auto !important; max-width: 450px; }
-            .dash-left { display: none !important; } 
-            .glass-box { padding: 20px !important; }
-            .nosotros-text, .creamos-text { font-size: clamp(1.8rem, 8vw, 2.5rem) !important; }
-            .icon-grid { gap: 8px !important; }
-            .service-item { padding: 12px 15px !important; font-size: 0.75rem !important; }
-
-            .menu-interactive-area { height: 350px !important; }
-            .ft-smm { top: 10%; left: 5%; } .ft-sms { bottom: 10%; left: 5%; } .ft-user { top: 10%; right: 5%; } .ft-txt { bottom: 10%; right: 5%; }
-            .phone-center { width: 240px !important; height: 160px !important; }
-            .menu-overlay-title h1 { font-size: 2.2rem; } .menu-overlay-title h2 { font-size: 1.5rem; }
-            .sticker-center-text { width: 90vw !important; padding: 0 !important; }
-            .sticker-line1 { flex-direction: column !important; gap: 5px !important; } .sticker-logo-img { height: auto !important; width: 90% !important; max-width: 250px !important; }
-            .sticker-line1 span { font-size: 1rem !important; margin-top: 5px !important; } .sticker-line2 { font-size: clamp(3rem, 15vw, 4rem) !important; margin-top: 0 !important; }
-
-            .testimonials-section { padding: 80px 0 !important; }
-            .testi-card { width: 90% !important; max-width: 320px !important; margin: 0 auto 20px auto !important; background: rgba(20, 20, 25, 0.98) !important; }
-
-            .contact-content-wrapper { padding-top: 80px; }
-            .contact-desc { font-size: 0.85rem; margin-bottom: 30px; }
-            .contact-cta-btn { font-size: 1rem; padding: 15px 30px; width: 100%; text-align: center; justify-content: center; }
-            .contact-trust-bar { gap: 15px; flex-direction: column; }
-        }
+        /* ASISTENTE */
+        #view-ai-chat { display: none; flex-direction: column; height: 100%; }
+        #view-ai-chat.active { display: flex; }
+        .admin-chatbot-container { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .ac-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: #f9fafb; }
+        .ac-msg { max-width: 80%; padding: 12px 18px; border-radius: 12px; font-size: 0.95rem; line-height: 1.5; }
+        .ac-msg.bot { background: #ffffff; border: 1px solid #e5e7eb; color: #1f2937; align-self: flex-start; }
+        .ac-msg.user { background: #2563eb; color: white; align-self: flex-end; }
+        .ac-input-area { display: flex; padding: 15px; background: #ffffff; border-top: 1px solid #e5e7eb; gap: 10px; }
+        .ac-input-area input { flex: 1; padding: 12px 15px; border: 1px solid #d1d5db; border-radius: 8px; outline: none; }
+        .ac-input-area button { background: #2563eb; color: white; border: none; padding: 0 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .ac-typing { font-size: 0.85rem; color: #6b7280; font-style: italic; margin-left: 10px; display: none;}
     </style>
 </head>
 <body>
 
     <div id="intro-loader">
         <div class="intro-logo" id="intro-text">
-            <span class="c">c</span><span class="r">r</span><span class="e">e</span><span class="a">a</span><span class="t">t</span><span class="i">i</span><span class="k">k</span>
+            <span>c</span><span>r</span><span>e</span><span>a</span><span>t</span><span>i</span><span>k</span>
+            <span style="margin-left: 15px; color: #a855f7;">a</span><span style="color: #a855f7;">d</span><span style="color: #a855f7;">m</span><span style="color: #a855f7;">i</span><span style="color: #a855f7;">n</span>
         </div>
     </div>
 
-    <div id="bg-presentation">
-        <div class="bg-slide slide-1" data-animate="true"></div>
-        <div class="bg-slide slide-2" data-animate="true"></div>
-        <div class="smoke-overlay"></div>
-    </div>
-    <div class="cursor-glow"></div>
-
-    <header id="main-header">
-        <img fetchpriority="high" src="LOGO MULTIMEDIA ISOTIPO MORA CREATIK.png" alt="creatik" class="logo-img" id="header-logo" onclick="triggerIntro()">
-        <div class="nav-center">
-            <div class="menu-btn" id="toggle-menu-btn"><span class="dot"></span> Menú</div>
-            <div class="academy-btn" id="open-academy-btn">Academy</div>
+    <div id="login-screen">
+        <div class="login-box">
+            <h2>CREATIK ADMIN</h2>
+            <input type="password" id="admin-pass" placeholder="CLAVE DE ACCESO" autocomplete="off">
+            <button onclick="iniciarSesion()">ENTRAR AL PANEL</button>
+            <p id="login-error" style="color: #ef4444; font-size: 0.85rem; display: none; margin-top: 15px; font-weight: 600;">Clave incorrecta</p>
         </div>
-        <div class="nav-right">
-            <a href="#">Login</a>
-            <button class="btn-demo-outline" id="toggle-paquetes-btn">PAQUETES</button>
-        </div>
-    </header>
-
-    <div id="academy-overlay">
-        <button class="overlay-fixed-close" id="close-academy-btn">✖ Cerrar</button>
-        <section class="academy-section">
-            <div class="academy-card">
-                <div class="academy-badge">✨ PROYECTO SOCIAL</div>
-                <h2>Creatik <span>Academy</span></h2>
-                <p style="margin-bottom: 15px; font-weight: 700; color: #ff3232; letter-spacing: 1px;">MÁS ALLÁ DE LA PANTALLA</p>
-                <p>En Creatik, nuestra visión no termina en el lente. Llevamos más de dos años y medio impulsando nuestro proyecto social <strong>Creatik Academy</strong>.</p>
-                <p style="margin-top: 10px;">Es un espacio de formación y convivencia donde unimos a apasionados del arte visual. A través de nuestras salidas de campo, transformamos la fotografía en una herramienta de integración. Formamos talento, unimos territorios y demostramos que el arte puede cambiar realidades.</p>
-            </div>
-            <div class="academy-visuals">
-                <div class="dual-slide-wrap">
-                    <img id="academy-A" class="fade-img active" loading="lazy" src="Creatik Academy/academy1.jpg" alt="Creatik Academy">
-                    <img id="academy-B" class="fade-img" loading="lazy" src="" alt="Creatik Academy">
-                </div>
-            </div>
-        </section>
     </div>
 
-    <div id="full-menu-overlay">
-        <div class="overlay-text-bg">HISTORIA INOLVIDABLE</div>
-        <div class="menu-overlay-content">
-            <div class="menu-pill-container" data-animate="true">
-                <span class="menu-pill-text t1" style="animation-delay: 0s;">única</span>
-                <span class="menu-pill-text t2" style="animation-delay: 2.5s;">memorable</span>
-                <span class="menu-pill-text t3" style="animation-delay: 5s;">eterna</span>
-                <span class="menu-pill-text t4" style="animation-delay: 7.5s;">inolvidable</span>
+    <div id="stats-modal" class="modal-overlay">
+        <div class="stats-box">
+            <h2 id="modal-welcome-name">¡Hola, Admin!</h2>
+            <p>Este es el movimiento del sitio web hoy:</p>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3 id="modal-c-hoy">0</h3>
+                    <span>Cotizaciones Hoy</span>
+                </div>
+                <div class="stat-item">
+                    <h3 id="modal-t-hoy" style="color: #10b981;">0</h3>
+                    <span>Tickets Cerrados</span>
+                </div>
             </div>
-            <div class="menu-overlay-title">
-                <h1>Contamos tu <span>historia</span> con el alma.</h1>
-                <h2>Capturamos momentos reales para hacerlos eternos.</h2>
-            </div>
-            <p class="menu-desc">En Creatik, capturamos la esencia de cada momento porque sabemos que tu reality es lo más importante. No solo entregamos una imagen, entregamos un recuerdo con alma.</p>
-            <div class="menu-interactive-area">
-                <div class="float-tag ft-smm">
-                    <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></svg></div>
-                    <span>Fotografía</span>
-                </div>
-                <div class="float-tag ft-sms">
-                    <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V4h-4z"/></svg></div>
-                    <span>Video</span>
-                </div>
-                <div class="float-tag ft-user">
-                    <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.97 4.43c-.16.09-.33.14-.5.14s-.34-.05-.5-.14l-7.97-4.43c-.32-.17-.53-.5-.53-.88V7.5c0-.38.21-.71.53-.88l7.97-4.43c.16-.09.33-.14.5-.14s.34.05.5.14l7.97-4.43c.32.17.53.5.53.88v9zM12 4.15L6.04 7.5 12 10.85l5.96-3.35L12 4.15z"/></svg></div>
-                    <span>Diseño Gráfico</span>
-                </div>
-                <div class="float-tag ft-txt">
-                    <div class="f-icon"><svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
-                    <span>Pasión</span>
-                </div>
-                
-                <div class="phone-center phone-slideshow">
-                    <img loading="lazy" decoding="async" src="FOTOS HORIZONTALES/img1H.jpg" class="slide active" alt="Galería">
-                    <img loading="lazy" decoding="async" src="FOTOS HORIZONTALES/img2H.jpg" class="slide" alt="Galería">
-                    <img loading="lazy" decoding="async" src="FOTOS HORIZONTALES/img3H.jpg" class="slide" alt="Galería">
-                    <img loading="lazy" decoding="async" src="FOTOS HORIZONTALES/img5H.jpg" class="slide" alt="Galería">
-                    <img loading="lazy" decoding="async" src="FOTOS HORIZONTALES/img8H.jpg" class="slide" alt="Galería">
-                </div>
-                <div class="slider-deco"></div>
-            </div>
+            <button class="btn-enter-dash" onclick="cerrarStatsModal()">Ir al Panel de Control ➔</button>
         </div>
-        <div class="bottom-glow-arc"></div>
     </div>
 
-    <div id="paquetes-overlay">
-        <img src="STICKER/sticker1.png" class="overlay-fixed-logo" id="paquetes-logo-btn" alt="Creatik">
-        <button class="overlay-fixed-close" id="close-paquetes-mobile-btn">✖ Cerrar</button>
-
-        <section class="sticker-wall-section">
-            <div class="sticker-center-text">
-                <h2 class="sticker-line1"><img loading="lazy" src="Copia de creatik letter.png" alt="Creatik" class="sticker-logo-img"><span>— Paquetes</span></h2>
-                <h1 class="sticker-line2">Tu historia</h1>
-            </div>
-        </section>
-
-        <section class="testimonials-section">
-            <div class="torn-paper-top"></div>
-            <div class="testimonials-content">
-                <h2>Lo que dicen nuestros clientes</h2>
-                <div class="testimonial-cards-container">
-                    <svg class="connector-line" viewBox="0 0 1200 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M50 50 C 200 10, 400 90, 600 50 C 800 10, 1000 90, 1150 50" stroke="#FFD700" stroke-width="2"/></svg>
-                    <div class="testi-card"><div class="card-header"><img loading="lazy" src="https://i.pravatar.cc/100?img=32" class="user-avatar" alt="Ana"><div class="user-info"><h3>Ana García</h3><div class="stars">★★★★★</div></div></div><p class="card-text">"¡Increíble trabajo! Capturaron la esencia de nuestra boda a la perfección."</p></div>
-                    <div class="testi-card"><div class="card-header"><img loading="lazy" src="https://i.pravatar.cc/100?img=11" class="user-avatar" alt="Carlos"><div class="user-info"><h3>Carlos Ruiz</h3><div class="stars">★★★★★</div></div></div><p class="card-text">"La calidad visual y la creatividad que aportaron le dieron un impulso enorme a nuestra marca."</p></div>
-                    <div class="testi-card"><div class="card-header"><img loading="lazy" src="https://i.pravatar.cc/100?img=47" class="user-avatar" alt="Laura"><div class="user-info"><h3>Laura Torres</h3><div class="stars">★★★★★</div></div></div><p class="card-text">"Tienen un ojo increíble para los detalles y la iluminación. ¡Me encantan!"</p></div>
-                </div>
-            </div>
-            <div class="torn-paper-bottom"></div>
-        </section>
-
-        <div class="overlay-marquee">
-            <div class="marquee-content"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"></div>
-            <div class="marquee-content"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"></div>
-        </div>
-
-        <section class="pricing-section">
-            <div class="pricing-header"><h2>ELIGE</h2><p>TU PLAN</p></div>
-            <div class="plans-container">
-                <div class="plan-card"><div class="plan-name">SESIÓN PERSONAL</div><div class="plan-time">Tiempo: 1 Hora</div><ul class="plan-features"><li>Equipo Profesional</li><li>15 fotos editadas</li><li>Fotos extras sin editar</li><li>Álbum Digital</li><li>Sticker y carta de cortesía</li></ul><button class="btn-plan">RESERVAR</button></div>
-                <div class="plan-card"><div class="plan-name">EMPRENDIMIENTO BÁSICO</div><div class="plan-time">Tiempo: 1 Hora</div><ul class="plan-features"><li>Equipo Profesional</li><li>15 fotos editadas</li><li>Ambientación básica</li><li>Entrega Digital</li><li>Sticker y carta de cortesía</li></ul><button class="btn-plan">RESERVAR</button></div>
-                <div class="plan-card"><div class="plan-name">EMPRENDIMIENTO PRO</div><div class="plan-time">Tiempo: 1 Hora</div><ul class="plan-features"><li>Equipo Profesional</li><li>25 fotos editadas</li><li>Ambientación avanzada</li><li>Entrega Digital</li><li>Sticker y carta de cortesía</li></ul><button class="btn-plan">RESERVAR</button></div>
-                <div class="plan-card"><div class="plan-name">EVENTO SMALL</div><div class="plan-time">Tiempo: 1 Hora</div><ul class="plan-features"><li>Equipo Profesional</li><li>50 fotos editadas</li><li>Fotos extras sin editar</li><li>Entrega USB</li><li>5 fotos impresas</li><li>Stickers de cortesía</li></ul><button class="btn-plan">RESERVAR</button></div>
-                <div class="plan-card popular"><div class="popular-sticker">El más popular</div><div class="plan-name">EVENTO INTERMEDIO</div><div class="plan-time">Tiempo: 2 Horas</div><ul class="plan-features"><li>Equipo Profesional</li><li>100 fotos editadas</li><li>Fotos extras sin editar</li><li>Video (10 min)</li><li>Entrega USB completa</li><li>10 fotos impresas</li></ul><button class="btn-plan">RESERVAR</button></div>
-                <div class="plan-card"><div class="plan-name">EVENTO EXPRESS</div><div class="plan-time">Tiempo: 2.5 Horas</div><ul class="plan-features"><li>Equipo + Asistente Pro</li><li>150 fotos editadas</li><li>Filmación (30 min)</li><li>Video vertical redes</li><li>Entrega USB completa</li><li>16 fotos impresas</li></ul><button class="btn-plan">RESERVAR</button></div>
-            </div>
-        </section>
-    </div>
-
-    <div id="contact-overlay">
-        <div class="contact-backdrop"></div>
-
-        <img src="img12.jpg" class="contact-floating-img fl-top-left" style="--rot: -10deg;" alt="Galería Creatik">
-        <img src="STICKER/sticker1.png" class="contact-floating-img fl-top-right" style="--rot: 15deg;" alt="Sticker Creatik">
-        <img src="STICKER/sticker3.png" class="contact-floating-img fl-bot-left" style="--rot: -15deg;" alt="Sticker Creatik">
-        <img src="img11.jpg" class="contact-floating-img fl-bot-right" style="--rot: 10deg;" alt="Galería Creatik">
-
-        <button class="overlay-fixed-close" id="close-contact-btn">✖ Cerrar</button>
+    <div id="dashboard-screen">
         
-        <div class="contact-content-wrapper">
-            <div class="contact-pill-container" data-animate="true">
-                <span class="contact-pill-text" style="animation-delay: 0s;">HABLEMOS</span>
-                <span class="contact-pill-text" style="animation-delay: 2.5s;">COTIZA HOY</span>
-                <span class="contact-pill-text" style="animation-delay: 5s;">FOTOGRAFÍA</span>
-                <span class="contact-pill-text" style="animation-delay: 7.5s;">CREATIVIDAD</span>
+        <div class="sidebar">
+            <div class="brand-title">Creatik <span>Admin</span></div>
+            <div class="admin-profile">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="admin-avatar">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <div class="admin-name-display" id="current-admin-name">Admin</div>
+                <div class="admin-role">Soporte & Ventas</div>
             </div>
-            
-            <h1 class="contact-title">¿Necesitas una <span>mano</span> para tu próxima sesión de fotos?</h1>
-            <p class="contact-desc">En Creatik, capturamos la esencia de cada momento porque sabemos que tu reality es lo más importante.</p>
-            
-            <a href="https://wa.me/50375778333" target="_blank" class="contact-cta-btn">
-                Iniciar Chat Ahora ➔
-            </a>
 
-            <div class="contact-trust">
-                <div class="contact-trust-bar">
-                    <div class="trust-item">
-                        <div class="trust-avatars">
-                            <img src="https://i.pravatar.cc/100?img=32" alt="Avatar">
-                            <img src="https://i.pravatar.cc/100?img=11" alt="Avatar">
-                            <img src="https://i.pravatar.cc/100?img=47" alt="Avatar">
-                        </div>
-                        <span>+10 Proyectos Exitosos</span>
+            <button class="nav-btn active" onclick="cambiarVista('resenas', this)">💬 Moderar Reseñas</button>
+            <button class="nav-btn" onclick="cambiarVista('tickets', this)">🎫 Historial de Tickets</button>
+            <button class="nav-btn" onclick="cambiarVista('cupones', this)">🎁 Gestor de Cupones</button>
+            <button class="nav-btn" onclick="cambiarVista('ai-chat', this)">🤖 Asistente Libre</button>
+            
+            <button id="roger-clear-btn" class="btn-clear-db" onclick="limpiarHistorialRoger()">⚠️ Limpiar Historial</button>
+
+            <button class="logout-btn" onclick="cerrarSesion()">Cerrar Sesión</button>
+        </div>
+
+        <div class="main-content">
+            
+            <div class="welcome-banner">
+                <div class="welcome-text">
+                    <h1 id="welcome-title">Bienvenido al Panel</h1>
+                    <p>Gestiona reseñas, revisa historiales de conversación y administra tus códigos de descuento desde un solo lugar.</p>
+                </div>
+                <div class="live-stat-card">
+                    <strong id="live-tickets-header-count">0</strong>
+                    <span>Tickets Cerrados</span>
+                </div>
+            </div>
+
+            <div id="view-resenas" class="view-section active">
+                <div class="section-header">Moderación de Reseñas Públicas</div>
+                <div class="data-table-container">
+                    <table id="tabla-resenas">
+                        <thead><tr><th>Fecha</th><th>Cliente</th><th>Estrellas</th><th>Comentario</th><th>Acción</th></tr></thead>
+                        <tbody id="lista-resenas"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="view-tickets" class="view-section">
+                <div class="section-header">Historial de Tickets Cerrados</div>
+                <div class="data-table-container">
+                    <table id="tabla-tickets">
+                        <thead><tr><th>Fecha / Hora</th><th>Código</th><th>Cliente Info</th><th>Paquete y Precios</th><th>Historial</th></tr></thead>
+                        <tbody id="lista-tickets"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="view-cupones" class="view-section">
+                <div class="coupon-header-bar">
+                    <div>
+                        <h3>Generador de Cupones</h3>
+                        <p style="color: #6b7280; font-size: 0.85rem;">Máximo 1 cupón del 25% por mes.</p>
                     </div>
-                    <div class="trust-item">
-                        <span class="trust-stars">★★★★★</span>
-                        <span>5/5 Reseñas de clientes</span>
+                    <button class="btn-create-coupon" onclick="generarCupon()">+ Crear Código (25%)</button>
+                </div>
+                <div class="data-table-container">
+                    <table id="tabla-cupones">
+                        <thead><tr><th>Código Promo</th><th>Creador</th><th>Descuento</th><th>Mes Asignado</th><th>Estado</th><th>Acción</th></tr></thead>
+                        <tbody id="lista-cupones"><tr><td colspan="6" style="text-align: center;">Cargando...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="view-ai-chat" class="view-section" style="flex:1;">
+                <div class="section-header">Asistente Creatik IA <span class="ac-typing" id="ac-typing">Escribiendo...</span></div>
+                <div class="admin-chatbot-container">
+                    <div class="ac-messages" id="ac-messages">
+                        <div class="ac-msg bot">¡Hola! Soy tu asistente interno. ¿En qué te puedo ayudar hoy?</div>
+                    </div>
+                    <div class="ac-input-area">
+                        <input type="text" id="ac-input" placeholder="Pregúntame sobre el trabajo de hoy..." autocomplete="off">
+                        <button onclick="sendAdminChatMessage()" id="ac-btn">Enviar</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <main class="hero-section" id="main-content-area">
-        <div class="side-text side-text-left">Bienvenido a creatik.<br>La era de la IA.</div>
-        <div class="center-hero">
-            <div class="dynamic-title-container">
-                <div class="title-group" id="title-historia"><h1>Tu historia</h1><h2>es</h2></div>
-                <div class="title-group" id="title-hagamos"><h1>Hagamos</h1><h2>que sea</h2></div>
+    <div id="chat-modal">
+        <div class="chat-box">
+            <div class="chat-box-header">
+                <h3 id="modal-ticket-title">Ticket</h3>
+                <button class="close-modal-btn" onclick="document.getElementById('chat-modal').style.display='none'">✖</button>
             </div>
-            <div class="text-box-container" id="dynamic-box">
-                <div class="glow-background"></div>
-                <span class="world-text">única</span>
-                <span class="world-text">memorable</span>
-                <span class="world-text">eterna</span>
-                <span class="world-text">inolvidable</span>
-            </div>
-            <button class="btn-demo-glow" id="btn-contact-open">Contáctanos</button>
-            <div class="bottom-slogan">Tu historia es única, hagamos que sea inolvidable</div>
-        </div>
-        <div class="side-text side-text-right" style="text-align: right;">Tu historia es unica, hagamos que sea inolvidable</div>
-    </main>
-
-    <div class="marquee-wrapper" id="marquee-transition">
-        <div class="marquee-content"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"></div>
-        <div class="marquee-content"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"><img loading="lazy" decoding="async" src="Copia de creatik letter.png" class="marquee-img"></div>
-    </div>
-
-    <div class="dashboard-container" id="scroll-panel">
-        <div class="dash-left"><h2>Nuestros<br>Trabajos<span style="color: #a855f7;">.</span></h2><div class="glass-box"><div class="viewer-box"><img id="main-viewer" src="" alt=""></div></div></div>
-        <div class="dash-center">
-            <div class="glass-box">
-                <div class="idea-container">
-                    <div class="idea-box">¿TIENES UNA IDEA?</div>
-                    <h2 class="nosotros-text">NOSOTROS</h2>
-                    <div class="nosotros-text" style="font-size: 1rem; background: #a855f7; display: inline-block; padding: 2px 8px; border-radius: 4px; margin: 5px 0;">LA</div>
-                    <h2 class="creamos-text">CREAMOS</h2>
-                    <p style="font-size: 0.7rem; color: white; opacity: 0.7; margin-top: 5px;">(PREGUNTA POR FECHAS DISPONIBLES)</p>
-                </div>
-                <div class="icon-grid" id="thumbnail-grid">
-                    <div class="icon-box"><img loading="lazy" decoding="async" src="img1.jpg"></div>
-                    <div class="icon-box"><img loading="lazy" decoding="async" src="img2_2.jpg"></div>
-                    <div class="icon-box"><img loading="lazy" decoding="async" src="img3.jpg"></div>
-                    <div class="icon-box"><img loading="lazy" decoding="async" src="img4.jpg"></div>
-                    <div class="icon-box"><img loading="lazy" decoding="async" src="img5.jpg"></div>
-                    <div class="icon-box"><img loading="lazy" decoding="async" src="img6.jpg"></div>
-                    <div class="icon-box"><img loading="lazy" decoding="async" src="img7_7.jpg"></div>
-                    <div class="icon-box"><img loading="lazy" decoding="async" src="img8.jpg"></div>
-                    <div class="icon-box"><img loading="lazy" decoding="async" src="img9.jpg"></div>
-                </div>
-            </div>
-        </div>
-        <div class="dash-right"><a href="https://www.facebook.com/profile.php?id=61587372815271" target="_blank" class="service-item"><span>FACEBOOK</span><div class="dot-icon" style="background: #1877f2;"><img loading="lazy" src="communication.png" alt="Facebook"></div></a><a href="https://www.instagram.com/soycreatik" target="_blank" class="service-item"><span>INSTAGRAM</span><div class="dot-icon" style="background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);"><img loading="lazy" src="instagram (1).png" alt="Instagram"></div></a><a href="https://www.tiktok.com/@soy.creatik?is_from_webapp=1&sender_device=pc" target="_blank" class="service-item"><span>TIKTOK</span><div class="dot-icon" style="background: #000000;"><img loading="lazy" src="tik-tok.png" alt="TikTok"></div></a></div>
-    </div>
-
-    <div id="chatbot-fab" title="Chatea con nosotros">
-        <svg viewBox="0 0 24 24" width="28" height="28" fill="white"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM9 11H7V9h2v2zm4 0h-2V9h2v2zm4 0h-2V9h2v2z"></path></svg>
-    </div>
-
-    <div id="chatbot-window">
-        <div class="chatbot-header">
-            <img src="LOGO CHAT.jpg" alt="Creatik Bot" class="chatbot-logo" onerror="this.src='https://i.pravatar.cc/100?img=12'">
-            <div class="chatbot-title">
-                <h4 style="display:flex; align-items:center; justify-content:space-between; width:100%; margin:0;">
-                    Creatik IA 
-                    <button id="admin-exit-btn">Salir</button>
-                </h4>
-                <div class="status-online">En línea</div>
-                <div id="chatbot-session-display" style="color: #ffd700; font-size: 0.65rem; font-weight: bold; margin-top: 2px; letter-spacing: 0.5px;">Gestión: Pendiente...</div>
-            </div>
-            <button id="close-chatbot-btn">✖</button>
-        </div>
-        
-        <div class="chatbot-messages" id="chatbot-messages"></div>
-        
-        <div class="chatbot-input-area">
-            <button id="chatbot-verify-btn" title="Acceso a Administradores">
-                <svg viewBox="0 0 24 24" width="20" height="20"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-            </button>
-            <input type="text" id="chatbot-input" placeholder="Escribe tu mensaje..." autocomplete="off">
-            <button id="chatbot-send-btn">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
-            </button>
+            <div class="chat-box-body" id="modal-ticket-body">Cargando...</div>
         </div>
     </div>
 
     <script>
-        // --- BLOQUEO ANTICOPIA ---
-        document.addEventListener('contextmenu', event => event.preventDefault());
-        document.addEventListener('dragstart', event => event.preventDefault());
+        // ANIMACIÓN DEL LOADER
+        window.addEventListener('load', () => {
+            const introText = document.getElementById('intro-text');
+            const loader = document.getElementById('intro-loader');
+            introText.classList.add('animate-letters');
+            setTimeout(() => { loader.classList.add('hidden'); }, 1800);
+        });
 
-        console.log("%c==========================================", "color: #0ea5e9; font-weight: bold; font-size: 14px;");
-        console.log("%cCREADO POR ROGER MÉNDEZ", "color: #0ea5e9; font-weight: bold; font-size: 16px;");
-        console.log("%cTodos los derechos reservados. Uso no autorizado prohibido.", "color: white; font-size: 12px;");
-        console.log("%c==========================================", "color: #0ea5e9; font-weight: bold; font-size: 14px;");
-
-        // --- CONEXIÓN CON GOOGLE SHEETS PARA GUARDAR LOS DATOS ---
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyijEFSF65DBJZ-DAKkFW29b5yMwZnvpXho0jwKyuCsMOXCSxnq5T78uni5jokeCY0-vA/exec';
-        
-        // --- API KEY BLINDADA ---
-        const k1 = "sk-proj-KH2vuYEN43CdaJPG8UT8u0ThJYKGjgJ-";
-        const k2 = "zhoyX1-Je9q7KY8xHLrrCEAB2O-bzyhi-";
-        const k3 = "0gSQDdC9DT3BlbkFJtVWsmA7ZrXqcH9_y_";
-        const k4 = "DXTCc5UC8yiQ6BAE80waG-eFZs9XUUKNycxp75hNfC7h6HUwldm4tJfIA";
-        const API_KEY = k1 + k2 + k3 + k4;
-
-        window.serverData = { bookedDates: [], totalHoy: 0 };
-        
-        function fetchBookedDates() {
-            if (GOOGLE_SCRIPT_URL.startsWith('http')) {
-                fetch(GOOGLE_SCRIPT_URL).then(res => res.json()).then(data => {
-                    window.serverData.bookedDates = data.bookedDates || [];
-                    window.serverData.totalHoy = data.totalHoy || 0;
-                }).catch(e => console.error("Error BD: ", e));
-            }
-        }
-        fetchBookedDates();
-
-        function getSentiment() {
-            let hist = conversationHistory.toLowerCase();
-            let badWords = ["malo", "pesimo", "pésimo", "no sirve", "basura", "lento", "estupido", "idiota", "odio", "mentira", "fraude", "apurate", "rapido", "asqueroso", "no quiero", "para que", "privado", "estafa", "caro", "robo", "mal servicio", "decepcionante", "peor", "horrible", "falta de respeto", "grosero", "abusivo", "incompetente"];
-            let goodWords = ["gracias", "excelente", "me encanta", "perfecto", "amable", "por favor", "genial", "super", "lindo", "buen servicio", "increible", "mucho gusto", "sí me parece", "acepto", "maravilloso", "increíble", "fascinante", "me gusta", "buenísimo", "ok", "vale", "está bien", "de acuerdo", "encantado", "bella", "hermoso", "muy bien", "trato hecho", "interesa"];
-            let badScore = badWords.filter(w => hist.includes(w)).length;
-            let goodScore = goodWords.filter(w => hist.includes(w)).length;
-            if (badScore > goodScore) return "Mal Trato 🔴";
-            if (goodScore > badScore && goodScore > 1) return "Buen Trato 🟢";
-            return "Neutral ⚪";
-        }
-
-        // --- SINCRONIZACION A SHEETS EN TIEMPO REAL ---
-        function syncToSheets(customPayload = null) {
-            if (!GOOGLE_SCRIPT_URL.startsWith('http')) return;
-            
-            let finalPayload = customPayload;
-            if (!finalPayload) {
-                if (!sessionId || sessionId === "Pendiente...") return;
-                
-                let fechaActual = new Date().toLocaleString("en-US", { timeZone: "America/El_Salvador" });
-                
-                finalPayload = { 
-                    action: "save", 
-                    codigo: sessionId, 
-                    fechaRegistro: fechaActual,
-                    nombre: userData.nombre || "En proceso...", 
-                    telefono: userData.telefono || "En proceso...", 
-                    ubicacion: userData.departamento || "En proceso...", 
-                    fechaEvento: userData.fechaEvento || "En proceso...",
-                    proyecto: userData.proyecto_resumen || "GESTIÓN INCOMPLETA", 
-                    precioTotal: userData.precio_final || "Calculando...",
-                    anticipo: userData.anticipo || "Calculando...",
-                    resumen: userData.resumen || "GESTIÓN INCOMPLETA",
-                    historial: conversationHistory + `\n[Evaluación IA: ${getSentiment()}]`,
-                    evaluacionTrato: getSentiment()
-                };
-            }
-            
-            fetch(GOOGLE_SCRIPT_URL, { 
-                method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(finalPayload) 
-            }).catch(e => console.log(e));
-        }
-
-        let inactivityTimer;
-        function resetInactivityTimer() {
-            clearTimeout(inactivityTimer);
-            if (isChatbotOpen) inactivityTimer = setTimeout(() => { isChatbotOpen = false; chatbotWindow.classList.remove('active'); chatbotFab.classList.remove('hide-chatbot-ui'); resetChat(); }, 600000); 
-        }
-        document.getElementById('chatbot-window').addEventListener('click', resetInactivityTimer);
-        document.getElementById('chatbot-window').addEventListener('mousemove', resetInactivityTimer);
-
-        // CONFIGURACIÓN DE ADMINISTRADORES
-        const adminUsers = { 
-            'VIC1234': {name: 'Víctor', color: '#3b82f6'}, 
-            'ROG5678': {name: 'Roger', color: '#10b981'}, 
-            'GER9012': {name: 'Gerardo', color: '#f59e0b'}, 
-            'ORL3456': {name: 'Orlando', color: '#ef4444'} 
+        const firebaseConfig = {
+            apiKey: "AIzaSyAKLFbMqBzP2lFvMBkCPLAasaL85UX6oJo",
+            authDomain: "soycreatik-978eb.firebaseapp.com",
+            projectId: "soycreatik-978eb",
+            storageBucket: "soycreatik-978eb.firebasestorage.app",
+            messagingSenderId: "756058176866",
+            appId: "1:756058176866:web:d407e960a59e00ce08c03b"
         };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-        const academyImagesList = ['academy1.jpg', '_DSC7744.jpg', 'academy2.jpg', 'academy3.jpg', 'academy4.jpg', 'academy5.jpg', 'academy6.jpg', 'academy7.jpg', 'academy8.jpg', 'academy9.jpg', 'academy10.jpg', 'academy11.jpg', 'academy12.jpg', 'academy13.jpg', 'academy14.jpg']; 
-        let currentPairIndex = 0; let activeLayer = 'A'; 
-        function shuffleArray(arr) { let array = arr.slice(); for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
-        let shuffledAcademy = shuffleArray(academyImagesList);
-        function changeAcademyImages() {
-            if (!document.getElementById('academy-A')) return;
-            if (currentPairIndex >= shuffledAcademy.length) { let lastImage = shuffledAcademy[shuffledAcademy.length - 1]; let newShuffle; do { newShuffle = shuffleArray(academyImagesList); } while (newShuffle[0] === lastImage); shuffledAcademy = newShuffle; currentPairIndex = 0; }
-            let nextImage = shuffledAcademy[currentPairIndex]; currentPairIndex++;
-            const layerOut = document.getElementById(`academy-${activeLayer}`); activeLayer = activeLayer === 'A' ? 'B' : 'A'; const layerIn = document.getElementById(`academy-${activeLayer}`);
-            const tempImg = new Image(); tempImg.onload = function() { layerIn.src = this.src; layerIn.classList.add('active'); layerOut.classList.remove('active'); }; tempImg.src = `Creatik Academy/${nextImage}`;
-        }
-        setInterval(changeAcademyImages, 4000); 
+        const admins = { 'VIC1234': 'Víctor', 'ROG2026': 'Roger', 'GER9012': 'Gerardo', 'ORL3456': 'Orlando' };
+        let activeAdminName = "";
+        let adminStats = { cotizaciones: 0, tickets: 0, cuponesC: 0, cuponesU: 0 };
+        let unsubResenas, unsubTickets, unsubCupones;
 
-        const chatbotFab = document.getElementById('chatbot-fab'); const chatbotWindow = document.getElementById('chatbot-window'); const closeChatbotBtn = document.getElementById('close-chatbot-btn'); const chatbotInput = document.getElementById('chatbot-input'); const chatbotSendBtn = document.getElementById('chatbot-send-btn'); const chatbotVerifyBtn = document.getElementById('chatbot-verify-btn'); const chatbotMessages = document.getElementById('chatbot-messages');
-        
-        let isChatbotOpen = false; let sessionId = "Pendiente..."; let conversationHistory = ""; let chatState = 'INIT'; 
-        let userData = { nombre: '', telefono: '', departamento: '', intencion: '', proyecto_resumen: '', resumen: '', precio_final: '', anticipo: '', fechaEvento: '' };
-        let lastUserText = ""; let repeatCount = 0;
-        
-        // Variables para aislamiento de Admin
-        let adminConversationHistory = "";
-        let adminFullLog = "";
-
-        chatbotFab.addEventListener('click', () => {
-            fetchBookedDates(); 
-            isChatbotOpen = true; chatbotWindow.classList.add('active'); chatbotFab.classList.add('hide-chatbot-ui'); resetInactivityTimer();
-            if(chatbotMessages.children.length === 0) {
-                let saludoInicial = "¡Hola! Soy Creatik IA. 🤖✨ Para brindarte una mejor atención, ¿qué te gustaría hacer hoy?";
-                appendBotMessage(saludoInicial); conversationHistory += "Creatik IA: " + saludoInicial + "\n";
-                appendBotOptions(["📸 Cotizar un servicio", "✅ Contratar a Creatik", "✨ Conocer más de Creatik", "📅 Reprogramar o Cancelar", "🎁 Canjear Cupón"]);
-            }
-            setTimeout(() => chatbotInput.focus(), 300);
-        });
-
-        closeChatbotBtn.addEventListener('click', () => { isChatbotOpen = false; chatbotWindow.classList.remove('active'); chatbotFab.classList.remove('hide-chatbot-ui'); clearTimeout(inactivityTimer); });
-        
-        // AUDITORÍA DE ADMINISTRADORES (Se guarda en una sola fila por sesión)
-        function logAdminActivity(adminName, actionDetail) {
-            if (!GOOGLE_SCRIPT_URL.startsWith('http')) return;
-            adminFullLog += `[${new Date().toLocaleTimeString('en-US')}] ${actionDetail}\n`;
-            let fechaActual = new Date().toLocaleString("en-US", { timeZone: "America/El_Salvador" });
-
-            let payload = {
-                action: "save",
-                codigo: window.adminSessionId,
-                fechaRegistro: fechaActual,
-                nombre: "ADMINISTRADOR",
-                telefono: "-",
-                ubicacion: "-",
-                fechaEvento: "-",
-                proyecto: "SESIÓN DE ADMIN: " + adminName,
-                precioTotal: "-",
-                anticipo: "-",
-                resumen: "Última acción: " + actionDetail,
-                historial: adminFullLog,
-                evaluacionTrato: "Admin 🛡️"
-            };
-            fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(payload) }).catch(e => console.log(e));
-        }
-
-        chatbotVerifyBtn.addEventListener('click', () => { 
-            resetInactivityTimer(); 
-            chatState = 'ADMIN_LOGIN'; 
-            appendBotMessage("🔒 **Acceso de Administración**\nPor favor, ingresa tu clave única:"); enableInput("Escribe tu clave..."); 
-            clearTimeout(window.adminTimeout); 
-            window.adminTimeout = setTimeout(() => { 
-                if(chatState === 'ADMIN_LOGIN') {
-                    chatbotMessages.lastChild.remove(); 
-                    enableInput();
+        async function iniciarSesion() {
+            const pass = document.getElementById('admin-pass').value.toUpperCase().trim();
+            if(admins[pass]) {
+                activeAdminName = admins[pass];
+                
+                if(activeAdminName === "Roger") {
+                    document.getElementById('roger-clear-btn').style.display = 'block';
                 }
-            }, 20000);
-        });
 
-        // BOTÓN PERMANENTE PARA SALIR DEL MODO ADMIN
-        const adminExitBtn = document.getElementById('admin-exit-btn');
-        adminExitBtn.addEventListener('click', () => {
-            logAdminActivity(window.currentAdminKey ? adminUsers[window.currentAdminKey].name : "Desconocido", "Cerró sesión del panel de administrador manualmente mediante el botón.");
-            
-            // Restaura y reinicia el chat del cliente
-            chatState = 'INIT'; 
-            document.querySelector('.chatbot-header').style.background = "rgba(0,0,0,0.5)";
-            adminExitBtn.style.display = 'none';
-            resetChat(); 
-        });
+                let todayStr = new Date().toLocaleDateString("en-US", {timeZone: "America/El_Salvador"});
+                let snapCotiz = await db.collection("cotizaciones").get();
+                let cHoy = 0, tHoy = 0;
+                snapCotiz.forEach(doc => {
+                    let d = doc.data();
+                    let dateStr = d.fechaRegistro ? new Date(d.fechaRegistro).toLocaleDateString("en-US", {timeZone: "America/El_Salvador"}) : "";
+                    if (dateStr === todayStr && d.codigo && d.codigo.startsWith("CTK-")) {
+                        cHoy++;
+                        if (d.precioTotal && d.precioTotal !== "Calculando...") tHoy++;
+                    }
+                });
 
-        document.querySelectorAll('.btn-plan').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const planCard = e.target.closest('.plan-card');
-                const planName = planCard.querySelector('.plan-name').textContent;
-                isPaquetesOpen = false; document.getElementById('paquetes-overlay').classList.remove('active'); document.body.style.overflow = 'auto'; updateHeaderVisibility();
-                isChatbotOpen = true; chatbotWindow.classList.add('active'); chatbotFab.classList.add('hide-chatbot-ui'); resetInactivityTimer();
-                chatbotMessages.innerHTML = ""; conversationHistory = "";
-                userData = { nombre: '', telefono: '', departamento: '', intencion: '', proyecto_resumen: '', resumen: '', precio_final: '', anticipo: '', fechaEvento: '' };
-                let digits = Math.floor(1000 + Math.random() * 9000); sessionId = "CTK-R" + digits; 
-                document.getElementById('chatbot-session-display').textContent = "Gestión: " + sessionId; 
-                userData.intencion = "Reserva Web: " + planName;
-                let msg = `¡Excelente elección! 🎉 Has seleccionado el paquete **${planName}**. Para iniciar tu gestión de forma fluida, ¿me podrías decir tu nombre? ✨`;
-                appendBotMessage(msg); conversationHistory += `Creatik IA: ${msg}\n`; chatState = 'AI_CHAT'; enableInput();
-                syncToSheets();
-            });
-        });
-
-        function scrollToBottom() { chatbotMessages.scrollTop = chatbotMessages.scrollHeight; }
-        function appendUserMessage(text) { const msgDiv = document.createElement('div'); msgDiv.className = 'message user-message'; msgDiv.textContent = text; chatbotMessages.appendChild(msgDiv); scrollToBottom(); }
-        function appendBotMessage(text) { const msgDiv = document.createElement('div'); msgDiv.className = 'message bot-message'; msgDiv.innerHTML = text; chatbotMessages.appendChild(msgDiv); scrollToBottom(); }
-        function appendBotTyping() { const msgDiv = document.createElement('div'); msgDiv.className = 'message bot-message typing-container'; msgDiv.id = 'bot-typing'; msgDiv.innerHTML = '<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>'; chatbotMessages.appendChild(msgDiv); scrollToBottom(); }
-        function removeBotTyping() { const typingDiv = document.getElementById('bot-typing'); if (typingDiv) typingDiv.remove(); }
-        function enableInput(placeholder = "Escribe tu mensaje...") { chatbotInput.disabled = false; chatbotSendBtn.disabled = false; chatbotInput.placeholder = placeholder; chatbotInput.focus(); }
-
-        function appendBotOptions(options) {
-            const msgDiv = document.createElement('div'); msgDiv.className = 'chat-options-container';
-            options.forEach(opt => { const btn = document.createElement('button'); btn.className = 'chat-option-btn'; btn.textContent = opt; btn.onclick = () => { msgDiv.style.pointerEvents = 'none'; msgDiv.style.opacity = '0.5'; handleSend(opt); }; msgDiv.appendChild(btn); });
-            chatbotMessages.appendChild(msgDiv); scrollToBottom(); enableInput();
-        }
-
-        function showFinalOptions() {
-            appendBotMessage("¿Deseas seguir consultando información o prefieres terminar la gestión por ahora? ✨");
-            appendBotOptions(["🔍 Seguir consultando", "👋 Salir y terminar"]); 
-            chatState = 'FINAL_DECISION'; 
-            enableInput();
-            
-            // Auto reset de 2 minutos
-            clearTimeout(window.finalDecisionTimer);
-            window.finalDecisionTimer = setTimeout(() => {
-                if (chatState === 'FINAL_DECISION') resetChat();
-            }, 120000);
-        }
-
-        function resetChat() {
-            document.querySelector('.chatbot-header').style.background = "rgba(0,0,0,0.5)";
-            document.getElementById('admin-exit-btn').style.display = "none";
-            chatbotMessages.innerHTML = ""; chatState = 'INIT'; conversationHistory = ""; 
-            userData = { nombre: '', telefono: '', departamento: '', intencion: '', proyecto_resumen: '', resumen: '', precio_final: '', anticipo: '', fechaEvento: '' };
-            lastUserText = ""; repeatCount = 0; document.getElementById('chatbot-session-display').textContent = "Gestión: Pendiente..."; sessionId = "Pendiente...";
-            let msg = "¡Hola de nuevo! Soy Creatik IA. 🤖✨ El chat se ha reiniciado. ¿En qué te puedo ayudar?";
-            appendBotMessage(msg); appendBotOptions(["📸 Cotizar un servicio", "✅ Contratar a Creatik", "✨ Conocer más de Creatik", "📅 Reprogramar o Cancelar", "🎁 Canjear Cupón"]); enableInput();
-        }
-
-        function maskName(name) {
-            if (!name || name === "No proporcionado" || name === "Anónimo" || name === "Extranjero" || name === "En proceso...") return name || "En proceso...";
-            let parts = name.split(" "); if (parts.length === 1) return name.substring(0, 3) + "***"; return parts[0] + " " + parts[1].charAt(0) + "***";
-        }
-
-        function getHtmlTicket() {
-            let ubi = userData.departamento || "-";
-            let proj = userData.proyecto_resumen || "Pendiente"; if (proj.length > 40) proj = proj.substring(0, 37) + "...";
-            let precio = userData.precio_final || "-";
-            let anticipo = userData.anticipo || "-";
-            
-            let qrData = encodeURIComponent(`TICKET CREATIK\nGestión: ${sessionId}\nCliente: ${maskName(userData.nombre)}\nFecha: ${userData.fechaEvento}\nLugar: ${ubi}\nTotal: ${precio}\nAnticipo: ${anticipo}`);
-            let qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=${qrData}&color=000000&bgcolor=ffffff`;
-
-            return `
-            <style>
-                .html-ticket { background: linear-gradient(135deg, #1e1b4b, #020005); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 15px; width: 100%; max-width: 280px; margin: 15px auto; color: white; font-family: 'Inter', sans-serif; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden; position: relative; }
-                .ticket-header { padding: 20px; text-align: center; } .ticket-header h3 { margin: 0; font-size: 1.5rem; font-weight: 900; letter-spacing: 1px; color: #fff; } .ticket-header p { margin: 5px 0 0 0; font-size: 0.7rem; color: #a855f7; letter-spacing: 2px; text-transform: uppercase; }
-                .ticket-divider { position: relative; height: 20px; display: flex; align-items: center; justify-content: center; } .ticket-divider hr { width: 80%; border: none; border-top: 2px dashed rgba(255,255,255,0.2); margin: 0; } .ticket-divider .circle-left, .ticket-divider .circle-right { position: absolute; width: 20px; height: 20px; background: #0f0a19; border-radius: 50%; top: 0; } .ticket-divider .circle-left { left: -10px; border-right: 1px solid rgba(168, 85, 247, 0.4); } .ticket-divider .circle-right { right: -10px; border-left: 1px solid rgba(168, 85, 247, 0.4); }
-                .ticket-body { padding: 20px; text-align: left; } .ticket-row { margin-bottom: 15px; display: flex; flex-direction: column; gap: 4px; } .ticket-row .label { font-size: 0.65rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1px; } .ticket-row .value { font-size: 0.95rem; font-weight: 700; color: #fff; line-height: 1.3; }
-                .ticket-footer { padding: 15px 20px 25px 20px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3); } .barcode { font-family: monospace; font-size: 1.2rem; letter-spacing: 2px; color: #fff; opacity: 0.8; }
-                .qr-container { display: flex; justify-content: center; margin-top: 15px; margin-bottom: 10px; } .qr-container img { width: 90px; height: 90px; border: 4px solid #ffffff; border-radius: 4px; background: #ffffff;}
-            </style>
-            <div class="html-ticket"><div class="ticket-header"><h3>CREATIK.</h3><p>TICKET DE GESTIÓN</p></div><div class="ticket-divider"><div class="circle-left"></div><div class="circle-right"></div><hr></div>
-            <div class="ticket-body"><div class="ticket-row"><span class="label">CÓDIGO DE GESTIÓN</span><span class="value">${sessionId}</span></div><div class="ticket-row"><span class="label">CLIENTE</span><span class="value">${maskName(userData.nombre)}</span></div><div class="ticket-row"><span class="label">FECHA ACORDADA</span><span class="value">${userData.fechaEvento}</span></div><div class="ticket-row"><span class="label">UBICACIÓN</span><span class="value">${ubi}</span></div><div class="ticket-row"><span class="label">PAQUETE</span><span class="value" style="color: #a855f7;">${proj}</span></div>
-            <div class="ticket-row" style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.2);"><span class="label" style="color: #ffd700;">PRECIO TOTAL</span><span class="value" style="color: #ffd700; font-size: 1.1rem;">${precio}</span></div>
-            <div class="ticket-row"><span class="label" style="color: #db2777;">ANTICIPO (50%)</span><span class="value" style="color: #db2777;">${anticipo}</span></div>
-            <div class="qr-container"><img src="${qrUrl}" alt="QR Ticket"></div>
-            </div>
-            <div class="ticket-footer"><div class="barcode">|||| |||| || ||| || ||||</div><div style="font-size:0.6rem; margin-top:5px; color:#a855f7;">${sessionId}</div></div></div>
-            <p style="font-size: 0.85rem; margin-top: 10px; line-height:1.4; text-align:center;">📸 <b>Por favor, tómale una captura a este ticket</b> y envíala a nuestro WhatsApp (+503 7577 8333) para agendar tu proyecto.</p>`;
-        }
-
-        async function getAIResponse(promptText, isFullContext = false, systemInjection = "", isAdminMode = false, adminName = "") {
-            let historyLines = (isAdminMode ? adminConversationHistory : conversationHistory).split('\n').filter(line => line.trim() !== '');
-            if (historyLines.length > 24) historyLines = historyLines.slice(historyLines.length - 24); 
-            let trimmedHistory = historyLines.join('\n');
-            
-            let bookedStr = window.serverData && window.serverData.bookedDates && window.serverData.bookedDates.length > 0 ? window.serverData.bookedDates.join(", ") : "Ninguna (todo disponible)";
-
-            let messagesArray = [];
-
-            if (isAdminMode) {
-                let adminSys = `Eres el asistente privado de Creatik. Hablas EXCLUSIVAMENTE con el Administrador: ${adminName}.
-REGLA 1 (IDENTIDAD Y CONVERSACIÓN LIBRE): Eres asistente, NO hablas como si fuera un cliente. Tienes PROHIBIDO generar códigos promocionales a nombre de otro administrador. 
-REGLA 2 (CREACIÓN DE CÓDIGOS Y 5 PASOS): Si ${adminName} pide crear un código de descuento, HAZLE ESTAS PREGUNTAS (UNA SOLA PREGUNTA A LA VEZ, ESTRICTAMENTE PROHIBIDO HACER 2 JUNTAS):
-   1. ¿Para qué tipo de evento es?
-   2. ¿De cuánto será el porcentaje de descuento?
-   3. ¿Es para alguien en específico o lo puede canjear cualquiera?
-   4. ¿Por qué motivo se está creando este cupón?
-   5. ADVERTENCIA (Dila al final antes de generar el código): "Ten en cuenta que del 100% del descuento otorgado, se te descontará el 25% de tus ganancias por usar este cupón. ¡Pero velo como una gran oportunidad para ganar clientes, gracias a ti lo lograremos!"
-REGLA 3 (LÍMITE DE CUPONES): El admin tiene ${window.cuponesAdminMes} de 5 cupones creados este mes. Si te pide crear uno y ya tiene 5, DÍSELO Y RECHÁZALO firmemente.
-REGLA 4: Si tiene menos de 5 y ya respondió todo, GENERA EL CÓDIGO y MUÉSTRALO VISIBLEMENTE EN EL CHAT en negritas (Formato: [Primera letra de su nombre en Mayúscula] + [10 letras y números complejos al azar] + CREATIK. Ej: ${adminName.charAt(0).toUpperCase()}X7K9P2M4W1CREATIK).
-REGLA 5: ADEMÁS de mostrarlo, es OBLIGATORIO que pongas al final de tu mensaje EXACTAMENTE esta etiqueta oculta: [LOG_PROMO: el_codigo_generado | porcentaje_de_descuento]`;
+                document.getElementById('modal-c-hoy').textContent = cHoy;
+                document.getElementById('modal-t-hoy').textContent = tHoy;
+                document.getElementById('modal-welcome-name').textContent = `¡Hola, ${activeAdminName}!`;
+                document.getElementById('login-screen').style.opacity = '0';
                 
-                messagesArray = [
-                    { role: "system", content: adminSys },
-                    { role: "user", content: (isFullContext ? `Historial de Admin:\n${trimmedHistory}\nAdmin: ${promptText}` : `Admin: ${promptText}`) }
-                ];
+                setTimeout(() => {
+                    document.getElementById('login-screen').style.display = 'none';
+                    document.getElementById('dashboard-screen').style.display = 'flex';
+                    document.getElementById('current-admin-name').textContent = activeAdminName;
+                    document.getElementById('welcome-title').textContent = "Bienvenido, " + activeAdminName;
+                    iniciarListeners();
+                    document.getElementById('stats-modal').classList.add('active');
+                }, 500);
             } else {
-                let basePrompt = `Eres "Creatik IA", asesora de ventas senior de Creatik Studio en El Salvador (2026). Tu tono es entusiasta, persuasivo, cercano y profesional. Usa emojis.
-
-ESTADO ACTUAL DE DATOS (REVISA ESTO ANTES DE RESPONDER):
-- Fechas Ocupadas (¡NO DISPONIBLES!): ${bookedStr}
-- Tipo de Evento: ${userData.proyecto_resumen ? userData.proyecto_resumen : "FALTA"}
-- Nombre: ${userData.nombre ? userData.nombre : "FALTA"}
-- Teléfono: ${userData.telefono ? userData.telefono : "FALTA"}
-- Ubicación: ${userData.departamento ? userData.departamento : "FALTA"}
-- Fecha y Hora exacta: ${userData.fechaEvento ? userData.fechaEvento : "FALTA"}
-
-REGLAS DE ATENCIÓN Y SERVICIOS (¡MUY IMPORTANTE!):
-- NOSOTROS SOLO OFRECEMOS FOTOGRAFÍA Y VIDEO. NO ofrecemos catering, ni DJ, ni decoración, NI NADA MÁS. ¡NO INVENTES SERVICIOS!
-- Si el cliente solo dice "Hola" o hace preguntas generales, NO le pidas el nombre. SOLO SI muestra interés en cotizar, contratar, reprogramar o da detalles, PIDE el Nombre y WhatsApp.
-- BLOQUEO DE DATOS: PROHIBIDO dar precios sin antes tener el Nombre, Teléfono, Tipo de Evento y Ubicación. 
-- ¡OJO! Si el cliente te responde "NO" a dar su nombre o algún dato, NO CAMBIES DE TEMA NI REINICIES. Simplemente dile "No hay problema", usa la etiqueta [N: No proporcionado] y SIGUE preguntando sobre el evento normal.
-- HAZ UNA SOLA PREGUNTA A LA VEZ. No agobies. NUNCA des precios sin preguntar: 1. Tipo Evento, 2. Nombre/Teléfono, 3. Ubicación, 4. Fecha/Hora, y MÍNIMO 3 DETALLES PROFUNDOS MÁS (horas, invitados, estilo).
-- NUNCA te quedes callada (Ej: No digas "Dame un momento"). Siempre lanza tu siguiente pregunta.
-
-POLÍTICAS DE CANCELACIÓN Y REPROGRAMACIÓN (SOLO PARA EVENTOS PASADOS):
-Si es Reprogramar o Cancelar un evento del pasado:
-1. Pide su CÓDIGO DE GESTIÓN ANTERIOR.
-2. El [SISTEMA INTERNO] te dará los datos. HAZ 3 PREGUNTAS DE SEGURIDAD.
-3. Valida respuestas. Si falla, RECHÁZALO DEFINITIVAMENTE.
-4. Si responde bien: CANCELACIÓN pierde el 100% del anticipo. REPROGRAMACIÓN cuesta 30% extra.
-
-REGLAS DE PRECIOS Y PROPUESTA INMEDIATA:
-- NUNCA MUESTRES LOS PRECIOS INTERNOS. LA MEMORIA USB VA INCLUIDA SIEMPRE (No desgloses precio, JAMÁS digas +$9 ni +$0.90).
-- KILOMETRAJE OCULTO: Internamente suma $0.95 por cada kilómetro si es fuera de San Salvador. NUNCA le menciones este cobro al cliente, solo súmalo al total inventado.
-- REGLA DE PROPUESTA INMEDIATA: Si el cliente ya dio sus datos básicos y dice "sí", "me interesa", "ok" o afirma, DEBES DARLE LA PROPUESTA INMEDIATAMENTE EN VIÑETAS. ¡PROHIBIDO PREGUNTAR MÁS COSAS!
-- Muestra el precio grande y en negritas usando HTML: <strong style='font-size: 1.3em;'>$150</strong>. PROHIBIDO poner la palabra "$Total" literal. Usa números inventados realistas.
-- OBLIGATORIO AL DAR PRECIO: Siempre añade esta frase al final de la propuesta: "(Recuerda que este precio es un estimado de nuestros precios, ya en WhatsApp lo hablaremos a profundidad)".
-
-ETIQUETAS INVISIBLES AL FINAL DE TU RESPUESTA:
-[ACTIVAR_CODIGO] (Si hay intención de cotizar o reprogramar)
-[N: (Nombre o "No proporcionado")]
-[T: (Teléfono)]
-[U: (Ubicación)]
-[E: (Fecha y Hora)]
-[R: (Resumen exacto del evento y Tipo de Evento)]
-
-CIERRE Y TICKET:
-Confirma la propuesta 3 veces. Si acepta explícitamente, despídete y pon EXACTAMENTE al final (USA NÚMEROS REALES PUROS, JAMÁS LETRAS COMO 'Total', Ej: 150):
-[GENERAR_TICKET]
-[PROYECTO: (Nombre Creativo)]
-[PRECIO: 150]
-[ANTICIPO: 75]`;
-
-                let finalPrompt = isFullContext ? `${basePrompt}\nHistorial:\n${trimmedHistory}\nUsuario: ${promptText}\n${systemInjection}\nCreatik IA:` : `${basePrompt}\nInstrucción: ${promptText}\n${systemInjection}\nCreatik IA:`;
-                
-                messagesArray = [
-                    { role: "system", content: "Eres humana. UNA SOLA PREGUNTA A LA VEZ. NO pidas nombre sin interés. Activa código al notar interés. Si dice 'NO' al nombre, acéptalo sin reiniciar y sigue preguntando del evento. PROHIBIDO INVENTAR SERVICIOS (solo foto/video). NUNCA TE QUEDES CALLADA TRAS VALIDAR, siempre haz otra pregunta. Si acepta, LANZA LA PROPUESTA INMEDIATAMENTE con viñetas y precio <strong style='font-size: 1.3em;'>$XXX</strong> añadiendo que es 'un estimado'. La USB va incluida, NUNCA reveles su costo interno (+$9). En las etiquetas PRECIO y ANTICIPO pon SOLO EL NÚMERO FINAL (Ej: 150). Usa etiquetas ocultas al final." }, 
-                    { role: "user", content: finalPrompt }
-                ];
+                document.getElementById('login-error').style.display = 'block';
             }
+        }
 
+        async function limpiarHistorialRoger() {
+            const confirmPass = prompt("⚠️ ACCIÓN CRÍTICA: Confirma tu contraseña para borrar todo el historial:");
+            if (confirmPass === "ROG2026") {
+                if (confirm("¿Estás 100% seguro? Se borrarán todas las cotizaciones.")) {
+                    const snap = await db.collection("cotizaciones").get();
+                    const batch = db.batch();
+                    snap.forEach(doc => batch.delete(doc.ref));
+                    await batch.commit();
+                    alert("✅ Historial vaciado.");
+                }
+            } else if (confirmPass !== null) { alert("❌ Contraseña incorrecta."); }
+        }
+
+        function iniciarListeners() {
+            // Reseñas
+            unsubResenas = db.collection("comentarios").orderBy("timestamp", "desc").onSnapshot(snap => {
+                const tbody = document.getElementById('lista-resenas');
+                let html = '';
+                snap.forEach(doc => {
+                    let d = doc.data(); let starsHtml = '★'.repeat(d.estrellas) + '☆'.repeat(5 - d.estrellas);
+                    html += `<tr><td>${d.fecha || '-'}</td><td><b>${d.nombre}</b></td><td class="stars-display">${starsHtml}</td><td>"${d.texto}"</td><td><button class="btn-delete" onclick="borrarResena('${doc.id}')">Borrar</button></td></tr>`;
+                });
+                tbody.innerHTML = html || '<tr><td colspan="5">Sin reseñas.</td></tr>';
+            });
+
+            // Tickets y Cotizaciones (REALTIME)
+            unsubTickets = db.collection("cotizaciones").onSnapshot(snap => {
+                const tbody = document.getElementById('lista-tickets');
+                let todayStr = new Date().toLocaleDateString("en-US", {timeZone: "America/El_Salvador"});
+                let totalCerrados = 0;
+                let cHoy = 0;
+                let html = '';
+                
+                let ticketsValidos = [];
+                snap.forEach(doc => {
+                    let d = doc.data();
+                    let dateStr = d.fechaRegistro ? new Date(d.fechaRegistro).toLocaleDateString("en-US", {timeZone: "America/El_Salvador"}) : "";
+                    
+                    if (d.codigo && d.codigo.startsWith("CTK-") && d.precioTotal && d.precioTotal !== "Calculando...") {
+                        totalCerrados++; // CONTADOR TOTAL
+                        ticketsValidos.push(d);
+                        globalTicketsData[d.codigo] = d.historial || "Sin registro.";
+                        if (dateStr === todayStr) cHoy++;
+                    }
+                });
+
+                // ACTUALIZACIÓN DE CONTADORES EN TIEMPO REAL
+                document.getElementById('live-tickets-header-count').textContent = totalCerrados;
+                adminStats.tickets = cHoy;
+
+                ticketsValidos.sort((a, b) => new Date(b.fechaRegistro) - new Date(a.fechaRegistro));
+                ticketsValidos.forEach(d => {
+                    let num = d.telefono ? d.telefono.replace(/[^0-9]/g, '') : '';
+                    html += `<tr><td style="font-size:0.8rem;">${d.fechaRegistro}</td><td style="color:#059669; font-weight:700;">${d.codigo}</td><td><b>${d.nombre}</b><br><a href="https://wa.me/503${num}" target="_blank">${d.telefono}</a></td><td>${d.proyecto}<br><b>${d.precioTotal}</b></td><td><button class="btn-action" onclick="abrirChat('${d.codigo}')">Chat</button></td></tr>`;
+                });
+                tbody.innerHTML = html || '<tr><td colspan="5">Sin tickets.</td></tr>';
+            });
+
+            // Cupones
+            unsubCupones = db.collection("promos").orderBy("fechaRegistro", "desc").onSnapshot(snap => {
+                const tbody = document.getElementById('lista-cupones');
+                let html = '';
+                snap.forEach(doc => {
+                    let d = doc.data();
+                    let statusClass = d.estado.includes("ACTIVO") ? "status-active" : "status-used";
+                    html += `<tr><td style="font-weight:700;">${d.codigo}</td><td>${d.admin}</td><td style="color:#db2777;">${d.descuento}</td><td>${d.mes}</td><td><span class="badge-status ${statusClass}">${d.estado}</span></td><td><button class="btn-delete" onclick="borrarCupon('${doc.id}')">Borrar</button></td></tr>`;
+                });
+                tbody.innerHTML = html || '<tr><td colspan="6">Sin cupones.</td></tr>';
+            });
+        }
+
+        let globalTicketsData = {};
+        function abrirChat(codigo) {
+            let content = (globalTicketsData[codigo] || "Sin historial.").replace(/Creatik IA:/g, '<br><span class="log-ia">🤖 Creatik IA:</span>').replace(/Usuario:/g, '<br><br><span class="log-user">👤 Usuario:</span>');
+            document.getElementById('modal-ticket-title').textContent = "Conversación: " + codigo;
+            document.getElementById('modal-ticket-body').innerHTML = content;
+            document.getElementById('chat-modal').style.display = 'flex';
+        }
+
+        async function borrarResena(id) { if(confirm("¿Borrar?")) await db.collection("comentarios").doc(id).delete(); }
+        async function borrarCupon(id) { if(confirm("¿Borrar?")) await db.collection("promos").doc(id).delete(); }
+
+        async function generarCupon() {
+            let d = new Date(); let mesAct = `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+            let valid = await db.collection("promos").where("admin", "==", activeAdminName).where("mes", "==", mesAct).get();
+            if(!valid.empty) return alert("Cupón de mes ya existe.");
+            let cod = `DESC25-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+            await db.collection("promos").doc(cod).set({ codigo: cod, admin: activeAdminName, descuento: "25%", estado: "ACTIVO", mes: mesAct, fechaRegistro: new Date().toLocaleString() });
+            alert("✅ " + cod);
+        }
+
+        const k1 = "sk-proj-KH2vuYEN43CdaJPG8UT8u0ThJYKGjgJ-", k2 = "zhoyX1-Je9q7KY8xHLrrCEAB2O-bzyhi-", k3 = "0gSQDdC9DT3BlbkFJtVWsmA7ZrXqcH9_y_", k4 = "DXTCc5UC8yiQ6BAE80waG-eFZs9XUUKNycxp75hNfC7h6HUwldm4tJfIA";
+        const API_KEY = k1 + k2 + k3 + k4;
+        let adminChatHistory = [{ role: "system", content: "Asistente interno de Creatik Studio." }];
+
+        async function sendAdminChatMessage() {
+            let inputEl = document.getElementById('ac-input'); let text = inputEl.value.trim(); if(!text) return;
+            let msgContainer = document.getElementById('ac-messages');
+            msgContainer.innerHTML += `<div class="ac-msg user">${text}</div>`;
+            inputEl.value = ''; msgContainer.scrollTop = msgContainer.scrollHeight;
+            document.getElementById('ac-typing').style.display = 'inline';
+            adminChatHistory.push({ role: "user", content: text });
             try {
                 const response = await fetch("https://api.openai.com/v1/chat/completions", {
                     method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${API_KEY}` },
-                    body: JSON.stringify({ 
-                        model: "gpt-4o", 
-                        messages: messagesArray,
-                        temperature: 0.6 
-                    })
+                    body: JSON.stringify({ model: "gpt-4o", messages: adminChatHistory, temperature: 0.7 })
                 });
-                const data = await response.json();
-                if (data.error) return `<b>Error:</b> ${data.error.message}`;
-                
-                let resText = data.choices[0].message.content.replace(/\n/g, '<br>');
-                if (!resText || resText.trim() === "") {
-                    return "Disculpa, tuve un pequeño lapsus mental 😅. ¿Me lo podrías repetir?";
-                }
-                return resText;
-            } catch (error) { 
-                console.error(error);
-                return "¡Ups! Error de conexión con la IA 🔌. Intenta de nuevo por favor."; 
-            }
+                const data = await response.json(); let resText = data.choices[0].message.content;
+                adminChatHistory.push({ role: "assistant", content: resText });
+                document.getElementById('ac-typing').style.display = 'none';
+                msgContainer.innerHTML += `<div class="ac-msg bot">${resText.replace(/\n/g, '<br>')}</div>`;
+                msgContainer.scrollTop = msgContainer.scrollHeight;
+            } catch (e) { document.getElementById('ac-typing').style.display = 'none'; }
         }
 
-        function cleanAiResp(str) {
-            let s = str.replace(/\[(N|T|U|E|R|PROYECTO|PRECIO|ANTICIPO|LOG_PROMO|ACTIVAR_CODIGO|GENERAR_TICKET|SISTEMA INTERNO)[^\]]*\]/gi, '');
-            s = s.replace(/\+\$9(?!\d)/g, ''); 
-            s = s.replace(/\+\$0\.90(?!\d)/g, ''); 
-            s = s.replace(/<br\s*\/?>\s*<br\s*\/?>\s*<br\s*\/?>/gi, '<br><br>');
-            return s.replace(/(?:<br\s*\/?>|\s)+$/gi, '').trim();
+        function cambiarVista(vista, btn) {
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active');
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('view-' + vista).classList.add('active');
         }
 
-        async function handleSend(manualText = null) {
-            resetInactivityTimer();
-            const text = (typeof manualText === 'string') ? manualText : chatbotInput.value.trim();
-            if (!text) return;
-
-            appendUserMessage(text);
-            chatbotInput.value = ''; chatbotInput.disabled = true; chatbotSendBtn.disabled = true;
-            let textLower = text.toLowerCase();
-
-            if (/(quiero otro c[oó]digo|nuevo c[oó]digo|reiniciar|empezar de cero|cancelar gesti[oó]n)/i.test(textLower)) { resetChat(); return; }
-            if (textLower === lastUserText && textLower !== "") { repeatCount++; if (repeatCount >= 3) { resetChat(); return; } } else { lastUserText = textLower; repeatCount = 1; }
-
-            clearTimeout(window.adminTimeout);
-            
-            // MODO ADMINISTRADOR - LOGIN Y CHAT
-            if (chatState === 'ADMIN_LOGIN') {
-                if (textLower === 'salir') { 
-                    chatState = savedChatState === 'ADMIN_LOGIN' ? 'INIT' : savedChatState; 
-                    chatbotMessages.lastChild.remove(); 
-                    enableInput(); 
-                    return; 
-                }
-                let upperKey = text.toUpperCase();
-                if (adminUsers[upperKey]) { 
-                    chatState = 'ADMIN_CHAT'; 
-                    window.currentAdminKey = upperKey;
-                    
-                    savedClientHistory = conversationHistory;
-                    savedClientHTML = chatbotMessages.innerHTML;
-                    adminConversationHistory = "";
-                    chatbotMessages.innerHTML = ""; 
-                    
-                    document.querySelector('.chatbot-header').style.background = `linear-gradient(135deg, ${adminUsers[upperKey].color}, #020005)`;
-                    document.getElementById('chatbot-session-display').textContent = `Administrador: ${adminUsers[upperKey].name}`;
-                    document.getElementById('admin-exit-btn').style.display = "block";
-
-                    window.adminSessionId = "LOG-" + adminUsers[upperKey].name.toUpperCase() + "-" + Date.now();
-                    adminFullLog = "Inicio de sesión de " + adminUsers[upperKey].name + "\n";
-                    logAdminActivity(adminUsers[upperKey].name, "Inició sesión en el panel de administrador.");
-
-                    appendBotTyping();
-                    try {
-                        let dashRes = await fetch(GOOGLE_SCRIPT_URL + "?adminDashboard=" + encodeURIComponent(adminUsers[upperKey].name));
-                        let dashData = await dashRes.json();
-                        window.cuponesAdminMes = dashData.cuponesAdminMes;
-
-                        let dashboardMsg = `Hola IA. Soy el admin ${adminUsers[upperKey].name} y acabo de iniciar sesión. OBLIGATORIAMENTE dame la bienvenida y muestra este resumen del día de hoy en viñetas:\n1. Personas que cotizaron hoy: ${dashData.cotizacionesHoy}\n2. Tickets generados (cerrados) hoy: ${dashData.ticketsHoy}\n3. Notas/Menciones a tu nombre: ${dashData.notasParaIA.length > 0 ? dashData.notasParaIA.join(" | ") : "Ninguna"}\n4. Cupones generados hoy: ${dashData.cuponesGeneradosHoy.length > 0 ? dashData.cuponesGeneradosHoy.join(", ") : "Ninguno"}\n5. Cupones canjeados hoy: ${dashData.cuponesCanjeadosHoy.length > 0 ? dashData.cuponesCanjeadosHoy.join(", ") : "Ninguno"}\n\nLUEGO de dar el resumen, agrega un mensaje de ánimo de tu parte y pregúntame si quiero verificar algún código de gestión.`;
-                        
-                        let aiResp = await getAIResponse(dashboardMsg, false, "", true, adminUsers[upperKey].name);
-                        removeBotTyping();
-                        appendBotMessage(`<img src="LOGO MULTIMEDIA ISOTIPO MORA CREATIK.png" class="admin-logo-anim" style="width:50px; height:auto; margin-bottom:10px;"><br>` + cleanAiResp(aiResp));
-                        adminConversationHistory += `Creatik IA: ${cleanAiResp(aiResp)}\n`;
-                        enableInput("Escribe lo que necesites...");
-                    } catch(e) {
-                        removeBotTyping(); appendBotMessage(`✅ Acceso concedido, ${adminUsers[upperKey].name}. Ocurrió un error al cargar el dashboard.`); enableInput();
-                    }
-                } else { setTimeout(() => { removeBotTyping(); appendBotMessage("❌ Clave incorrecta. Escribe tu clave o 'salir'."); enableInput("Escribe tu clave..."); }, 500); window.adminTimeout = setTimeout(() => { if(chatState === 'ADMIN_LOGIN') { chatState = savedChatState; chatbotMessages.lastChild.remove(); enableInput(); } }, 20000); }
-                return;
-            } 
-            else if (chatState === 'ADMIN_CHAT') {
-                if (textLower === 'salir') { document.getElementById('admin-exit-btn').click(); return; }
-                
-                adminConversationHistory += `Admin: ${text}\n`;
-
-                if (textLower.includes("ver logs") || textLower.includes("ver actividad") || textLower.includes("otros admin") || textLower.includes("cupones")) {
-                    appendBotTyping();
-                    try {
-                        let res = await fetch(GOOGLE_SCRIPT_URL + "?getLogs=true");
-                        let data = await res.json();
-                        removeBotTyping();
-                        if(data.logs && data.logs.length > 0) {
-                            appendBotMessage("📋 **Últimos Registros de Actividad:**<br><pre style='white-space: pre-wrap; font-size:0.75rem; background: rgba(0,0,0,0.5); padding:10px; border-radius:10px;'>" + data.logs.join("<br><br>") + "</pre>");
-                        } else {
-                            appendBotMessage("No hay registros recientes.");
-                        }
-                        adminConversationHistory += "Creatik IA: Mostré los registros de actividad.\n";
-                        enableInput();
-                        return;
-                    } catch(e) { removeBotTyping(); appendBotMessage("Error al obtener logs."); enableInput(); return; }
-                }
-                
-                if (textLower.match(/(ctk-[a-z0-9]+)/i)) {
-                    const codeMatch = textLower.match(/(ctk-[a-z0-9]+)/i);
-                    const queryId = codeMatch[1].toUpperCase().trim();
-                    logAdminActivity(adminUsers[window.currentAdminKey].name, `Buscó la gestión: ${queryId}`);
-                    removeBotTyping(); appendBotMessage("🔍 Buscando gestión **" + queryId + "**..."); appendBotTyping();
-                    fetch(GOOGLE_SCRIPT_URL + "?id=" + encodeURIComponent(queryId)).then(res => res.json()).then(data => {
-                        removeBotTyping();
-                        if(data.found) {
-                            if (data.data.resumen === "GESTIÓN INCOMPLETA" || data.data.proyecto === "GESTIÓN INCOMPLETA") {
-                                let resHTML = `<span style="color:#ef4444; font-weight:bold;">⚠️ GESTIÓN INCOMPLETA: ${data.data.codigo}</span><br>Esta gestión fue abandonada antes de generar el ticket.`;
-                                appendBotMessage(resHTML);
-                                adminConversationHistory += `Creatik IA: Mostré que la gestión ${data.data.codigo} está incompleta.\n`;
-                            } else {
-                                let resHTML = `<span style="color:#10b981; font-weight:bold;">✅ GESTIÓN: ${data.data.codigo}</span><br><br>👤 **Nombre:** ${data.data.nombre}<br>📱 **Tel:** ${data.data.telefono}<br>📅 **Fecha Evento:** ${data.data.fechaEvento}<br>📍 **Ubicación:** ${data.data.ubicacion}<br>🎯 **Proyecto:** ${data.data.proyecto}<br>💰 **Precio Total:** ${data.data.precioTotal}<br>💸 **Anticipo:** ${data.data.anticipo}<br><br>📝 **Resumen del chat:**<br><i>${data.data.resumen}</i>`;
-                                appendBotMessage(resHTML); 
-                                adminConversationHistory += `Creatik IA: Mostré los datos de la gestión ${data.data.codigo}.\n`;
-                            }
-                            appendBotMessage("¿Buscar otra o necesitas algo más?");
-                        } else { appendBotMessage("❌ No se encontró la gestión."); adminConversationHistory += "Creatik IA: No encontré la gestión.\n"; }
-                        enableInput(); 
-                    }).catch(e => { removeBotTyping(); appendBotMessage("⚠️ Error de base de datos."); enableInput();});
-                    return;
-                }
-                
-                appendBotTyping();
-                let aiResp = await getAIResponse(text, true, "", true, adminUsers[window.currentAdminKey].name);
-                removeBotTyping(); 
-                
-                // Capturar log promocional con la regex mejorada
-                let promoMatch = aiResp.match(/\[LOG_PROMO:\s*([^|\]]+)\s*[|,-]\s*([^\]]+)\]/i);
-                if (promoMatch) {
-                    let code = promoMatch[1].trim();
-                    let desc = promoMatch[2].trim();
-                    
-                    fetch(GOOGLE_SCRIPT_URL, {
-                        method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' },
-                        body: JSON.stringify({ action: "savePromo", codigo: code, descuento: desc, admin: adminUsers[window.currentAdminKey].name })
-                    });
-                    window.cuponesAdminMes++;
-                    logAdminActivity(adminUsers[window.currentAdminKey].name, `Creó el código promocional: ${code} con descuento: ${desc}`);
-                }
-
-                appendBotMessage(cleanAiResp(aiResp)); 
-                adminConversationHistory += `Creatik IA: ${cleanAiResp(aiResp)}\n`;
-                enableInput(); 
-                return;
-            }
-            
-            conversationHistory += `Usuario: ${text}\n`;
-            
-            // --- CANJEAR CUPÓN ---
-            if (chatState === 'REDEEM_COUPON') {
-                const codeText = text.toUpperCase().trim();
-                appendBotTyping();
-                try {
-                    let res = await fetch(GOOGLE_SCRIPT_URL + "?checkPromo=" + encodeURIComponent(codeText));
-                    let dbData = await res.json();
-                    removeBotTyping();
-                    if (dbData.valid) {
-                        let digits = Math.floor(1000 + Math.random() * 9000);
-                        sessionId = "CTK-P" + digits;
-                        document.getElementById('chatbot-session-display').textContent = "Gestión: " + sessionId;
-                        
-                        fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({action: 'usePromo', codigo: codeText, cliente: sessionId})});
-                        
-                        chatState = 'AI_CHAT';
-                        let sysInj = `\n[SISTEMA INTERNO: El cliente ingresó el cupón ${codeText} y ES VÁLIDO. OBLIGATORIO: Dile explícitamente "¡Felicidades, tu cupón es válido y se aplicará tu descuento!". LUEGO CONTINÚA LA CONVERSACIÓN haciéndole la primera pregunta (Ej: De qué trata su evento).]`;
-                        appendBotTyping();
-                        let aiResp = await getAIResponse("Aquí está mi cupón válido", false, sysInj, false, "");
-                        removeBotTyping();
-                        appendBotMessage(cleanAiResp(aiResp));
-                        conversationHistory += `Creatik IA: ${cleanAiResp(aiResp).replace(/<[^>]*>?/gm, '')}\n`;
-                        enableInput();
-                        return;
-                    } else {
-                        appendBotMessage("❌ Lo siento, ese código " + (dbData.reason === 'used' ? "ya fue canjeado anteriormente." : "no es válido o no existe.") + " La gestión se reiniciará en 3 segundos para tu seguridad.");
-                        chatbotInput.disabled = true; chatbotSendBtn.disabled = true;
-                        setTimeout(() => { resetChat(); }, 3500);
-                        return;
-                    }
-                } catch(e) {
-                    removeBotTyping();
-                    appendBotMessage("⚠️ Hubo un error verificando el cupón. La gestión se reiniciará en 3 segundos.");
-                    setTimeout(() => { resetChat(); }, 3500);
-                    return;
-                }
-            }
-
-            if (text === "🎁 Canjear Cupón") {
-                chatState = 'REDEEM_COUPON';
-                appendBotMessage("¡Qué emoción! 🎉 Por favor, escribe tu código promocional aquí abajo:");
-                enableInput("Escribe tu código...");
-                return;
-            }
-
-            // --- CÓDIGO DE GESTIÓN (ACTIVA CON INTENCIÓN CLARA O BOTONES) ---
-            let isIntent = /(quiero|qyuero|me interesa|deseo|busco|necesito|reservar|contratar|agendar|tomarme|cotizar|paquete|cobertura|sesi[oó]n|precio|cuanto cuesta|\bs[ií]\b|te quiero|lo quiero|asesor[ií]a|info|informaci[oó]n|evento|boda|cumplea[ñn]os|reprogramar|cancelar)/i.test(textLower);
-            let isButton = ["📸 Cotizar un servicio", "✅ Contratar a Creatik", "✨ Conocer más de Creatik", "📅 Reprogramar o Cancelar"].includes(text);
-
-            if (sessionId === "Pendiente..." && (isIntent || isButton)) {
-                let prefix = "CTK-L";
-                if (text.includes("Cotizar")) prefix = "CTK-C";
-                else if (text.includes("Contratar")) prefix = "CTK-S";
-                else if (text.includes("Conocer más")) prefix = "CTK-I";
-                else if (text.includes("Reprogramar") || text.includes("Cancelar")) prefix = "CTK-M";
-                let digits = Math.floor(1000 + Math.random() * 9000);
-                sessionId = prefix + digits; 
-                document.getElementById('chatbot-session-display').textContent = "Gestión: " + sessionId;
-            }
-
-            syncToSheets(); // Guarda el mensaje del usuario (si hay código generado)
-
-            try {
-                const groserias = /idiota|estupido|imbecil|mierda|puta|callate|pudrete|maldito|basura|pendejo/i;
-                if (groserias.test(text)) { let resp = "En Creatik valoramos el respeto mutuo. ¡Que tengas un excelente día! ✨"; appendBotMessage(resp); syncToSheets(); chatbotInput.placeholder = "Chat finalizado."; return; }
-
-                if (chatState === 'FINAL_DECISION') {
-                    clearTimeout(window.finalDecisionTimer);
-                    if (text.includes("Seguir consultando")) { 
-                        chatState = 'AI_CHAT'; 
-                        removeBotTyping(); 
-                        let digits = Math.floor(1000 + Math.random() * 9000);
-                        sessionId = "CTK-C" + digits;
-                        document.getElementById('chatbot-session-display').textContent = "Gestión: " + sessionId;
-                        appendBotMessage("¡Perfecto! 😉 He abierto una nueva gestión para ti. ¿Qué más te gustaría saber?"); 
-                        enableInput(); 
-                        return; 
-                    }
-                    if (text.includes("Salir")) { resetChat(); return;}
-                    
-                    // Si el usuario escribe algo distinto a los botones, se reinicia el chat
-                    resetChat();
-                    return;
-                }
-
-                if (chatState === 'INIT') chatState = 'AI_CHAT';
-
-                // --- SISTEMA DE VERIFICACIÓN PARA REPROGRAMACIONES ---
-                let systemInjection = "";
-                const codeMatch = text.match(/(CTK-[a-zA-Z0-9]+)/i);
-                
-                if (chatState === 'AI_CHAT' && codeMatch) {
-                    appendBotTyping();
-                    try {
-                        let fetchedId = codeMatch[1].toUpperCase();
-                        let res = await fetch(GOOGLE_SCRIPT_URL + "?id=" + encodeURIComponent(fetchedId));
-                        let dbData = await res.json();
-                        if (dbData.found) {
-                            if (dbData.data.resumen === "GESTIÓN INCOMPLETA" || dbData.data.proyecto === "GESTIÓN INCOMPLETA") {
-                                systemInjection = `\n[SISTEMA INTERNO: El código ${fetchedId} es una GESTIÓN INCOMPLETA. Dile al cliente que este código no tiene un ticket válido porque la gestión anterior se abandonó, y no le des ninguna información.]`;
-                            } else {
-                                systemInjection = `\n[SISTEMA INTERNO: Datos reales del código ${fetchedId}: Nombre="${dbData.data.nombre}", Fecha="${dbData.data.fechaEvento}", Ubicación="${dbData.data.ubicacion}". HAZLE 3 PREGUNTAS DE SEGURIDAD. COMPARA ESTRICTAMENTE SUS RESPUESTAS CON ESTOS DATOS. SI SE EQUIVOCA EN ALGUNO, RECHÁZALO Y NO LE DES INFORMACIÓN.]`;
-                            }
-                        } else {
-                            systemInjection = `\n[SISTEMA INTERNO: El código ${fetchedId} NO EXISTE en la base de datos. Dile al cliente que el código es inválido.]`;
-                        }
-                    } catch(e) {
-                        console.log(e);
-                    }
-                    removeBotTyping();
-                }
-
-                appendBotTyping();
-
-                if (chatState === 'AI_CHAT') { 
-                    let aiResp = await getAIResponse(text, true, systemInjection, false, ""); 
-                    removeBotTyping(); 
-                    
-                    // EXTRACCIÓN DE DATOS EN TIEMPO REAL A TRAVÉS DE ETIQUETAS DE LA IA
-                    let rawN = aiResp.match(/\[N:\s*([^\]]+)\]/i); if (rawN) { let val = rawN[1].trim(); if(val && !val.toUpperCase().includes("FALTA")) userData.nombre = val; }
-                    let rawT = aiResp.match(/\[T:\s*([^\]]+)\]/i); if (rawT) { let val = rawT[1].trim(); if(val && !val.toUpperCase().includes("FALTA")) userData.telefono = val; }
-                    let rawU = aiResp.match(/\[U:\s*([^\]]+)\]/i); if (rawU) { let val = rawU[1].trim(); if(val && !val.toUpperCase().includes("FALTA")) userData.departamento = val; }
-                    let rawE = aiResp.match(/\[E:\s*([^\]]+)\]/i); if (rawE) { let val = rawE[1].trim(); if(val && !val.toUpperCase().includes("FALTA")) userData.fechaEvento = val; }
-                    let rawR = aiResp.match(/\[R:\s*([^\]]+)\]/i); if (rawR) { let val = rawR[1].trim(); if(val && !val.toUpperCase().includes("FALTA")) userData.resumen = val; }
-
-                    // Activación inteligente del código por parte de la IA si el JS no lo detectó
-                    if (aiResp.includes("[ACTIVAR_CODIGO]") && sessionId === "Pendiente...") {
-                        let digits = Math.floor(1000 + Math.random() * 9000); 
-                        sessionId = "CTK-W" + digits; 
-                        document.getElementById('chatbot-session-display').textContent = "Gestión: " + sessionId;
-                    }
-
-                    if (aiResp.includes("[GENERAR_TICKET]")) {
-                        let projMatch = aiResp.match(/\[PROYECTO:\s*([^\]]+)\]/i); 
-                        let priceMatch = aiResp.match(/\[PRECIO:\s*([^\]]+)\]/i); 
-                        let depositMatch = aiResp.match(/\[ANTICIPO:\s*([^\]]+)\]/i); 
-                        
-                        if (projMatch) userData.proyecto_resumen = projMatch[1].replace(/<[^>]*>?/gm, '').trim();
-                        
-                        // Capturar solo los números puros de las etiquetas PRECIO y ANTICIPO
-                        if (priceMatch) {
-                            let matchP = priceMatch[1].match(/\d+(\.\d+)?/);
-                            userData.precio_final = matchP ? "$" + matchP[0] : "-";
-                        }
-                        if (depositMatch) {
-                            let matchA = depositMatch[1].match(/\d+(\.\d+)?/);
-                            userData.anticipo = matchA ? "$" + matchA[0] : "-";
-                        }
-
-                        let cleanResp = cleanAiResp(aiResp);
-                        appendBotMessage(cleanResp); 
-                        conversationHistory += `Creatik IA: ${cleanResp.replace(/<[^>]*>?/gm, '')}\n`; 
-                        chatState = 'GENERATING_TICKET'; 
-                        appendBotTyping();
-                        
-                        setTimeout(() => { 
-                            removeBotTyping(); 
-                            const ticketMsgHtml = getHtmlTicket(); 
-                            appendBotMessage(ticketMsgHtml); 
-                            syncToSheets(); // Guarda Ticket final
-                            
-                            document.getElementById('chatbot-session-display').textContent = "Gestión: Finalizada";
-                            setTimeout(showFinalOptions, 2500); 
-                        }, 1200); 
-                        return;
-                    } else {
-                        let cleanResp = cleanAiResp(aiResp);
-                        appendBotMessage(cleanResp); 
-                        conversationHistory += `Creatik IA: ${cleanResp.replace(/<[^>]*>?/gm, '')}\n`; 
-                        syncToSheets(); // Guarda respuesta de la IA en tiempo real
-                        enableInput(); 
-                        return; 
-                    }
-                }
-
-            } catch (err) { console.error("Fallo:", err); removeBotTyping(); appendBotMessage("Fallo temporal 🔌. Intenta de nuevo."); } 
-            finally { if(chatState !== 'FINAL_DECISION' && chatState !== 'GENERATING_TICKET' && chatState !== 'ADMIN_CHAT') { enableInput(); scrollToBottom(); } }
-        }
-
-        chatbotSendBtn.addEventListener('click', (e) => { e.preventDefault(); handleSend(); });
-        chatbotInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); handleSend(); } });
-
-        // --- EVENTOS DEL DISEÑO VISUAL Y OVERLAYS ---
-        const loader = document.getElementById('intro-loader'); const introText = document.getElementById('intro-text'); const glow = document.querySelector('.cursor-glow'); const panel = document.getElementById('scroll-panel'); const bgPresentation = document.getElementById('bg-presentation'); const marquee = document.getElementById('marquee-transition'); const mainHeader = document.getElementById('main-header');
-        let isMenuOpen = false, isPaquetesOpen = false, isAcademyOpen = false;
-        const menuBtn = document.getElementById('toggle-menu-btn'); const menuOverlay = document.getElementById('full-menu-overlay'); const paquetesBtn = document.getElementById('toggle-paquetes-btn'); const paquetesOverlay = document.getElementById('paquetes-overlay'); const closePaquetesMobileBtn = document.getElementById('close-paquetes-mobile-btn'); const paquetesLogoBtn = document.getElementById('paquetes-logo-btn'); const btnContactOpen = document.getElementById('btn-contact-open'); const contactOverlay = document.getElementById('contact-overlay'); const btnContactClose = document.getElementById('close-contact-btn'); const btnAcademyOpen = document.getElementById('open-academy-btn'); const academyOverlay = document.getElementById('academy-overlay'); const btnAcademyClose = document.getElementById('close-academy-btn');
-        let slideshowInterval; const slides = document.querySelectorAll('.phone-slideshow .slide'); let currentSlideIdx = 0;
-        
-        function nextSlide() { slides[currentSlideIdx].classList.remove('active'); currentSlideIdx = (currentSlideIdx + 1) % slides.length; slides[currentSlideIdx].classList.add('active'); }
-        function updateHeaderVisibility() { if (isPaquetesOpen || isAcademyOpen || contactOverlay.classList.contains('active') || isMenuOpen) { bgPresentation.classList.add('paused-animation'); marquee.classList.add('paused-animation'); chatbotFab.classList.add('hide-chatbot-ui'); chatbotWindow.classList.remove('active'); isChatbotOpen = false; if (!isMenuOpen) { mainHeader.style.opacity = '0'; mainHeader.style.visibility = 'hidden'; mainHeader.style.pointerEvents = 'none'; } } else { bgPresentation.classList.remove('paused-animation'); marquee.classList.remove('paused-animation'); chatbotFab.classList.remove('hide-chatbot-ui'); mainHeader.style.visibility = 'visible'; mainHeader.style.pointerEvents = 'auto'; mainHeader.style.opacity = Math.max(0, 1 - window.scrollY / 300); } }
-        function triggerIntro() { loader.classList.remove('hidden'); introText.classList.remove('animate-letters'); void introText.offsetWidth; introText.classList.add('animate-letters'); setTimeout(() => loader.classList.add('hidden'), window.innerWidth <= 900 ? 2500 : 1500); }
-        
-        menuBtn.addEventListener('click', () => { isMenuOpen = !isMenuOpen; mainHeader.classList.toggle('menu-mode', isMenuOpen); if (isMenuOpen) { menuOverlay.classList.add('active'); menuBtn.classList.add('active-btn'); document.body.style.overflow = 'hidden'; menuBtn.innerHTML = '<span class="dot"></span> Cerrar'; mainHeader.style.opacity = 1; if (!slideshowInterval && slides.length > 0) slideshowInterval = setInterval(nextSlide, 3000); } else { menuOverlay.classList.remove('active'); menuBtn.classList.remove('active-btn'); document.body.style.overflow = 'auto'; menuBtn.innerHTML = '<span class="dot"></span> Menú'; if (slideshowInterval) { clearInterval(slideshowInterval); slideshowInterval = null; } } updateHeaderVisibility(); });
-        paquetesBtn.addEventListener('click', () => { isPaquetesOpen = true; paquetesOverlay.scrollTop = 0; paquetesOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; updateHeaderVisibility(); }); closePaquetesMobileBtn.addEventListener('click', () => { isPaquetesOpen = false; paquetesOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; updateHeaderVisibility(); }); paquetesLogoBtn.addEventListener('click', () => { isPaquetesOpen = false; paquetesOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; updateHeaderVisibility(); triggerIntro(); }); btnContactOpen.addEventListener('click', () => { contactOverlay.scrollTop = 0; contactOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; updateHeaderVisibility(); }); btnContactClose.addEventListener('click', () => { contactOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; updateHeaderVisibility(); }); btnAcademyOpen.addEventListener('click', () => { isAcademyOpen = true; academyOverlay.scrollTop = 0; academyOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; updateHeaderVisibility(); }); btnAcademyClose.addEventListener('click', () => { isAcademyOpen = false; academyOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; updateHeaderVisibility(); });
-        
-        const viewer = document.getElementById('main-viewer'); const thumbBoxes = document.querySelectorAll('#thumbnail-grid .icon-box'); const dashImages = ['img1.jpg', 'img2_2.jpg', 'img3.jpg', 'img4.jpg', 'img5.jpg', 'img6.jpg', 'img7_7.jpg', 'img8.jpg', 'img9.jpg']; let dashIdx = 0;
-        function autoShowImage() { if (!viewer || thumbBoxes.length === 0) return; const panelRect = panel.getBoundingClientRect(); if (panelRect.bottom < 0 || panelRect.top > window.innerHeight) return; if (window.innerWidth <= 900) { thumbBoxes.forEach(box => { box.style.borderColor = 'rgba(255,255,255,0.08)'; box.style.background = 'rgba(255,255,255,0.04)'; box.style.transform = 'scale(1) translate3d(0,0,0)'; }); return; } viewer.style.opacity = 0; setTimeout(() => { const newSrc = dashImages[dashIdx]; viewer.src = newSrc; viewer.style.objectPosition = (newSrc.includes('img2') || newSrc.includes('img7')) ? 'center top' : 'center center'; viewer.style.opacity = 1; thumbBoxes.forEach((box, i) => { if (i === dashIdx) { box.style.borderColor = '#a855f7'; box.style.background = 'rgba(168, 85, 247, 0.25)'; box.style.transform = 'scale(1.05) translate3d(0,0,0)'; } else { box.style.borderColor = 'rgba(255,255,255,0.08)'; box.style.background = 'rgba(255,255,255,0.04)'; box.style.transform = 'scale(1) translate3d(0,0,0)'; } }); dashIdx = (dashIdx + 1) % dashImages.length; }, 300); }
-        let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2; let ballX = window.innerWidth / 2, ballY = window.innerHeight / 2; document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; }, { passive: true }); function animateGlow() { if (window.innerWidth > 900) { ballX += (mouseX - ballX) * 0.1; ballY += (mouseY - ballY) * 0.1; glow.style.transform = `translate3d(${ballX}px, ${ballY}px, 0) translate3d(-50%, -50%, 0)`; } requestAnimationFrame(animateGlow); } animateGlow();
-        
-        function initDynamicBox() { const words = document.querySelectorAll('#dynamic-box .world-text'); const box = document.getElementById('dynamic-box'); const titleHistoria = document.getElementById('title-historia'); const titleHagamos = document.getElementById('title-hagamos'); if (!box || words.length === 0) return; let currentIndex = 0; function updateText() { const boxRect = box.getBoundingClientRect(); if (boxRect.bottom < 0 || boxRect.top > window.innerHeight) return; words[currentIndex].classList.remove('active'); currentIndex = (currentIndex + 1) % words.length; const nextWord = words[currentIndex]; nextWord.classList.add('active'); if(window.innerWidth > 900) { box.style.width = `${nextWord.scrollWidth + 80}px`; } if (nextWord.textContent.trim().toLowerCase() === 'inolvidable') { titleHistoria.classList.remove('active'); titleHagamos.classList.add('active'); } else { titleHagamos.classList.remove('active'); titleHistoria.classList.add('active'); } } document.fonts.ready.then(() => { words[0].classList.add('active'); titleHistoria.classList.add('active'); if(window.innerWidth > 900) { box.style.width = `${words[0].scrollWidth + 80}px`; } setInterval(updateText, 3000); }); }
-        let isScrolling = false; window.addEventListener('scroll', () => { if(isMenuOpen || isPaquetesOpen || contactOverlay.classList.contains('active') || isAcademyOpen) return; if (!isScrolling) { window.requestAnimationFrame(() => { const scrollVal = window.scrollY; const fadeFactor = Math.max(0, 1 - scrollVal / 300).toFixed(2); bgPresentation.style.opacity = fadeFactor; if (window.innerWidth > 900) { if (!isChatbotOpen) mainHeader.style.opacity = fadeFactor; if (scrollVal > 100) panel.classList.add('visible'); else panel.classList.remove('visible'); } isScrolling = false; }); isScrolling = true; } }, { passive: true });
-        
-        window.addEventListener('load', () => { triggerIntro(); initDynamicBox(); if (viewer) { autoShowImage(); setInterval(autoShowImage, 3500); } });
+        function cerrarStatsModal() { document.getElementById('stats-modal').classList.remove('active'); }
+        function cerrarSesion() { location.reload(); }
+        document.getElementById('admin-pass').addEventListener('keypress', e => { if(e.key==='Enter') iniciarSesion(); });
+        document.getElementById('ac-input').addEventListener('keypress', e => { if(e.key==='Enter') sendAdminChatMessage(); });
     </script>
 </body>
 </html>
